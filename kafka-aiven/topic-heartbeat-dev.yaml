@@ -1,0 +1,20 @@
+apiVersion: kafka.nais.io/v1
+kind: Topic
+metadata:
+  name: test-lovme-sykepengerlytter
+  namespace: medlemskap
+  labels:
+    team: medlemskap
+spec:
+  pool: nav-dev
+  config:
+    cleanupPolicy: delete
+    minimumInSyncReplicas: 1
+    partitions: 1
+    replication: 3
+    retentionBytes: -1
+    retentionHours: 5
+  acl:
+    - team: medlemskap
+      application: medlemskap-sykepenger-listener
+      access: readwrite

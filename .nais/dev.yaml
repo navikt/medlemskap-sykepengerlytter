@@ -1,0 +1,17 @@
+app-name: "medlemskap-sykepenger-lytter-q4"
+ingresses:
+  - "https://pensjon-institusjonsmelding-lytter-q4.dev.adeo.no"
+srvuserpath: "serviceuser/data/dev/srvmedlemskapsykepengerlytter"
+env:
+  - name: "KAFKA_BOOTSTRAP_SERVERS"
+    value: ""
+  - name: "SCHEMA_REGISTRY_URL"
+    value: ""
+  - name: "SECURITY_TOKEN_SERVICE"
+    value: ""
+  - name: "INST_TOPIC"
+    value: ""
+  - name: "INST_GROUP"
+    value: ""
+  - name: "JOARK-URL"
+    value: ""

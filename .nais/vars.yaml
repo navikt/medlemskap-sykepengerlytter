@@ -1,0 +1,4 @@
+app: medlemskap-sykepenger-listener
+namespace: medlemskap
+team: medlemskap
+service_user: srvmedlemskap
