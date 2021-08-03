@@ -112,6 +112,6 @@ data class Configuration(
         val keystoreType: String = "PKCS12",
         val keystoreLocation: String = "KAFKA_KEYSTORE_PATH".configProperty(),
         val keystorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
-        val topic : String =  "medlemskap.test-lovme-heartbeat"
+        val topic : String =  "medlemskap.test-lovme-sykepengerlytter"
     )
 }
