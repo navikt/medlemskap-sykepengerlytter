@@ -37,6 +37,7 @@ spec:
     enabled: true
   kafka:
     pool: nav-dev
+  protected: true
   accessPolicy:
     outbound:
       external:
