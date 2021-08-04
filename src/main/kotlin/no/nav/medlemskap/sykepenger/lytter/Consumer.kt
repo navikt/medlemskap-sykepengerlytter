@@ -23,7 +23,7 @@ class Consumer(
     fun pollMessages(): List<String> = //listOf("Message A","Message B","Message C")
 
         consumer.poll(Duration.ofSeconds(4))
-            .map { it.value() }
+            .map { it.value()+" offset : "+it.offset() }
             .map { it.toString() }
             .also {
                 //Metrics.incReceivedTotal(it.count())

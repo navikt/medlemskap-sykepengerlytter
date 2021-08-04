@@ -23,7 +23,7 @@ open class KafkaConfig(
         //KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
         //KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistry,
         ConsumerConfig.GROUP_ID_CONFIG to Configuration.KafkaConfig().groupID,
-        //ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "latest",
+        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ) + securityStrategy.securityConfig()
 
     fun createConsumer() = KafkaConsumer<String, String>(inst2Config())
