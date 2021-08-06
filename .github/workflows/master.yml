@@ -21,7 +21,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: test and build
-        run: ./gradlew test shadowJar
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+      - run: ./gradlew test shadowJar
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
