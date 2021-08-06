@@ -1,0 +1,514 @@
+{
+  "id": "e286c397-32cf-4c63-9e7a-677089afff4f",
+  "sykmeldingId": "345bafec-be7a-4ea7-90cf-bd94f86aebb0",
+  "soknadstype": "SELVSTENDIGE_OG_FRILANSERE",
+  "status": "SENDT",
+  "fom": "2021-06-01",
+  "tom": "2021-06-30",
+  "opprettetDato": "2021-08-05",
+  "innsendtDato": "2021-08-05",
+  "sendtTilNAVDato": "2021-08-05T14:12:00.766716",
+  "sendtTilArbeidsgiverDato": null,
+  "avbruttDato": null,
+  "startSykeforlop": "2021-06-01",
+  "sykmeldingUtskrevet": "2021-06-01",
+  "arbeidsgiver": null,
+  "korrigerer": null,
+  "korrigertAv": null,
+  "arbeidssituasjon": "NAERINGSDRIVENDE",
+  "soknadPerioder": [
+    {
+      "fom": "2021-06-01",
+      "tom": "2021-06-30",
+      "grad": 100,
+      "sykmeldingstype": "AKTIVITET_IKKE_MULIG"
+    }
+  ],
+  "sporsmal": [
+    {
+      "id": "1549824",
+      "tag": "ANSVARSERKLARING",
+      "sporsmalstekst": "Jeg vet at jeg kan miste retten til sykepenger hvis opplysningene jeg gir ikke er riktige eller fullstendige. Jeg vet også at NAV kan holde igjen eller kreve tilbake penger, og at å gi feil opplysninger kan være straffbart.",
+      "undertekst": null,
+      "svartype": "CHECKBOX_PANEL",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "id": "362189",
+          "verdi": "CHECKED",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": []
+    },
+    {
+      "id": "1549825",
+      "tag": "TILBAKE_I_ARBEID",
+      "sporsmalstekst": "Var du tilbake i fullt arbeid som selvstendig næringsdrivende før sykmeldingsperioden utløp 30. juni 2021?",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": true,
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "id": "362190",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "1549826",
+          "tag": "TILBAKE_NAR",
+          "sporsmalstekst": "Når begynte du å jobbe igjen?",
+          "undertekst": null,
+          "svartype": "DATO",
+          "min": "2021-06-01",
+          "max": "2021-06-30",
+          "pavirkerAndreSporsmal": true,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362191",
+              "verdi": "2021-06-16",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "1549827",
+      "tag": "ARBEID_UTENFOR_NORGE",
+      "sporsmalstekst": "Har du arbeidet i utlandet i løpet av de siste 12 månedene?",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "id": "362192",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": []
+    },
+    {
+      "id": "1549839",
+      "tag": "JOBBET_DU_100_PROSENT_0",
+      "sporsmalstekst": "I perioden 1. - 15. juni 2021 var du 100% sykmeldt som selvstendig næringsdrivende. Jobbet du noe i denne perioden?",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "id": "362193",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "1549840",
+          "tag": "HVOR_MANGE_TIMER_PER_UKE_0",
+          "sporsmalstekst": "Hvor mange timer i uken jobber du vanligvis når du er frisk? Varierer det, kan du oppgi gjennomsnittet.",
+          "undertekst": null,
+          "svartype": "TIMER",
+          "min": "1",
+          "max": "150",
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362194",
+              "verdi": "38",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        },
+        {
+          "id": "1549841",
+          "tag": "HVOR_MYE_HAR_DU_JOBBET_0",
+          "sporsmalstekst": "Hvor mye jobbet du totalt i 1. - 15. juni 2021 som selvstendig næringsdrivende?",
+          "undertekst": null,
+          "svartype": "RADIO_GRUPPE_TIMER_PROSENT",
+          "min": null,
+          "max": null,
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "1549842",
+              "tag": "HVOR_MYE_PROSENT_0",
+              "sporsmalstekst": "prosent",
+              "undertekst": null,
+              "svartype": "RADIO",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [
+                {
+                  "id": "362195",
+                  "verdi": "CHECKED",
+                  "avgittAv": null
+                }
+              ],
+              "undersporsmal": [
+                {
+                  "id": "1549843",
+                  "tag": "HVOR_MYE_PROSENT_VERDI_0",
+                  "sporsmalstekst": null,
+                  "undertekst": "prosent",
+                  "svartype": "TALL",
+                  "min": "1",
+                  "max": "99",
+                  "pavirkerAndreSporsmal": false,
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [
+                    {
+                      "id": "362196",
+                      "verdi": "50",
+                      "avgittAv": null
+                    }
+                  ],
+                  "undersporsmal": []
+                }
+              ]
+            },
+            {
+              "id": "1549844",
+              "tag": "HVOR_MYE_TIMER_0",
+              "sporsmalstekst": "timer",
+              "undertekst": null,
+              "svartype": "RADIO",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "1549845",
+                  "tag": "HVOR_MYE_TIMER_VERDI_0",
+                  "sporsmalstekst": null,
+                  "undertekst": "timer totalt",
+                  "svartype": "TALL",
+                  "min": "1",
+                  "max": "321",
+                  "pavirkerAndreSporsmal": false,
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [],
+                  "undersporsmal": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1549828",
+      "tag": "ANDRE_INNTEKTSKILDER",
+      "sporsmalstekst": "Har du annen inntekt? Du trenger ikke oppgi penger fra NAV.",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "id": "362197",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "1549829",
+          "tag": "HVILKE_ANDRE_INNTEKTSKILDER",
+          "sporsmalstekst": "Hvilke inntektskilder har du?",
+          "undertekst": null,
+          "svartype": "CHECKBOX_GRUPPE",
+          "min": null,
+          "max": null,
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "1549830",
+              "tag": "INNTEKTSKILDE_ARBEIDSFORHOLD",
+              "sporsmalstekst": "arbeidsforhold",
+              "undertekst": null,
+              "svartype": "CHECKBOX",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "1549831",
+                  "tag": "INNTEKTSKILDE_ARBEIDSFORHOLD_ER_DU_SYKMELDT",
+                  "sporsmalstekst": "Er du sykmeldt fra dette?",
+                  "undertekst": null,
+                  "svartype": "JA_NEI",
+                  "min": null,
+                  "max": null,
+                  "pavirkerAndreSporsmal": false,
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [],
+                  "undersporsmal": []
+                }
+              ]
+            },
+            {
+              "id": "1549832",
+              "tag": "INNTEKTSKILDE_JORDBRUKER",
+              "sporsmalstekst": "jordbruk / fiske / reindrift",
+              "undertekst": null,
+              "svartype": "CHECKBOX",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "1549833",
+                  "tag": "INNTEKTSKILDE_JORDBRUKER_ER_DU_SYKMELDT",
+                  "sporsmalstekst": "Er du sykmeldt fra dette?",
+                  "undertekst": null,
+                  "svartype": "JA_NEI",
+                  "min": null,
+                  "max": null,
+                  "pavirkerAndreSporsmal": false,
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [],
+                  "undersporsmal": []
+                }
+              ]
+            },
+            {
+              "id": "1549834",
+              "tag": "INNTEKTSKILDE_FRILANSER_SELVSTENDIG",
+              "sporsmalstekst": "frilanser",
+              "undertekst": null,
+              "svartype": "CHECKBOX",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [
+                {
+                  "id": "362198",
+                  "verdi": "CHECKED",
+                  "avgittAv": null
+                }
+              ],
+              "undersporsmal": [
+                {
+                  "id": "1549835",
+                  "tag": "INNTEKTSKILDE_FRILANSER_SELVSTENDIG_ER_DU_SYKMELDT",
+                  "sporsmalstekst": "Er du sykmeldt fra dette?",
+                  "undertekst": null,
+                  "svartype": "JA_NEI",
+                  "min": null,
+                  "max": null,
+                  "pavirkerAndreSporsmal": false,
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [
+                    {
+                      "id": "362199",
+                      "verdi": "JA",
+                      "avgittAv": null
+                    }
+                  ],
+                  "undersporsmal": []
+                }
+              ]
+            },
+            {
+              "id": "1549836",
+              "tag": "INNTEKTSKILDE_ANNET",
+              "sporsmalstekst": "annet",
+              "undertekst": null,
+              "svartype": "CHECKBOX",
+              "min": null,
+              "max": null,
+              "pavirkerAndreSporsmal": false,
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1549846",
+      "tag": "UTLAND",
+      "sporsmalstekst": "Har du vært utenfor EØS mens du var sykmeldt 1. - 15. juni 2021?",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "id": "362200",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "1549847",
+          "tag": "PERIODER",
+          "sporsmalstekst": "Når var du utenfor EØS?",
+          "undertekst": null,
+          "svartype": "PERIODER",
+          "min": "2021-06-01",
+          "max": "2021-06-15",
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362201",
+              "verdi": "{\"fom\":\"2021-06-03\",\"tom\":\"2021-06-14\"}",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        },
+        {
+          "id": "1549848",
+          "tag": "UTLANDSOPPHOLD_SOKT_SYKEPENGER",
+          "sporsmalstekst": "Har du søkt om å beholde sykepengene for disse dagene?",
+          "undertekst": null,
+          "svartype": "JA_NEI",
+          "min": null,
+          "max": null,
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362202",
+              "verdi": "JA",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "1549849",
+      "tag": "UTDANNING",
+      "sporsmalstekst": "Har du vært under utdanning i løpet av perioden 1. - 15. juni 2021?",
+      "undertekst": null,
+      "svartype": "JA_NEI",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "id": "362203",
+          "verdi": "JA",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "1549850",
+          "tag": "UTDANNING_START",
+          "sporsmalstekst": "Når startet du på utdanningen?",
+          "undertekst": null,
+          "svartype": "DATO",
+          "min": null,
+          "max": "2021-06-15",
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362204",
+              "verdi": "2021-06-02",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        },
+        {
+          "id": "1549851",
+          "tag": "FULLTIDSSTUDIUM",
+          "sporsmalstekst": "Er utdanningen et fulltidsstudium?",
+          "undertekst": null,
+          "svartype": "JA_NEI",
+          "min": null,
+          "max": null,
+          "pavirkerAndreSporsmal": false,
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "id": "362205",
+              "verdi": "JA",
+              "avgittAv": null
+            }
+          ],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "1549837",
+      "tag": "VAER_KLAR_OVER_AT",
+      "sporsmalstekst": "Viktig å være klar over:",
+      "undertekst": "<ul><li>Du kan bare få sykepenger hvis det er din egen sykdom eller skade som hindrer deg i å jobbe. Sosiale eller økonomiske problemer gir ikke rett til sykepenger.</li><li>Du kan miste retten til sykepenger hvis du nekter å opplyse om din egen arbeidsevne, eller hvis du ikke tar imot behandling eller tilrettelegging.</li><li>Retten til sykepenger gjelder bare inntekt du har mottatt som lønn og betalt skatt av på sykmeldingstidspunktet.</li><li>NAV kan innhente opplysninger som er nødvendige for å behandle søknaden.</li><li>Du må melde fra til NAV hvis du satt i varetekt, sonet straff eller var under forvaring i sykmeldingsperioden.</li><li>Fristen for å søke sykepenger er som hovedregel 3 måneder</li></ul><p>Du kan lese mer om rettigheter og plikter på <a href=\"https://www.nav.no/sykepenger\" target=\"_blank\">nav.no/sykepenger</a>.</p>",
+      "svartype": "IKKE_RELEVANT",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [],
+      "undersporsmal": []
+    },
+    {
+      "id": "1549838",
+      "tag": "BEKREFT_OPPLYSNINGER",
+      "sporsmalstekst": "Jeg har lest all informasjonen jeg har fått i søknaden og bekrefter at opplysningene jeg har gitt er korrekte.",
+      "undertekst": null,
+      "svartype": "CHECKBOX_PANEL",
+      "min": null,
+      "max": null,
+      "pavirkerAndreSporsmal": false,
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "id": "362206",
+          "verdi": "CHECKED",
+          "avgittAv": null
+        }
+      ],
+      "undersporsmal": []
+    }
+  ],
+  "egenmeldtSykmelding": false
+}
