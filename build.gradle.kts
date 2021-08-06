@@ -24,12 +24,12 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:1.7.0")
     implementation("com.natpryce:konfig:$konfigVersion")
