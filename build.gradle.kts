@@ -1,4 +1,5 @@
 val ktorVersion = "1.6.0"
+val jacksonVersion = "2.10.5"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
@@ -24,7 +25,10 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
