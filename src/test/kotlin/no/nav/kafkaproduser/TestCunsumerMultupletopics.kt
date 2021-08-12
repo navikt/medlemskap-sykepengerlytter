@@ -64,7 +64,8 @@ class SimpleConsumer(brokers: KafkaConfig) {
         // Tell consumer to subscribe to topic.
         val topica = "medlemskap.test-lovme-topica"
         val topicb = "medlemskap.test-lovme-topicb"
-        consumer.subscribe(listOf(topica,topicb))
+        val medlemskap_vurdert = "medlemskap.medlemskap-vurdert"
+        consumer.subscribe(listOf(topica,topicb,medlemskap_vurdert))
         consumer.seekToBeginning(consumer.assignment())
 
         var noMessagesCount = 0
@@ -102,10 +103,18 @@ class SimpleConsumer(brokers: KafkaConfig) {
         when (event.topic) {
             "medlemskap.test-lovme-topica" -> handleTopicA(event.key,event.value)
             "medlemskap.test-lovme-topicb" ->handleTopicB(event.key,event.value)
+            "medlemskap.medlemskap-vurdert"->handleMedlemskapVurdert(event.key,event.value)
             else -> println("Not supported")
         }
 
     }
+
+    private fun handleMedlemskapVurdert(key: String?, value: Object) {
+        println("--------------------START----------------")
+        println(value)
+        println("--------------------END----------------")
+    }
+
     private fun handleTopicA(key:String?,value:Object) {
         println("Business logic for topic A execurting")
         //println(value)
