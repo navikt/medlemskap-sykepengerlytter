@@ -16,6 +16,7 @@ import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import java.io.File
+import java.util.*
 
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -69,7 +70,9 @@ class SimpleProducer(brokers: KafkaConfig) {
             val fakeSoknadJson = fileContent
             logger.log(Level.INFO,"JSON data: $fakeSoknadJson")
 
-            val futureResult = producer.send(ProducerRecord(Configuration.KafkaConfig().topic, fakeSoknadJson))
+            val futureResult = producer.send(ProducerRecord("medlemskap.test-lovme-topicb",
+                UUID.randomUUID().toString(), fakeSoknadJson))
+
             logger.log(Level.INFO,"Sent a record")
 
             Thread.sleep(waitTimeBetweenIterationsMs)
