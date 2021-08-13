@@ -70,7 +70,7 @@ class SimpleProducer(brokers: KafkaConfig) {
             val fakeSoknadJson = fileContent
             logger.log(Level.INFO,"JSON data: $fakeSoknadJson")
 
-            val futureResult = producer.send(ProducerRecord("medlemskap.medlemskap-vurdert",
+            val futureResult = producer.send(ProducerRecord("medlemskap.test-lovme-sykepengerlytter",
                 UUID.randomUUID().toString(), fakeSoknadJson))
 
             logger.log(Level.INFO,"Sent a record")

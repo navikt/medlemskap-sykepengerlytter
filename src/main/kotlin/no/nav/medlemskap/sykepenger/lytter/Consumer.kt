@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.time.delay
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
@@ -15,7 +16,7 @@ import java.time.Duration
 class Consumer(
     environment: Environment,
     private val config: KafkaConfig = KafkaConfig(environment),
-    private val service: LovMeService = LovMeService(environment = environment),
+    private val service: LovMeService = LovMeService(Configuration()),
     private val consumer: KafkaConsumer<String, String> = config.createConsumer(),
 ) {
 

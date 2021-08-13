@@ -9,31 +9,23 @@ private val logger = KotlinLogging.logger { }
 
 private val defaultProperties = ConfigurationMap(
     mapOf(
-        "AZURE_TENANT" to "",
-        "AZURE_AUTHORITY_ENDPOINT" to "",
+        "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT" to "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
+        "AZURE_APP_WELL_KNOWN_URL" to "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
+        "AZURE_TENANT" to "966ac572-f5b7-4bbe-aa88-c76419c0f851",
+        "AZURE_AUTHORITY_ENDPOINT" to "https://login.microsoftonline.com",
         "SERVICE_USER_USERNAME" to "test",
-        "MEDLEMSKAP_REGLER_URL" to "",
-        "MEDL2_BASE_URL" to "",
-        "MEDL2_API_KEY" to "",
-        "AAREG_BASE_URL" to "",
-        "AAREG_API_KEY" to "",
-        "SECURITY_TOKEN_SERVICE_URL" to "",
-        "SECURITY_TOKEN_SERVICE_REST_URL" to "",
+        "SECURITY_TOKEN_SERVICE_URL" to "https://api-gw-q1.oera.no/sts/SecurityTokenServiceProvider/",
+        "SECURITY_TOKEN_SERVICE_REST_URL" to "https://api-gw-q1.oera.no/security-token-service",
         "SECURITY_TOKEN_SERVICE_API_KEY" to "",
         "SERVICE_USER_PASSWORD" to "",
         "NAIS_APP_NAME" to "",
         "NAIS_CLUSTER_NAME" to "",
         "NAIS_APP_IMAGE" to "",
-        "AZURE_APP_CLIENT_ID" to "",
-        "SAF_BASE_URL" to "",
-        "SAF_API_KEY" to "",
-        "OPPGAVE_BASE_URL" to "",
-        "OPPGAVE_API_KEY" to "",
-        "PDL_BASE_URL" to "",
-        "PDL_API_KEY" to "",
-        "EREG_BASE_URL" to "",
-        "EREG_API_KEY" to "",
-        "UDI_BASE_URL" to "",
+        "AZURE_APP_CLIENT_ID" to "6c9dadf3-fc83-4f35-b9e5-b9f292bc7f52",
+        "AZURE_APP_CLIENT_SECRET" to "9c3Q~s-f3oCw8bOyF~O1HD~Q~yvlX3i_Ix",
+        "MEDL_OPPSLAG_API_KEY" to "",
+        "MEDL_OPPSLAG_BASE_URL" to "https://medlemskap-oppslag.dev.intern.nav.no",
+        "MEDL_OPPSLAG_CLIENT_ID" to "2719da58-489e-4185-9ee6-74b7e93763d2",
         "KAFKA_BROKERS" to "nav-dev-kafka-nav-dev.aivencloud.com:26484",
         "KAFKA_TRUSTSTORE_PATH" to "c:\\dev\\secrets\\client.truststore.jks",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
@@ -73,8 +65,8 @@ data class Configuration(
 ) {
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
-        val medlemskapOppslagApiKey: String = "\"MEDL_OPPSLAG_API_KEY".configProperty(),
-        val medlemskapOppslagClientID: String = "UDI_PROXY_CLIENT_ID".configProperty(),
+        //val medlemskapOppslagApiKey: String = "\"MEDL_OPPSLAG_API_KEY".configProperty(),
+        val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
     )
 
     data class Sts(

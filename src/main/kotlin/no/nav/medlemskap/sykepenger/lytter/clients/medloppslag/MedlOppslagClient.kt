@@ -9,18 +9,18 @@ import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 
 
-class medlOppslagClient(
+class MedlOppslagClient(
     private val baseUrl: String,
     private val azureAdClient: AzureAdClient,
     private val httpClient: HttpClient,
     private val retry: Retry? = null
 ) {
 
-    suspend fun oppholdstillatelse(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+    suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotUdiProxy()
-        return runWithRetryAndMetrics("UDI-proxy", "Oppholdstillatelse", retry) {
+        return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
             httpClient.post {
-                url("$baseUrl/udi/person")
+                url("$baseUrl/kafka")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
