@@ -1,7 +1,5 @@
 package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
 
-import no.nav.medlemskap.sykepenger.lytter.domain.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.domain.Periode
 
 data class MedlOppslagRequest(
     val fnr: String,
@@ -9,6 +7,11 @@ data class MedlOppslagRequest(
     val periode: Periode,
     val brukerinput: Brukerinput
 )
+
+data class Periode(val fom: String, val tom: String)
+
+data class Brukerinput(val arbeidUtenforNorge: Boolean)
+
 /*
 *
 * {
