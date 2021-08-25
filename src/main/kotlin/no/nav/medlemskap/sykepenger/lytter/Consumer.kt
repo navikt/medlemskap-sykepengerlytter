@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.time.delay
+import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
@@ -18,8 +19,11 @@ class Consumer(
     private val config: KafkaConfig = KafkaConfig(environment),
     private val service: LovMeService = LovMeService(Configuration()),
     private val consumer: KafkaConsumer<String, String> = config.createConsumer(),
-) {
 
+)
+{
+    private val secureLogger = KotlinLogging.logger("tjenestekall")
+    private val logger = KotlinLogging.logger { }
     init {
         consumer.subscribe(listOf(config.topic))
     }
@@ -51,7 +55,7 @@ class Consumer(
                 delay(Duration.ofSeconds(5))
             }
         }.onEach {
-            println("receiced :"+ it.size)
+            logger.debug { "receiced :"+ it.size + "on topic "+config.topic }
             it.forEach { record -> service.handle(record) }
         }.onEach {
             consumer.commitAsync()
