@@ -1,5 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
 
+import java.util.*
+
 
 data class MedlOppslagRequest(
     val fnr: String,
@@ -8,22 +10,6 @@ data class MedlOppslagRequest(
     val brukerinput: Brukerinput
 )
 
-data class Periode(val fom: String, val tom: String)
+data class Periode(val fom: String, val tom: String= Date().toString())
 
 data class Brukerinput(val arbeidUtenforNorge: Boolean)
-
-/*
-*
-* {
- "fnr":"21507300739",
- "førsteDagForYtelse": "2021-01-01",
- "periode": {
-    "fom": "2021-01-01",
-    "tom": "2021-01-07"
- },
- "brukerinput": {
-    "arbeidUtenforNorge": false
- }
-}
-*
-* */
