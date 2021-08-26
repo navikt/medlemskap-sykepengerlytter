@@ -1,17 +1,60 @@
-app-name: "medlemskap-sykepenger-lytter"
-ingresses:
-  - ""
-srvuserpath: "serviceuser/data/dev/srvmedlemskapsykepengerlytter"
-env:
-  - name: "KAFKA_BOOTSTRAP_SERVERS"
-    value: ""
-  - name: "SCHEMA_REGISTRY_URL"
-    value: ""
-  - name: "SECURITY_TOKEN_SERVICE"
-    value: ""
-  - name: "INST_TOPIC"
-    value: ""
-  - name: "INST_GROUP"
-    value: ""
-  - name: "JOARK-URL"
-    value: ""
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: medlemskap-sykepenger-listener
+  namespace: medlemskap
+  labels:
+    team: medlemskap
+spec:
+  azure:
+    application:
+      enabled: true
+  image: {{image}}
+  liveness:
+    path: "/isAlive"
+    port: 8080
+    initialDelay: 20
+    timeout: 60
+  readiness:
+    path: "/isReady"
+    port: 8080
+    initialDelay: 20
+    timeout: 60
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  prometheus:
+    enabled: true
+    path: "/metrics"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  protected: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: api-gw-q1.oera.no
+        - host: api-gw-q2.oera.no
+        - host: saf.dev-fss-pub.nais.io
+        - host: login.microsoftonline.com
+  env:
+    - name: AZURE_TENANT
+      value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
+    - name: AZURE_AUTHORITY_ENDPOINT
+      value: https://login.microsoftonline.com
+    - name: SECURITY_TOKEN_SERVICE_URL
+      value: https://api-gw.oera.no/sts/SecurityTokenServiceProvider/
+    - name: SECURITY_TOKEN_SERVICE_REST_URL
+      value: https://api-gw.oera.no/security-token-service
+    - name: MEDL_OPPSLAG_BASE_URL
+      value: https://medlemskap-oppslag.prod-gcp.nais.io
+    - name: MEDL_OPPSLAG_CLIENT_ID
+    - value: 23600ac9-019c-445d-87a4-2df4996e6f63

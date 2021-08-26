@@ -10,7 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.security.Token
 
 class AzureAdClient(private val configuration: Configuration) {
 
-    suspend fun hentTokenScopetMotUdiProxy(): Token {
+    suspend fun hentTokenScopetMotMedlemskapOppslag(): Token {
         val formUrlEncode = listOf(
             "client_id" to configuration.azureAd.clientId,
             "scope" to "api://${configuration.register.medlemskapOppslagClientID}/.default",

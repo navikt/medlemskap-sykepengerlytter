@@ -65,7 +65,6 @@ data class Configuration(
 ) {
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
-        //val medlemskapOppslagApiKey: String = "\"MEDL_OPPSLAG_API_KEY".configProperty(),
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
     )
 
