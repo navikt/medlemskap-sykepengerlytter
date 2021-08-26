@@ -1,30 +1,70 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.config.Environment
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.SykepengeSoknad
+import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
+import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagClient
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.domain.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class LovMeService(
-    private val environment: Environment,
-    //private val lovmeClient: LovMeClient<*> = LovMeClient(environment = environment)
-) {
+    private val configuration: Configuration,
+)
+{
     companion object {
-        val log: Logger = LoggerFactory.getLogger(LovMeService::class.java)
+        private val log = KotlinLogging.logger { }
+
+    }
+    val azureAdClient = AzureAdClient(configuration)
+    val restClients = RestClients(
+        azureAdClient = azureAdClient,
+        configuration = configuration
+    )
+    val medlOppslagClient: MedlOppslagClient
+
+
+    init {
+    medlOppslagClient=restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     }
 
-    fun callLovMe(sykepengeSoknad: SykepengeSoknad)
+    suspend fun callLovMe(sykepengeSoknad: SykepengeSoknad)
     {
-
-    //Todo : Implement
-    }
-    fun handle(soknadRecord: SoknadRecord)
-    {
-        soknadRecord.log()
-    }
-    private fun SoknadRecord.log() =
-        LovMeService.log.info(
-            "Received soknad  - id: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic"
+        val lovMeRequest = MedlOppslagRequest(
+            fnr = sykepengeSoknad.fnr!!,
+            førsteDagForYtelse = sykepengeSoknad.fom!!,
+            periode = Periode(sykepengeSoknad.fom, ""),
+            brukerinput = Brukerinput(false)
         )
+
+        medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!)
+    }
+    suspend fun handle(soknadRecord: SoknadRecord)
+    {
+        if (validerSoknad(soknadRecord.sykepengeSoknad)) {
+            callLovMe(soknadRecord.sykepengeSoknad)
+            soknadRecord.logSendt()
+        } else {
+            soknadRecord.logIkkeSendt()
+        }
+    }
+    private fun SoknadRecord.logIkkeSendt() =
+        LovMeService.log.info(
+            "Søknad ikke sendt basert på validering - id: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic"
+        )
+
+    private fun SoknadRecord.logSendt() =
+        LovMeService.log.info(
+            "Søknad sendt - id: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic"
+        )
+
+    fun validerSoknad(sykepengeSoknad: SykepengeSoknad): Boolean {
+        return !sykepengeSoknad.fnr.isNullOrBlank() &&
+                !sykepengeSoknad.fom.isNullOrBlank() &&
+                !sykepengeSoknad.sykmeldingId.isNullOrBlank()
+    }
 }

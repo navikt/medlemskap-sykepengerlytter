@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.jakson
 
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 
 class JaksonParserTest {

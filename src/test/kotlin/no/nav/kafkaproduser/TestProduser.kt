@@ -16,6 +16,7 @@ import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import java.io.File
+import java.util.*
 
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -64,17 +65,25 @@ class SimpleProducer(brokers: KafkaConfig) {
         //val jsonString: String = File("./src/main/resources/sampleRequest.json").readText(Charsets.UTF_8)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         logger.info(fileContent)
-        val waitTimeBetweenIterationsMs = 1000L / ratePerSecond
-        logger.info("Producing $ratePerSecond records per second (1 every ${waitTimeBetweenIterationsMs}ms)")
+        val waitTimeBetweenIterationsMs = 5000L / ratePerSecond
+        while(true) {
+            logger.info("Producing $ratePerSecond records per second (1 every ${waitTimeBetweenIterationsMs}ms)")
             val fakeSoknadJson = fileContent
-            logger.log(Level.INFO,"JSON data: $fakeSoknadJson")
+            //logger.log(Level.INFO, "JSON data: $fakeSoknadJson")
 
-            val futureResult = producer.send(ProducerRecord(Configuration.KafkaConfig().topic, fakeSoknadJson))
-            logger.log(Level.INFO,"Sent a record")
+            val futureResult = producer.send(
+                ProducerRecord(
+                    "medlemskap.test-lovme-sykepengerlytter",
+                    UUID.randomUUID().toString(), fakeSoknadJson
+                )
+            )
+
+            logger.log(Level.INFO, "Sent a record")
 
             Thread.sleep(waitTimeBetweenIterationsMs)
 
             // wait for the write acknowledgment
             futureResult.get()
+        }
         }
     }
