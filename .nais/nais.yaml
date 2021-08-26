@@ -54,3 +54,7 @@ spec:
       value: https://api-gw-q1.oera.no/sts/SecurityTokenServiceProvider/
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: https://api-gw-q1.oera.no/security-token-service
+    - name: MEDL_OPPSLAG_BASE_URL
+      value: https://medlemskap-oppslag.dev.intern.nav.no
+    - name: MEDL_OPPSLAG_CLIENT_ID
+    - value: 2719da58-489e-4185-9ee6-74b7e93763d2

@@ -17,7 +17,7 @@ class MedlOppslagClient(
 ) {
 
     suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        val token = azureAdClient.hentTokenScopetMotUdiProxy()
+        val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
             httpClient.post {
                 url("$baseUrl/kafka")
