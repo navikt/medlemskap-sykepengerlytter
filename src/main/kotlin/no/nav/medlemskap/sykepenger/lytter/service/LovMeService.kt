@@ -40,7 +40,7 @@ class LovMeService(
             periode = Periode(sykepengeSoknad.fom, sykepengeSoknad.tom!!),
             brukerinput = Brukerinput(false)
         )
-        let { medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!) }
+        //medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!)
 
 
 
