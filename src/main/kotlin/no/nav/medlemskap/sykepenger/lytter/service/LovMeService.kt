@@ -37,11 +37,13 @@ class LovMeService(
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr!!,
             førsteDagForYtelse = sykepengeSoknad.fom!!,
-            periode = Periode(sykepengeSoknad.fom, ""),
+            periode = Periode(sykepengeSoknad.fom, sykepengeSoknad.tom!!),
             brukerinput = Brukerinput(false)
         )
+        let { medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!) }
 
-        medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!)
+
+
     }
     suspend fun handle(soknadRecord: SoknadRecord)
     {
