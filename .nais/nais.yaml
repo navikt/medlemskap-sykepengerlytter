@@ -40,6 +40,8 @@ spec:
   protected: true
   accessPolicy:
     outbound:
+      rules:
+        - application: medlemskap-oppslag
       external:
         - host: api-gw-q1.oera.no
         - host: api-gw-q2.oera.no
