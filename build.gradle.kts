@@ -4,6 +4,7 @@ val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
 val resilience4jVersion = "1.5.0"
 val logstashVersion = "6.4"
+val logbackVersion = "1.2.3"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
@@ -44,6 +45,7 @@ dependencies {
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:2.5.0")
     implementation("org.apache.avro:avro:1.10.2")
