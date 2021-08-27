@@ -10,8 +10,6 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagReques
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class LovMeService(
     private val configuration: Configuration,
