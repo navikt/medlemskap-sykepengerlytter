@@ -56,12 +56,12 @@ class LovMeService(
     }
     private fun SoknadRecord.logIkkeSendt() =
         LovMeService.log.info(
-            "Søknad ikke sendt basert på validering - id: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic"
+            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic"
         )
 
     private fun SoknadRecord.logSendt() =
         LovMeService.log.info(
-            "Søknad sendt - id: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic"
+            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic"
         )
 
     fun validerSoknad(sykepengeSoknad: SykepengeSoknad): Boolean {
