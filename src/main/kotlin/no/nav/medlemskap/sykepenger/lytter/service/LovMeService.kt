@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
@@ -56,12 +57,14 @@ class LovMeService(
     }
     private fun SoknadRecord.logIkkeSendt() =
         LovMeService.log.info(
-            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic"
+            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic",
+            kv("callId", sykepengeSoknad.sykmeldingId),
         )
 
     private fun SoknadRecord.logSendt() =
         LovMeService.log.info(
-            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic"
+            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic",
+            kv("callId", sykepengeSoknad.sykmeldingId),
         )
 
     fun validerSoknad(sykepengeSoknad: SykepengeSoknad): Boolean {
