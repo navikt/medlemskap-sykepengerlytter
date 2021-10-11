@@ -43,6 +43,7 @@ class Consumer(
             }
 
 
+
             //.filter { it.kilde == Hendelse.Kilde.KDI }
 
     fun flow(): Flow<List<SoknadRecord>> =
