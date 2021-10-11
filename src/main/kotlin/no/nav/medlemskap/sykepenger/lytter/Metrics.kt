@@ -35,13 +35,13 @@ object Metrics {
         .help("Totalt prosesserte meldinger")
         .register()
     private val successfulLovmePosts: Counter = Counter.build()
-        .name("medlemskap_sykepenger_lytte_successful_joark_posts_counter")
-        .help("Vellykede meldinger sendt til joark")
+        .name("medlemskap_sykepenger_lytte_successful_lovme_posts_counter")
+        .help("Vellykede meldinger sendt til lovme")
         .register()
     private val failedLovmePosts: Counter = Counter.build()
-        .name("medlemskap_sykepenger_lytte_failed_joark_posts_counter")
+        .name("medlemskap_sykepenger_lytte_failed_lovme_posts_counter")
         .labelNames("cause")
-        .help("Feilende meldinger sendt til joark")
+        .help("Feilende meldinger sendt til Lovme")
         .register()
 
     fun clientTimer(service: String?, operation: String?): Timer =
