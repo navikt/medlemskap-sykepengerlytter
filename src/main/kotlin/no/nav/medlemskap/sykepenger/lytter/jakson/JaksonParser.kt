@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 
-
 class JaksonParser {
     fun parse(jsonString: String): LovmeSoknadDTO {
         try {
@@ -19,8 +18,8 @@ class JaksonParser {
             return  mapper.readValue(jsonString)
         }
         catch (t:Throwable){
-            println(jsonString)
             throw t
+            //TODO: hvordan skal/bør vi håndtere dette...
         }
     }
 
