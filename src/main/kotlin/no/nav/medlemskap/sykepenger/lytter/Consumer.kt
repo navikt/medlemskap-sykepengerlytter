@@ -39,10 +39,7 @@ class Consumer(
                 JaksonParser().parse(it.value())
             )}
             .also {
-                //Metrics.incReceivedTotal(it.count())
-                //it.forEach { hendelse ->
-                //    Metrics.incReceivedKilde(hendelse.kilde)
-                //}
+                Metrics.incReceivedTotal(it.count())
             }
 
 

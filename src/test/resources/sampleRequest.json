@@ -1,77 +1,12 @@
 {
-  "id": "25e65716-ae77-4bbf-8183-84a2742dd138",
-  "fnr": "19026500128",
-  "sykmeldingId": "ddaff965-f514-400e-8e61-3f7b2c753a4b",
-  "soknadstype": "ARBEIDSTAKERE",
-  "status": "NY",
-  "fom": "2019-03-22",
-  "tom": "2019-04-08",
-  "opprettetDato": "2019-04-09",
-  "innsendtDato": null,
-  "sendtTilNAVDato": null,
-  "sendtTilArbeidsgiverDato": null,
-  "avbruttDato": null,
-  "startSykeforlop": "2019-03-22",
-  "sykmeldingUtskrevet": "2019-03-31",
-  "arbeidsgiver": {
-    "navn": "TESTBEDRIFTEN AS",
-    "orgnummer": "999888777"
-  },
-  "korrigerer": null,
-  "korrigertAv": null,
-  "arbeidssituasjon": "ARBEIDSTAKER",
-  "soknadPerioder": [
-    {
-      "fom": "2019-03-22",
-      "tom": "2019-03-30",
-      "grad": 50
-    },
-    {
-      "fom": "2019-03-31",
-      "tom": "2019-04-08",
-      "grad": 100
-    }
-  ],
-  "sporsmal": [
-    {
-      "id": "200140",
-      "tag": "ANSVARSERKLARING",
-      "sporsmalstekst": "Jeg vet at jeg kan miste retten til sykepenger hvis opplysningene jeg gir ikke er riktige eller fullstendige. Jeg vet også at NAV kan holde igjen eller kreve tilbake penger, og at å gi feil opplysninger kan være straffbart.",
-      "undertekst": null,
-      "svartype": "CHECKBOX_PANEL",
-      "min": null,
-      "max": null,
-      "pavirkerAndreSporsmal": false,
-      "kriterieForVisningAvUndersporsmal": null,
-      "svar": [],
-      "undersporsmal": []
-    },
-    {
-      "id": "200141",
-      "tag": "EGENMELDINGER",
-      "sporsmalstekst": "Vi har registrert at du ble sykmeldt fredag 22. mars 2019. Brukte du egenmeldinger og/eller var du sykmeldt i perioden 6. - 21. mars 2019?",
-      "undertekst": null,
-      "svartype": "JA_NEI",
-      "min": null,
-      "max": null,
-      "pavirkerAndreSporsmal": false,
-      "kriterieForVisningAvUndersporsmal": "JA",
-      "svar": [],
-      "undersporsmal": [
-        {
-          "id": "200142",
-          "tag": "EGENMELDINGER_NAR",
-          "sporsmalstekst": "Hvilke dager før 22. mars 2019 var du borte fra jobb?",
-          "undertekst": null,
-          "svartype": "PERIODER",
-          "min": "2018-09-22",
-          "max": "2019-03-21",
-          "pavirkerAndreSporsmal": false,
-          "kriterieForVisningAvUndersporsmal": null,
-          "svar": [],
-          "undersporsmal": []
-        }
-      ]
-    }
-  ]
+  "id" : "8f0b25ab-0fad-497d-960a-94370345d269",
+  "type" : "ARBEIDSTAKERE",
+  "status" : "SENDT",
+  "fnr" : "01010112345",
+  "korrigerer" : null,
+  "startSyketilfelle" : "2021-09-01",
+  "sendtNav" : "2021-10-11T15:35:53.471168",
+  "fom" : "2021-09-01",
+  "tom" : "2021-09-30",
+  "arbeidUtenforNorge" : false
 }

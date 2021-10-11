@@ -3,11 +3,11 @@ package no.nav.medlemskap.sykepenger.lytter.jakson
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nav.medlemskap.sykepenger.lytter.domain.SykepengeSoknad
+import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 
 
 class JaksonParser {
-    fun parse(jsonString: String): SykepengeSoknad {
+    fun parse(jsonString: String): LovmeSoknadDTO {
         val mapper: ObjectMapper = ObjectMapper()
             .registerKotlinModule()
             .findAndRegisterModules()

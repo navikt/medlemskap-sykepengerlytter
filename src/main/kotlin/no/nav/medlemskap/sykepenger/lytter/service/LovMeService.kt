@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.Metrics
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
@@ -31,15 +32,15 @@ class LovMeService(
     medlOppslagClient=restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     }
 
-    suspend fun callLovMe(sykepengeSoknad: SykepengeSoknad)
+    suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO)
     {
         val lovMeRequest = MedlOppslagRequest(
-            fnr = sykepengeSoknad.fnr!!,
-            førsteDagForYtelse = sykepengeSoknad.fom!!,
-            periode = Periode(sykepengeSoknad.fom, sykepengeSoknad.tom!!),
+            fnr = sykepengeSoknad.fnr,
+            førsteDagForYtelse = sykepengeSoknad.fom.toString(),
+            periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom?.toString()),
             brukerinput = Brukerinput(false)
         )
-        medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.sykmeldingId!!)
+        medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
 
 
 
@@ -47,27 +48,38 @@ class LovMeService(
     suspend fun handle(soknadRecord: SoknadRecord)
     {
         if (validerSoknad(soknadRecord.sykepengeSoknad)) {
-            callLovMe(soknadRecord.sykepengeSoknad)
-            soknadRecord.logSendt()
+            try {
+                callLovMe(soknadRecord.sykepengeSoknad)
+                soknadRecord.logSendt()
+                Metrics.incSuccessfulLovmePosts()
+            }
+            catch (t:Throwable){
+                Metrics.incFailedLovmePosts()
+                soknadRecord.logTekiskFeil(t)
+            }
         } else {
             soknadRecord.logIkkeSendt()
         }
     }
     private fun SoknadRecord.logIkkeSendt() =
         LovMeService.log.info(
-            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic",
-            kv("callId", sykepengeSoknad.sykmeldingId),
+            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
+            kv("callId", sykepengeSoknad.id),
         )
 
     private fun SoknadRecord.logSendt() =
         LovMeService.log.info(
-            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.sykmeldingId}, offsett: $offset, partiotion: $partition, topic: $topic",
-            kv("callId", sykepengeSoknad.sykmeldingId),
+            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
+            kv("callId", sykepengeSoknad.id),
+        )
+    private fun SoknadRecord.logTekiskFeil(t:Throwable) =
+        LovMeService.log.info(
+            "Teknisk feil ved kall mot LovMe - sykmeldingId: ${sykepengeSoknad.id}, melding:"+t.message,
+            kv("callId", sykepengeSoknad.id),
         )
 
-    fun validerSoknad(sykepengeSoknad: SykepengeSoknad): Boolean {
+    fun validerSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
         return !sykepengeSoknad.fnr.isNullOrBlank() &&
-                !sykepengeSoknad.fom.isNullOrBlank() &&
-                !sykepengeSoknad.sykmeldingId.isNullOrBlank()
+                !sykepengeSoknad.id.isNullOrBlank()
     }
 }
