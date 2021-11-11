@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.config
 
 import com.natpryce.konfig.*
+import jdk.jfr.Enabled
 import mu.KotlinLogging
 import java.io.File
 import java.io.FileNotFoundException
@@ -30,7 +31,8 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_TRUSTSTORE_PATH" to "c:\\dev\\secrets\\client.truststore.jks",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_KEYSTORE_PATH" to "c:\\dev\\secrets\\client.keystore.p12",
-        "KAFKA_CREDSTORE_PASSWORD" to "changeme"
+        "KAFKA_CREDSTORE_PASSWORD" to "changeme",
+        "KAFKA_ENABLED" to "false"
     )
 )
 
@@ -95,6 +97,7 @@ data class Configuration(
         val keystoreType: String = "PKCS12",
         val keystoreLocation: String = "KAFKA_KEYSTORE_PATH".configProperty(),
         val keystorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
+        val enabled: String = "KAFKA_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter"
     )
 }

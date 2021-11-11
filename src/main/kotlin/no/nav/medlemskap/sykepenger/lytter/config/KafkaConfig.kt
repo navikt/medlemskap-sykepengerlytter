@@ -11,6 +11,7 @@ open class KafkaConfig(
 ) {
 
     val topic = Configuration.KafkaConfig().topic
+    val enabled = Configuration.KafkaConfig().enabled
 
 
     fun inst2Config() = mapOf(
