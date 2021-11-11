@@ -36,14 +36,12 @@ spec:
   secureLogs:
     enabled: true
   kafka:
-    pool: nav-dev
+    pool: nav-prod
   protected: true
   accessPolicy:
     outbound:
       external:
-        - host: api-gw-q1.oera.no
-        - host: api-gw-q2.oera.no
-        - host: saf.dev-fss-pub.nais.io
+        - host: api-gw.oera.no
         - host: login.microsoftonline.com
   env:
     - name: AZURE_TENANT
@@ -57,4 +55,6 @@ spec:
     - name: MEDL_OPPSLAG_BASE_URL
       value: https://medlemskap-oppslag.prod-gcp.nais.io
     - name: MEDL_OPPSLAG_CLIENT_ID
-    - value: 23600ac9-019c-445d-87a4-2df4996e6f63
+      value: 23600ac9-019c-445d-87a4-2df4996e6f63
+    - name: KAFKA_ENABLED
+      value: Nei
