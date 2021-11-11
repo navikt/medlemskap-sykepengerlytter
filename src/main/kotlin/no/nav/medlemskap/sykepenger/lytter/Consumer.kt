@@ -46,7 +46,7 @@ class Consumer(
         flow {
             while (true) {
 
-                if(config.enabled.toBoolean()){
+                if(config.enabled!="Ja"){
                     logger.debug("Kafka is disabled. Does not fect messages from topic")
                     emit(emptyList<SoknadRecord>())
                 }
