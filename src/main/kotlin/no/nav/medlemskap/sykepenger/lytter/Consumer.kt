@@ -47,7 +47,7 @@ class Consumer(
             while (true) {
 
                 if(config.enabled!="Ja"){
-                    logger.debug("Kafka is disabled. Does not fetch messages from topic")
+                    logger.info("Kafka is disabled. Does not fetch messages from topic")
                     emit(emptyList<SoknadRecord>())
                 }
                 else{
