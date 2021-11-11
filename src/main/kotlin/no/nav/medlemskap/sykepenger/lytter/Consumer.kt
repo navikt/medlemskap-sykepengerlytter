@@ -28,7 +28,7 @@ class Consumer(
         consumer.subscribe(listOf(config.topic))
     }
 
-    fun pollMessages(): List<SoknadRecord> = //listOf("Message A","Message B","Message C")
+    fun pollMessages(): List<SoknadRecord> =
 
         consumer.poll(Duration.ofSeconds(4))
             .map { SoknadRecord(it.partition(),
@@ -42,14 +42,18 @@ class Consumer(
                 Metrics.incReceivedTotal(it.count())
             }
 
-
-
-            //.filter { it.kilde == Hendelse.Kilde.KDI }
-
     fun flow(): Flow<List<SoknadRecord>> =
         flow {
             while (true) {
-                emit(pollMessages())
+
+                if(config.enabled.toBoolean()){
+                    logger.debug("Kafka is disabled. Does not fect messages from topic")
+                    emit(emptyList<SoknadRecord>())
+                }
+                else{
+                    emit(pollMessages())
+                }
+
                 delay(Duration.ofSeconds(5))
             }
         }.onEach {

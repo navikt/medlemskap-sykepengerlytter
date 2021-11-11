@@ -40,6 +40,8 @@ spec:
   protected: true
   accessPolicy:
     outbound:
+      rules:
+        - application: medlemskap-oppslag
       external:
         - host: api-gw-q1.oera.no
         - host: api-gw-q2.oera.no
@@ -57,4 +59,6 @@ spec:
     - name: MEDL_OPPSLAG_BASE_URL
       value: https://medlemskap-oppslag.dev.intern.nav.no
     - name: MEDL_OPPSLAG_CLIENT_ID
-    - value: 2719da58-489e-4185-9ee6-74b7e93763d2
+      value: 2719da58-489e-4185-9ee6-74b7e93763d2
+    - name: KAFKA_ENABLED
+      value: true
