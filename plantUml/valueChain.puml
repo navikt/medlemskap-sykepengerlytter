@@ -1,7 +1,7 @@
 
 @startuml
-
-node kafka $tag13
+!include <logos/kafka>
+queue "<$kafka>" as kafka
 cloud {
 database postgres
 }

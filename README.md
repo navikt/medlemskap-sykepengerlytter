@@ -12,4 +12,4 @@ komponent for lytting på sykepenger-søknad-kafkaTopic
 
 #Value Chain diagram
 
-![valuechain](./plantUml/valueChainv2.png)
+![valuechain](./plantUml/valueChain.png)
