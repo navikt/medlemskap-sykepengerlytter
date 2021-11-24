@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+Flex -> (Kafka)
+(Kafka) --> (medlemskap-sykepenge-lytter)
+(medlemskap-sykepenge-lytter) -->(medlemslap-oppslag) :Token
+
+note right of (Kafka)
+Flex published messages to kafka topic
+end note
+note right of (medlemskap-sykepenge-lytter)
+sykepenge lytter henter kafka meldinger, parser dem, og
+kaller medlemslap-oppslag via REST
+end note
+@enduml
