@@ -5,17 +5,17 @@ node kafka $tag13
 cloud {
 database postgres
 }
-component medlemslap_saga
+component medlemskap_saga
 component medlemskap_oppslag
 component medlemskap_Joark
 component sykepenge_lytter  <<contekst>>
 
 kafka -- sykepenge_lytter :flex-topic
 sykepenge_lytter -- medlemskap_oppslag :http
-kafka -> medlemslap_saga :medlemslap-vurdert
+kafka -> medlemskap_saga :medlemslap-vurdert
 kafka <- medlemskap_oppslag :medlemslap-vurdert
 kafka -> medlemskap_Joark :medlemslap-vurdert
-medlemslap_saga -- postgres : SQL
+medlemskap_saga -- postgres : SQL
 
 skinparam component {
     backgroundColor<<contekst>> green
