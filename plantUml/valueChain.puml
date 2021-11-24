@@ -10,12 +10,12 @@ component medlemskap_oppslag
 component medlemskap_Joark
 component sykepenge_lytter  <<contekst>>
 
-kafka -- sykepenge_lytter :flex-topic
-sykepenge_lytter -- medlemskap_oppslag :http
-kafka -> medlemskap_saga :medlemslap-vurdert
-kafka <- medlemskap_oppslag :medlemslap-vurdert
-kafka -> medlemskap_Joark :medlemslap-vurdert
-medlemskap_saga -- postgres : SQL
+kafka -down-> sykepenge_lytter :flex-topic
+sykepenge_lytter -down-> medlemskap_oppslag :http
+kafka -up-> medlemskap_saga :medlemskap-vurdert
+kafka <- medlemskap_oppslag :medlemskap-vurdert
+kafka -> medlemskap_Joark :medlemskap-vurdert
+medlemskap_saga -down-> postgres : SQL
 
 skinparam component {
     backgroundColor<<contekst>> green
