@@ -6,6 +6,7 @@ komponent for lytting på sykepenger-søknad-kafkaTopic
 * Medlemskap-Oppslag
 
 #UseCase diagram
+
 ![usecase](./plantUml/usecase.png)
 
 
