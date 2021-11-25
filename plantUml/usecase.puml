@@ -19,6 +19,6 @@ Flex published messages to kafka topic
 end note
 note right of medlemskap_sykepenge_lytter
 sykepenge lytter henter kafka meldinger, parser dem, og
-kaller medlemskap-oppslag via REST
+kaller medlemskap-oppslag via REST.
 end note
 @enduml
