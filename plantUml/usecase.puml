@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+!include <logos/kafka>
+queue "<$kafka>" as kafka
+component medlemskap_sykepenge_lytter
+component medlemskap_oppslag
+actor flex
+interface "/" as rest2
+interface "/kafka" as rest
+
+rest-down-medlemskap_oppslag
+rest2-down-medlemskap_oppslag
+flex -> kafka
+kafka --> medlemskap_sykepenge_lytter
+medlemskap_sykepenge_lytter -->rest :Bearer token
+
+note right of kafka
+Flex published messages to kafka topic
+end note
+note right of medlemskap_sykepenge_lytter
+sykepenge lytter henter kafka meldinger, parser dem, og
+kaller medlemskap-oppslag via REST.
+end note
+@enduml

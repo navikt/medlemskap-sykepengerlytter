@@ -1,0 +1,23 @@
+
+@startuml
+!include <logos/kafka>
+queue "<$kafka>" as kafka
+cloud {
+database postgres
+}
+component medlemskap_saga
+component medlemskap_oppslag
+component medlemskap_Joark
+component sykepenge_lytter  <<contekst>>
+
+kafka -down-> sykepenge_lytter :flex-topic
+sykepenge_lytter -down-> medlemskap_oppslag :http
+kafka -up-> medlemskap_saga :medlemskap-vurdert
+kafka <- medlemskap_oppslag :medlemskap-vurdert
+kafka -> medlemskap_Joark :medlemskap-vurdert
+medlemskap_saga -down-> postgres : SQL
+
+skinparam component {
+    backgroundColor<<contekst>> green
+}
+@enduml
