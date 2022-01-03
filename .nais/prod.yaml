@@ -53,8 +53,8 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: https://api-gw.oera.no/security-token-service
     - name: MEDL_OPPSLAG_BASE_URL
-      value: https://medlemskap-oppslag.prod-gcp.nais.io
+      value: https://medlemskap-oppslag.intern.nav.no
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
     - name: KAFKA_ENABLED
-      value: Nei
+      value: Ja
