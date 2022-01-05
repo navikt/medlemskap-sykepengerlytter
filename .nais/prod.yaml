@@ -57,4 +57,4 @@ spec:
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
     - name: KAFKA_ENABLED
-      value: Ja
+      value: Nei
