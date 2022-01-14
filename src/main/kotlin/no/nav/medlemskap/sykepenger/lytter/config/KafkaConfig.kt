@@ -22,7 +22,7 @@ open class KafkaConfig(
         ConsumerConfig.GROUP_ID_CONFIG to Configuration.KafkaConfig().groupID,
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
         ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to 1,
+        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to 10,
 
     ) + securityStrategy.securityConfig()
 
