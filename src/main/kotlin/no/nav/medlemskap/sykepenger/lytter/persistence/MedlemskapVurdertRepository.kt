@@ -13,8 +13,8 @@ interface MedlemskapVurdertRepository {
 }
 
 class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : MedlemskapVurdertRepository {
-    val INSERT_VURDERING = "INSERT INTO vurdering(fnr, fom,tom,status) VALUES(?, ?, ?, ?)"
-    val FIND_BY_FNR = "select * from vurdering where fnr = ?"
+    val INSERT_VURDERING = "INSERT INTO syk_vurdering(id,fnr, fom,tom,status) VALUES(?, ?, ?, ?, ?)"
+    val FIND_BY_FNR = "select * from syk_vurdering where fnr = ?"
 
     override fun finnVurdering(fnr: String): List<VurderingDao> {
 
@@ -26,7 +26,7 @@ class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : Medlemsk
     override fun lagreVurdering(vurderingDao: VurderingDao) {
         using(sessionOf(dataSource)) { session ->
             session.transaction {
-                it.run(queryOf(INSERT_VURDERING, vurderingDao.fnr, vurderingDao.fom,vurderingDao.tom, vurderingDao.status).asExecute)
+                it.run(queryOf(INSERT_VURDERING, vurderingDao.id,vurderingDao.fnr, vurderingDao.fom,vurderingDao.tom, vurderingDao.status).asExecute)
             }
 
         }
@@ -39,6 +39,7 @@ class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : Medlemsk
 
     val toVurderingDao: (Row) -> VurderingDao = { row ->
         VurderingDao(
+            row.string("id"),
             row.int("fnr").toString(),
             row.localDate("fom"),
             row.localDate("tom"),

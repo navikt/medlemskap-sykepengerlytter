@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import java.time.LocalDate
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.LogManager
 
@@ -38,9 +39,9 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
         val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-        repo.lagreVurdering(VurderingDao("1234", LocalDate.of(2020,1,1), LocalDate.of(2020,1,10),"JA"))
-        repo.lagreVurdering(VurderingDao("1234", LocalDate.of(2020,1,11), LocalDate.of(2020,1,20),"UAVKLART"))
-        repo.lagreVurdering(VurderingDao("1234", LocalDate.of(2020,1,21), LocalDate.of(2020,1,29),"PÅFØLGENDE"))
+        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,1), LocalDate.of(2020,1,10),"JA"))
+        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,11), LocalDate.of(2020,1,20),"UAVKLART"))
+        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,21), LocalDate.of(2020,1,29),"PÅFØLGENDE"))
 
 
         assertNotNull("complete")

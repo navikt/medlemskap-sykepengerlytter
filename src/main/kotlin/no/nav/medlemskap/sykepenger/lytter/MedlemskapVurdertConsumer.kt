@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.time.delay
 import mu.KotlinLogging
+import no.nav.medlemskap.saga.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
@@ -12,17 +13,22 @@ import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdertRecord
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
 import no.nav.medlemskap.sykepenger.lytter.jakson.MedlemskapVurdertParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.LovMeService
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
 class MedlemskapVurdertConsumer(
     environment: Environment,
     private val config: KafkaConfig = KafkaConfig(environment),
-    private val service: LovMeService = LovMeService(Configuration()),
+    private val persistenceService: PersistenceService = PersistenceService(
+        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource())
+    ),
+
     private val consumer: KafkaConsumer<String, String> = config.createMedlemskapVurdertConsumer(),
 
-)
+    )
 {
     private val secureLogger = KotlinLogging.logger("tjenestekall")
     private val logger = KotlinLogging.logger { }
@@ -60,7 +66,7 @@ class MedlemskapVurdertConsumer(
             }
         }.onEach {
             logger.debug { "received :"+ it.size + "on topic "+config.topic }
-            it.forEach {  }
+            it.forEach { record->persistenceService.handle(record) }
         }.onEach {
             consumer.commitAsync()
         }.onEach {
