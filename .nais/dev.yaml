@@ -10,7 +10,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_12
         databases:
-          - name: medlemskap
+          - name: sykmedlemskap
             envVarPrefix: DB
             diskAutoresize: true
             tier: db-g1-small
