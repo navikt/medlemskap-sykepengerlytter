@@ -1,4 +1,4 @@
-CREATE TABLE syk_vurdering
+CREATE TABLE IF NOT EXISTS syk_vurdering
 (
     id VARCHAR(100),
     fnr VARCHAR(11),
@@ -7,3 +7,5 @@ CREATE TABLE syk_vurdering
     status VARCHAR(10)
 
 );
+
+CREATE  INDEX IF NOT EXISTS fnr_idx ON syk_vurdering (fnr);

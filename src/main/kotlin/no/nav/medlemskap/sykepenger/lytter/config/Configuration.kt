@@ -99,6 +99,7 @@ data class Configuration(
         val keystoreLocation: String = "KAFKA_KEYSTORE_PATH".configProperty(),
         val keystorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
         val enabled: String = "KAFKA_ENABLED".configProperty(),
+        val medlemskapvurdert_enabled: String = "MEDLEMSKAPVURDERT_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
         val medlemskapVurdertTopic : String =  "medlemskap.medlemskap-vurdert"
     )

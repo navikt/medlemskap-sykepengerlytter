@@ -6,6 +6,13 @@ metadata:
   labels:
     team: medlemskap
 spec:
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_12
+        databases:
+          - name: medlemskap
+            envVarPrefix: DB
+            diskAutoresize: true
   azure:
     application:
       enabled: true
@@ -58,3 +65,5 @@ spec:
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
     - name: KAFKA_ENABLED
       value: Ja
+    - name: MEDLEMSKAPVURDERT_ENABLED
+      value: Nei
