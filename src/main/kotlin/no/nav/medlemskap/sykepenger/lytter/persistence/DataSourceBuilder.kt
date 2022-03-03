@@ -1,4 +1,4 @@
-package no.nav.medlemskap.saga.persistence
+package no.nav.medlemskap.sykepenger.lytter.persistence
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

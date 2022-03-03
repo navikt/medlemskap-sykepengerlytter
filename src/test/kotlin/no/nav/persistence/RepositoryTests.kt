@@ -1,6 +1,6 @@
 package no.nav.persistence
 
-import no.nav.medlemskap.saga.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository

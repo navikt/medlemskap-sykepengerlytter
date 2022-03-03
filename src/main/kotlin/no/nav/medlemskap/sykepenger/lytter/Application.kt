@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
-import no.nav.medlemskap.saga.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
