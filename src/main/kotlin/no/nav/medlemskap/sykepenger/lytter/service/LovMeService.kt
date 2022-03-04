@@ -51,10 +51,8 @@ class LovMeService(
             try {
                 callLovMe(soknadRecord.sykepengeSoknad)
                 soknadRecord.logSendt()
-                //Metrics.incSuccessfulLovmePosts()
             }
             catch (t:Throwable){
-                //Metrics.incFailedLovmePosts()
                 soknadRecord.logTekiskFeil(t)
             }
         } else {

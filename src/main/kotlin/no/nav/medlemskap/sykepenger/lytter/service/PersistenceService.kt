@@ -2,8 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.VurderingDao
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdertRecord
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import java.time.LocalDate
@@ -20,13 +20,24 @@ class PersistenceService(
     suspend fun handle(vurdertRecord: MedlemskapVurdertRecord){
         try {
             medlemskapVurdertRepository.lagreVurdering(VurderingDaoMapper().mapJsonNodeToVurderingDao(vurdertRecord.key!!,vurdertRecord.medlemskapVurdert))
-            log.info { "vurdering av sykepengesøknad med id ${vurdertRecord.key} lagret i databasen" }
+            vurdertRecord.logLagret()
         }
         catch (throwable :Throwable){
-            log.error { "vurdering av sykepengesøknad med id ${vurdertRecord.key} ble ikke lagret lagret i databasen. Error : ${throwable.cause}" }
+            vurdertRecord.logLagringFeilet(throwable)
         }
 
     }
+
+    private fun MedlemskapVurdertRecord.logLagret() =
+        PersistenceService.log.info(
+            "Vurdering lagret til database - sykmeldingId: ${key}, offsett: $offset, partiotion: $partition, topic: $topic",
+            StructuredArguments.kv("callId", key),
+        )
+    private fun MedlemskapVurdertRecord.logLagringFeilet(t:Throwable) =
+        PersistenceService.log.error(
+            "Vurdering ble ikke lagret til database - sykmeldingId: ${key}, offsett: $offset, partiotion: $partition, topic: $topic , reason : ${t.cause}",
+            StructuredArguments.kv("callId", key),
+        )
 
 
 }

@@ -43,7 +43,7 @@ class MedlemskapVurdertConsumer(
                 MedlemskapVurdertParser().parse(it.value())
             )}
             .also {
-                Metrics.incReceivedTotal(it.count())
+                Metrics.incReceivedvurderingTotal(it.count())
             }
 
     fun flow(): Flow<List<MedlemskapVurdertRecord>> =
@@ -66,7 +66,7 @@ class MedlemskapVurdertConsumer(
         }.onEach {
             consumer.commitAsync()
         }.onEach {
-            Metrics.incProcessedTotal(it.count())
+            Metrics.incProcessedVurderingerTotal(it.count())
         }
 
 }
