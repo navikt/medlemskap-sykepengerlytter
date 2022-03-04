@@ -32,7 +32,8 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_KEYSTORE_PATH" to "c:\\dev\\secrets\\client.keystore.p12",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
-        "KAFKA_ENABLED" to "false"
+        "KAFKA_ENABLED" to "false",
+        "MEDLEMSKAPVURDERT_ENABLED" to "Ja"
     )
 )
 
