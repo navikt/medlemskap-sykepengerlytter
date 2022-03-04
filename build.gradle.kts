@@ -5,6 +5,9 @@ val kotlinLoggerVersion = "1.8.3"
 val resilience4jVersion = "1.5.0"
 val logstashVersion = "6.4"
 val logbackVersion = "1.2.3"
+val flywayVersion = "6.5.0"
+val hikariVersion = "3.4.5"
+val kotliqueryVersion = "1.3.1"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
@@ -54,6 +57,13 @@ dependencies {
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("org.testcontainers:kafka:1.16.0")
+    testImplementation ("org.testcontainers:postgresql:1.16.0")
+    testImplementation ("org.testcontainers:junit-jupiter:1.16.0")
+    //Database
+    implementation("org.postgresql:postgresql:42.2.5")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
+    implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
 }
 
 tasks {

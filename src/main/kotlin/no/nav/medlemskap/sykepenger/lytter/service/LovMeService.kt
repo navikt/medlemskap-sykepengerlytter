@@ -2,7 +2,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.Metrics
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
@@ -51,10 +50,8 @@ class LovMeService(
             try {
                 callLovMe(soknadRecord.sykepengeSoknad)
                 soknadRecord.logSendt()
-                //Metrics.incSuccessfulLovmePosts()
             }
             catch (t:Throwable){
-                //Metrics.incFailedLovmePosts()
                 soknadRecord.logTekiskFeil(t)
             }
         } else {

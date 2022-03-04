@@ -16,8 +16,14 @@ object Metrics {
     fun incReceivedTotal(count: Int = 1) =
         receivedTotal.inc(count.toDouble())
 
+    fun incReceivedvurderingTotal(count: Int = 1) =
+        receivedVurderingerTotal.inc(count.toDouble())
+
     fun incProcessedTotal(count: Int = 1) =
         processedTotal.inc(count.toDouble())
+
+    fun incProcessedVurderingerTotal(count: Int = 1) =
+        processedVurderingerTotal.inc(count.toDouble())
 
     fun incSuccessfulLovmePosts(count: Int = 1) =
         successfulLovmePosts.inc(count.toDouble())
@@ -30,9 +36,18 @@ object Metrics {
         .name("medlemskap_sykepenger_lytter_received")
         .help("Totalt mottatte inst meldinger")
         .register()
+    private val receivedVurderingerTotal: Counter = Counter.build()
+        .name("medlemskap_sykepenger_lytter_vurderinger_received")
+        .help("Totalt mottatte vurdernger")
+        .register()
     private val processedTotal: Counter = Counter.build()
         .name("medlemskap_sykepenger_lytte_processed_counter")
         .help("Totalt prosesserte meldinger")
+        .register()
+
+    private val processedVurderingerTotal: Counter = Counter.build()
+        .name("medlemskap_sykepenger_lytte_vurderinger_processed_counter")
+        .help("Totalt prosesserte vurderinger")
         .register()
     private val successfulLovmePosts: Counter = Counter.build()
         .name("medlemskap_sykepenger_lytte_successful_lovme_posts_counter")
