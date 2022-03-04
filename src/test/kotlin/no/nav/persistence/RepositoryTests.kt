@@ -4,8 +4,8 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
@@ -33,7 +33,6 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
     @Test
     fun `lagre medlemskap vurdering`() {
-        //val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
         postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
@@ -46,8 +45,10 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         assertNotNull("complete")
         val result = repo.finnVurdering("1234")
+
         assertTrue(result.size==3,"result set should contain 3 elements")
 
+        assertEquals("1234".sha256(),result.first().fnr)
     }
     @Test
     fun `opprettDataSource fra enviroment`() {

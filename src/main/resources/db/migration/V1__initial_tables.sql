@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS syk_vurdering
 (
     id VARCHAR(100),
-    fnr VARCHAR(11),
+    fnr VARCHAR(100),
     fom date,
     tom date,
     status VARCHAR(10)

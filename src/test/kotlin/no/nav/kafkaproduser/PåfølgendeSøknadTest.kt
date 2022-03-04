@@ -7,6 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
 import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.security.MessageDigest
 import java.time.LocalDate
 
 class PåfølgendeSøknadTest {
@@ -34,6 +35,19 @@ class PåfølgendeSøknadTest {
         Assertions.assertTrue(sokndB.erpåfølgende(sokndA))
 
     }
+    @Test
+    fun `test hash`(){
+        val fnr = "21047541120"
+        println(fnr.sha1)
+
+    }
+    val String.sha1: String
+        get() {
+            val bytes = MessageDigest.getInstance("SHA-256").digest(("lang stygg tekst som på ingen måte skal kunne autogenereres"+this).toByteArray())
+            return bytes.joinToString("") {
+                "%02x".format(it)
+            }
+        }
     @Test
     fun `test påfølgende logikk med medlemskap som starter midt i perioden`(){
 
