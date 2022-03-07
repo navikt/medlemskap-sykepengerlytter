@@ -10,17 +10,23 @@ import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.LovMeService
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
 class Consumer(
     environment: Environment,
+    private val persistenceService: PersistenceService = PersistenceService(
+        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource())
+    ),
     private val config: KafkaConfig = KafkaConfig(environment),
-    private val service: LovMeService = LovMeService(Configuration()),
+    private val service: LovMeService = LovMeService(Configuration(),persistenceService),
     private val consumer: KafkaConsumer<String, String> = config.createConsumer(),
 
-)
+    )
 {
     private val secureLogger = KotlinLogging.logger("tjenestekall")
     private val logger = KotlinLogging.logger { }

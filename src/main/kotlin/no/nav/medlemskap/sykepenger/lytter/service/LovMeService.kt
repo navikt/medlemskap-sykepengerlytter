@@ -13,6 +13,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 
 class LovMeService(
     private val configuration: Configuration,
+    private val persistenceService: PersistenceService
 )
 {
     companion object {
@@ -27,8 +28,11 @@ class LovMeService(
     val medlOppslagClient: MedlOppslagClient
 
 
+
+
     init {
     medlOppslagClient=restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
+
     }
 
     suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO)
@@ -46,18 +50,58 @@ class LovMeService(
     }
     suspend fun handle(soknadRecord: SoknadRecord)
     {
-        if (validerSoknad(soknadRecord.sykepengeSoknad)) {
-            try {
-                callLovMe(soknadRecord.sykepengeSoknad)
-                soknadRecord.logSendt()
+        if (validerSoknad(soknadRecord.sykepengeSoknad)){
+            val medlemRequest = mapToMedlemskap(soknadRecord.sykepengeSoknad)
+            val duplikat = isDuplikat(medlemRequest)
+            if (duplikat!=null){
+                    log.info ( "soknad med id ${soknadRecord.sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${duplikat.fnr} ",
+                        kv("callId", soknadRecord.sykepengeSoknad.id))
+
+            return
             }
-            catch (t:Throwable){
-                soknadRecord.logTekiskFeil(t)
+            else if (isPaafolgendeSoknad(soknadRecord.sykepengeSoknad)){
+                log.info ( "soknad med id ${soknadRecord.sykepengeSoknad.id} er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført} ",
+                    kv("callId", soknadRecord.sykepengeSoknad.id))
+                return
             }
-        } else {
+            else{
+                try {
+                    callLovMe(soknadRecord.sykepengeSoknad)
+                    soknadRecord.logSendt()
+                }
+                catch (t:Throwable){
+                    soknadRecord.logTekiskFeil(t)
+                }
+            }
+        }
+        else{
+
             soknadRecord.logIkkeSendt()
         }
     }
+
+     suspend fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {
+        val vurderinger = persistenceService.hentMedlemskap(medlemRequest.fnr)
+        val erFunksjoneltLik = vurderinger.find { medlemRequest.erFunkskjoneltLik(it) }
+        return erFunksjoneltLik
+    }
+
+     suspend fun isPaafolgendeSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
+        val medlemRequest = mapToMedlemskap(sykepengeSoknad)
+        val vurderinger = persistenceService.hentMedlemskap(sykepengeSoknad.fnr)
+        val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
+        if (result!=null){
+            persistenceService.lagrePaafolgendeSoknad(sykepengeSoknad)
+            return true
+        }
+        return false;
+    }
+
+    private fun mapToMedlemskap(sykepengeSoknad: LovmeSoknadDTO): Medlemskap {
+        return Medlemskap(sykepengeSoknad.fnr,sykepengeSoknad.fom,sykepengeSoknad.tom,ErMedlem.UAVKLART)
+
+    }
+
     private fun SoknadRecord.logIkkeSendt() =
         LovMeService.log.info(
             "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
@@ -78,5 +122,6 @@ class LovMeService(
     fun validerSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
         return !sykepengeSoknad.fnr.isNullOrBlank() &&
                 !sykepengeSoknad.id.isNullOrBlank()
+
     }
 }

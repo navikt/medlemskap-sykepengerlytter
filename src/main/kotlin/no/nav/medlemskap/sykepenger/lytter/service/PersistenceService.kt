@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdertRecord
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import java.time.LocalDate
@@ -25,6 +28,15 @@ class PersistenceService(
         catch (throwable :Throwable){
             vurdertRecord.logLagringFeilet(throwable)
         }
+
+    }
+
+    suspend fun hentMedlemskap(fnr:String): List<Medlemskap>{
+       return  medlemskapVurdertRepository.finnVurdering(fnr).map { Medlemskap(it.fnr,it.fom,it.tom,ErMedlem.valueOf(it.status)) }
+    }
+    suspend fun lagrePaafolgendeSoknad(soknadDTO: LovmeSoknadDTO){
+        medlemskapVurdertRepository.lagreVurdering(VurderingDao(soknadDTO.id,soknadDTO.fnr,soknadDTO.fom,soknadDTO.tom,ErMedlem.PAAFOLGENDE.toString()))
+
 
     }
 
