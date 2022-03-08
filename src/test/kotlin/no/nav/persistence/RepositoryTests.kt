@@ -62,12 +62,12 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
         val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-        repo.lagreVurdering(VurderingDao("1234","1234", LocalDate.now(), LocalDate.now(),ErMedlem.PAFOLGENDE.toString()))
-        val result = repo.finnVurdering("1234")
+        repo.lagreVurdering(VurderingDao("2222","2222", LocalDate.now(), LocalDate.now(),ErMedlem.PAFOLGENDE.toString()))
+        val result = repo.finnVurdering("2222")
 
         assertTrue(result.size==1,"result set should contain 3 elements")
 
-        assertEquals("1234".sha256(),result.first().fnr)
+        assertEquals("2222".sha256(),result.first().fnr)
         assertEquals(ErMedlem.PAFOLGENDE,ErMedlem.valueOf(result.first().status))
     }
     @Test
