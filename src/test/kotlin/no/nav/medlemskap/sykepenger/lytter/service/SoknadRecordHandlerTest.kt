@@ -1,18 +1,17 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
-import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.persistence.InMemmoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.*
 
-class LovmeServiceTest {
+class SoknadRecordHandlerTest {
 
     @Test
     fun `test Duplikat på forespørsel`() = runBlocking {
@@ -36,7 +35,7 @@ class LovmeServiceTest {
             LocalDate.of(2022,1,25),
             ErMedlem.JA.toString())
         )
-        val service: LovMeService = LovMeService(Configuration(), persistenceService)
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
         val duplikat = service.isDuplikat(
             Medlemskap(
                 "123",
@@ -69,7 +68,7 @@ class LovmeServiceTest {
             LocalDate.of(2022,1,25),
             ErMedlem.JA.toString())
         )
-        val service: LovMeService = LovMeService(Configuration(), persistenceService)
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
         val duplikat = service.isDuplikat(
             Medlemskap(
                 "123",
@@ -92,9 +91,9 @@ class LovmeServiceTest {
             ErMedlem.JA.toString())
         )
 
-        val service: LovMeService = LovMeService(Configuration(), persistenceService)
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
-        val sykepengeSoknad = JaksonParser().parse(fileContent)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
         val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
         Assertions.assertTrue(paafolgende)
         val dbResult = repo.finnVurdering("01010112345")
@@ -117,9 +116,9 @@ class LovmeServiceTest {
             ErMedlem.JA.toString())
         )
 
-        val service: LovMeService = LovMeService(Configuration(), persistenceService)
+        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
-        val sykepengeSoknad = JaksonParser().parse(fileContent)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         val paafolgendeMedlemskap = dbResult.find { it.status=="PAAFOLGENDE" }
@@ -141,9 +140,9 @@ class LovmeServiceTest {
             ErMedlem.JA.toString())
         )
 
-        val service: LovMeService = LovMeService(Configuration(), persistenceService)
+        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
-        val sykepengeSoknad = JaksonParser().parse(fileContent)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         Assertions.assertEquals(1,dbResult.size)

@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 
 import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
-import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.security.MessageDigest
@@ -14,7 +14,7 @@ class PåfølgendeSøknadTest {
 
     @Test
     fun `JsonObjektInneholderFomTom`(){
-        val json = JaksonParser().parseMedlemskap(Medlemskap("12343", LocalDate.now(), LocalDate.now(),ErMedlem.JA))
+        val json = JacksonParser().parseMedlemskap(Medlemskap("12343", LocalDate.now(), LocalDate.now(),ErMedlem.JA))
         println(json)
     }
 

@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.time.delay
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
+import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
-import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.service.LovMeService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandler
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
@@ -23,13 +23,13 @@ class Consumer(
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource())
     ),
     private val config: KafkaConfig = KafkaConfig(environment),
-    private val service: LovMeService = LovMeService(Configuration(),persistenceService),
+    private val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService),
     private val consumer: KafkaConsumer<String, String> = config.createConsumer(),
 
-    )
-{
+    ) {
     private val secureLogger = KotlinLogging.logger("tjenestekall")
     private val logger = KotlinLogging.logger { }
+
     init {
         consumer.subscribe(listOf(config.topic))
     }
@@ -37,13 +37,16 @@ class Consumer(
     fun pollMessages(): List<SoknadRecord> =
 
         consumer.poll(Duration.ofSeconds(4))
-            .map { SoknadRecord(it.partition(),
-                it.offset(),
-                it.value(),
-                it.key(),
-                it.topic(),
-                JaksonParser().parse(it.value())
-            )}
+            .map {
+                SoknadRecord(
+                    it.partition(),
+                    it.offset(),
+                    it.value(),
+                    it.key(),
+                    it.topic(),
+                    JacksonParser().parse(it.value())
+                )
+            }
             .also {
                 Metrics.incReceivedTotal(it.count())
             }
@@ -52,18 +55,17 @@ class Consumer(
         flow {
             while (true) {
 
-                if(config.enabled!="Ja"){
+                if (config.enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
                     emit(emptyList<SoknadRecord>())
-                }
-                else{
+                } else {
                     emit(pollMessages())
                 }
 
                 delay(Duration.ofSeconds(1))
             }
         }.onEach {
-            logger.debug { "receiced :"+ it.size + "on topic "+config.topic }
+            logger.debug { "receiced :" + it.size + "on topic " + config.topic }
             it.forEach { record -> service.handle(record) }
         }.onEach {
             consumer.commitAsync()

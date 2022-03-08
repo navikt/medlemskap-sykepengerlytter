@@ -58,8 +58,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
         val repo: MedlemskapVurdertRepository = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-
-        assertNotNull("complete")
+        assertNotNull(repo)
 
     }
 }

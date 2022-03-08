@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.jakson
+package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-class JaksonParser {
+class JacksonParser {
     private val log = KotlinLogging.logger { }
     fun parse(jsonString: String): LovmeSoknadDTO {
         try {
