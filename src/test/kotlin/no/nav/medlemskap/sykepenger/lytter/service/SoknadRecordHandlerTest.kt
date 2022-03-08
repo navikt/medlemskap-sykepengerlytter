@@ -97,7 +97,7 @@ class SoknadRecordHandlerTest {
         val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
         Assertions.assertTrue(paafolgende)
         val dbResult = repo.finnVurdering("01010112345")
-        val paafolgendeMedlemskap = dbResult.find { it.status=="PAAFOLGENDE" }
+        val paafolgendeMedlemskap = dbResult.find { it.status=="PAFOLGENDE" }
         Assertions.assertNotNull(paafolgendeMedlemskap)
         Assertions.assertEquals(paafolgendeMedlemskap!!.fom,sykepengeSoknad.fom)
         Assertions.assertEquals(paafolgendeMedlemskap!!.tom,sykepengeSoknad.tom)
@@ -121,7 +121,7 @@ class SoknadRecordHandlerTest {
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
-        val paafolgendeMedlemskap = dbResult.find { it.status=="PAAFOLGENDE" }
+        val paafolgendeMedlemskap = dbResult.find { it.status=="PAFOLGENDE" }
         Assertions.assertNotNull(paafolgendeMedlemskap)
         Assertions.assertEquals(paafolgendeMedlemskap!!.fom,sykepengeSoknad.fom)
         Assertions.assertEquals(paafolgendeMedlemskap!!.tom,sykepengeSoknad.tom)

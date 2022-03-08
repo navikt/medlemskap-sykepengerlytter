@@ -9,7 +9,7 @@ enum class ErMedlem{
     JA,
     NEI,
     UAVKLART,
-    PAAFOLGENDE,
+    PAFOLGENDE,
 }
 
 fun Medlemskap.erpåfølgende(medlemskap: Medlemskap):Boolean{

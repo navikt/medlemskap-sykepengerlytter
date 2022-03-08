@@ -46,7 +46,7 @@ class PersistenceService(
                 soknadDTO.fnr,
                 soknadDTO.fom,
                 soknadDTO.tom,
-                ErMedlem.PAAFOLGENDE.toString()
+                ErMedlem.PAFOLGENDE.toString()
             )
         )
 
