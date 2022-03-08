@@ -2,9 +2,14 @@ package no.nav.persistence
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.saga.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
@@ -49,6 +54,21 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         assertTrue(result.size==3,"result set should contain 3 elements")
 
         assertEquals("1234".sha256(),result.first().fnr)
+    }
+    @Test
+    fun `lagre påfølgende vurdering`() {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+        val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
+        repo.lagreVurdering(VurderingDao("1234","1234", LocalDate.now(), LocalDate.now(),ErMedlem.PAFOLGENDE.toString()))
+        val result = repo.finnVurdering("1234")
+
+        assertTrue(result.size==1,"result set should contain 3 elements")
+
+        assertEquals("1234".sha256(),result.first().fnr)
+        assertEquals(ErMedlem.PAFOLGENDE,ErMedlem.valueOf(result.first().status))
     }
     @Test
     fun `opprettDataSource fra enviroment`() {
