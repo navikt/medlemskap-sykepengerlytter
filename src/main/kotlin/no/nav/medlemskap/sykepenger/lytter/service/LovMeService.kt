@@ -33,11 +33,15 @@ class LovMeService(
 
     suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO)
     {
+        var arbeidIUtland = false;
+        if (sykepengeSoknad.arbeidUtenforNorge!=null){
+            arbeidIUtland=sykepengeSoknad.arbeidUtenforNorge
+        }
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom?.toString()),
-            brukerinput = Brukerinput(false)
+            brukerinput = Brukerinput(arbeidIUtland)
         )
         medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
 
