@@ -1,16 +1,16 @@
-package no.nav.medlemskap.sykepenger.lytter.jakson
+package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 
 
-class JaksonParserTest {
+class JacksonParserTest {
 
     @Test
     fun `parse Json String`() {
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
-        val sykepengeSoknad = JaksonParser().parse(fileContent)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
         assertNotNull(sykepengeSoknad)
     }
 

@@ -1,9 +1,7 @@
 package no.nav.persistence
 
 
-import no.nav.medlemskap.sykepenger.lytter.jakson.JaksonParser
-import no.nav.medlemskap.sykepenger.lytter.jakson.MedlemskapVurdertParser
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.service.VurderingDaoMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
