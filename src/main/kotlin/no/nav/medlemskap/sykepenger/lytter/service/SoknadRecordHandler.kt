@@ -66,15 +66,13 @@ class SoknadRecordHandler(
     }
 
     private fun arbeidUtenForNorgeFalse(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        var arbUtland =sykepengeSoknad.arbeidUtenforNorge
-        if (arbUtland==null){
-            arbUtland=false
-        }
-        log.info(
+        if(sykepengeSoknad.arbeidUtenforNorge == true) {
+            log.info(
             "Søknad inneholder arbeidUtenforNorge=true og skal ikke filtreres - sykmeldingId: ${sykepengeSoknad.id}",
             kv("callId", sykepengeSoknad.id),
         )
-        return arbUtland == false
+        }
+        return sykepengeSoknad.arbeidUtenforNorge == false
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) {
