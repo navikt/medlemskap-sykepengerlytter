@@ -129,6 +129,27 @@ class SoknadRecordHandlerTest {
         Assertions.assertEquals(paafolgendeMedlemskap!!.id,sykepengeSoknad.id)
     }
     @Test
+    fun `test påfølgende forespørsel via handle med utlandLik true`() = runBlocking {
+        val repo = InMemmoryRepository()
+        val persistenceService = PersistenceService(repo)
+
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,8,25),
+            LocalDate.of(2021,8,31),
+            ErMedlem.JA.toString())
+        )
+
+        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+        val fileContent = this::class.java.classLoader.getResource("sampleRequestUtlandTrue.json").readText(Charsets.UTF_8)
+        var sykepengeSoknad = JacksonParser().parse(fileContent)
+        service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
+        val dbResult = repo.finnVurdering("01010112345")
+        val paafolgendeMedlemskap = dbResult.find { it.status=="PAFOLGENDE" }
+
+        Assertions.assertNull(paafolgendeMedlemskap)
+    }
+    @Test
     fun `test duplikat forespørsel via handle`() = runBlocking {
         val repo = InMemmoryRepository()
         val persistenceService = PersistenceService(repo)
@@ -142,6 +163,26 @@ class SoknadRecordHandlerTest {
 
         val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
+        service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
+        val dbResult = repo.finnVurdering("01010112345")
+        Assertions.assertEquals(1,dbResult.size)
+
+    }
+    @Test
+    fun `test duplikat forespørsel via handle med utlandTrue`() = runBlocking {
+        val repo = InMemmoryRepository()
+        val persistenceService = PersistenceService(repo)
+
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,9,1),
+            LocalDate.of(2021,9,30),
+            ErMedlem.JA.toString())
+        )
+
+        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+        val fileContent = this::class.java.classLoader.getResource("sampleRequestUtlandTrue.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")

@@ -38,7 +38,7 @@ class SoknadRecordHandler(
         if (validerSoknad(soknadRecord.sykepengeSoknad)) {
             val medlemRequest = mapToMedlemskap(soknadRecord.sykepengeSoknad)
             val duplikat = isDuplikat(medlemRequest)
-            if (duplikat != null) {
+            if (duplikat != null && arbeidUtenForNorgeFalse(soknadRecord.sykepengeSoknad)) {
                 log.info(
                     "soknad med id ${soknadRecord.sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${duplikat.fnr} ",
                     kv("callId", soknadRecord.sykepengeSoknad.id)
@@ -65,6 +65,16 @@ class SoknadRecordHandler(
         }
     }
 
+    private fun arbeidUtenForNorgeFalse(sykepengeSoknad: LovmeSoknadDTO): Boolean {
+        if(sykepengeSoknad.arbeidUtenforNorge == true) {
+            log.info(
+            "Søknad inneholder arbeidUtenforNorge=true og skal ikke filtreres - sykmeldingId: ${sykepengeSoknad.id}",
+            kv("callId", sykepengeSoknad.id),
+        )
+        }
+        return sykepengeSoknad.arbeidUtenforNorge == false
+    }
+
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) {
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
@@ -85,7 +95,7 @@ class SoknadRecordHandler(
         val medlemRequest = mapToMedlemskap(sykepengeSoknad)
         val vurderinger = persistenceService.hentMedlemskap(sykepengeSoknad.fnr)
         val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
-        if (result != null) {
+        if (result != null && arbeidUtenForNorgeFalse(sykepengeSoknad)) {
             persistenceService.lagrePaafolgendeSoknad(sykepengeSoknad)
             return true
         }
