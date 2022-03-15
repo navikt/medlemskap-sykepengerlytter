@@ -7,18 +7,23 @@ component medlemskap_oppslag
 actor flex
 interface "/" as rest2
 interface "/kafka" as rest
+database   sykmedlemskap as database
 
 rest-down-medlemskap_oppslag
 rest2-down-medlemskap_oppslag
 flex -> kafka
-kafka --> medlemskap_sykepenge_lytter
+kafka --> medlemskap_sykepenge_lytter : medlemskap-vurdert
+kafka --> medlemskap_sykepenge_lytter : sykepenge-soknad
 medlemskap_sykepenge_lytter -->rest :Bearer token
+medlemskap_sykepenge_lytter -left->database :sql
 
 note right of kafka
 Flex published messages to kafka topic
 end note
 note right of medlemskap_sykepenge_lytter
-sykepenge lytter henter kafka meldinger, parser dem, og
-kaller medlemskap-oppslag via REST.
+sykepenge lytter henter kafka meldinger, parser dem,
+og kaller medlemskap-oppslag via REST.
+Meldinger som er påfølgende blir filtrert ut
+
 end note
 @enduml

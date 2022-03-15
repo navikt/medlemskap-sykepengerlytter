@@ -3,15 +3,21 @@
 !include <logos/kafka>
 queue "<$kafka>" as kafka
 cloud {
+database sykmedlem
+}
+cloud {
 database postgres
 }
+
 component medlemskap_saga
 component medlemskap_oppslag
 component medlemskap_Joark
 component sykepenge_lytter  <<contekst>>
 
 kafka -down-> sykepenge_lytter :flex-topic
+kafka -down-> sykepenge_lytter :medlemskap-vurdert
 sykepenge_lytter -down-> medlemskap_oppslag :http
+sykepenge_lytter -down-> sykmedlem :påfølgende_Søknader
 kafka -up-> medlemskap_saga :medlemskap-vurdert
 kafka <- medlemskap_oppslag :medlemskap-vurdert
 kafka -> medlemskap_Joark :medlemskap-vurdert
