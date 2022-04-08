@@ -57,6 +57,9 @@ class SoknadRecordHandler(
                     soknadRecord.logSendt()
                 } catch (t: Throwable) {
                     soknadRecord.logTekniskFeil(t)
+                    if (!t.message!!.contains("udi/person")){
+                        throw  t
+                    }
                 }
             }
         } else {
