@@ -93,7 +93,7 @@ data class Configuration(
         val bootstrapServers: String = "KAFKA_BROKERS".configProperty(),
         val securityProtocol: String = "SSL",
         val trustStorePath: String = "KAFKA_TRUSTSTORE_PATH".configProperty(),
-        val groupID: String = "medlemskap-sykepenger-listener",
+        val groupID: String = "medlemskap-sykepenger-listener_v2",
         val medlemskapVurdertConsumerGroupID: String = "medlemskap-vurdert-listener",
         val trustStorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
         val keystoreType: String = "PKCS12",
