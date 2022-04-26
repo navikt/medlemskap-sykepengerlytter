@@ -9,6 +9,7 @@ import no.nav.persistence.InMemmoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 class SoknadRecordHandlerTest {
@@ -79,6 +80,8 @@ class SoknadRecordHandlerTest {
         Assertions.assertNull(duplikat)
     }
 
+
+
     @Test
     fun `test påfølgende forespørsel`() = runBlocking {
         val repo = InMemmoryRepository()
@@ -104,6 +107,161 @@ class SoknadRecordHandlerTest {
         Assertions.assertEquals(paafolgendeMedlemskap!!.fnr,sykepengeSoknad.fnr)
         Assertions.assertEquals(paafolgendeMedlemskap!!.id,sykepengeSoknad.id)
     }
+
+    @Test
+    fun `test påfølgende forespørsel med mange db innslag`() = runBlocking {
+        val repo = InMemmoryRepository()
+        val persistenceService = PersistenceService(repo)
+
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,19),
+            LocalDate.of(2021,10,25),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,5),
+            LocalDate.of(2021,10,18),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,26),
+            LocalDate.of(2021,11,24),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,11,25),
+            LocalDate.of(2021,12,6),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,12,7),
+            LocalDate.of(2022,1,5),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,1,6),
+            LocalDate.of(2022,1,22),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,1,23),
+            LocalDate.of(2022,2,7),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,2,8),
+            LocalDate.of(2022,3,4),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,3,5),
+            LocalDate.of(2022,3,22),
+            ErMedlem.JA.toString())
+        )
+
+
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengeSoknad = LovmeSoknadDTO(
+            id = UUID.randomUUID().toString(),
+            type=SoknadstypeDTO.ARBEIDSTAKERE,
+            status=SoknadsstatusDTO.SENDT,
+            fnr = "01010112345",
+            korrigerer = null,
+            startSyketilfelle = LocalDate.of(2022,3,23),
+            sendtNav = LocalDateTime.now(),
+            fom = LocalDate.of(2022,3,23),
+            tom = LocalDate.of(2022,4,8),
+            arbeidUtenforNorge = false
+        )
+        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        Assertions.assertTrue(paafolgende)
+        }
+    @Test
+    fun `test påfølgende forespørsel med mange db innslag og arbeidUtland=true`() = runBlocking {
+        val repo = InMemmoryRepository()
+        val persistenceService = PersistenceService(repo)
+
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,19),
+            LocalDate.of(2021,10,25),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,5),
+            LocalDate.of(2021,10,18),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,10,26),
+            LocalDate.of(2021,11,24),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,11,25),
+            LocalDate.of(2021,12,6),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2021,12,7),
+            LocalDate.of(2022,1,5),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,1,6),
+            LocalDate.of(2022,1,22),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,1,23),
+            LocalDate.of(2022,2,7),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,2,8),
+            LocalDate.of(2022,3,4),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,3,5),
+            LocalDate.of(2022,3,22),
+            ErMedlem.JA.toString())
+        )
+
+
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
+        val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
+            SoknadstypeDTO.ARBEIDSTAKERE,
+            SoknadsstatusDTO.SENDT,
+            "01010112345",
+            null,
+            LocalDate.of(2022,3,23),
+            LocalDateTime.now(), LocalDate.of(2022,3,23),
+            LocalDate.of(2022,4,8),
+            true
+        )
+        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        Assertions.assertFalse(paafolgende)
+    }
+
     @Test
     fun `test påfølgende forespørsel via handle`() = runBlocking {
         val repo = InMemmoryRepository()
