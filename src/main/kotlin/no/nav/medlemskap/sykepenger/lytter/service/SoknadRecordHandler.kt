@@ -69,7 +69,8 @@ class SoknadRecordHandler(
         try {
             persistenceService.lagreLovmeResponse(soknadRecord.key!!, MedlemskapVurdertParser().parse(vurdering))
         } catch (t: Exception) {
-            soknadRecord.logTekniskFeil(t)
+           log.error("Teknisk feil ved lagring av LovmeRespons i databasen, - sykmeldingId: ${soknadRecord.key} . melding : ${t.message}",
+           kv("callId",soknadRecord.key))
         }
     }
 
@@ -93,7 +94,7 @@ class SoknadRecordHandler(
             kv("callId", sykepengeSoknad.id),
         )
         }
-        return sykepengeSoknad.arbeidUtenforNorge == false
+        return sykepengeSoknad.arbeidUtenforNorge == false || sykepengeSoknad.arbeidUtenforNorge ==null
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
