@@ -33,6 +33,26 @@ class PersistenceService(
         }
 
     }
+    fun lagreLovmeResponse(key:String,medlemskapVurdert:JsonNode) {
+        try {
+            medlemskapVurdertRepository.lagreVurdering(
+                VurderingDaoMapper().mapJsonNodeToVurderingDao(
+                    key,
+                    medlemskapVurdert
+                )
+            )
+            log.info(
+                "Vurdering lagret til database - sykmeldingId: $key",
+                StructuredArguments.kv("callId", key),
+            )
+        } catch (throwable: Throwable) {
+            log.error(
+                "Vurdering ble ikke lagret til database - sykmeldingId: $key , reason : ${throwable.cause}",
+                StructuredArguments.kv("callId", key),
+            )
+        }
+
+    }
 
     fun hentMedlemskap(fnr: String): List<Medlemskap> {
         return medlemskapVurdertRepository.finnVurdering(fnr)

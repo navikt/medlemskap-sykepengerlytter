@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagReques
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -52,16 +53,36 @@ class SoknadRecordHandler(
                 )
                 return
             } else {
-                try {
-                    callLovMe(soknadRecord.sykepengeSoknad)
-                    soknadRecord.logSendt()
-                } catch (t: Throwable) {
-                    soknadRecord.logTekniskFeil(t)
-                }
+               val  vurdering = getVurdering(soknadRecord)
+                lagreVurdering(soknadRecord, vurdering)
             }
         } else {
 
             soknadRecord.logIkkeSendt()
+        }
+    }
+
+    private fun lagreVurdering(
+        soknadRecord: SoknadRecord,
+        vurdering: String
+    ) {
+        try {
+            persistenceService.lagreLovmeResponse(soknadRecord.key!!, MedlemskapVurdertParser().parse(vurdering))
+        } catch (t: Exception) {
+            soknadRecord.logTekniskFeil(t)
+        }
+    }
+
+    private suspend fun getVurdering(
+        soknadRecord: SoknadRecord
+    ): String {
+        try {
+            val vurdering = callLovMe(soknadRecord.sykepengeSoknad)
+            soknadRecord.logSendt()
+            return vurdering
+        } catch (t: Throwable) {
+            soknadRecord.logTekniskFeil(t)
+            throw t
         }
     }
 
@@ -75,7 +96,7 @@ class SoknadRecordHandler(
         return sykepengeSoknad.arbeidUtenforNorge == false
     }
 
-    private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) {
+    private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
         var arbeidIUtland = false;
         if (sykepengeSoknad.arbeidUtenforNorge!=null){
             arbeidIUtland=sykepengeSoknad.arbeidUtenforNorge
@@ -86,7 +107,7 @@ class SoknadRecordHandler(
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
             brukerinput = Brukerinput(arbeidIUtland)
         )
-        medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
+        return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
     }
 
     fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {
