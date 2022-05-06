@@ -85,7 +85,7 @@ class SoknadRecordHandler(
             soknadRecord.logSendt()
             return vurdering
         } catch (t: Throwable) {
-            if (t.cause.toString().contains("GradertAdresseException")){
+            if (t.message.toString().contains("GradertAdresseException")){
                 log.info("Gradert adresse : key:  ${soknadRecord.key}, offset: ${soknadRecord.offset}")
                 return "GradertAdresseException"
             }
