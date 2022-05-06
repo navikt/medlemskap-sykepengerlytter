@@ -54,7 +54,10 @@ class SoknadRecordHandler(
                 return
             } else {
                val  vurdering = getVurdering(soknadRecord)
-                lagreVurdering(soknadRecord, vurdering)
+                if (!vurdering.equals("GradertAdresseException")){
+                    lagreVurdering(soknadRecord, vurdering)
+                }
+
             }
         } else {
 
@@ -82,6 +85,10 @@ class SoknadRecordHandler(
             soknadRecord.logSendt()
             return vurdering
         } catch (t: Throwable) {
+            if (t.cause.toString().contains("GradertAdresseException")){
+                log.info("Gradert adresse : key:  ${soknadRecord.key}, offset: ${soknadRecord.offset}")
+                return "GradertAdresseException"
+            }
             soknadRecord.logTekniskFeil(t)
             throw t
         }
