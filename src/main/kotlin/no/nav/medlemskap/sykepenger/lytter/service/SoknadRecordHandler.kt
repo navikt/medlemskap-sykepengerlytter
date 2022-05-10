@@ -109,6 +109,10 @@ class SoknadRecordHandler(
         if (sykepengeSoknad.arbeidUtenforNorge!=null){
             arbeidIUtland=sykepengeSoknad.arbeidUtenforNorge
         }
+        else{
+            log.info("Kall med null verdi i arbeidUtland videresendt til Lovme, id ${sykepengeSoknad.id}. påfølgende søknad? Hardkoder til ArbeidUtland TRUE.")
+            arbeidIUtland = true
+        }
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
