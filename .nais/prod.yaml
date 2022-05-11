@@ -66,4 +66,4 @@ spec:
     - name: KAFKA_ENABLED
       value: Nei
     - name: MEDLEMSKAPVURDERT_ENABLED
-      value: Nei
+      value: Ja
