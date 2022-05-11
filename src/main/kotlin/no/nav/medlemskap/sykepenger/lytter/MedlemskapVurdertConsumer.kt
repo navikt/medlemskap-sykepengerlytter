@@ -14,6 +14,9 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdert
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class MedlemskapVurdertConsumer(
     environment: Environment,
@@ -42,7 +45,10 @@ class MedlemskapVurdertConsumer(
                     it.value(),
                     it.key(),
                     it.topic(),
-                    MedlemskapVurdertParser().parse(it.value())
+                    MedlemskapVurdertParser().parse(it.value()) ,
+                    LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(it!!.timestamp()), ZoneId.systemDefault()),
+                    it.timestampType().name
                 )
             }
             .also {
