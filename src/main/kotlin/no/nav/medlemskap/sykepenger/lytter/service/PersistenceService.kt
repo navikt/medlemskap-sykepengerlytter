@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdertRecord
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class PersistenceService(
     private val medlemskapVurdertRepository: MedlemskapVurdertRepository
@@ -20,6 +21,13 @@ class PersistenceService(
     }
 
     fun handle(vurdertRecord: MedlemskapVurdertRecord) {
+        log.info { "behandler hendelse generert ${vurdertRecord.timestamp}, type ${vurdertRecord.timestampType}" }
+        if (
+            vurdertRecord.timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
+                vurdertRecord.timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0))){
+            log.info { "Aktuell periode for rekjøring. Skal kalle Lovme! : ${vurdertRecord.timestamp}" }
+        }
+    /*
         try {
             medlemskapVurdertRepository.lagreVurdering(
                 VurderingDaoMapper().mapJsonNodeToVurderingDao(
@@ -31,6 +39,8 @@ class PersistenceService(
         } catch (throwable: Throwable) {
             vurdertRecord.logLagringFeilet(throwable)
         }
+        */
+
 
     }
     fun lagreLovmeResponse(key:String,medlemskapVurdert:JsonNode) {
