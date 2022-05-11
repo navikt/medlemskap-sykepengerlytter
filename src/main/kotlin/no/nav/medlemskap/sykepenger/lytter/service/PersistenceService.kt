@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.VurderingDao
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
-import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdertRecord
+import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,12 +17,13 @@ class PersistenceService(
 
     }
 
-    fun handle(vurdertRecord: MedlemskapVurdertRecord) {
+    fun handle(replay: SoknadRecordReplay) {
         //log.info { "behandler hendelse generert ${vurdertRecord.timestamp}, type ${vurdertRecord.timestampType}" }
         if (
-            vurdertRecord.timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
-                vurdertRecord.timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0))){
-            log.info { "Aktuell periode for rekjøring. Skal kalle Lovme! : ${vurdertRecord.timestamp}" }
+            replay.timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
+            replay.timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0))){
+            log.info { "Aktuell periode for rekjøring. Skal kalle Lovme! : ${replay.timestamp}" }
+            //kall annne tjeneste
         }
     /*
         try {
