@@ -65,8 +65,6 @@ class MedlemskapVurdertConsumer(
                 } else {
                     emit(pollMessages())
                 }
-
-                delay(Duration.ofSeconds(1))
             }
         }.onEach {
             logger.debug { "received :" + it.size + "on topic " + config.topic }
