@@ -21,7 +21,7 @@ class PersistenceService(
     }
 
     fun handle(vurdertRecord: MedlemskapVurdertRecord) {
-        log.info { "behandler hendelse generert ${vurdertRecord.timestamp}, type ${vurdertRecord.timestampType}" }
+        //log.info { "behandler hendelse generert ${vurdertRecord.timestamp}, type ${vurdertRecord.timestampType}" }
         if (
             vurdertRecord.timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
                 vurdertRecord.timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0))){
