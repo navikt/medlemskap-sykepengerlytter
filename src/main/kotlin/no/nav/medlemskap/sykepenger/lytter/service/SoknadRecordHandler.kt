@@ -126,7 +126,7 @@ class SoknadRecordHandler(
                 return "GradertAdresseException"
             }
             soknadRecord.logTekniskFeil(t)
-            throw t
+            return "GradertAdresseException"
         }
     }
 
