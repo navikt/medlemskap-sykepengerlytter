@@ -126,7 +126,7 @@ class SoknadRecordHandler(
                 return "GradertAdresseException"
             }
             soknadRecord.logTekniskFeil(t)
-            return "GradertAdresseException"
+            throw t
         }
     }
 
@@ -146,9 +146,8 @@ class SoknadRecordHandler(
             arbeidIUtland=sykepengeSoknad.arbeidUtenforNorge
         }
         else{
-            log.info("Kall med null verdi i arbeidUtland videresendt til Lovme, id ${sykepengeSoknad.id}. påfølgende søknad? Hardkoder til ArbeidUtland false.")
-            arbeidIUtland = false
-            //TODO: Endre dette så snart replay er komplett
+            log.info("Kall med null verdi i arbeidUtland videresendt til Lovme, id ${sykepengeSoknad.id}. påfølgende søknad? Hardkoder til ArbeidUtland true.")
+            arbeidIUtland = true
         }
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
