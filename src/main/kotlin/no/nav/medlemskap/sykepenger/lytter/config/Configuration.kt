@@ -94,7 +94,7 @@ data class Configuration(
         val securityProtocol: String = "SSL",
         val trustStorePath: String = "KAFKA_TRUSTSTORE_PATH".configProperty(),
         val groupID: String = "medlemskap-sykepenger-listener_v2",
-        val medlemskapVurdertConsumerGroupID: String = "medlemskap-vurdert-listener",
+        val replayConsumerGroup: String = "medlemskap-sykepenger-listener-replay",
         val trustStorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
         val keystoreType: String = "PKCS12",
         val keystoreLocation: String = "KAFKA_KEYSTORE_PATH".configProperty(),
@@ -102,6 +102,6 @@ data class Configuration(
         val enabled: String = "KAFKA_ENABLED".configProperty(),
         val medlemskapvurdert_enabled: String = "MEDLEMSKAPVURDERT_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
-        val medlemskapVurdertTopic : String =  "medlemskap.medlemskap-vurdert"
+        val replayTopic : String =  "flex.sykepengesoknad-lovme-filter"
     )
 }
