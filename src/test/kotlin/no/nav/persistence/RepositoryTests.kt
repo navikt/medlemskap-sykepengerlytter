@@ -81,4 +81,8 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         assertNotNull(repo)
 
     }
+    @Test
+    fun shatest(){
+      println("01076529058".sha256())
+    }
 }

@@ -55,7 +55,7 @@ class SoknadRecordHandler(
                 return
             } else {
                val  vurdering = getVurdering(soknadRecord)
-                if (!vurdering.equals("GradertAdresseException")){
+                if (!vurdering.equals("GradertAdresseException") || !vurdering.equals("TekniskFeil")){
                     lagreVurdering(soknadRecord, vurdering)
                 }
 
@@ -126,7 +126,7 @@ class SoknadRecordHandler(
                 return "GradertAdresseException"
             }
             soknadRecord.logTekniskFeil(t)
-            throw t
+            return "TekniskFeil"
         }
     }
 
