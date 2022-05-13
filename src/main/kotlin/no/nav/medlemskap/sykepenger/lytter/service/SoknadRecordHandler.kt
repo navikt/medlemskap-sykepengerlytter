@@ -58,7 +58,6 @@ class SoknadRecordHandler(
                 if (!vurdering.equals("GradertAdresseException")){
                     lagreVurdering(soknadRecord, vurdering)
                 }
-
             }
         } else {
 
