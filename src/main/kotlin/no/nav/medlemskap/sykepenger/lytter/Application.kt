@@ -15,7 +15,7 @@ fun main() {
 
 class Application(private val env: Environment = System.getenv(),
                   private val consumer: Consumer = Consumer(env) ,
-                  private val medlemskapVurdertConsumer: MedlemskapVurdertConsumer = MedlemskapVurdertConsumer(env)
+                  private val brukerSpørsmaalConsumer: BrukerSpørsmaalConsumer = BrukerSpørsmaalConsumer(env)
 ) {
     companion object {
         val log: Logger = LoggerFactory.getLogger(Application::class.java)
@@ -32,7 +32,7 @@ class Application(private val env: Environment = System.getenv(),
         }
         @OptIn(DelicateCoroutinesApi::class)
         val consumeJob = consumer.flow().launchIn(GlobalScope)
-        val consumeJob2 = medlemskapVurdertConsumer.flow().launchIn(GlobalScope)
+        val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
 
         naisLiveness(consumeJob,consumeJob2).start(wait = true)
     }

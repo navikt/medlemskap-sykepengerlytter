@@ -64,42 +64,6 @@ class SoknadRecordHandler(
             soknadRecord.logIkkeSendt()
         }
     }
-    suspend fun replay(soknadRecord: SoknadRecord,timestamp:LocalDateTime) {
-        if (validerSoknad(soknadRecord.sykepengeSoknad)) {
-            if (
-                timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
-                timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0)))
-            {
-                log.info { "Aktuell periode for rekjøring. : $timestamp" }
-                val medlemRequest = mapToMedlemskap(soknadRecord.sykepengeSoknad)
-                val duplikat = isDuplikat(medlemRequest)
-                if (duplikat != null && arbeidUtenForNorgeFalse(soknadRecord.sykepengeSoknad)) {
-                    log.info(
-                        "soknad med id ${soknadRecord.sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${duplikat.fnr} ",
-                        kv("callId", soknadRecord.sykepengeSoknad.id)
-                    )
-                    return
-                } else if (isPaafolgendeSoknad(soknadRecord.sykepengeSoknad)) {
-                    log.info(
-                        "soknad med id ${soknadRecord.sykepengeSoknad.id} er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført} ",
-                        kv("callId", soknadRecord.sykepengeSoknad.id)
-                    )
-                    return
-                } else {
-                    val  vurdering = getVurdering(soknadRecord)
-                    if (!vurdering.equals("GradertAdresseException")){
-                        lagreVurdering(soknadRecord, vurdering)
-                    }
-
-                }
-            }
-
-        } else {
-
-            soknadRecord.logIkkeSendt()
-        }
-    }
-
     private fun lagreVurdering(
         soknadRecord: SoknadRecord,
         vurdering: String
