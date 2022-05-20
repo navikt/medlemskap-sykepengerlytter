@@ -102,6 +102,6 @@ data class Configuration(
         val enabled: String = "KAFKA_ENABLED".configProperty(),
         val medlemskapvurdert_enabled: String = "MEDLEMSKAPVURDERT_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
-        val flextopic : String =  "flex.sykepengesoknad-lovme-filter"
+        val flextopic : String =  "flex.sykepengesoknad"
     )
 }
