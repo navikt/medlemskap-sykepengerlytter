@@ -65,5 +65,5 @@ spec:
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
     - name: KAFKA_ENABLED
       value: Ja
-    - name: MEDLEMSKAPVURDERT_ENABLED
-      value: Nei
+    - name: BRUKERSPORSMAAL_ENABLED
+      value: JA

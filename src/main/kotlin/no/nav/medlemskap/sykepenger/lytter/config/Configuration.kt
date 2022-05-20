@@ -33,7 +33,7 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_KEYSTORE_PATH" to "c:\\dev\\secrets\\client.keystore.p12",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
-        "MEDLEMSKAPVURDERT_ENABLED" to "Ja"
+        "BRUKERSPORSMAAL_ENABLED" to "Ja"
     )
 )
 
@@ -100,7 +100,7 @@ data class Configuration(
         val keystoreLocation: String = "KAFKA_KEYSTORE_PATH".configProperty(),
         val keystorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
         val enabled: String = "KAFKA_ENABLED".configProperty(),
-        val medlemskapvurdert_enabled: String = "MEDLEMSKAPVURDERT_ENABLED".configProperty(),
+        val brukersporsmaal_enabled: String = "BRUKERSPORSMAAL_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
         val flextopic : String =  "flex.sykepengesoknad"
     )

@@ -62,7 +62,7 @@ class BrukerSporsmaalConsumer(
         flow {
             while (true) {
 
-                if (config.medlemskapvurdert_enabled != "Ja") {
+                if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
                     emit(emptyList<FlexMessageRecord>())
                 } else {

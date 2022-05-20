@@ -13,7 +13,7 @@ open class KafkaConfig(
     val topic = Configuration.KafkaConfig().topic
     val flexTopic = Configuration.KafkaConfig().flextopic
     val enabled = Configuration.KafkaConfig().enabled
-    val medlemskapvurdert_enabled = Configuration.KafkaConfig().medlemskapvurdert_enabled
+    val brukersporsmaal_enabled = Configuration.KafkaConfig().brukersporsmaal_enabled
 
 
     fun inst2Config() = mapOf(
