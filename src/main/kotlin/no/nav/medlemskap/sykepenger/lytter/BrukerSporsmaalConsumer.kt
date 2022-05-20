@@ -20,7 +20,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class BrukerSpørsmaalConsumer(
+class BrukerSporsmaalConsumer(
     environment: Environment,
     private val persistenceService: PersistenceService = PersistenceService(
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource()) ,
@@ -70,7 +70,7 @@ class BrukerSpørsmaalConsumer(
                 }
             }
         }.onEach { it ->
-            logger.debug { "Replay received :" + it.size + "on topic " + config.topic }
+            logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic }
             it.forEach {  record ->service.handle(record) }
         }.onEach {
             consumer.commitAsync()

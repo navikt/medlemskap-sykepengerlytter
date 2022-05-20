@@ -15,7 +15,7 @@ fun main() {
 
 class Application(private val env: Environment = System.getenv(),
                   private val consumer: Consumer = Consumer(env) ,
-                  private val brukerSpørsmaalConsumer: BrukerSpørsmaalConsumer = BrukerSpørsmaalConsumer(env)
+                  private val brukerSpørsmaalConsumer: BrukerSporsmaalConsumer = BrukerSporsmaalConsumer(env)
 ) {
     companion object {
         val log: Logger = LoggerFactory.getLogger(Application::class.java)

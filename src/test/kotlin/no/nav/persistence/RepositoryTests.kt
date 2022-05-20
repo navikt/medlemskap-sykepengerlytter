@@ -87,7 +87,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
-            ytelse = "SYKEPPENGER",
+            ytelse = "SYKEPENGER",
             status="SENDT",
             sporsmaal = FlexBrukerSporsmaal(false)
 

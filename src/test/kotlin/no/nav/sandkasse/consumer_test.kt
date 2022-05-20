@@ -82,6 +82,9 @@ fun handleMessage(it: ConsumerRecord<String, String>?) {
 
             }
         }
+        else{
+            println(json)
+        }
 
         println("$timestamp, $id , $fnr , $status , $type , $svar")
     }

@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
+import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
@@ -56,8 +57,9 @@ class PersistenceService(
                 ErMedlem.PAFOLGENDE.toString()
             )
         )
-
-
+    }
+    fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal){
+        brukersporsmaalRepository.lagreBrukersporsmaal(brukersporsmaal)
     }
 
     private fun MedlemskapVurdertRecord.logLagret() =
