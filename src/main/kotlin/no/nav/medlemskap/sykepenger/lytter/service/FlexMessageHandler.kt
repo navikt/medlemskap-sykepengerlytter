@@ -59,8 +59,8 @@ open class FlexMessageHandler (
         val status = JsonNode.get("status").asText()
         val type = JsonNode.get("type").asText()
         val id = JsonNode.get("id").asText()
-        val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText()
-        val sendtNav = JsonNode.get("sendtNav").asText()
+        val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
+        val sendtNav = JsonNode.get("sendtNav").asText(null)
         val sendtNavDato = parseDateString(sendtNav)
         val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
 

@@ -59,6 +59,21 @@ class FlexMessageHandlerTest {
         assertEquals("6743728c-815f-45dd-8b28-ff0bd1dbcf52",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertNull(brukersporsmaal.sporsmaal!!.arbeidUtland,"Arbeid utland skal være null! ")
     }
+    @Test
+    fun `test mapping av request med null i sendtArbeidsGiver`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageNULL_I_SENDT_ARB_GIVER.json").readText(Charsets.UTF_8)
+        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = FlexMessageHandler(Configuration(),PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val brukersporsmaal = service.mapMessage(record)
+        assertNotNull(brukersporsmaal)
+        assertNotNull(brukersporsmaal.sporsmaal)
+        assertEquals("28049120771",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
+        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(LocalDateTime.parse("2021-08-18T08:04:18.99198").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
+        assertEquals("6743728c-815f-45dd-8b28-ff0bd1dbcf52",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
+        assertNull(brukersporsmaal.sporsmaal!!.arbeidUtland,"Arbeid utland skal være null! ")
+    }
 
 
     @Test
