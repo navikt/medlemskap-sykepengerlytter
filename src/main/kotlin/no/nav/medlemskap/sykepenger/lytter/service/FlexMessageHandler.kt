@@ -52,45 +52,54 @@ open class FlexMessageHandler (
     }
 
     open fun mapMessage(flexMessageRecord: FlexMessageRecord): Brukersporsmaal {
-        val json = flexMessageRecord.value
-        val JsonNode = ObjectMapper().readTree(json)
-        val sporsmålArray = JsonNode.get("sporsmal")
-        val fnr = JsonNode.get("fnr").asText()
-        val status = JsonNode.get("status").asText()
-        val type = JsonNode.get("type").asText()
-        val id = JsonNode.get("id").asText()
-        val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
-        val sendtNav = JsonNode.get("sendtNav").asText(null)
-        val sendtNavDato = parseDateString(sendtNav)
-        val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
+        try {
+            val json = flexMessageRecord.value
+            val JsonNode = ObjectMapper().readTree(json)
+            val sporsmålArray = JsonNode.get("sporsmal")
+            val fnr = JsonNode.get("fnr").asText()
+            val status = JsonNode.get("status").asText()
+            val type = JsonNode.get("type").asText()
+            val id = JsonNode.get("id").asText()
+            val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
+            val sendtNav = JsonNode.get("sendtNav").asText(null)
+            val sendtNavDato = parseDateString(sendtNav)
+            val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
 
-        var svarText: String = "IKKE OPPGITT"
-        var svar: Boolean?
-        val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-        if (arbeidutland != null) {
-            //println(arbeidutland)
-            try {
-                svarText = arbeidutland.get("svar").get(0).get("verdi").asText()
-            } catch (t: Throwable) {
+            var svarText: String = "IKKE OPPGITT"
+            var svar: Boolean?
+            val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
+            if (arbeidutland != null) {
+                //println(arbeidutland)
+                try {
+                    svarText = arbeidutland.get("svar").get(0).get("verdi").asText()
+                } catch (t: Throwable) {
 
+                }
             }
-        }
-        if (svarText == "IKKE OPPGITT") {
-            svar = null
-        } else {
-            if (svarText =="NEI"){svar = false}
-            else if (svarText == "JA"){svar = true}
-             else svar = null
-        }
+            if (svarText == "IKKE OPPGITT") {
+                svar = null
+            } else {
+                if (svarText == "NEI") {
+                    svar = false
+                } else if (svarText == "JA") {
+                    svar = true
+                } else svar = null
+            }
 
-        return Brukersporsmaal(
-            fnr,
-            id,
-            DatePicker().findEarliest(sendArbeidsgiverDato,sendtNavDato),
-            "SYKEPENGER",
-            status,
-            FlexBrukerSporsmaal(svar)
-        )
+            return Brukersporsmaal(
+                fnr,
+                id,
+                DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                "SYKEPENGER",
+                status,
+                FlexBrukerSporsmaal(svar)
+            )
+        }
+        catch (t:Throwable){
+            log.error("not able to parse message ${t.message}, cause : ${t.cause}")
+            secureLogger.error("not able to parse message ${t.message}", kv("body",flexMessageRecord.value))
+            throw t
+        }
     }
 
 
