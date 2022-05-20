@@ -13,11 +13,13 @@ import no.nav.medlemskap.sykepenger.lytter.security.sha256
 interface BrukersporsmaalRepository {
     fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal>
     fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal)
+    fun finnBrukersporsmaalForSoknad(id: String) : Brukersporsmaal?
 }
 
 class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : BrukersporsmaalRepository {
     val INSERT_BRUKER_SPORSMAAL = "INSERT INTO brukersporsmaal(fnr,soknadid, eventDate,ytelse,status,sporsmaal) VALUES(?, ?, ?, ?, ?, to_json(?::json))"
     val FIND_BY_FNR = "select * from brukersporsmaal where fnr = ?"
+    val FIND_BY_ID = "select * from brukersporsmaal where soknadid = ?"
 
     override fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal> {
 
@@ -33,6 +35,17 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             session.transaction {
                 it.run(queryOf(INSERT_BRUKER_SPORSMAAL, brukersporsmaal.fnr.sha256(),brukersporsmaal.soknadid, brukersporsmaal.eventDate,brukersporsmaal.ytelse, brukersporsmaal.status,
                     brukersporsmaal.sporsmaal?.let { it1 -> JacksonParser().parse(it1) }).asExecute)
+            }
+
+        }
+    }
+
+    override fun finnBrukersporsmaalForSoknad(id: String): Brukersporsmaal? {
+            return using(sessionOf(dataSource)) {
+                it.run(queryOf(FIND_BY_ID, id)
+                    .map(toBrukersporsmaalDao)
+                    .asList
+                ).firstOrNull()
             }
 
         }
@@ -54,4 +67,3 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
 
         )
     }
-}

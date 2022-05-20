@@ -100,13 +100,62 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
     }
     @Test
-    fun `lagre brukersporsmaal UTEN flexBrukerSpørsmål`() {
+    fun `Hente brukersporsmaal basert paa ID`() {
         postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
         val soknadID = UUID.randomUUID().toString()
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
 
+        val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
+        repo.lagreBrukersporsmaal(Brukersporsmaal(
+            fnr="2222",
+            soknadid =soknadID,
+            eventDate = LocalDate.now(),
+            ytelse = "SYKEPENGER",
+            status="SENDT",
+            sporsmaal = FlexBrukerSporsmaal(false)
+
+        ))
+        val brukersporsmaal = repo.finnBrukersporsmaalForSoknad(soknadID)
+        assertNotNull(brukersporsmaal!!.sporsmaal)
+        assertEquals(false,brukersporsmaal.sporsmaal!!.arbeidUtland,"arbeid utland skal være satt til false")
+        assertEquals("2222".sha256(),brukersporsmaal.fnr,"fnr er ikke korrekt")
+
+    }
+    @Test
+    fun `Hente brukersporsmaal basert paa ID som ikke finnes`() {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val soknadID = UUID.randomUUID().toString()
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+
+        val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
+        repo.lagreBrukersporsmaal(Brukersporsmaal(
+            fnr="2222",
+            soknadid =soknadID,
+            eventDate = LocalDate.now(),
+            ytelse = "SYKEPENGER",
+            status="SENDT",
+            sporsmaal = FlexBrukerSporsmaal(false)
+
+        ))
+        val brukersporsmaal = repo.finnBrukersporsmaalForSoknad("1234")
+        assertNull(brukersporsmaal)
+
+
+    }
+    @Test
+    fun `lagre brukersporsmaal UTEN flexBrukerSpørsmål`() {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val soknadID = UUID.randomUUID().toString()
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         repo.lagreBrukersporsmaal(Brukersporsmaal(
             fnr="2222",

@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS brukersporsmaal
     sporsmaal jsonb
 
 );
-
+CREATE  INDEX IF NOT EXISTS brukersporsmaal_soknadid_idx ON brukersporsmaal (soknadid);
 CREATE  INDEX IF NOT EXISTS brukersporsmaal_fnr_idx ON brukersporsmaal (fnr);

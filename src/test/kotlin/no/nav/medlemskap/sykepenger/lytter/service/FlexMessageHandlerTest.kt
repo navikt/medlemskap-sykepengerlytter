@@ -59,6 +59,8 @@ class FlexMessageHandlerTest {
         assertEquals("6743728c-815f-45dd-8b28-ff0bd1dbcf52",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertNull(brukersporsmaal.sporsmaal!!.arbeidUtland,"Arbeid utland skal være null! ")
     }
+
+
     @Test
     fun `SENDT status skal lagres til database`() = runBlocking {
         val key = UUID.randomUUID().toString()
@@ -67,6 +69,18 @@ class FlexMessageHandlerTest {
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
         val service = FlexMessageHandler(Configuration(),persistenceService)
+        service.handle(record)
+        assertTrue(brukersporsmaalRepository.storage.size==1)
+    }
+    @Test
+    fun `duplikat melding skal ikke lagres to ganger`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
+        val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
+        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
+        val service = FlexMessageHandler(Configuration(),persistenceService)
+        service.handle(record)
         service.handle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }

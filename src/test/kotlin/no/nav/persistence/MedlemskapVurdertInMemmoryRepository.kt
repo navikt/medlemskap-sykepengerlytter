@@ -26,6 +26,9 @@ class BrukersporsmaalInMemmoryRepository: BrukersporsmaalRepository {
         storage.add(brukersporsmaal)
     }
 
+    override fun finnBrukersporsmaalForSoknad(id: String): Brukersporsmaal? {
+        return storage.filter { it.soknadid == id }.firstOrNull()
+    }
 
 
 }

@@ -42,6 +42,10 @@ class PersistenceService(
 
     }
 
+    fun hentbrukersporsmaalForSoknadID(soknadID:String):Brukersporsmaal?{
+        return brukersporsmaalRepository.finnBrukersporsmaalForSoknad(soknadID)
+    }
+
     fun hentMedlemskap(fnr: String): List<Medlemskap> {
         return medlemskapVurdertRepository.finnVurdering(fnr)
             .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
