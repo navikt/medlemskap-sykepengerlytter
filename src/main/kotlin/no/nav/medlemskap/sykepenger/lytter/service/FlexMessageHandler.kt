@@ -23,18 +23,18 @@ open class FlexMessageHandler (
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val brukersporsmaal: Brukersporsmaal = mapMessage(flexMessageRecord)
-        val existing = persistenceService.hentbrukersporsmaalForSoknadID(brukersporsmaal.soknadid)
-        if (existing != null){
-            log.info(
-                "Flex melding for søknad ${flexMessageRecord.key}, " +
-                        "offset : ${flexMessageRecord.offset}, " +
-                        "partition : ${flexMessageRecord.partition}," +
-                        "filtrert ut. duplikat melding: ${brukersporsmaal.soknadid}"
-            )
-            return
-        }
 
         if (brukersporsmaal.status == Soknadstatus.SENDT.toString()) {
+            val existing = persistenceService.hentbrukersporsmaalForSoknadID(brukersporsmaal.soknadid)
+            if (existing != null){
+                log.info(
+                    "Flex melding for søknad ${flexMessageRecord.key}, " +
+                            "offset : ${flexMessageRecord.offset}, " +
+                            "partition : ${flexMessageRecord.partition}," +
+                            "filtrert ut. duplikat melding: ${brukersporsmaal.soknadid}"
+                )
+                return
+            }
             persistenceService.lagreBrukersporsmaal(brukersporsmaal)
             log.info(
                 "Brukerspørsmål for søknad ${flexMessageRecord.key} lagret til databasen",
