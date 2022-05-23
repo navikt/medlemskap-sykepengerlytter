@@ -70,5 +70,5 @@ spec:
       value: 2719da58-489e-4185-9ee6-74b7e93763d2
     - name: KAFKA_ENABLED
       value: Ja
-    - name: MEDLEMSKAPVURDERT_ENABLED
+    - name: BRUKERSPORSMAAL_ENABLED
       value: Ja

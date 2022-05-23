@@ -3,44 +3,24 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
+import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PersistenceService(
-    private val medlemskapVurdertRepository: MedlemskapVurdertRepository
+    private val medlemskapVurdertRepository: MedlemskapVurdertRepository,
+    private val brukersporsmaalRepository: BrukersporsmaalRepository
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
 
     }
 
-    fun handle(replay: SoknadRecordReplay) {
-        //log.info { "behandler hendelse generert ${vurdertRecord.timestamp}, type ${vurdertRecord.timestampType}" }
-        if (
-            replay.timestamp.isAfter(LocalDateTime.of(2022,4,8,0,0)) &&
-            replay.timestamp.isBefore(LocalDateTime.of(2022,4,19,15,0))){
-            log.info { "Aktuell periode for rekjøring. Skal kalle Lovme! : ${replay.timestamp}" }
-            //kall annne tjeneste
-        }
-    /*
-        try {
-            medlemskapVurdertRepository.lagreVurdering(
-                VurderingDaoMapper().mapJsonNodeToVurderingDao(
-                    vurdertRecord.key!!,
-                    vurdertRecord.medlemskapVurdert
-                )
-            )
-            vurdertRecord.logLagret()
-        } catch (throwable: Throwable) {
-            vurdertRecord.logLagringFeilet(throwable)
-        }
-        */
-
-
-    }
     fun lagreLovmeResponse(key:String,medlemskapVurdert:JsonNode) {
         try {
             medlemskapVurdertRepository.lagreVurdering(
@@ -62,6 +42,10 @@ class PersistenceService(
 
     }
 
+    fun hentbrukersporsmaalForSoknadID(soknadID:String):Brukersporsmaal?{
+        return brukersporsmaalRepository.finnBrukersporsmaalForSoknad(soknadID)
+    }
+
     fun hentMedlemskap(fnr: String): List<Medlemskap> {
         return medlemskapVurdertRepository.finnVurdering(fnr)
             .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
@@ -77,8 +61,9 @@ class PersistenceService(
                 ErMedlem.PAFOLGENDE.toString()
             )
         )
-
-
+    }
+    fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal){
+        brukersporsmaalRepository.lagreBrukersporsmaal(brukersporsmaal)
     }
 
     private fun MedlemskapVurdertRecord.logLagret() =

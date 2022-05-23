@@ -5,7 +5,8 @@ import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.persistence.InMemmoryRepository
+import no.nav.persistence.BrukersporsmaalInMemmoryRepository
+import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -16,8 +17,9 @@ class SoknadRecordHandlerTest {
 
     @Test
     fun `test Duplikat på forespørsel`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"123",
             LocalDate.of(2022,1,1),
@@ -49,8 +51,9 @@ class SoknadRecordHandlerTest {
 
     @Test
     fun `test ikke Duplikat på forespørsel`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"123",
             LocalDate.of(2022,1,1),
@@ -84,8 +87,9 @@ class SoknadRecordHandlerTest {
 
     @Test
     fun `test påfølgende forespørsel`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -110,8 +114,9 @@ class SoknadRecordHandlerTest {
 
     @Test
     fun `test påfølgende forespørsel med mange db innslag`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -187,8 +192,9 @@ class SoknadRecordHandlerTest {
         }
     @Test
     fun `test påfølgende forespørsel med mange db innslag og arbeidUtland=true`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -264,8 +270,9 @@ class SoknadRecordHandlerTest {
 
     @Test
     fun `test påfølgende forespørsel via handle`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -288,8 +295,9 @@ class SoknadRecordHandlerTest {
     }
     @Test
     fun `test påfølgende forespørsel med utlandLik true`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -309,8 +317,9 @@ class SoknadRecordHandlerTest {
     }
     @Test
     fun `test duplikat forespørsel via handle`() = runBlocking {
-        val repo = InMemmoryRepository()
-        val persistenceService = PersistenceService(repo)
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",

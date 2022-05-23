@@ -11,6 +11,7 @@ import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandler
@@ -20,7 +21,8 @@ import java.time.Duration
 class Consumer(
     environment: Environment,
     private val persistenceService: PersistenceService = PersistenceService(
-        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource())
+        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource()) ,
+        PostgresBrukersporsmaalRepository(DataSourceBuilder(environment).getDataSource())
     ),
     private val config: KafkaConfig = KafkaConfig(environment),
     private val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService),
