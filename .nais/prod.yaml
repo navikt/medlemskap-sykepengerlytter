@@ -66,4 +66,4 @@ spec:
     - name: KAFKA_ENABLED
       value: Ja
     - name: BRUKERSPORSMAAL_ENABLED
-      value: JA
+      value: Ja
