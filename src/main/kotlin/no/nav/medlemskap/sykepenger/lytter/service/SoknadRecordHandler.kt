@@ -11,7 +11,8 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
-import java.time.LocalDateTime
+import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import java.time.LocalDate
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -104,22 +105,42 @@ class SoknadRecordHandler(
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
-        var arbeidIUtland = false;
-        if (sykepengeSoknad.arbeidUtenforNorge!=null){
-            arbeidIUtland=sykepengeSoknad.arbeidUtenforNorge
-        }
-        else{
-            log.info("Kall med null verdi i arbeidUtland videresendt til Lovme, id ${sykepengeSoknad.id}. påfølgende søknad? Hardkoder til ArbeidUtland false.")
-            arbeidIUtland = false
-            //TODO: Endre dette så snart replay er komplett
-        }
+        var arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
-            brukerinput = Brukerinput(arbeidIUtland)
+            brukerinput = Brukerinput(arbeidUtland)
         )
         return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
+    }
+
+     fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
+        // KRAV 1 : er true oppgitt i søknad, bruk denne verdien
+        if (sykepengeSoknad.arbeidUtenforNorge==true){
+            return true
+        }
+        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { it.eventDate.isAfter(LocalDate.now().minusYears(1)) }
+        val jasvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==true }
+        val neisvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==false }
+        val ikkeoppgittsvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==null }
+        //krav 2 : Er det svart JA på tidligere spørsmål, bruk denne verdien
+        if (jasvar.isNotEmpty()) {
+            log.info("arbeid utland ja oppgitt i tidligere søknader siste året (${jasvar.first().soknadid}) for fnr (kryptert) ${sykepengeSoknad.fnr.sha256()}. Setter arbeid utland lik true")
+            return true
+        }
+        //krav 3 : er det svart NEI på tidligere søknader så bruk denne verdien
+        if (neisvar.isNotEmpty()){
+            return false
+        }
+        if (sykepengeSoknad.arbeidUtenforNorge == null && ikkeoppgittsvar.isEmpty()){
+            log.info("arbeid utland er ikke oppgitt  i søknad ${sykepengeSoknad.id}, og heller aldri oppgitt i tidligere søknader siste året for fnr (kryptert) ${sykepengeSoknad.fnr.sha256()}. Setter arbeid utland lik true")
+            return true
+        }
+
+        else{
+            return false
+        }
     }
 
     fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {
