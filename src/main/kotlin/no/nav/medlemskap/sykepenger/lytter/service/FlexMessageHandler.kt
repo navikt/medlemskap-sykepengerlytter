@@ -126,10 +126,10 @@ open class DatePicker(){
             return LocalDate.now()
         }
         if (sendArbeidsgiverDato==null && sendtNavDato!=null){
-            return sendtNavDato!!
+            return sendtNavDato
         }
         if (sendtNavDato==null && sendArbeidsgiverDato !=null){
-            return sendArbeidsgiverDato!!
+            return sendArbeidsgiverDato
         }
         if (sendtNavDato!!.isBefore(sendArbeidsgiverDato)){
             return sendtNavDato
