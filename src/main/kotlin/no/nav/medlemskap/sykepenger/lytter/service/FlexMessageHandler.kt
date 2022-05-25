@@ -122,7 +122,6 @@ open class DatePicker(){
     }
     open fun findEarliest(sendArbeidsgiverDato: LocalDate?, sendtNavDato: LocalDate?): LocalDate {
         if (sendArbeidsgiverDato == null  && sendtNavDato == null){
-            log.warn("både sendtArbeidsgiver og sendtNav er null. Setter dagens dato ")
             return LocalDate.now()
         }
         if (sendArbeidsgiverDato==null && sendtNavDato!=null){
