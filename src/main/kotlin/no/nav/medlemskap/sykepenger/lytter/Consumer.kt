@@ -64,7 +64,7 @@ class Consumer(
                     emit(pollMessages())
                 }
 
-                delay(Duration.ofMinutes(1))
+                delay(Duration.ofSeconds(1))
             }
         }.onEach {
             logger.debug { "receiced :" + it.size + "on topic " + config.topic }
