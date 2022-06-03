@@ -120,17 +120,25 @@ class SoknadRecordHandler(
         if (sykepengeSoknad.arbeidUtenforNorge==true){
             return true
         }
+
+        if (sykepengeSoknad.arbeidUtenforNorge == null){
+            log.info("arbeid utland ikke oppgitt i søknad ${sykepengeSoknad.id}. Setter verdi fra historiske data",
+                kv("callId", sykepengeSoknad.id))
+        }
         val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { it.eventDate.isAfter(LocalDate.now().minusYears(1)) }
         val jasvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==true }
         val neisvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==false }
         val ikkeoppgittsvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==null }
         //krav 2 : Er det svart JA på tidligere spørsmål, bruk denne verdien
         if (jasvar.isNotEmpty()) {
-            log.info("arbeid utland ja oppgitt i tidligere søknader siste året (${jasvar.first().soknadid}) for fnr (kryptert) ${sykepengeSoknad.fnr.sha256()}. Setter arbeid utland lik true")
+            log.info("arbeid utland ja oppgitt i tidligere søknader siste året (${jasvar.first().soknadid}) for fnr (kryptert) ${sykepengeSoknad.fnr.sha256()}. Setter arbeid utland lik true",
+                kv("callId", sykepengeSoknad.id))
             return true
         }
         //krav 3 : er det svart NEI på tidligere søknader så bruk denne verdien
-        if (neisvar.isNotEmpty()){
+        if (sykepengeSoknad.arbeidUtenforNorge == null && neisvar.isNotEmpty()){
+            log.info("arbeid utland Nei oppgitt i tidligere søknader siste året (${neisvar.first().soknadid}) for fnr (kryptert) ${sykepengeSoknad.fnr.sha256()}. Setter arbeid utland lik false",
+                kv("callId", sykepengeSoknad.id))
             return false
         }
         if (sykepengeSoknad.arbeidUtenforNorge == null && ikkeoppgittsvar.isEmpty()){
