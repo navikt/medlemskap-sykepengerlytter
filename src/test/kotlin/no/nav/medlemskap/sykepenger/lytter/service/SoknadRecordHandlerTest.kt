@@ -306,7 +306,8 @@ class SoknadRecordHandlerTest {
             LocalDate.of(2022,3,23),
             LocalDateTime.now(), LocalDate.of(2022,3,23),
             LocalDate.of(2022,4,8),
-            true
+            true,
+            arbeidUtenforNorge = true
         )
         val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
         Assertions.assertFalse(paafolgende)
@@ -317,6 +318,8 @@ class SoknadRecordHandlerTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo,repo2)
+        repo.storage.clear()
+        repo2.storage.clear()
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",
@@ -342,6 +345,9 @@ class SoknadRecordHandlerTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo,repo2)
+        repo.storage.clear()
+        repo2.storage.clear()
+
 
         repo.lagreVurdering(VurderingDao(
             UUID.randomUUID().toString(),"01010112345",

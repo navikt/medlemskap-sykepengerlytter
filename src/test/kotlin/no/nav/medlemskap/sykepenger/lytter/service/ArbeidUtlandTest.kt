@@ -114,7 +114,8 @@ class ArbeidUtlandTest {
             LocalDate.of(2022,3,23),
             LocalDateTime.now(), LocalDate.of(2022,3,23),
             LocalDate.of(2022,4,8),
-            true
+            true,
+            arbeidUtenforNorge = true
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
         Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))

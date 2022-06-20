@@ -13,6 +13,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandler
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
