@@ -2,6 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.saga.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
@@ -385,5 +387,33 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("01010112345")
         Assertions.assertEquals(1,dbResult.size)
 
+    }
+    @Test
+    fun `test2 duplikat forespørsel via handle`() = runBlocking {
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
+        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+        service.medlOppslagClient = LovMeMock()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json").readText(Charsets.UTF_8)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
+        service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
+
+
+        val dbResult = repo.finnVurdering("19026500128")
+        Assertions.assertEquals(1,dbResult.size)
+
+    }
+
+}
+
+/*
+* merk at det ikke er likhet i fnr i flex request og simulert lovme response.
+* Eneste som sjekkes i dette scenario er at kall mot lovme(Mock sådan)  faktisk utføres'
+* */
+public class LovMeMock():LovmeAPI {
+    override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
+        return fileContent
     }
 }
