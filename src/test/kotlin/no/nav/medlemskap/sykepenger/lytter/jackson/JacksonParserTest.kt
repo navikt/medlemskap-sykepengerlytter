@@ -13,5 +13,12 @@ class JacksonParserTest {
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         assertNotNull(sykepengeSoknad)
     }
+    @Test
+    fun `parse Json String2`() {
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
+        assertNotNull(sykepengeSoknad)
+    }
+
 
 }

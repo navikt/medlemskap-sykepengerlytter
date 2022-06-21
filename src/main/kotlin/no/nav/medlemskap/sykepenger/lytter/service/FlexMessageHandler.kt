@@ -6,22 +6,43 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 open class FlexMessageHandler (
     private val configuration: Configuration,
-    private val persistenceService: PersistenceService
+    private val persistenceService: PersistenceService,
+    private val soknadRecordHandler: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
         private val secureLogger = KotlinLogging.logger { }
 
+
     }
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
+        handleBrukerSporsmaal(flexMessageRecord)
+        handleLovmeRequest(flexMessageRecord)
+
+    }
+
+     suspend fun handleLovmeRequest(flexMessageRecord: FlexMessageRecord) {
+        val requestObject = JacksonParser().parse(flexMessageRecord.value)
+        if (soknadSkalSendesTeamLovMe(requestObject)){
+            val soknadRecord =SoknadRecord(flexMessageRecord.partition,flexMessageRecord.offset,flexMessageRecord.value,flexMessageRecord.key,flexMessageRecord.topic,requestObject)
+            soknadRecordHandler.handle(soknadRecord)
+        }
+    }
+
+    fun soknadSkalSendesTeamLovMe(lovmeSoknadDTO: LovmeSoknadDTO) =
+        lovmeSoknadDTO.status == SoknadsstatusDTO.SENDT &&
+                lovmeSoknadDTO.type == SoknadstypeDTO.ARBEIDSTAKERE &&
+                lovmeSoknadDTO.sendtNav != null && false == lovmeSoknadDTO.ettersending
+
+    private fun handleBrukerSporsmaal(flexMessageRecord: FlexMessageRecord) {
         val brukersporsmaal: Brukersporsmaal = mapMessage(flexMessageRecord)
 
         if (brukersporsmaal.status == Soknadstatus.SENDT.toString()) {
