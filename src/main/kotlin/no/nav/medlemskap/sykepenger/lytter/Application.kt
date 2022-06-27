@@ -31,9 +31,9 @@ class Application(private val env: Environment = System.getenv(),
             log.warn("klarte ikke å kjøre migrerings skript. årsak : ${t.message}")
         }
         @OptIn(DelicateCoroutinesApi::class)
-        val consumeJob = consumer.flow().launchIn(GlobalScope)
+        //val consumeJob = consumer.flow().launchIn(GlobalScope)
         val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
 
-        naisLiveness(consumeJob,consumeJob2).start(wait = true)
+        naisLiveness(consumeJob2).start(wait = true)
     }
 }

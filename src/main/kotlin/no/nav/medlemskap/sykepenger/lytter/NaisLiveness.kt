@@ -14,7 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.Writer
 
-fun naisLiveness(consumeJob: Job,medlemskalConsumerJob:Job) = embeddedServer(Netty, applicationEngineEnvironment {
+fun naisLiveness(medlemskalConsumerJob:Job) = embeddedServer(Netty, applicationEngineEnvironment {
     connector { port = 8080 }
     module {
 
@@ -24,7 +24,7 @@ fun naisLiveness(consumeJob: Job,medlemskalConsumerJob:Job) = embeddedServer(Net
 
         routing {
             get("/isAlive") {
-                if (consumeJob.isActive && medlemskalConsumerJob.isActive) {
+                if (medlemskalConsumerJob.isActive) {
                     call.respondText("Alive!", ContentType.Text.Plain, HttpStatusCode.OK)
                 } else {
                     call.respondText("Not alive :(", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
