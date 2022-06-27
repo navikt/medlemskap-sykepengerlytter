@@ -27,6 +27,8 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
+  ingresses:
+    - https://medlemskap-vurdering-sykepenger.intern.nav.no
   replicas:
     min: 2
     max: 2
@@ -46,6 +48,11 @@ spec:
     pool: nav-prod
   protected: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: sparkel-medlemskap
+          namespace: tbd
+          cluster: prod-fss
     outbound:
       external:
         - host: api-gw.oera.no
@@ -63,6 +70,10 @@ spec:
       value: https://medlemskap-oppslag.intern.nav.no
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
+    - name: MEDL_SAGA_CLIENT_ID
+      value: 46a1a151-80bf-4e9a-9c06-3ed10c2bb2f2
+    - name: MEDL_SAGA_BASE_URL
+      value: https://medlemskap-vurdering.intern.nav.no
     - name: KAFKA_ENABLED
       value: Nei
     - name: BRUKERSPORSMAAL_ENABLED
