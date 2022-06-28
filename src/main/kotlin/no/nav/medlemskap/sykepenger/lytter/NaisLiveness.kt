@@ -12,9 +12,11 @@ import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import java.io.Writer
+import java.util.*
 
-fun naisLiveness(medlemskalConsumerJob:Job) = embeddedServer(Netty, applicationEngineEnvironment {
+fun naisLiveness(medlemskalConsumerJob:Job,bomloService: BomloService) = embeddedServer(Netty, applicationEngineEnvironment {
     connector { port = 8080 }
     module {
 
@@ -32,6 +34,9 @@ fun naisLiveness(medlemskalConsumerJob:Job) = embeddedServer(Netty, applicationE
             }
             get("/isReady") {
                 call.respondText("Ready!", ContentType.Text.Plain, HttpStatusCode.OK)
+            }
+            get("/status") {
+                call.respondText(bomloService.sagaClient.ping(UUID.randomUUID().toString()), ContentType.Text.Plain, HttpStatusCode.OK)
             }
             get("/metrics") {
                 call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {

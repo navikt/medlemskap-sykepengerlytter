@@ -113,4 +113,26 @@ class JacksonParser {
             throw t;
         }
     }
+    fun ToJson(obj: Any): JsonNode {
+        val mapper: ObjectMapper = ObjectMapper()
+            .registerKotlinModule()
+            .findAndRegisterModules()
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+        return  mapper.valueToTree(obj);
+
+    }
+    fun ToJson(string: String): JsonNode {
+        val mapper: ObjectMapper = ObjectMapper()
+            .registerKotlinModule()
+            .findAndRegisterModules()
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+        return  mapper.readTree(string);
+
+    }
 }

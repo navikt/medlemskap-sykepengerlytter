@@ -5,6 +5,9 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser

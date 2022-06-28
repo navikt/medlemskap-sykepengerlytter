@@ -23,4 +23,17 @@ class AzureAdClient(private val configuration: Configuration) {
             body = TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded)
         }
     }
+    suspend fun hentTokenScopetMotMedlemskapSaga(): Token {
+        val formUrlEncode = listOf(
+            "client_id" to configuration.azureAd.clientId,
+            "scope" to "api://${configuration.register.medlemskapSagaClientID}/.default",
+            "client_secret" to configuration.azureAd.clientSecret,
+            "grant_type" to "client_credentials"
+        ).formUrlEncode()
+
+        return apacheHttpClient.post {
+            url(configuration.azureAd.tokenEndpoint)
+            body = TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded)
+        }
+    }
 }

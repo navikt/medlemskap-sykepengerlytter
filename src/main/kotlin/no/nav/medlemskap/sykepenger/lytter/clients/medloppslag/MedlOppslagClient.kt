@@ -5,8 +5,8 @@ import io.github.resilience4j.retry.Retry
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.util.*
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 
 

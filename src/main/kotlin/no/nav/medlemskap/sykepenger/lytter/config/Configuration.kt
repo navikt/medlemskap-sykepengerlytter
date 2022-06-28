@@ -69,6 +69,8 @@ data class Configuration(
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
+        val medlemskapSagaBaseUrl: String = "MEDL_SAGA_BASE_URL".configProperty(),
+        val medlemskapSagaClientID: String = "MEDL_SAGA_CLIENT_ID".configProperty(),
     )
 
     data class Sts(
