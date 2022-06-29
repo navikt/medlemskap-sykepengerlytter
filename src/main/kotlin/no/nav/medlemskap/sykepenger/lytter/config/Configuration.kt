@@ -33,7 +33,10 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_KEYSTORE_PATH" to "c:\\dev\\secrets\\client.keystore.p12",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
-        "BRUKERSPORSMAAL_ENABLED" to "Ja"
+        "BRUKERSPORSMAAL_ENABLED" to "Ja",
+        "MEDL_SAGA_API_KEY" to "",
+        "MEDL_SAGA_BASE_URL" to "",
+        "MEDL_SAGA_CLIENT_ID" to "",
     )
 )
 

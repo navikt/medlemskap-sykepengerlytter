@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.saga.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser

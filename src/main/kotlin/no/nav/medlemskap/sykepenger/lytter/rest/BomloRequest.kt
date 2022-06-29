@@ -5,8 +5,8 @@ import java.time.LocalDate
 data class BomloRequest(
     val fnr: String,
     val førsteDagForYtelse: LocalDate?,
-    val periode: InputPeriode,
-    val ytelse: Ytelse?,
+    val periode: BomloInputPeriode,
+    val ytelse: BomloYtelse?,
 )
 
 data class BomloInputPeriode(
