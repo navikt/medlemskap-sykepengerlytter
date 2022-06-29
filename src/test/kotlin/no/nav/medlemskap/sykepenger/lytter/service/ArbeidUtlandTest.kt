@@ -27,7 +27,7 @@ class ArbeidUtlandTest {
 
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             "01010112345",
             null,
             LocalDate.of(2022,3,23),
@@ -54,7 +54,7 @@ class ArbeidUtlandTest {
         )
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             fnrInUseCase,
             null,
             LocalDate.of(2022,3,23),
@@ -81,7 +81,7 @@ class ArbeidUtlandTest {
         )
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             fnrInUseCase,
             null,
             LocalDate.of(2022,3,23),
@@ -108,7 +108,7 @@ class ArbeidUtlandTest {
         )
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             fnrInUseCase,
             null,
             LocalDate.of(2022,3,23),
@@ -152,7 +152,7 @@ class ArbeidUtlandTest {
         )
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             fnrInUseCase,
             null,
             LocalDate.of(2022,3,23),

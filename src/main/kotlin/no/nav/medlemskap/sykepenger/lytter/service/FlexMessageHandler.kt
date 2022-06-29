@@ -38,7 +38,7 @@ open class FlexMessageHandler (
     }
 
     fun soknadSkalSendesTeamLovMe(lovmeSoknadDTO: LovmeSoknadDTO) =
-        lovmeSoknadDTO.status == SoknadsstatusDTO.SENDT &&
+        lovmeSoknadDTO.status == SoknadsstatusDTO.SENDT.name &&
                 lovmeSoknadDTO.type == SoknadstypeDTO.ARBEIDSTAKERE &&
                 lovmeSoknadDTO.sendtNav != null && false == lovmeSoknadDTO.ettersending
 

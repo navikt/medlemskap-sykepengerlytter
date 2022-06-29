@@ -6,10 +6,10 @@ import java.time.LocalDateTime
 data class LovmeSoknadDTO(
     val id: String,
     val type: SoknadstypeDTO,
-    val status: SoknadsstatusDTO,
+    val status: String,
     val fnr: String,
     val korrigerer: String? = null,
-    val startSyketilfelle: LocalDate,
+    val startSyketilfelle: LocalDate?,
     val sendtNav: LocalDateTime?,
     val fom: LocalDate,
     val tom: LocalDate,
