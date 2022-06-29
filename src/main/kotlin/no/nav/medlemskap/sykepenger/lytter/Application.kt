@@ -5,6 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
+import no.nav.medlemskap.sykepenger.lytter.nais.createHttpServer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -34,6 +35,6 @@ class Application(private val env: Environment = System.getenv(),
         //val consumeJob = consumer.flow().launchIn(GlobalScope)
         val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
 
-        naisLiveness(consumeJob2).start(wait = true)
+        createHttpServer(consumeJob2).start(wait = true)
     }
 }
