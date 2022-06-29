@@ -26,7 +26,8 @@ class JacksonParser {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
             return LovmeSoknadDTO(
                 "",
-                SoknadstypeDTO.ARBEIDSTAKERE, SoknadsstatusDTO.SENDT,
+                SoknadstypeDTO.ARBEIDSTAKERE,
+                SoknadsstatusDTO.SENDT.name,
                 "", null,
                 LocalDate.now(),
                 LocalDateTime.now(),

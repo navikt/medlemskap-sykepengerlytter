@@ -180,7 +180,7 @@ class SoknadRecordHandlerTest {
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type=SoknadstypeDTO.ARBEIDSTAKERE,
-            status=SoknadsstatusDTO.SENDT,
+            status=SoknadsstatusDTO.SENDT.name,
             fnr = "01010112345",
             korrigerer = null,
             startSyketilfelle = LocalDate.of(2022,3,23),
@@ -222,7 +222,7 @@ class SoknadRecordHandlerTest {
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type=SoknadstypeDTO.ARBEIDSTAKERE,
-            status=SoknadsstatusDTO.SENDT,
+            status=SoknadsstatusDTO.SENDT.name,
             fnr = "01010112345",
             korrigerer = null,
             startSyketilfelle = LocalDate.of(2022,4,27),
@@ -302,7 +302,7 @@ class SoknadRecordHandlerTest {
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
             SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT,
+            SoknadsstatusDTO.SENDT.name,
             "01010112345",
             null,
             LocalDate.of(2022,3,23),
