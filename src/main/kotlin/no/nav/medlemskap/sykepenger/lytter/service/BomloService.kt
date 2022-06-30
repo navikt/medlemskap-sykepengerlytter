@@ -50,7 +50,7 @@ class BomloService(private val configuration: Configuration) {
     }
 
     private fun mapToMedlemskapRequest(bomloRequest: BomloRequest): MedlOppslagRequest {
-        return MedlOppslagRequest(bomloRequest.fnr,bomloRequest.førsteDagForYtelse.toString(), Periode(bomloRequest.periode.fom.toString(),bomloRequest.periode.toString()), Brukerinput(true))
+        return MedlOppslagRequest(bomloRequest.fnr,bomloRequest.førsteDagForYtelse.toString(), Periode(bomloRequest.periode.fom.toString(),bomloRequest.periode.tom.toString()), Brukerinput(true))
 
     }
 }
