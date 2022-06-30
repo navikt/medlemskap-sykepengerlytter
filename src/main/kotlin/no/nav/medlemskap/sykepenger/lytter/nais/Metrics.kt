@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter
+package no.nav.medlemskap.sykepenger.lytter.nais
 
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.Gauge

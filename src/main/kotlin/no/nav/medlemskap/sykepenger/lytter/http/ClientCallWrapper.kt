@@ -2,11 +2,14 @@ package no.nav.medlemskap.sykepenger.lytter.http
 
 import io.github.resilience4j.kotlin.retry.executeSuspendFunction
 import io.github.resilience4j.retry.Retry
+import io.ktor.client.features.*
 import io.micrometer.core.instrument.Timer
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.Metrics.clientCounter
-import no.nav.medlemskap.sykepenger.lytter.Metrics.clientTimer
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientCounter
+import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientTimer
+import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 
 private val logger = KotlinLogging.logger { }
 
@@ -21,7 +24,17 @@ suspend fun <T> runWithRetryAndMetrics(service: String, operation: String, retry
     } catch (jce: CancellationException) {
         logger.info("Kall mot $service:$operation kanselleres pga feil i kall mot annet baksystem", jce)
         throw jce
-    } catch (t: Throwable) {
+    }
+    catch (cause: ResponseException){
+        if (cause.response.status.value == 404) {
+            throw cause
+        }
+        else{
+            logger.warn("Feilet under kall mot $service:$operation : ${cause.message}", cause)
+            throw cause
+        }
+    }
+    catch (t: Throwable) {
         logger.warn("Feilet under kall mot $service:$operation : ${t.message}", t)
         throw t
     }

@@ -33,7 +33,11 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_KEYSTORE_PATH" to "c:\\dev\\secrets\\client.keystore.p12",
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
-        "BRUKERSPORSMAAL_ENABLED" to "Ja"
+        "BRUKERSPORSMAAL_ENABLED" to "Ja",
+        "AZURE_APP_TENANT_ID" to "",
+        "MEDL_SAGA_API_KEY" to "",
+        "MEDL_SAGA_BASE_URL" to "",
+        "MEDL_SAGA_CLIENT_ID" to "",
     )
 )
 
@@ -69,6 +73,8 @@ data class Configuration(
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
+        val medlemskapSagaBaseUrl: String = "MEDL_SAGA_BASE_URL".configProperty(),
+        val medlemskapSagaClientID: String = "MEDL_SAGA_CLIENT_ID".configProperty(),
     )
 
     data class Sts(
@@ -84,7 +90,9 @@ data class Configuration(
         val clientSecret: String = "AZURE_APP_CLIENT_SECRET".configProperty(),
         val jwtAudience: String = "AZURE_APP_CLIENT_ID".configProperty(),
         val tokenEndpoint: String = "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT".configProperty().removeSuffix("/"),
-        val azureAppWellKnownUrl: String = "AZURE_APP_WELL_KNOWN_URL".configProperty().removeSuffix("/")
+        val azureAppWellKnownUrl: String = "AZURE_APP_WELL_KNOWN_URL".configProperty().removeSuffix("/"),
+        val authorityEndpoint: String = "AZURE_AUTHORITY_ENDPOINT".configProperty().removeSuffix("/"),
+        val tenant: String = "AZURE_APP_TENANT_ID".configProperty()
     )
 
 

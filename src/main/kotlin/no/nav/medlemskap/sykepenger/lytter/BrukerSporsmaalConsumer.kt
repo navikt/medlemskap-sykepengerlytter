@@ -8,12 +8,12 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandler
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
