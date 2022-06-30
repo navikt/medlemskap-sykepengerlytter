@@ -5,8 +5,8 @@ import io.github.resilience4j.retry.Retry
 import io.micrometer.core.instrument.Timer
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.Metrics.clientCounter
-import no.nav.medlemskap.sykepenger.lytter.Metrics.clientTimer
+import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientCounter
+import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientTimer
 
 private val logger = KotlinLogging.logger { }
 
