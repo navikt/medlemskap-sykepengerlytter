@@ -9,12 +9,14 @@ import kotlinx.coroutines.Job
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.nais.writeMetrics004
 import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
+import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
 
 fun Routing.naisRoutes(
-    consumeJob: Job,
+    consumeJob: Job,bomloService: BomloService
 ) {
     get("/isAlive") {
         if (consumeJob.isActive) {
@@ -31,4 +33,18 @@ fun Routing.naisRoutes(
             writeMetrics004(this, Metrics.registry)
         }
     }
+    get("/status") {
+        var map:MutableMap<String,Boolean> = mutableMapOf()
+        try{
+            bomloService.sagaClient.ping(UUID.randomUUID().toString())
+            map["SAGA"] = true
+            call.respondText(Dependencies(map,null).toString(), ContentType.Text.Plain, HttpStatusCode.OK)
+        }
+        catch (t:Exception){
+            map["SAGA"] = false
+            call.respondText(Dependencies(map,t.message).toString(), ContentType.Text.Plain, HttpStatusCode.ExpectationFailed)
+        }
+
+    }
 }
+data class Dependencies(val hashMap: MutableMap<String,Boolean>, val message:String?)

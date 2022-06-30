@@ -25,12 +25,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
+import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import java.io.Writer
 import java.net.ProxySelector
 
-fun createHttpServer(consumeJob: Job) = embeddedServer(Netty, applicationEngineEnvironment {
+fun createHttpServer(consumeJob: Job,bomloService:BomloService) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication: Boolean = true
     val configuration: Configuration = Configuration()
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
@@ -62,7 +63,7 @@ fun createHttpServer(consumeJob: Job) = embeddedServer(Netty, applicationEngineE
         }
 
         routing {
-            naisRoutes(consumeJob)
+            naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes()
         }
     }

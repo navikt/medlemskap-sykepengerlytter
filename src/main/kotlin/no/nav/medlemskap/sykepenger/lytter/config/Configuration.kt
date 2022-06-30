@@ -34,7 +34,10 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
         "BRUKERSPORSMAAL_ENABLED" to "Ja",
-        "AZURE_APP_TENANT_ID" to ""
+        "AZURE_APP_TENANT_ID" to "",
+        "MEDL_SAGA_API_KEY" to "",
+        "MEDL_SAGA_BASE_URL" to "",
+        "MEDL_SAGA_CLIENT_ID" to "",
     )
 )
 
@@ -70,6 +73,8 @@ data class Configuration(
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
+        val medlemskapSagaBaseUrl: String = "MEDL_SAGA_BASE_URL".configProperty(),
+        val medlemskapSagaClientID: String = "MEDL_SAGA_CLIENT_ID".configProperty(),
     )
 
     data class Sts(
