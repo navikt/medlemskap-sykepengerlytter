@@ -416,4 +416,9 @@ public class LovMeMock():LovmeAPI {
         val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
         return fileContent
     }
+
+    override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        TODO("Not yet implemented")
+    }
+
 }
