@@ -20,6 +20,19 @@ class MedlOppslagClient(
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
             httpClient.post {
+                url("$baseUrl/kafka")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                header(HttpHeaders.Authorization, "Bearer ${token.token}")
+                header("Nav-Call-Id", callId)
+                header("X-Correlation-Id", callId)
+                body = medlOppslagRequest
+            }
+        }
+    }
+    override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
+        return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
+            httpClient.post {
                 url("$baseUrl/")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
@@ -33,4 +46,5 @@ class MedlOppslagClient(
 
 interface LovmeAPI{
     suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String
+    suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String
 }
