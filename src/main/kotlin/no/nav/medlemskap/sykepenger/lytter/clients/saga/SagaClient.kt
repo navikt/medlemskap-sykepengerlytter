@@ -19,7 +19,7 @@ class SagaClient(
     private val retry: Retry? = null
 ):SagaAPI {
 
-    override suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): JsonNode {
+    override suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "vurdering", retry) {
             httpClient.post {
@@ -49,6 +49,6 @@ class SagaClient(
 }
 
 interface SagaAPI{
-    suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): JsonNode
+    suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String
     suspend fun ping(callId: String): String
 }

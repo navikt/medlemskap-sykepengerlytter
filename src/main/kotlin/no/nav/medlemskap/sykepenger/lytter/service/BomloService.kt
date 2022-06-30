@@ -7,6 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 
@@ -34,7 +35,7 @@ class BomloService(private val configuration: Configuration) {
         try {
             val response = sagaClient.finnVurdering(bomloRequest,callId)
             log.info("Vurdering funnet i database for kall med id $callId")
-            return response
+            return objectMapper.readTree(response)
         }
         catch (cause: ResponseException){
             if (cause.response.status.value == 404) {
