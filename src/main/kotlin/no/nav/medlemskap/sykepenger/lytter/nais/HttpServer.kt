@@ -64,7 +64,7 @@ fun createHttpServer(consumeJob: Job,bomloService:BomloService) = embeddedServer
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes()
+            sykepengerLytterRoutes(bomloService)
         }
     }
 })

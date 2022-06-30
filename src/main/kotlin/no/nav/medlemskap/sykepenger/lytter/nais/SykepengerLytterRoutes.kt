@@ -11,11 +11,13 @@ import io.ktor.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
-fun Routing.sykepengerLytterRoutes() {
+fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
     route("/vurdering") {
         authenticate("azureAuth") {
             post("/vurdering") {
@@ -27,12 +29,17 @@ fun Routing.sykepengerLytterRoutes() {
                     "kall autentisert, url : /vurdering",
                     kv("callId", callId)
                 )
-
+                val request = call.receive<BomloRequest>()
                 try {
-                    val request = call.receive<MedlOppslagRequest>()
-                    call.respond(HttpStatusCode.OK, "Kall er OK ")
+                    val response = bomloService.finnVurdering(request,callId)
+                    call.respond(HttpStatusCode.OK, response)
                 } catch (t: Throwable) {
-                    call.respond(t.stackTrace)
+                    secureLogger.error("Unexpected error calling Lovmme",
+                    kv("callId", callId),
+                    kv("fnr",request.fnr),
+                    kv("cause",t.stackTrace)
+                    )
+                    call.respond(HttpStatusCode.InternalServerError,t.message!!)
                 }
             }
 

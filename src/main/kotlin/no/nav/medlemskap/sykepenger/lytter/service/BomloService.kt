@@ -33,6 +33,7 @@ class BomloService(private val configuration: Configuration) {
     suspend fun finnVurdering(bomloRequest: BomloRequest, callId:String):JsonNode{
         try {
             val response = sagaClient.finnVurdering(bomloRequest,callId)
+            log.info("Vurdering funnet i database for kall med id $callId")
             return response
         }
         catch (cause: ResponseException){
