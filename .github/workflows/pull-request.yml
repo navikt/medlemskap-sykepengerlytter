@@ -3,7 +3,7 @@ name: PR build
 on: [ pull_request ]
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/medlemskap-sykepengerlytter:${{ github.sha }}
+  IMAGE: ghcr.io/navikt/medlemskap-sykepengerlytter:${{ github.sha }}
 jobs:
   build:
     runs-on: ubuntu-latest
