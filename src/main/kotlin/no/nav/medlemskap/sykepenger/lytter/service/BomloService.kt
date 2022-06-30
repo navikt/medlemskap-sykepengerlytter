@@ -41,7 +41,7 @@ class BomloService(private val configuration: Configuration) {
             if (cause.response.status.value == 404) {
                 log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                 val lovmeRequest = mapToMedlemskapRequest(bomloRequest)
-                val resultat= lovmeClient.vurderMedlemskap(lovmeRequest,callId)
+                val resultat= lovmeClient.vurderMedlemskapBomlo(lovmeRequest,callId)
                 return JacksonParser().ToJson(resultat)
             }
             //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
