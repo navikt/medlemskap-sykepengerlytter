@@ -18,7 +18,6 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
 fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
-    route("/vurdering") {
         authenticate("azureAuth") {
             post("/vurdering") {
                 val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -44,5 +43,4 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             }
 
         }
-    }
 }
