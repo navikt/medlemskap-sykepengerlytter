@@ -30,7 +30,7 @@ open class FlexMessageHandler (
             handleLovmeRequest(flexMessageRecord)
         }
         else{
-            log.info("Meldign med id ${flexMessageRecord.key} filtrert ut. Ikke ønsket meldingstype : ${requestObject.type.name}")
+            log.info("Melding med id ${flexMessageRecord.key} filtrert ut. Ikke ønsket meldingstype : ${requestObject.type.name}")
         }
 
 
