@@ -25,7 +25,7 @@ open class FlexMessageHandler (
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
-        if  (soknadSkalSendesTeamLovMe(requestObject)){
+        if  (requestObject.type == SoknadstypeDTO.ARBEIDSTAKERE){
             handleBrukerSporsmaal(flexMessageRecord)
             handleLovmeRequest(flexMessageRecord)
         }
