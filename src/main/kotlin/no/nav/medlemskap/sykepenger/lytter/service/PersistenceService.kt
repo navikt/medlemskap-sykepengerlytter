@@ -59,8 +59,8 @@ class PersistenceService(
             VurderingDao(
                 soknadDTO.id,
                 soknadDTO.fnr,
-                soknadDTO.fom,
-                soknadDTO.tom,
+                soknadDTO.fom!!,
+                soknadDTO.tom!!,
                 ErMedlem.PAFOLGENDE.toString()
             )
         )

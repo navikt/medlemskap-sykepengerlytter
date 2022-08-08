@@ -11,8 +11,8 @@ data class LovmeSoknadDTO(
     val korrigerer: String? = null,
     val startSyketilfelle: LocalDate?,
     val sendtNav: LocalDateTime?,
-    val fom: LocalDate,
-    val tom: LocalDate,
+    val fom: LocalDate?,
+    val tom: LocalDate?,
     val ettersending:Boolean? = null,
     // Kun True eller False hvis bruker har svar JA eller NEI.
     val arbeidUtenforNorge: Boolean? = null)

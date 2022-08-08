@@ -24,8 +24,15 @@ open class FlexMessageHandler (
     }
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
-        handleBrukerSporsmaal(flexMessageRecord)
-        handleLovmeRequest(flexMessageRecord)
+        val requestObject = JacksonParser().parse(flexMessageRecord.value)
+        if  (soknadSkalSendesTeamLovMe(requestObject)){
+            handleBrukerSporsmaal(flexMessageRecord)
+            handleLovmeRequest(flexMessageRecord)
+        }
+        else{
+            log.info("Meldign med id ${flexMessageRecord.key} filtrert ut. Ikke ønsket meldingstype : ${requestObject.type.name}")
+        }
+
 
     }
 
