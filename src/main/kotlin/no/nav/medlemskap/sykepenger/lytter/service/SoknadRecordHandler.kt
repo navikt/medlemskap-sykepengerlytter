@@ -166,7 +166,7 @@ class SoknadRecordHandler(
     }
 
     private fun mapToMedlemskap(sykepengeSoknad: LovmeSoknadDTO): Medlemskap {
-        return Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom, sykepengeSoknad.tom, ErMedlem.UAVKLART)
+        return Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, ErMedlem.UAVKLART)
 
     }
 

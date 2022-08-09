@@ -110,4 +110,16 @@ class FlexMessageHandlerTest {
         service.handle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
+    @Test
+    fun `OPPHOLD_UTLAND skal ikke behadles`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageUTLAND.json").readText(Charsets.UTF_8)
+        val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
+        brukersporsmaalRepository.storage.clear()
+        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
+        val service = FlexMessageHandler(Configuration(),persistenceService)
+        service.handle(record)
+        assertTrue(brukersporsmaalRepository.storage.size==0)
+    }
 }
