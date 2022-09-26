@@ -47,7 +47,7 @@ open class FlexMessageHandler (
     fun soknadSkalSendesTeamLovMe(lovmeSoknadDTO: LovmeSoknadDTO) =
         lovmeSoknadDTO.status == SoknadsstatusDTO.SENDT.name &&
                 lovmeSoknadDTO.type == SoknadstypeDTO.ARBEIDSTAKERE &&
-                lovmeSoknadDTO.sendtNav != null && false == lovmeSoknadDTO.ettersending
+                false == lovmeSoknadDTO.ettersending
 
     private fun handleBrukerSporsmaal(flexMessageRecord: FlexMessageRecord) {
         val brukersporsmaal: Brukersporsmaal = mapMessage(flexMessageRecord)
