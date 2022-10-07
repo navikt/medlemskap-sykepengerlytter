@@ -1,18 +1,27 @@
 @startuml
 'https://plantuml.com/use-case-diagram
+
 !include <logos/kafka>
+
 queue "<$kafka>" as kafka
+database "syk_vurdering\nbrukersporsmaal" as medlemskap
+
 component medlemskap_sykepenge_lytter
 component medlemskap_oppslag
 actor flex
+actor team_bomlo
 interface "/" as rest2
 interface "/kafka" as rest
-
+interface "/vurderinger" as vurderinger
 rest-down-medlemskap_oppslag
 rest2-down-medlemskap_oppslag
+vurderinger-right-medlemskap_sykepenge_lytter
 flex -> kafka
 kafka --> medlemskap_sykepenge_lytter
 medlemskap_sykepenge_lytter -->rest :Bearer token
+medlemskap_sykepenge_lytter -->medlemskap :SQL
+
+team_bomlo -->vurderinger :Bearer token
 
 note right of kafka
 Flex published messages to kafka topic
