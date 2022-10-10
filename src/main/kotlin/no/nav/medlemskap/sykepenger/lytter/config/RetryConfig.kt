@@ -6,8 +6,8 @@ import java.time.Duration
 
 val retryConfig: RetryConfig = RetryConfig
     .custom<RetryConfig>()
-    .maxAttempts(2)
-    .waitDuration(Duration.ofSeconds(1))
+    .maxAttempts(3)
+    .waitDuration(Duration.ofSeconds(3))
     .retryExceptions(RuntimeException::class.java)
     .build()
 
