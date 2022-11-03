@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.nais
 
-import io.ktor.application.call
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
-import io.ktor.features.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.respond
-import io.ktor.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest

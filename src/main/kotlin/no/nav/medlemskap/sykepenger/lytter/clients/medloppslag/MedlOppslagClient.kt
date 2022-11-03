@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
 
 import io.github.resilience4j.retry.Retry
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -25,8 +26,8 @@ class MedlOppslagClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-                body = medlOppslagRequest
-            }
+                setBody(medlOppslagRequest)
+            }.body()
         }
     }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
@@ -38,8 +39,8 @@ class MedlOppslagClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-                body = medlOppslagRequest
-            }
+                setBody(medlOppslagRequest)
+            }.body()
         }
     }
 }

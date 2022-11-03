@@ -2,9 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.config
 
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
-import io.ktor.auth.Principal
-import io.ktor.auth.jwt.JWTCredential
-import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import mu.KotlinLogging
 import java.net.URL
 import java.util.concurrent.TimeUnit

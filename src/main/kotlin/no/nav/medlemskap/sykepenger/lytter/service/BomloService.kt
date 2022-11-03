@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.Brukersporsmaal

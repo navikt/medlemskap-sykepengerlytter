@@ -2,10 +2,11 @@ package no.nav.medlemskap.sykepenger.lytter.config
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.ktor.client.call.*
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.nais.apacheHttpClient
+import no.nav.medlemskap.sykepenger.lytter.http.apacheHttpClient
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class AzureAdOpenIdConfiguration(
@@ -22,5 +23,6 @@ data class AzureAdOpenIdConfiguration(
 private val logger = KotlinLogging.logger { }
 
 fun getAadConfig(azureAdConfig: Configuration.AzureAd): AzureAdOpenIdConfiguration = runBlocking {
-    apacheHttpClient.get<AzureAdOpenIdConfiguration>("${azureAdConfig.authorityEndpoint}/${azureAdConfig.tenant}/v2.0/.well-known/openid-configuration").also { logger.info { it } }
+    apacheHttpClient.get("${azureAdConfig.authorityEndpoint}/${azureAdConfig.tenant}/v2.0/.well-known/openid-configuration")
+        .body<AzureAdOpenIdConfiguration>().also { logger.info { it } }
 }

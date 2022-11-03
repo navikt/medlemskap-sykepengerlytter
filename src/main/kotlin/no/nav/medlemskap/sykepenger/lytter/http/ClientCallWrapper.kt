@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.http
 
 import io.github.resilience4j.kotlin.retry.executeSuspendFunction
 import io.github.resilience4j.retry.Retry
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.micrometer.core.instrument.Timer
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
