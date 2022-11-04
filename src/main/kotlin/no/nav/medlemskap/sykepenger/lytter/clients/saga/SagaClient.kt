@@ -4,6 +4,7 @@ package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.resilience4j.retry.Retry
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -28,8 +29,8 @@ class SagaClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-                body = JacksonParser().ToJson(bomloRequest)
-            }
+                setBody(JacksonParser().ToJson(bomloRequest))
+            }.body()
         }
 
     }
@@ -42,7 +43,7 @@ class SagaClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-            }
+            }.body()
         }
 
     }

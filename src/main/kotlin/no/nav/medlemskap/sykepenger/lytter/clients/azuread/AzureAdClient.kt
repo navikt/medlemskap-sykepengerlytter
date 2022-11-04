@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.clients.azuread
 
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.content.*
 import io.ktor.http.*
@@ -20,8 +21,8 @@ class AzureAdClient(private val configuration: Configuration) {
 
         return apacheHttpClient.post {
             url(configuration.azureAd.tokenEndpoint)
-            body = TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded)
-        }
+            setBody(TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded))
+        }.body()
     }
     suspend fun hentTokenScopetMotMedlemskapSaga(): Token {
         val formUrlEncode = listOf(
@@ -33,7 +34,7 @@ class AzureAdClient(private val configuration: Configuration) {
 
         return apacheHttpClient.post {
             url(configuration.azureAd.tokenEndpoint)
-            body = TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded)
-        }
+            setBody(TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded))
+        }.body()
     }
 }

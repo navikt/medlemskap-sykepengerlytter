@@ -1,9 +1,9 @@
 package no.nav.medlemskap.sykepenger.lytter.nais
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Job
 import mu.KotlinLogging
