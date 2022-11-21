@@ -1,5 +1,6 @@
-val ktorVersion = "2.1.2"
-val jacksonVersion = "2.10.5"
+val ktorVersion = "2.1.3"
+val kafkaVersion = "3.3.1"
+val jacksonVersion = "2.14.0"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
 val resilience4jVersion = "1.5.0"
@@ -63,7 +64,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.1.2")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
-    implementation("org.apache.kafka:kafka-clients:2.5.0")
+    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
     implementation("org.apache.avro:avro:1.10.2")
     implementation("io.confluent:kafka-avro-serializer:5.2.2")
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
