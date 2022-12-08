@@ -15,7 +15,6 @@ val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 plugins {
     kotlin("jvm") version "1.7.10"
     application
-    id("com.github.davidmc24.gradle.plugin.avro") version "1.2.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
@@ -65,8 +64,6 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.1.2")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    implementation("org.apache.avro:avro:1.10.2")
-    implementation("io.confluent:kafka-avro-serializer:5.2.2")
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.mockk:mockk:1.11.0")
@@ -75,7 +72,7 @@ dependencies {
     testImplementation ("org.testcontainers:postgresql:1.16.0")
     testImplementation ("org.testcontainers:junit-jupiter:1.16.0")
     //Database
-    implementation("org.postgresql:postgresql:42.2.5")
+    implementation("org.postgresql:postgresql:42.5.1")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
