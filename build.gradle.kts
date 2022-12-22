@@ -68,7 +68,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("org.testcontainers:kafka:1.16.0")
+    testImplementation("org.testcontainers:kafka:1.16.1")
     testImplementation ("org.testcontainers:postgresql:1.16.0")
     testImplementation ("org.testcontainers:junit-jupiter:1.16.0")
     //Database
