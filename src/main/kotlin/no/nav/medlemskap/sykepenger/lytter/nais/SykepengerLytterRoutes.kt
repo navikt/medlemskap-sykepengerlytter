@@ -11,8 +11,8 @@ import io.ktor.server.routing.*
 import io.ktor.http.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapResultat
+import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import java.util.*
@@ -33,7 +33,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             val request = call.receive<BomloRequest>()
             try {
                 val response = bomloService.finnVurdering(request, callId)
-                val medlemskapsloggObjekt = response.hentMedlemskapsResultat()
+                val medlemskapsloggObjekt = response.lagMedlemskapsResultat()
 
                 secureLogger.info(
                     "{} konklusjon gitt for bruker {}", medlemskapsloggObjekt.svar, medlemskapsloggObjekt.fnr,
@@ -57,16 +57,3 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
 
     }
 }
-
-fun JsonNode.hentMedlemskapsResultat(): Medlemskapslogg {
-    val årsaker = this.get("resultat").get("årsaker")
-
-    return Medlemskapslogg(
-        fnr = this.get("datagrunnlag").get("fnr").asText(),
-        svar = this.get("resultat").get("svar").asText(),
-        årsak = årsaker.firstOrNull()?.get("regelId"),
-        årsaker = årsaker.map { it.get("regelId") }
-    )
-}
-
-data class Medlemskapslogg(val fnr: String, val svar: String, val årsak: JsonNode?, val årsaker: List<JsonNode>)
