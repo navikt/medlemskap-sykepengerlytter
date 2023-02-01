@@ -29,15 +29,14 @@ class JacksonParserTest {
 
     @Test
     fun `MedlemskapResultat mappes riktig`() {
-        val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart.json").readText(Charsets.UTF_8)
         val vurdering = JacksonParser().ToJson(fileContent)
         val resultat = vurdering.lagMedlemskapsResultat()
 
-        assertEquals(resultat.fnr, "19026500128")
-        assertEquals(resultat.svar, "JA")
-        assertNull(resultat.årsak)
-        assertNull(resultat.årsaker.firstOrNull())
-
+        assertEquals("15076500565", resultat.fnr )
+        assertEquals("UAVKLART", resultat.svar)
+        assertEquals("REGEL_25", resultat.årsak)
+        assertEquals("[\"REGEL_25\", \"REGEL_1_4\"]", resultat.årsaker.toString())
     }
 
 
