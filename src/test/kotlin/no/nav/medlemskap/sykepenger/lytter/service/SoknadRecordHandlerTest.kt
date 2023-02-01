@@ -400,7 +400,7 @@ class SoknadRecordHandlerTest {
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
 
 
-        val dbResult = repo.finnVurdering("19026500128")
+        val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1,dbResult.size)
 
     }

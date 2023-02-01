@@ -18,7 +18,7 @@ class PersistenceServiceMappingTest {
         Assertions.assertNotNull(JsonNode)
         val dao = VurderingDaoMapper().mapJsonNodeToVurderingDao(soknad_id,JsonNode)
         Assertions.assertEquals(soknad_id,dao.id)
-        Assertions.assertEquals("19026500128",dao.fnr)
+        Assertions.assertEquals("12345678901",dao.fnr)
         Assertions.assertEquals(LocalDate.of(2019,3,22),dao.fom)
         Assertions.assertEquals(LocalDate.of(2019,4,8),dao.tom)
         Assertions.assertEquals("JA",dao.status)
