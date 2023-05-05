@@ -56,6 +56,7 @@ spec:
           cluster: dev-fss
     outbound:
       rules:
+        - application: medlemskap-saga
         - application: medlemskap-oppslag
       external:
         - host: api-gw-q1.oera.no
@@ -72,13 +73,13 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: https://api-gw-q1.oera.no/security-token-service
     - name: MEDL_OPPSLAG_BASE_URL
-      value: https://medlemskap-oppslag.dev.intern.nav.no
+      value: http://medlemskap-oppslag.medlemskap.svc.cluster.local
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 2719da58-489e-4185-9ee6-74b7e93763d2
     - name: MEDL_SAGA_CLIENT_ID
       value: 39f402c0-7373-49e3-9e64-9669181f78d4
     - name: MEDL_SAGA_BASE_URL
-      value: https://medlemskap-vurdering.dev.intern.nav.no
+      value: http://medlemskap-saga.medlemskap.svc.cluster.local
     - name: KAFKA_ENABLED
       value: Nei
     - name: BRUKERSPORSMAAL_ENABLED
