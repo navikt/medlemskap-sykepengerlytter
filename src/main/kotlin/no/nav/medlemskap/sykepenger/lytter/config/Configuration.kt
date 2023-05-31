@@ -34,7 +34,7 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
         "BRUKERSPORSMAAL_ENABLED" to "Ja",
-        "AZURE_APP_TENANT_ID" to "",
+        "AZURE_APP_TENANT_ID" to "966ac572-f5b7-4bbe-aa88-c76419c0f851",
         "MEDL_SAGA_API_KEY" to "",
         "MEDL_SAGA_BASE_URL" to "",
         "MEDL_SAGA_CLIENT_ID" to "",
