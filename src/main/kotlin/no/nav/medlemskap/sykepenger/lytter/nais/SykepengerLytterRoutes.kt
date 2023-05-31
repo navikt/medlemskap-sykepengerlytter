@@ -51,7 +51,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 call.respond(HttpStatusCode.OK, response)
             } catch (t: Throwable) {
                 secureLogger.error(
-                    "Unexpected error calling Lovmme",
+                    "Unexpected error calling Lovme",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace)
@@ -74,7 +74,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             //kalle lovme
             //tolke svar
             //svare med flex spesifikt respons
-            secureLogger.info ("Mocking data respons for request : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ")
+            secureLogger.info ("Mocking data respons for request : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
+                kv("callId", callId)
+            )
             val respons =FlexRespons(Svar.UAVKLART, Spørsmål.values().toSet())
             call.respond(HttpStatusCode.OK,respons)
         }
