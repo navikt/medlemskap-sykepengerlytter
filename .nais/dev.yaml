@@ -54,6 +54,8 @@ spec:
         - application: sparkel-medlemskap
           namespace: tbd
           cluster: dev-fss
+        - application: sykepengesoknad-backend
+          namespace: flex
     outbound:
       rules:
         - application: medlemskap-saga
