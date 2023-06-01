@@ -74,25 +74,31 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             )
            val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
 
-            secureLogger.info ("Mocking data respons for request : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
+            secureLogger.info ("Calling Lovme  : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
                 kv("callId", callId)
             )
-            val lovmeRequest = MedlOppslagRequest(
-                fnr=requiredVariables["fnr"]!!,
-                førsteDagForYtelse = requiredVariables["fom"]!!,
-                periode = Periode(
-                    fom=requiredVariables["fom"]!!,
-                    tom = requiredVariables["tom"]!!),
-                brukerinput = Brukerinput(false))
-            val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
-            if (lovmeresponse=="GradertAdresse"){
-                call.respond(HttpStatusCode.BadRequest,"bruker har gradert adresse")
+            try {
+                val lovmeRequest = MedlOppslagRequest(
+                    fnr=requiredVariables["fnr"]!!,
+                    førsteDagForYtelse = requiredVariables["fom"]!!,
+                    periode = Periode(
+                        fom=requiredVariables["fom"]!!,
+                        tom = requiredVariables["tom"]!!),
+                    brukerinput = Brukerinput(false))
+                val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
+                if (lovmeresponse=="GradertAdresse"){
+                    call.respond(HttpStatusCode.BadRequest,"bruker har gradert adresse")
+                }
+                else{
+                    val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                    call.respond(HttpStatusCode.OK,flexRespons)
+                }
+                call.respond(HttpStatusCode.Conflict,"ukjent tilstand i tjeneste. Kontakt utvikler!")
             }
-            else{
-               val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
-                call.respond(HttpStatusCode.OK,flexRespons)
+            catch (t:Throwable){
+                call.respond(HttpStatusCode.InternalServerError,t)
             }
-            call.respond(HttpStatusCode.Conflict,"ukjent tilstand i tjeneste. Kontakt utvikler!")
+
         }
     }
 
