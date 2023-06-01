@@ -30,6 +30,19 @@ class MedlOppslagClient(
             }.body()
         }
     }
+    override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
+        return runWithRetryAndMetrics("MEDL-OPPSLAG", "brukerspørsmål", retry) {
+            httpClient.post {
+                url("$baseUrl/brukerspørsmål")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                header(HttpHeaders.Authorization, "Bearer ${token.token}")
+                header("Nav-Call-Id", callId)
+                header("X-Correlation-Id", callId)
+                setBody(medlOppslagRequest)
+            }.body()
+        }
+    }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
@@ -48,4 +61,5 @@ class MedlOppslagClient(
 interface LovmeAPI{
     suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String
     suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String
+    suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String
 }

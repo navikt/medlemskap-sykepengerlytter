@@ -62,6 +62,22 @@ class BomloService(private val configuration: Configuration) {
             throw cause
         }
     }
+
+    suspend fun kallLovme(request:MedlOppslagRequest,callId:String):String{
+            runCatching { lovmeClient.brukerspørsmål(request,callId) }
+                .onFailure {
+                    if (it.message?.contains("GradertAdresseException") == true){
+                        return "GradertAdresse"
+                    }
+                    else
+                    {
+                    throw Exception("Teknisk feil ved kall mot Lovme. Årsak : ${it.message}")
+                    }
+                }
+                .onSuccess { return it }
+        return "" //umulig å komme hit?
+
+    }
     fun getArbeidUtlandFromBrukerSporsmaal(bomloRequest: BomloRequest,callId: String): Boolean {
 
         val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr).filter { it.eventDate.isAfter(

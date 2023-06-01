@@ -11,12 +11,16 @@ import io.ktor.http.*
 import io.ktor.server.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import java.lang.NullPointerException
 import java.util.*
 
@@ -69,16 +73,26 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 kv("callId", callId)
             )
            val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
-            //kjøre ett kall mot lovme!
-             //må mappe til reauest objekt
-            //kalle lovme
-            //tolke svar
-            //svare med flex spesifikt respons
+
             secureLogger.info ("Mocking data respons for request : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
                 kv("callId", callId)
             )
-            val respons =FlexRespons(Svar.UAVKLART, Spørsmål.values().toSet())
-            call.respond(HttpStatusCode.OK,respons)
+            val lovmeRequest = MedlOppslagRequest(
+                fnr=requiredVariables["fnr"]!!,
+                førsteDagForYtelse = requiredVariables["fom"]!!,
+                periode = Periode(
+                    fom=requiredVariables["fom"]!!,
+                    tom = requiredVariables["tom"]!!),
+                brukerinput = Brukerinput(false))
+            val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
+            if (lovmeresponse=="GradertAdresse"){
+                call.respond(HttpStatusCode.BadRequest,"bruker har gradert adresse")
+            }
+            else{
+               val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                call.respond(HttpStatusCode.OK,flexRespons)
+            }
+            call.respond(HttpStatusCode.Conflict,"ukjent tilstand i tjeneste. Kontakt utvikler!")
         }
     }
 

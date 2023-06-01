@@ -421,4 +421,8 @@ public class LovMeMock():LovmeAPI {
         TODO("Not yet implemented")
     }
 
+    override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        TODO("Not yet implemented")
+    }
+
 }
