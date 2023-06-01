@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.rest
 
 data class FlexRespons(
   val svar:Svar,
-  val spørsmål:Set<Spørsmål>
+  val sporsmal:Set<Spørsmål>
 )
 
 enum class Spørsmål{

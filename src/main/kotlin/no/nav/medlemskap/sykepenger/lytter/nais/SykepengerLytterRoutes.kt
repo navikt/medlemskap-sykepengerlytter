@@ -63,7 +63,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
         }
-        get("/brukerspørsmål") {
+        get("/brukersporsmal") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
             secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
