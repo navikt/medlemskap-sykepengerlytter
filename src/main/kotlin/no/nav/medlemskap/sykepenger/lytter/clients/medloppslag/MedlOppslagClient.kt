@@ -34,7 +34,7 @@ class MedlOppslagClient(
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "brukerspørsmål", retry) {
             httpClient.post {
-                url("$baseUrl/brukerspørsmål")
+                url("$baseUrl/brukersporsmaal")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
