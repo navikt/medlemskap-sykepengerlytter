@@ -6,6 +6,11 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.time.withTimeout
+import kotlinx.coroutines.withTimeout
+import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 
@@ -16,6 +21,7 @@ class MedlOppslagClient(
     private val httpClient: HttpClient,
     private val retry: Retry? = null
 ):LovmeAPI {
+    private val secureLogger = KotlinLogging.logger("tjenestekall")
 
     override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
@@ -33,6 +39,8 @@ class MedlOppslagClient(
     override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "brukerspørsmål", retry) {
+            try {
+            withTimeout(25000){
             httpClient.post {
                 url("$baseUrl/brukersporsmaal")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
@@ -42,6 +50,16 @@ class MedlOppslagClient(
                 setBody(medlOppslagRequest)
             }.body()
         }
+        }
+            catch (t: TimeoutCancellationException){
+                secureLogger.warn("Timeout i kall mot Lovme",
+                    kv("fnr",medlOppslagRequest.fnr),
+                    kv("callId",callId)
+                )
+                "TimeoutCancellationException"
+            }
+        }
+
     }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()

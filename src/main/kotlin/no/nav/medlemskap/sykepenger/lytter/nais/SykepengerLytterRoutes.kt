@@ -89,6 +89,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 if (lovmeresponse=="GradertAdresse"){
                     call.respond(HttpStatusCode.BadRequest,"bruker har gradert adresse")
                 }
+                if (lovmeresponse=="TimeoutCancellationException"){
+                    call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
+                }
                 else{
                     val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
                     call.respond(HttpStatusCode.OK,flexRespons)
