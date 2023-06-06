@@ -70,7 +70,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 "kall autentisert, url : /brukerspørsmål",
                 kv("callId", callId)
             )
-           val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
+           /*
+           * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
+           * */
+            val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
 
             secureLogger.info ("Calling Lovme  : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
                 kv("callId", callId)
@@ -99,26 +102,23 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             catch (t:Throwable){
                 call.respond(HttpStatusCode.InternalServerError,t)
             }
-
         }
     }
-
-
 }
 
  fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
-    val headers = setOf("fnr")
-    val queryParams = setOf("fom","tom")
     var returnMap = mutableMapOf<String,String>()
-    for (variabel in headers ){
+     val headers = setOf("fnr")
+     for (variabel in headers ){
         try {
             returnMap[variabel] = request.headers[variabel]!!
         }
         catch (e:NullPointerException){
-        throw BadRequestException("Header '$variabel' mangler")
+            throw BadRequestException("Header '$variabel' mangler")
         }
     }
-    for (variabel in queryParams ){
+     val queryParams = setOf("fom","tom")
+     for (variabel in queryParams ){
         try {
             returnMap[variabel] = request.queryParameters[variabel]!!
         }
@@ -126,7 +126,6 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             throw BadRequestException("QueryParameter '$variabel' mangler")
         }
     }
-
     return returnMap
 }
 
