@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import com.fasterxml. jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.JsonNode
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
@@ -25,6 +25,9 @@ class RegelMotorResponsHandler {
 
     private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
 
+        //if (lovmeresponseNode!!.erBritiskBorger() && !lovmeresponseNode.harOppholdsTilatelse()){
+        //    return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
+        //}
         if (lovmeresponseNode!!.erEosBorger()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
@@ -65,6 +68,9 @@ fun JsonNode.erTredjelandsborgerMedEØSFamilie():Boolean{
 fun JsonNode.erTredjelandsborger():Boolean{
     return !this.finnSvarPaaRegel("REGEL_2")
 }
+fun JsonNode.erBritiskBorger():Boolean{
+    return this.finnSvarPaaRegel("REGEL_19_7")
+}
 fun JsonNode.harOppholdsTilatelse():Boolean{
     /*
     * Sjekk uavklart svar fra UDI
@@ -84,7 +90,9 @@ fun JsonNode.harOppholdsTilatelse():Boolean{
     if (!this.finnSvarPaaRegel("REGEL_19_3_1")){
         return false
     }
-
+    /*
+     *Har bruker opphold på samme vilkår flagg?
+     */
     if (this.finnSvarPaaRegel("REGEL_19_8")){
         return false
 

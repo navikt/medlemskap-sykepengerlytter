@@ -88,7 +88,11 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     brukerinput = Brukerinput(false))
                 val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
                 if (lovmeresponse=="GradertAdresse"){
-                    call.respond(HttpStatusCode.BadRequest,"bruker har gradert adresse")
+                    secureLogger.warn("Kall fra flex på gradert adresse",
+                        kv("callId", callId),
+                        kv("fnr", lovmeRequest.fnr)
+                    )
+                    call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
                 }
                 if (lovmeresponse=="TimeoutCancellationException"){
                     call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
@@ -97,7 +101,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
-                call.respond(HttpStatusCode.Conflict,"ukjent tilstand i tjeneste. Kontakt utvikler!")
+                call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
             }
             catch (t:Throwable){
                 call.respond(HttpStatusCode.InternalServerError,t)

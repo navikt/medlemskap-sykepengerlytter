@@ -53,6 +53,8 @@ spec:
         - application: sparkel-medlemskap
           namespace: tbd
           cluster: prod-fss
+        - application: sykepengesoknad-backend
+          namespace: flex
     outbound:
       rules:
         - application: medlemskap-oppslag
