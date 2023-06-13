@@ -11,4 +11,11 @@ val retryConfig: RetryConfig = RetryConfig
     .retryExceptions(RuntimeException::class.java)
     .build()
 
+val noRetryConfig: RetryConfig = RetryConfig
+    .custom<RetryConfig>()
+    .maxAttempts(1)
+    .retryExceptions(RuntimeException::class.java)
+    .build()
+
 val retryRegistry: RetryRegistry = RetryRegistry.of(retryConfig)
+val flexretryRegistry: RetryRegistry = RetryRegistry.of(noRetryConfig)
