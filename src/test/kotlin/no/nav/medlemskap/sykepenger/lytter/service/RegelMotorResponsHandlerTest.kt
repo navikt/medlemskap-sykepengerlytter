@@ -64,5 +64,13 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(jsonNode.erBritiskBorger())
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
     }
+    @Test
+    fun REGEL_0_1(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_0_1.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        val jsonNode = objectMapper.readTree(fileContent)
+        Assertions.assertFalse(jsonNode.erBritiskBorger())
+        Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
+    }
 
 }

@@ -1,0 +1,34 @@
+{
+  "tidspunkt": "2023-06-16T15:42:44.284473",
+  "versjonTjeneste": "7d68f10",
+  "versjonRegler": "v1",
+  "kanal": "brukerspørsmål",
+  "resultat": {
+    "regelId": "REGEL_REQUEST_VALIDERING",
+    "svar": "UAVKLART",
+    "begrunnelse": "",
+    "harDekning": null,
+    "dekning": "",
+    "delresultat": [
+      {
+        "regelId": "REGEL_0_1",
+        "svar": "NEI",
+        "begrunnelse": "Ugyldig input dato",
+        "harDekning": null,
+        "dekning": "",
+        "delresultat": [],
+        "årsaker": [],
+        "avklaring": "Er input-dato gyldig?"
+      }
+    ],
+    "årsaker": [
+      {
+        "regelId": "REGEL_0_1",
+        "avklaring": "Er input-dato gyldig?",
+        "svar": "NEI",
+        "begrunnelse": "Ugyldig input dato"
+      }
+    ],
+    "avklaring": "Er input-dataene gyldige?"
+  }
+}
