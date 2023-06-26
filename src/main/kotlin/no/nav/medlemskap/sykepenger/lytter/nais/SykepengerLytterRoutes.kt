@@ -17,7 +17,6 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
@@ -35,7 +34,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
                 "kall autentisert, url : /vurdering",
-                kv("callId", callId)
+                kv("callId", callId),
+                kv("endpoint", "vurdering")
             )
             val request = call.receive<BomloRequest>()
             try {
@@ -47,7 +47,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("fnr", medlemskapsloggObjekt.fnr),
                     kv("svar", medlemskapsloggObjekt.svar),
                     kv("årsak", medlemskapsloggObjekt.årsak),
-                    kv("årsaker", medlemskapsloggObjekt.årsaker)
+                    kv("årsaker", medlemskapsloggObjekt.årsaker),
+                    kv("endpoint", "vurdering")
                 )
 
                 call.respond(HttpStatusCode.OK, response)
@@ -56,12 +57,14 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     "Unexpected error calling Lovme",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
-                    kv("cause", t.stackTrace)
+                    kv("cause", t.stackTrace),
+                    kv("endpoint", "vurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
         }
         get("/brukersporsmal") {
+            val start = System.currentTimeMillis()
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
             secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
@@ -76,7 +79,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
 
             secureLogger.info ("Calling Lovme  : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
-                kv("callId", callId)
+                kv("callId", callId),
+                kv("endpoint", "brukersporsmal")
             )
             try {
                 val lovmeRequest = MedlOppslagRequest(
@@ -90,15 +94,30 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 if (lovmeresponse=="GradertAdresse"){
                     secureLogger.warn("Kall fra flex på gradert adresse",
                         kv("callId", callId),
-                        kv("fnr", lovmeRequest.fnr)
+                        kv("fnr", lovmeRequest.fnr),
+                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
+                        kv("endpoint", "brukersporsmal")
                     )
                     call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
                 }
                 if (lovmeresponse=="TimeoutCancellationException"){
+                    secureLogger.warn("Kall mot Lovme Timet ut",
+                        kv("callId", callId),
+                        kv("fnr", lovmeRequest.fnr),
+                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
+                        kv("endpoint", "brukersporsmal")
+                    )
                     call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
                 }
                 else{
                     val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                    secureLogger.warn("Svarer brukerspørsmål",
+                        kv("callId", callId),
+                        kv("fnr", lovmeRequest.fnr),
+                        kv("brukerspørsmål",flexRespons.sporsmal),
+                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
+                        kv("endpoint", "brukersporsmal")
+                    )
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
