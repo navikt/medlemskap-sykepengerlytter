@@ -104,7 +104,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
             }
             catch (t:Throwable){
-                call.respond(HttpStatusCode.InternalServerError,t)
+                call.respond(HttpStatusCode.InternalServerError,t.message!!)
             }
         }
     }
