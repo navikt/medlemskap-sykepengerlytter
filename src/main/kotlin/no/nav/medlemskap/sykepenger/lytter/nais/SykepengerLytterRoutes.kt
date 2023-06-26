@@ -116,7 +116,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
-                        kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal)),
+                        kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal")
                     )
