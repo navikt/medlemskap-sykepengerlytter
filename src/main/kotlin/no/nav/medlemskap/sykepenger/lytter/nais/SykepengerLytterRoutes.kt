@@ -14,7 +14,9 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
@@ -111,10 +113,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 }
                 else{
                     val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
-                    secureLogger.warn("Svarer brukerspørsmål",
+                    secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
-                        kv("brukerspørsmål",flexRespons.sporsmal),
+                        kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal)),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal")
                     )
