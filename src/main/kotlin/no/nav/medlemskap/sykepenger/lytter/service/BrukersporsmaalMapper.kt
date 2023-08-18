@@ -27,10 +27,6 @@ class BrukersporsmaalMapper(val rootNode: JsonNode){
     }
 
 
-
-    val MEDLEMSKAP_ARBEIDUTLAND = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
-
-
     fun getOppholdstilatelse_brukerspørsmål(): Medlemskap_oppholdstilatelse_brukersporsmaal?{
         val medlemskap_oppholdstilatelse_json = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLDSTILLATELSE") }
         if (medlemskap_oppholdstilatelse_json!=null){

@@ -4,7 +4,6 @@ import no.nav.medlemskap.saga.persistence.Medlemskap_oppholdstilatelse_brukerspo
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.util.*
 
 class BrukerspormaalMapperTest {
 

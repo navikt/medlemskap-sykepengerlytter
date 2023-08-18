@@ -5,7 +5,6 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.saga.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
@@ -84,7 +83,6 @@ open class FlexMessageHandler (
         try {
             val json = flexMessageRecord.value
             val JsonNode = ObjectMapper().readTree(json)
-            val sporsmålArray = JsonNode.get("sporsmal")
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
             val type = JsonNode.get("type").asText()
@@ -93,33 +91,19 @@ open class FlexMessageHandler (
             val sendtNav = JsonNode.get("sendtNav").asText(null)
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
+            
+           val mapper = BrukersporsmaalMapper(JsonNode)
 
-
-            val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-
-            val brukersp_arb_utland_old_model:FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
-            val mapper = BrukersporsmaalMapper(JsonNode)
-
-            //val MEDLEMSKAP_OPPHOLDSTILLATELSE = sporsmålArray.find { it.get("tag").asText().equals("`medlemskap-oppholdstilatelse-json`") }
-
-            //val medlemskapOppholdstilatelseBrukersporsmaal:Medlemskap_oppholdstilatelse_brukersporsmaal? = mapOppholdstilatele_BrukerSpørsmål(MEDLEMSKAP_OPPHOLDSTILLATELSE)
             return Brukersporsmaal(
                 fnr,
                 id,
                 DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
                 "SYKEPENGER",
                 status,
-                brukersp_arb_utland_old_model,
+                mapper.brukersp_arb_utland_old_model,
                 mapper.oppholdstilatelse_brukersporsmaal,
-                null
+                mapper.arbeidUtlandBrukerSporsmaal
             )
-
-            /*
-            val MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
-
-            val opphold = JacksonParser().parseFlexBrukerpSorsmaalV2(`medlemskap-oppholdstilatelse-json`!!.toPrettyString())
-
-             */
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")

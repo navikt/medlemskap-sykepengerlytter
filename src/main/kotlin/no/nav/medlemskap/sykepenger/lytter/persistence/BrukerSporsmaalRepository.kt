@@ -31,10 +31,24 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
     }
 
     override fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal) {
+
+        val json = JacksonParser().ToJson(
+            Brukersporsmaal(
+            fnr = brukersporsmaal.fnr.sha256(),
+            soknadid = brukersporsmaal.soknadid,
+            eventDate = brukersporsmaal.eventDate,
+            ytelse = brukersporsmaal.ytelse,
+            status = brukersporsmaal.status,
+            sporsmaal = brukersporsmaal.sporsmaal,
+            oppholdstilatelse = brukersporsmaal.oppholdstilatelse,
+            utfort_arbeid_utenfor_norge = brukersporsmaal.utfort_arbeid_utenfor_norge
+        ))
+
+
         using(sessionOf(dataSource)) { session ->
             session.transaction {
                 it.run(queryOf(INSERT_BRUKER_SPORSMAAL, brukersporsmaal.fnr.sha256(),brukersporsmaal.soknadid, brukersporsmaal.eventDate,brukersporsmaal.ytelse, brukersporsmaal.status,
-                    brukersporsmaal.sporsmaal?.let { it1 -> JacksonParser().parse(it1) }).asExecute)
+                    brukersporsmaal.let { json.toPrettyString() }).asExecute)
             }
 
         }
@@ -57,13 +71,17 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
     }
 
     val toBrukersporsmaalDao: (Row) -> Brukersporsmaal = { row ->
+
+        val sporsmaal:Brukersporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+
         Brukersporsmaal(
             fnr=row.string("fnr"),
             soknadid = row.string("soknadid").toString(),
             eventDate= row.localDate("eventDate"),
             ytelse= row.string("ytelse"),
             status= row.string("status"),
-            sporsmaal= JacksonParser().parseFlexBrukerSporsmaal(row.string("sporsmaal"))
+            sporsmaal= sporsmaal.sporsmaal,
+            oppholdstilatelse = sporsmaal.oppholdstilatelse,
+            utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge)
 
-        )
     }
