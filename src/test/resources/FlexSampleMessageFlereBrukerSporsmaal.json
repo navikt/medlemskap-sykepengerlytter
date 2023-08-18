@@ -1,0 +1,734 @@
+{
+  "id": "a588f3a3-1615-3f8b-8ba8-4445966dcf2d",
+  "type": "ARBEIDSTAKERE",
+  "status": "SENDT",
+  "fnr": "51857200482",
+  "sykmeldingId": "f79d707e-2ec4-4c58-bc9a-e925db502976",
+  "arbeidsgiver": {
+    "navn": "Sauefabrikk",
+    "orgnummer": "896929119"
+  },
+  "arbeidssituasjon": "ARBEIDSTAKER",
+  "korrigerer": null,
+  "korrigertAv": null,
+  "soktUtenlandsopphold": null,
+  "arbeidsgiverForskutterer": null,
+  "fom": "2023-08-07",
+  "tom": "2023-08-13",
+  "dodsdato": null,
+  "startSyketilfelle": "2023-08-07",
+  "arbeidGjenopptatt": null,
+  "sykmeldingSkrevet": "2023-08-07T02:00:00",
+  "opprettet": "2023-08-14T14:38:09.383084",
+  "opprinneligSendt": null,
+  "sendtNav": null,
+  "sendtArbeidsgiver": "2023-08-14T15:55:15.915480962",
+  "egenmeldinger": [],
+  "fravarForSykmeldingen": [],
+  "papirsykmeldinger": [],
+  "fravar": [],
+  "andreInntektskilder": [],
+  "soknadsperioder": [
+    {
+      "fom": "2023-08-07",
+      "tom": "2023-08-13",
+      "sykmeldingsgrad": 100,
+      "faktiskGrad": null,
+      "avtaltTimer": null,
+      "faktiskTimer": null,
+      "sykmeldingstype": "AKTIVITET_IKKE_MULIG",
+      "grad": 100
+    }
+  ],
+  "sporsmal": [
+    {
+      "id": "712555f5-5648-3132-aff2-f63517bebbb7",
+      "tag": "ANSVARSERKLARING",
+      "sporsmalstekst": "Jeg vet at jeg kan miste retten til sykepenger hvis opplysningene jeg gir ikke er riktige eller fullstendige. Jeg vet også at NAV kan holde igjen eller kreve tilbake penger, og at å gi feil opplysninger kan være straffbart.",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "CHECKBOX_PANEL",
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "verdi": "CHECKED"
+        }
+      ],
+      "undersporsmal": []
+    },
+    {
+      "id": "3721ac6f-863b-3ec1-add0-4a68cc6d1ff2",
+      "tag": "TILBAKE_I_ARBEID",
+      "sporsmalstekst": "Var du tilbake i fullt arbeid hos Sauefabrikk i løpet av perioden 7. - 13. august 2023?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "44e5b58d-1e12-3086-8e07-12090e3e054b",
+          "tag": "TILBAKE_NAR",
+          "sporsmalstekst": "Når begynte du å jobbe igjen?",
+          "undertekst": null,
+          "min": "2023-08-07",
+          "max": "2023-08-13",
+          "svartype": "DATO",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "90320771-52ed-32f3-8941-7465d25654f2",
+      "tag": "FERIE_V2",
+      "sporsmalstekst": "Tok du ut feriedager i tidsrommet 7. - 13. august 2023?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "85e9e7d2-a2df-363c-9c0f-04f6b0c1ed28",
+          "tag": "FERIE_NAR_V2",
+          "sporsmalstekst": "Når tok du ut feriedager?",
+          "undertekst": null,
+          "min": "2023-08-07",
+          "max": "2023-08-13",
+          "svartype": "PERIODER",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "a506464d-9312-36dc-8796-9912353d7339",
+      "tag": "PERMISJON_V2",
+      "sporsmalstekst": "Tok du permisjon mens du var sykmeldt 7. - 13. august 2023?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "22095719-4e62-3cd2-a97b-10b63d26e87d",
+          "tag": "PERMISJON_NAR_V2",
+          "sporsmalstekst": "Når tok du permisjon?",
+          "undertekst": null,
+          "min": "2023-08-07",
+          "max": "2023-08-13",
+          "svartype": "PERIODER",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "3ef94680-8613-3f3b-93bc-f75669de9f37",
+      "tag": "UTLAND_V2",
+      "sporsmalstekst": "Var du på reise utenfor EØS mens du var sykmeldt 7. - 13. august 2023?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "0e2c922d-9209-318a-9981-1cb1586b3064",
+          "tag": "UTLAND_NAR_V2",
+          "sporsmalstekst": "Når var du utenfor EØS?",
+          "undertekst": null,
+          "min": "2023-08-07",
+          "max": "2023-08-13",
+          "svartype": "PERIODER",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": []
+        }
+      ]
+    },
+    {
+      "id": "5f1d092c-6c82-3a45-a535-5abd0198dca1",
+      "tag": "ARBEID_UNDERVEIS_100_PROSENT_0",
+      "sporsmalstekst": "I perioden 7. - 13. august 2023 var du 100 % sykmeldt fra Sauefabrikk. Jobbet du noe hos Sauefabrikk i denne perioden?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "073a844c-f642-32fb-b63d-79e42d000685",
+          "tag": "HVOR_MYE_HAR_DU_JOBBET_0",
+          "sporsmalstekst": "Oppgi arbeidsmengde i timer eller prosent:",
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "RADIO_GRUPPE_TIMER_PROSENT",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "e78c3dbd-4f39-3801-83f3-3fed86de5f5a",
+              "tag": "HVOR_MYE_PROSENT_0",
+              "sporsmalstekst": "Prosent",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "RADIO",
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "a6d471da-329b-34bc-bf90-4a7cc791a056",
+                  "tag": "HVOR_MYE_PROSENT_VERDI_0",
+                  "sporsmalstekst": "Oppgi hvor mange prosent av din normale arbeidstid du jobbet hos Sauefabrikk i perioden 7. - 13. august 2023?",
+                  "undertekst": "Oppgi i prosent. Eksempel: 40",
+                  "min": "1",
+                  "max": "99",
+                  "svartype": "PROSENT",
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [],
+                  "undersporsmal": []
+                }
+              ]
+            },
+            {
+              "id": "e39fed1e-4383-3531-8126-82648a422e60",
+              "tag": "HVOR_MYE_TIMER_0",
+              "sporsmalstekst": "Timer",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "RADIO",
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "0b646add-95a4-3866-a0e9-bc0960dd81b3",
+                  "tag": "HVOR_MYE_TIMER_VERDI_0",
+                  "sporsmalstekst": "Oppgi totalt antall timer du jobbet i perioden 7. - 13. august 2023 hos Sauefabrikk",
+                  "undertekst": "Oppgi i timer. Eksempel: 12",
+                  "min": "1",
+                  "max": "150",
+                  "svartype": "TIMER",
+                  "kriterieForVisningAvUndersporsmal": null,
+                  "svar": [],
+                  "undersporsmal": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "344b6399-5a4c-30b9-b04a-e21ade45c10f",
+          "tag": "JOBBER_DU_NORMAL_ARBEIDSUKE_0",
+          "sporsmalstekst": "Jobber du vanligvis 37,5 timer i uka hos Sauefabrikk?",
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "JA_NEI",
+          "kriterieForVisningAvUndersporsmal": "NEI",
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "31b1cff2-4739-305b-94b4-b38b86ab31a6",
+              "tag": "HVOR_MANGE_TIMER_PER_UKE_0",
+              "sporsmalstekst": "Oppgi timer per uke",
+              "undertekst": null,
+              "min": "1",
+              "max": "150",
+              "svartype": "TIMER",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "48ff2f28-94c1-379d-9648-578bdf07b05d",
+      "tag": "ARBEID_UTENFOR_NORGE",
+      "sporsmalstekst": "Har du arbeidet i utlandet i løpet av de siste 12 månedene?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": []
+    },
+    {
+      "id": "7d8068a2-3362-3125-8a04-18fd3468dcb6",
+      "tag": "ANDRE_INNTEKTSKILDER_V2",
+      "sporsmalstekst": "Har du andre inntektskilder enn Sauefabrikk?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "NEI"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "e2fd0086-ff73-33de-9e15-7956663b23e1",
+          "tag": "HVILKE_ANDRE_INNTEKTSKILDER",
+          "sporsmalstekst": "Velg inntektskildene som passer for deg:",
+          "undertekst": "Finner du ikke noe som passer for deg, velger du nei øverst",
+          "min": null,
+          "max": null,
+          "svartype": "CHECKBOX_GRUPPE",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "86d565e1-9dfe-3ef8-8c45-67284efac6e5",
+              "tag": "INNTEKTSKILDE_ANDRE_ARBEIDSFORHOLD",
+              "sporsmalstekst": "Ansatt et annet sted enn nevnt over",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "fc32f1a2-cb93-3e93-9019-5521ebbf2550",
+              "tag": "INNTEKTSKILDE_SELVSTENDIG",
+              "sporsmalstekst": "Selvstendig næringsdrivende",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": "CHECKED",
+              "svar": [],
+              "undersporsmal": [
+                {
+                  "id": "6a453537-15b7-36ff-98c1-f8e0333f329a",
+                  "tag": "INNTEKTSKILDE_SELVSTENDIG_4_AR",
+                  "sporsmalstekst": "Har du vært næringsdrivende i mer enn 4 år?",
+                  "undertekst": null,
+                  "min": null,
+                  "max": null,
+                  "svartype": "JA_NEI",
+                  "kriterieForVisningAvUndersporsmal": "JA",
+                  "svar": [],
+                  "undersporsmal": [
+                    {
+                      "id": "25c844c4-7cec-3236-979b-244b533a2d1c",
+                      "tag": "INNTEKTSKILDE_SELVSTENDIG_VARIG_ENDRING_GRUPPE",
+                      "sporsmalstekst": "Har det vært endring i din arbeidssituasjon eller virksomhet?",
+                      "undertekst": null,
+                      "min": null,
+                      "max": null,
+                      "svartype": "RADIO_GRUPPE",
+                      "kriterieForVisningAvUndersporsmal": null,
+                      "svar": [],
+                      "undersporsmal": [
+                        {
+                          "id": "58ab23bb-5a98-3086-a040-1f595f4b81dd",
+                          "tag": "INNTEKTSKILDE_SELVSTENDIG_VARIG_ENDRING_JA",
+                          "sporsmalstekst": "Ja",
+                          "undertekst": null,
+                          "min": null,
+                          "max": null,
+                          "svartype": "RADIO",
+                          "kriterieForVisningAvUndersporsmal": null,
+                          "svar": [],
+                          "undersporsmal": []
+                        },
+                        {
+                          "id": "aa8fe7a2-3b72-3fac-adc7-0a5d7681856e",
+                          "tag": "INNTEKTSKILDE_SELVSTENDIG_VARIG_ENDRING_NEI",
+                          "sporsmalstekst": "Nei",
+                          "undertekst": null,
+                          "min": null,
+                          "max": null,
+                          "svartype": "RADIO",
+                          "kriterieForVisningAvUndersporsmal": null,
+                          "svar": [],
+                          "undersporsmal": []
+                        },
+                        {
+                          "id": "e5713d74-0750-3526-a46e-589666f9c613",
+                          "tag": "INNTEKTSKILDE_SELVSTENDIG_VARIG_ENDRING_VET_IKKE",
+                          "sporsmalstekst": "Vet ikke",
+                          "undertekst": null,
+                          "min": null,
+                          "max": null,
+                          "svartype": "RADIO",
+                          "kriterieForVisningAvUndersporsmal": null,
+                          "svar": [],
+                          "undersporsmal": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4b5a32a4-dfbc-3362-aafb-3c925dccd834",
+              "tag": "INNTEKTSKILDE_SELVSTENDIG_DAGMAMMA",
+              "sporsmalstekst": "Dagmamma",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "2059af3a-81f8-378d-9ed6-fc4990bdbdb4",
+              "tag": "INNTEKTSKILDE_JORDBRUKER",
+              "sporsmalstekst": "Jordbruk / Fiske / Reindrift",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "9d00b503-8f9b-3ada-8d5c-afd98dbe5d67",
+              "tag": "INNTEKTSKILDE_FRILANSER",
+              "sporsmalstekst": "Frilanser",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "d7c22dfc-1bf2-35c1-9391-765a93d51747",
+              "tag": "INNTEKTSKILDE_OMSORGSLONN",
+              "sporsmalstekst": "Kommunal omsorgstønad",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "e0ec1c33-6ef6-39f2-8d4a-3ef224abd5e4",
+              "tag": "INNTEKTSKILDE_FOSTERHJEM",
+              "sporsmalstekst": "Fosterhjemsgodtgjørelse",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            },
+            {
+              "id": "8ed5ed80-e345-32c7-995a-b6cffe202885",
+              "tag": "INNTEKTSKILDE_STYREVERV",
+              "sporsmalstekst": "Styreverv",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "CHECKBOX",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [],
+              "undersporsmal": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "74e4b575-35f8-3b86-a0b5-be70a9e9dcc3",
+      "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE",
+      "sporsmalstekst": "Har du oppholdstillatelse fra utlendingsdirektoratet?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "JA"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "6cce0e9c-2006-3f64-8adf-46041f082545",
+          "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO",
+          "sporsmalstekst": "Oppgi vedtaksdato om oppholdstillatelse:",
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "DATO",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [
+            {
+              "verdi": "2022-08-01"
+            }
+          ],
+          "undersporsmal": []
+        },
+        {
+          "id": "f2aba9f0-5b9c-3be3-8581-9a5c47b826bc",
+          "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT",
+          "sporsmalstekst": "Har du fått permanent oppholdstillatelse?",
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "JA_NEI",
+          "kriterieForVisningAvUndersporsmal": "NEI",
+          "svar": [
+            {
+              "verdi": "NEI"
+            }
+          ],
+          "undersporsmal": [
+            {
+              "id": "a2e67a90-a937-3b00-a58b-262e064eee18",
+              "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE",
+              "sporsmalstekst": "Hvilken periode har du fått oppholdstillatelse?",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "PERIODER",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "{\"fom\":\"2023-08-01\",\"tom\":\"2023-08-13\"}"
+                }
+              ],
+              "undersporsmal": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f9a3854f-b1ca-3659-bbd2-7a4c21a10b21",
+      "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE",
+      "sporsmalstekst": "Har du utført arbeid utenfor Norge i det siste 12 månedene?",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "JA_NEI",
+      "kriterieForVisningAvUndersporsmal": "JA",
+      "svar": [
+        {
+          "verdi": "JA"
+        }
+      ],
+      "undersporsmal": [
+        {
+          "id": "ab66c037-4038-3d10-b12c-6e0510fe0e1c",
+          "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING_0",
+          "sporsmalstekst": null,
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "IKKE_RELEVANT",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "599a26c5-45cc-36cc-83f6-677c8e26a217",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER_0",
+              "sporsmalstekst": "Arbeidsgiver",
+              "undertekst": null,
+              "min": "1",
+              "max": "50",
+              "svartype": "FRITEKST",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "ggg"
+                }
+              ],
+              "undersporsmal": []
+            },
+            {
+              "id": "e3d19efc-9d33-3cda-835c-5f8ca023ebb7",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_HVOR_0",
+              "sporsmalstekst": "Velg land",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "COMBOBOX_SINGLE",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "Hellas"
+                }
+              ],
+              "undersporsmal": []
+            },
+            {
+              "id": "35a98b58-6752-3224-8028-27c5145ede60",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR_0",
+              "sporsmalstekst": null,
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "PERIODER",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "{\"fom\":\"2023-08-03\",\"tom\":\"2023-08-03\"}"
+                }
+              ],
+              "undersporsmal": []
+            }
+          ]
+        },
+        {
+          "id": "e92c733e-d0b3-3509-a260-153af32eeb1e",
+          "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING_1",
+          "sporsmalstekst": null,
+          "undertekst": null,
+          "min": null,
+          "max": null,
+          "svartype": "IKKE_RELEVANT",
+          "kriterieForVisningAvUndersporsmal": null,
+          "svar": [],
+          "undersporsmal": [
+            {
+              "id": "7e625f69-93fb-3100-86f6-7ca0d11e318c",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER_1",
+              "sporsmalstekst": "Arbeidsgiver",
+              "undertekst": null,
+              "min": "1",
+              "max": "50",
+              "svartype": "FRITEKST",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "Hahahaha"
+                }
+              ],
+              "undersporsmal": []
+            },
+            {
+              "id": "97196375-9c0c-38ae-abbf-2a1f542124e3",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_HVOR_1",
+              "sporsmalstekst": "Velg land",
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "COMBOBOX_SINGLE",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "Benin"
+                }
+              ],
+              "undersporsmal": []
+            },
+            {
+              "id": "c854e6d6-7b84-3e58-a535-6418ee0346bf",
+              "tag": "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR_1",
+              "sporsmalstekst": null,
+              "undertekst": null,
+              "min": null,
+              "max": null,
+              "svartype": "PERIODER",
+              "kriterieForVisningAvUndersporsmal": null,
+              "svar": [
+                {
+                  "verdi": "{\"fom\":\"2023-08-11\",\"tom\":\"2023-08-11\"}"
+                }
+              ],
+              "undersporsmal": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "39c7fa1e-b90e-3d20-941a-9f34cd847ca9",
+      "tag": "VAER_KLAR_OVER_AT",
+      "sporsmalstekst": "Viktig å være klar over:",
+      "undertekst": "<ul><li>Du kan bare få sykepenger hvis det er din egen sykdom eller skade som hindrer deg i å jobbe. Sosiale eller økonomiske problemer gir ikke rett til sykepenger.</li><li>Du kan miste retten til sykepenger hvis du nekter å opplyse om din egen arbeidsevne, eller hvis du ikke tar imot behandling eller tilrettelegging.</li><li>Retten til sykepenger gjelder bare inntekt du har mottatt som lønn og betalt skatt av på sykmeldingstidspunktet.</li><li>NAV kan innhente opplysninger som er nødvendige for å behandle søknaden.</li><li>Fristen for å søke sykepenger er som hovedregel 3 måneder.</li><li>Du kan endre svarene i denne søknaden opp til 12 måneder etter du sendte den inn første gangen.</li><li>Du må melde fra til NAV hvis du satt i varetekt, sonet straff eller var under forvaring i sykmeldingsperioden. <a href=\"https://www.nav.no/skriv-til-oss\" target=\"_blank\">Meld fra til NAV her.</a></li><li>Du må melde fra om studier som er påbegynt etter at du ble sykmeldt, og som ikke er avklart med NAV. Det samme gjelder hvis du begynner å studere mer enn du gjorde før du ble sykmeldt. <a href=\"https://www.nav.no/skriv-til-oss\" target=\"_blank\">Meld fra til NAV her.</a></li><li>Du kan lese mer om rettigheter og plikter på <a href=\"https://www.nav.no/sykepenger\" target=\"_blank\">nav.no/sykepenger</a>.</li></ul>",
+      "min": null,
+      "max": null,
+      "svartype": "IKKE_RELEVANT",
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [],
+      "undersporsmal": []
+    },
+    {
+      "id": "9a6a1e0a-90d2-3984-bf93-1acaf1edbe43",
+      "tag": "BEKREFT_OPPLYSNINGER",
+      "sporsmalstekst": "Jeg har lest all informasjonen jeg har fått i søknaden og bekrefter at opplysningene jeg har gitt er korrekte.",
+      "undertekst": null,
+      "min": null,
+      "max": null,
+      "svartype": "CHECKBOX_PANEL",
+      "kriterieForVisningAvUndersporsmal": null,
+      "svar": [
+        {
+          "verdi": "CHECKED"
+        }
+      ],
+      "undersporsmal": []
+    }
+  ],
+  "avsendertype": "BRUKER",
+  "ettersending": false,
+  "mottaker": "ARBEIDSGIVER",
+  "egenmeldtSykmelding": false,
+  "yrkesskade": null,
+  "arbeidUtenforNorge": false,
+  "harRedusertVenteperiode": null,
+  "behandlingsdager": null,
+  "permitteringer": [],
+  "merknaderFraSykmelding": null,
+  "egenmeldingsdagerFraSykmelding": null,
+  "merknader": null,
+  "sendTilGosys": null,
+  "utenlandskSykmelding": false
+}

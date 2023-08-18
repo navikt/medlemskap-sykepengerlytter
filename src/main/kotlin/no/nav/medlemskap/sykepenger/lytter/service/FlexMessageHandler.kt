@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.saga.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
@@ -93,35 +94,32 @@ open class FlexMessageHandler (
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
 
-            var svarText: String = "IKKE OPPGITT"
-            var svar: Boolean?
+
             val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-            if (arbeidutland != null) {
-                //println(arbeidutland)
-                try {
-                    svarText = arbeidutland.get("svar").get(0).get("verdi").asText()
-                } catch (t: Throwable) {
 
-                }
-            }
-            if (svarText == "IKKE OPPGITT") {
-                svar = null
-            } else {
-                if (svarText == "NEI") {
-                    svar = false
-                } else if (svarText == "JA") {
-                    svar = true
-                } else svar = null
-            }
+            val brukersp_arb_utland_old_model:FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
+            val mapper = BrukersporsmaalMapper(JsonNode)
 
+            //val MEDLEMSKAP_OPPHOLDSTILLATELSE = sporsmålArray.find { it.get("tag").asText().equals("`medlemskap-oppholdstilatelse-json`") }
+
+            //val medlemskapOppholdstilatelseBrukersporsmaal:Medlemskap_oppholdstilatelse_brukersporsmaal? = mapOppholdstilatele_BrukerSpørsmål(MEDLEMSKAP_OPPHOLDSTILLATELSE)
             return Brukersporsmaal(
                 fnr,
                 id,
                 DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
                 "SYKEPENGER",
                 status,
-                FlexBrukerSporsmaal(svar)
+                brukersp_arb_utland_old_model,
+                mapper.oppholdstilatelse_brukersporsmaal,
+                null
             )
+
+            /*
+            val MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
+
+            val opphold = JacksonParser().parseFlexBrukerpSorsmaalV2(`medlemskap-oppholdstilatelse-json`!!.toPrettyString())
+
+             */
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
@@ -129,8 +127,6 @@ open class FlexMessageHandler (
             throw t
         }
     }
-
-
 
     private fun parseDateString(dateString: String?): LocalDate? {
         return try {
