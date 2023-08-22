@@ -9,7 +9,7 @@ class BrukerspormaalMapperTest {
 
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_2.json").readText(Charsets.UTF_8)
         val jsonNode = JacksonParser().ToJson(fileContent)
         val mapper = BrukersporsmaalMapper(jsonNode)
         val v = mapper.getOppholdstilatelse_brukerspørsmål()

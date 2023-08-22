@@ -1,13 +1,20 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import com.fasterxml.jackson.databind.JsonNode
+import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.config.retryConfig
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import java.time.LocalDate
 
 class BrukersporsmaalMapper(val rootNode: JsonNode){
+    companion object {
+        private val log = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger { }
 
+
+    }
     val sporsmålArray = rootNode.get("sporsmal")
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
     val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
@@ -69,29 +76,33 @@ fun maputfortArbeidUtenforNorge_BrukerSpørsmål(arbeidutland: JsonNode): Medlem
 
 
     fun mapOppholdstilatele_BrukerSpørsmål(medlemskapOppholdstillatelse: JsonNode): Medlemskap_oppholdstilatelse_brukersporsmaal? {
-        val flexModel:FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(medlemskapOppholdstillatelse)
-        val id = flexModel.id
-        val sporsmalstekst = flexModel.sporsmalstekst
-        val svar:Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?:"NEI"
-        val vedtaksdato = flexModel.undersporsmal?.filter { it.tag== "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.first()?.svar?.first()?.verdi
-        val permanentOpphold = flexModel.undersporsmal?.filter { it.tag== "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }?.first()?.svar?.first()?.verdi
-        var perioder = mutableListOf<Periode>()
-        if (permanentOpphold == "NEI"){
+        try{
+            val flexModel:FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(medlemskapOppholdstillatelse)
+            val id = flexModel.id
+            val sporsmalstekst = flexModel.sporsmalstekst
+            val svar:Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?:"NEI"
+            val vedtaksdato = flexModel.undersporsmal?.filter { it.tag== "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.first()?.svar?.first()?.verdi
+            val permanentOpphold = flexModel.undersporsmal?.filter { it.tag== "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }?.first()?.svar?.first()?.verdi
+            var perioder = mutableListOf<Periode>()
+            if (permanentOpphold == "NEI"){
                 val periode = flexModel.undersporsmal?.filter { it.tag== "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }?.first()?.undersporsmal?.first()?.svar?.first()?.verdi
                 val periodedto:Periode = JacksonParser().toDomainObject(periode!!)
-               perioder.add(periodedto)
+                perioder.add(periodedto)
+            }
+            val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                id=id,
+                sporsmalstekst=sporsmalstekst,
+                svar=svar,
+                vedtaksdato = LocalDate.parse(vedtaksdato),
+                vedtaksTypePermanent = "JA" == permanentOpphold,
+                perioder = perioder)
+            return response
         }
-        val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id=id,
-            sporsmalstekst=sporsmalstekst,
-            svar=svar,
-            vedtaksdato = LocalDate.parse(vedtaksdato),
-            vedtaksTypePermanent = "JA" == permanentOpphold,
-            perioder = perioder)
-        return response
-    }
-
-
+        catch (e:Exception){
+            secureLogger.error("Not able to parse Medlemskap_oppholdstilatelse_brukersporsmaal",
+                StructuredArguments.kv("json", medlemskapOppholdstillatelse.toPrettyString()))       }
+            return null
+        }
 }
  fun FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland: JsonNode?): FlexBrukerSporsmaal {
     var svarText: String = "IKKE OPPGITT"
