@@ -5,14 +5,12 @@ import io.ktor.client.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-mer import no.nav.medlemskap.saga.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.saga.persistence.Medlemskap_utfort_arbeid_utenfor_norge
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
