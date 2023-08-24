@@ -91,8 +91,21 @@ open class FlexMessageHandler (
             val sendtNav = JsonNode.get("sendtNav").asText(null)
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
-            
-           val mapper = BrukersporsmaalMapper(JsonNode)
+            // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
+            if (status != Soknadstatus.SENDT.toString()){
+
+                return Brukersporsmaal(
+                    fnr,
+                    id,
+                    DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                    "SYKEPENGER",
+                    status,
+                    null,
+                    null,
+                    null
+                )
+            }
+            val mapper = BrukersporsmaalMapper(JsonNode)
 
             return Brukersporsmaal(
                 fnr,

@@ -19,10 +19,67 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
     val sporsmålArray = rootNode.get("sporsmal")
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
     val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-    val arbeidutland_brukersporsmaal =
-        sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
+    val arbeidutland_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
+    val oppholdUtenforNorge_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE") }
+    val oppholdUtenforEOS_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS") }
     val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
     val arbeidUtlandBrukerSporsmaal = getarbeidUtlandBrukerSporsmaal()
+    val oppholdUtenforNorge = getOppholdUtenforNorgeBrukerSporsmaal()
+    val oppholdUtenforEOS = getOppholdUtenforEOSBrukerSporsmaal()
+
+    private fun getOppholdUtenforEOSBrukerSporsmaal(): Medlemskap_opphold_utenfor_eos? {
+        if (oppholdUtenforEOS_brukersporsmaal != null){
+            return mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOS_brukersporsmaal)
+
+        }
+        return null
+    }
+
+    private fun mapOppholdUtenforEOS_BrukerSporsmaal(oppholdutenforEOS: JsonNode): Medlemskap_opphold_utenfor_eos? {
+        val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdutenforEOS)
+        val id = flexModel.id
+        val sporsmalstekst = flexModel.sporsmalstekst
+        val utlandsopphold: List<OppholdUtenforEOS> =
+            mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+                ?: emptyList())
+        val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        return Medlemskap_opphold_utenfor_eos(id,sporsmalstekst,svar,utlandsopphold);
+    }
+
+
+    private fun mapOppholdUtenforEOS(flex_OppholdUtenforEOS: List<FlexMedlemskapsBrukerSporsmaal>): List<OppholdUtenforEOS> {
+        return flex_OppholdUtenforEOS.map{
+            val hvor = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first()!!.verdi
+            val grunnNode = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }
+            val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
+            val grunn = v2?.first()!!.sporsmalstekst
+            val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }?.svar!!.first()!!.verdi))
+            println("test")
+            OppholdUtenforEOS(it.id,hvor,grunn!!,periode)
+        }
+
+    }
+
+    private fun getOppholdUtenforNorgeBrukerSporsmaal(): Medlemskap_opphold_utenfor_norge ?{
+        if (oppholdUtenforNorge_brukersporsmaal != null){
+            return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge_brukersporsmaal)
+
+        }
+        return null
+    }
+
+    private fun mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge: JsonNode): Medlemskap_opphold_utenfor_norge? {
+        val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdUtenforNorge)
+        val id = flexModel.id
+        val sporsmalstekst = flexModel.sporsmalstekst
+        val utlandsopphold: List<OppholdUtenforNorge> =
+            mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
+                ?: emptyList())
+        val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        return Medlemskap_opphold_utenfor_norge(id,sporsmalstekst,svar,utlandsopphold);
+    }
+
+
 
     private fun getarbeidUtlandBrukerSporsmaal(): Medlemskap_utfort_arbeid_utenfor_norge? {
         if (arbeidutland_brukersporsmaal != null) {
@@ -68,6 +125,19 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
                 StructuredArguments.kv("json", arbeidutland.toPrettyString())
             )
             return null
+        }
+
+    }
+
+    private fun mapOppholdUtenforNorge(flex_OppholdUtenforNorge: List<FlexMedlemskapsBrukerSporsmaal>): List<OppholdUtenforNorge> {
+        return flex_OppholdUtenforNorge.map{
+            val hvor = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }?.svar!!.first()!!.verdi
+            val grunnNode = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }
+            val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
+            val grunn = v2?.first()!!.sporsmalstekst
+            val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }?.svar!!.first()!!.verdi))
+            println("test")
+            OppholdUtenforNorge(it.id,hvor,grunn!!,periode)
         }
 
     }

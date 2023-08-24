@@ -56,8 +56,8 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("51857200482",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
         assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
-        assertEquals(LocalDateTime.parse("2023-08-14T14:38:09.383084").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
-        assertEquals("a588f3a3-1615-3f8b-8ba8-4445966dcf2d",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
+        assertEquals(LocalDateTime.parse("2023-08-23T14:38:09.383084").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
+        assertEquals("4d6d35de-dc50-35ef-8f36-5cf59b2df922",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertFalse(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
     }
     @Test

@@ -75,5 +75,31 @@ data class ArbeidUtenforNorge(
     val land:String,
     val perioder: List<Periode>
 )
+data class OppholdUtenforNorge(
+    val id: String,
+    val land:String,
+    val grunn:String,
+    val perioder: List<Periode>
+)
+data class OppholdUtenforEOS(
+    val id: String,
+    val land:String,
+    val grunn:String,
+    val perioder: List<Periode>
+)
+
+data class Medlemskap_opphold_utenfor_norge(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val oppholdUtenforNorge:List<OppholdUtenforNorge>
+)
+
+data class Medlemskap_opphold_utenfor_eos(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val oppholdUtenforNorge:List<OppholdUtenforEOS>
+)
 
 
