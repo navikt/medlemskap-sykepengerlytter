@@ -52,6 +52,8 @@ class BomloService(private val configuration: Configuration) {
             if (cause.response.status.value == 404) {
                 log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                 val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)
+                val brukersporsmaal:Brukersporsmaal? = getBrukerSporsmaal(bomloRequest,callId)
+
                 val lovmeRequest = mapToMedlemskapRequest(bomloRequest,arbeidUtland)
                 val resultat= lovmeClient.vurderMedlemskapBomlo(lovmeRequest,callId)
                 return JacksonParser().ToJson(resultat)
@@ -78,7 +80,7 @@ class BomloService(private val configuration: Configuration) {
 
     }
 
-
+    //TODO: Logikken under må avklares så vi kan forholde oss til ny modell
     fun getBrukerSporsmaal(bomloRequest: BomloRequest,callId: String): Brukersporsmaal? {
 
         val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr).filter { it.eventDate.isAfter(

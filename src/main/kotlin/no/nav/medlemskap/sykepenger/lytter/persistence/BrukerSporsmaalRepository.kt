@@ -41,7 +41,10 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             status = brukersporsmaal.status,
             sporsmaal = brukersporsmaal.sporsmaal,
             oppholdstilatelse = brukersporsmaal.oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = brukersporsmaal.utfort_arbeid_utenfor_norge
+            utfort_arbeid_utenfor_norge = brukersporsmaal.utfort_arbeid_utenfor_norge,
+            oppholdUtenforNorge = brukersporsmaal.oppholdUtenforNorge,
+            oppholdUtenforEOS = brukersporsmaal.oppholdUtenforEOS
+
         ))
 
 
@@ -82,6 +85,8 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             status= row.string("status"),
             sporsmaal= sporsmaal.sporsmaal,
             oppholdstilatelse = sporsmaal.oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge)
+            utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge,
+            oppholdUtenforNorge = sporsmaal.oppholdUtenforNorge,
+            oppholdUtenforEOS = sporsmaal.oppholdUtenforEOS)
 
     }
