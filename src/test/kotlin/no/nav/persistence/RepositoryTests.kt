@@ -1,9 +1,7 @@
 package no.nav.persistence
 
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.saga.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
-import no.nav.medlemskap.saga.persistence.VurderingDao
 
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 
@@ -90,6 +88,53 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             ytelse = "SYKEPENGER",
             status="SENDT",
             sporsmaal = FlexBrukerSporsmaal(false)
+
+        ))
+        val result = repo.finnBrukersporsmaal("2222")
+        val brukersporsmaal = result.first();
+        assertNotNull(brukersporsmaal.sporsmaal)
+        assertEquals(false,brukersporsmaal.sporsmaal!!.arbeidUtland,"arbeid utland skal være satt til false")
+        assertEquals("2222".sha256(),brukersporsmaal.fnr,"fnr er ikke korrekt")
+
+    }
+    @Test
+    fun `lagre brukersporsmaal MED flexBrukerSpørsmål inklusive medlemskapssporsmaal`() {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val soknadID = UUID.randomUUID().toString()
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+
+        val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
+        repo.lagreBrukersporsmaal(Brukersporsmaal(
+            fnr="2222",
+            soknadid =soknadID,
+            eventDate = LocalDate.now(),
+            ytelse = "SYKEPENGER",
+            status="SENDT",
+            sporsmaal = FlexBrukerSporsmaal(false),
+            oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                id=UUID.randomUUID().toString(),
+                sporsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
+                svar = true,
+                vedtaksdato = LocalDate.now(),
+                vedtaksTypePermanent = false,
+                perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
+            ),
+            utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+                id = UUID.randomUUID().toString(),
+                sporsmalstekst = "",
+                svar = true,
+                arbeidUtenforNorge = listOf(ArbeidUtenforNorge(
+                    id = "1",
+                    arbeidsgiver = "",
+                    land = "SWE",
+                    perioder = listOf(Periode(LocalDate.now(), LocalDate.now()))
+                ))
+            )
+
+
 
         ))
         val result = repo.finnBrukersporsmaal("2222")

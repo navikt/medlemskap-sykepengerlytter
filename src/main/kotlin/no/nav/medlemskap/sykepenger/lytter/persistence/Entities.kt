@@ -34,12 +34,74 @@ data class Brukersporsmaal(
     val eventDate: LocalDate,
     val ytelse: String,
     val status: String,
-    val sporsmaal: FlexBrukerSporsmaal?
+    val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
+    val oppholdstilatelse:Medlemskap_oppholdstilatelse_brukersporsmaal? = null,
+    val utfort_arbeid_utenfor_norge:Medlemskap_utfort_arbeid_utenfor_norge? = null,
+    val oppholdUtenforNorge:Medlemskap_opphold_utenfor_norge? = null,
+    val oppholdUtenforEOS:Medlemskap_opphold_utenfor_eos? = null
+
 )
 
 data class FlexBrukerSporsmaal(
     val arbeidUtland: Boolean?
 )
+data class FlexMedlemskapsBrukerSporsmaal(
+    val id: String,
+    val tag: String,
+    val sporsmalstekst: String?,
+    val undertekst: String?,
+    val svartype: String?,
+    val kriterieForVisningAvUndersporsmal:String?,
+    val svar:List<sporsmaalSvar>?,
+    val undersporsmal:List<FlexMedlemskapsBrukerSporsmaal>?
+)
+data class sporsmaalSvar(val verdi:String)
 
+data class Medlemskap_oppholdstilatelse_brukersporsmaal(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val vedtaksdato:LocalDate,
+    val vedtaksTypePermanent:Boolean,
+    val perioder:List<Periode> = mutableListOf()
+)
+data class Medlemskap_utfort_arbeid_utenfor_norge(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val arbeidUtenforNorge:List<ArbeidUtenforNorge>
+)
+data class ArbeidUtenforNorge(
+    val id: String,
+    val arbeidsgiver:String,
+    val land:String,
+    val perioder: List<Periode>
+)
+data class OppholdUtenforNorge(
+    val id: String,
+    val land:String,
+    val grunn:String,
+    val perioder: List<Periode>
+)
+data class OppholdUtenforEOS(
+    val id: String,
+    val land:String,
+    val grunn:String,
+    val perioder: List<Periode>
+)
+
+data class Medlemskap_opphold_utenfor_norge(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val oppholdUtenforNorge:List<OppholdUtenforNorge>
+)
+
+data class Medlemskap_opphold_utenfor_eos(
+    val id: String,
+    val sporsmalstekst: String?,
+    val svar:Boolean,
+    val oppholdUtenforNorge:List<OppholdUtenforEOS>
+)
 
 

@@ -83,7 +83,6 @@ open class FlexMessageHandler (
         try {
             val json = flexMessageRecord.value
             val JsonNode = ObjectMapper().readTree(json)
-            val sporsmålArray = JsonNode.get("sporsmal")
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
             val type = JsonNode.get("type").asText()
@@ -92,27 +91,21 @@ open class FlexMessageHandler (
             val sendtNav = JsonNode.get("sendtNav").asText(null)
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
+            // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
+            if (status != Soknadstatus.SENDT.toString()){
 
-            var svarText: String = "IKKE OPPGITT"
-            var svar: Boolean?
-            val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-            if (arbeidutland != null) {
-                //println(arbeidutland)
-                try {
-                    svarText = arbeidutland.get("svar").get(0).get("verdi").asText()
-                } catch (t: Throwable) {
-
-                }
+                return Brukersporsmaal(
+                    fnr,
+                    id,
+                    DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                    "SYKEPENGER",
+                    status,
+                    null,
+                    null,
+                    null
+                )
             }
-            if (svarText == "IKKE OPPGITT") {
-                svar = null
-            } else {
-                if (svarText == "NEI") {
-                    svar = false
-                } else if (svarText == "JA") {
-                    svar = true
-                } else svar = null
-            }
+            val mapper = BrukersporsmaalMapper(JsonNode)
 
             return Brukersporsmaal(
                 fnr,
@@ -120,7 +113,9 @@ open class FlexMessageHandler (
                 DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
                 "SYKEPENGER",
                 status,
-                FlexBrukerSporsmaal(svar)
+                mapper.brukersp_arb_utland_old_model,
+                mapper.oppholdstilatelse_brukersporsmaal,
+                mapper.arbeidUtlandBrukerSporsmaal
             )
         }
         catch (t:Throwable){
@@ -129,8 +124,6 @@ open class FlexMessageHandler (
             throw t
         }
     }
-
-
 
     private fun parseDateString(dateString: String?): LocalDate? {
         return try {
