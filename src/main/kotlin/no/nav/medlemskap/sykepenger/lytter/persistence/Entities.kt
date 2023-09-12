@@ -16,6 +16,9 @@ fun Periode.begynnerIPerioden(periode: Periode): Boolean {
                     (fom.isAfter(periode.fom) && fom.isBefore(periode.tom))
             )
 }
+fun Periode.erAvsluttetPr(date:LocalDate): Boolean {
+    return this.tom.isBefore(date)
+}
 
 
 fun SykepengerVurderingDao.fnr(): String {
