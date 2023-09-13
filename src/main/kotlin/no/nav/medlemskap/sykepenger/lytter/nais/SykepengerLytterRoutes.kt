@@ -116,14 +116,14 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
                     val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
                     val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
-                    //val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
 
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
                         kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
-                        kv("endpoint", "brukersporsmal")
+                        kv("endpoint", "brukersporsmal"),
+                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(alleredeStilteSporsmaal).toPrettyString())
                     )
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
