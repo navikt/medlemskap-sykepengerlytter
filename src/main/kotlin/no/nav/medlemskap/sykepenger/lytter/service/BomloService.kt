@@ -16,6 +16,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
 
@@ -89,6 +90,38 @@ class BomloService(private val configuration: Configuration) {
         val arbeidUtlandGammelModell:Boolean = arbeidUtenForNorgeGammelModell(brukersporsmaal,callId,bomloRequest)
         return null
     }
+    fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
+
+        val alleredespurteBrukersporsmaal = mutableListOf<Spørsmål>()
+
+        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(fnr).filter { it.eventDate.isAfter(
+            LocalDate.now().minusYears(1)) }
+
+
+        val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal)
+        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal)
+        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal)
+        val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal)
+        if (arbeidUtland!=null){
+            alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
+        }
+        if (oppholdUtenforEOS!=null){
+            alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        }
+        if (oppholdUtenforNorge!=null){
+            alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
+        }
+        if (oppholdstilatesle!=null){
+            alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLDSTILATELSE)
+        }
+
+
+
+
+        return emptyList()
+    }
+
+
 
     private fun arbeidUtenForNorgeGammelModell(brukersporsmaal: List<Brukersporsmaal>, callId: String, bomloRequest: BomloRequest): Boolean {
         val jasvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==true }

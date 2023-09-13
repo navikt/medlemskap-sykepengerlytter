@@ -14,7 +14,6 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
@@ -22,6 +21,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
+import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
 import java.lang.NullPointerException
 import java.util.*
 
@@ -112,7 +112,12 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
                 }
                 else{
-                    val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+
+                    val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                    val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
+                    val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    //val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
@@ -131,7 +136,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
     }
 }
 
- fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
+
+
+fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
     var returnMap = mutableMapOf<String,String>()
      val headers = setOf("fnr")
      for (variabel in headers ){

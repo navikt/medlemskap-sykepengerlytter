@@ -104,7 +104,7 @@ data class Medlemskap_opphold_utenfor_eos(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
-    val oppholdUtenforNorge:List<OppholdUtenforEOS>
+    val oppholdUtenforEOS:List<OppholdUtenforEOS>
 )
 
 

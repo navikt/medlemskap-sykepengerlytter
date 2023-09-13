@@ -56,6 +56,6 @@ class BrukerspormaalMapperTest {
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.sporsmalstekst,"spørsmålstekst skal være satt") }
-        brukerspørsmaal?.let { Assertions.assertTrue(it.oppholdUtenforNorge.size==1,"det skal finnes et opphold utenfor norge") }
+        brukerspørsmaal?.let { Assertions.assertTrue(it.oppholdUtenforEOS.size==1,"det skal finnes et opphold utenfor norge") }
     }
 }

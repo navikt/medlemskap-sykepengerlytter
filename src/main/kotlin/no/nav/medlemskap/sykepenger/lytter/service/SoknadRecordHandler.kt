@@ -165,7 +165,11 @@ class SoknadRecordHandler(
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status = "SENDT",
-            sporsmaal = FlexBrukerSporsmaal(arbeidUtlandGammelModell))
+            sporsmaal = FlexBrukerSporsmaal(arbeidUtlandGammelModell),
+            oppholdstilatelse=oppholdstilatelse,
+            utfort_arbeid_utenfor_norge = utfortarbeidutenfornorge,
+            oppholdUtenforNorge = oppholdUtenforNorge,
+            oppholdUtenforEOS = oppholdUtenforEOS)
     }
 
 
