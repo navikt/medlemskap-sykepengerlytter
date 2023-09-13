@@ -398,8 +398,7 @@ class SoknadRecordHandlerTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
-
-
+        service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1,dbResult.size)
 

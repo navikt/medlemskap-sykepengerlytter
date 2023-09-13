@@ -1,6 +1,10 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.saga.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.rest.Svar
+import org.apache.kafka.clients.admin.ListOffsetsOptions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -492,6 +496,20 @@ class AlleredeStilteBrukerSpormaalTest {
     }
 
 
+
+    /*
+    * Test av filtrerings logikk
+    *   - Brukerspørsmål som er stilt tidligere (ref tester over) skal filtreres vekk fra foreslåtte bruker spørsmål
+    * */
+    @Test
+    fun `allerede stile brukerspormaal skal filtreres ut fra foreslaat respons`(){
+        val foreslaateSpørsmål = FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE))
+        val allereredeStilteBrukerSpørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE)
+        val actual_response = createFlexRespons(foreslaateSpørsmål,allereredeStilteBrukerSpørsmål)
+        Assertions.assertEquals(Svar.UAVKLART,actual_response.svar)
+        Assertions.assertTrue(actual_response.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+        Assertions.assertFalse(actual_response.sporsmal.contains(Spørsmål.ARBEID_UTENFOR_NORGE))
+    }
 
     fun mockBrukerSpørsmål(fnr:String, eventDate:LocalDate, arbeidUtenforNorge:Medlemskap_utfort_arbeid_utenfor_norge):Brukersporsmaal{
         return Brukersporsmaal(

@@ -78,6 +78,26 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
     return null
 }
 
+fun finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker: List<Brukersporsmaal>): List<Spørsmål> {
+    val alleredespurteBrukersporsmaal = mutableListOf<Spørsmål>()
+    val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(alleBrukerSpormaalForBruker)
+    val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(alleBrukerSpormaalForBruker)
+    val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(alleBrukerSpormaalForBruker)
+    val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(alleBrukerSpormaalForBruker)
+    if (arbeidUtland!=null){
+        alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
+    }
+    if (oppholdUtenforEOS!=null){
+        alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+    }
+    if (oppholdUtenforNorge!=null){
+        alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLD_UTENFOR_NORGE)
+    }
+    if (oppholdstilatesle!=null){
+        alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLDSTILATELSE)
+    }
+    return alleredespurteBrukersporsmaal
+}
 fun createFlexRespons(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: List<Spørsmål>): FlexRespons {
 
     val questions = suggestedRespons.sporsmal.filter { !alleredeStilteSporsmaal.contains(it) }

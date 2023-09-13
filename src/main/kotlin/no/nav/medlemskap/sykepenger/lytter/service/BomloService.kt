@@ -20,12 +20,13 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
 
-class BomloService(private val configuration: Configuration) {
+class BomloService(private val configuration: Configuration)
+{
     companion object {
         private val log = KotlinLogging.logger { }
 
     }
-    val persistenceService: PersistenceService = PersistenceService(
+    var persistenceService: PersistenceService = PersistenceService(
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
         PostgresBrukersporsmaalRepository(DataSourceBuilder(System.getenv()).getDataSource())
     )
@@ -91,35 +92,13 @@ class BomloService(private val configuration: Configuration) {
         return null
     }
     fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
-
-        val alleredespurteBrukersporsmaal = mutableListOf<Spørsmål>()
-
-        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(fnr).filter { it.eventDate.isAfter(
+        
+        val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter { it.eventDate.isAfter(
             LocalDate.now().minusYears(1)) }
-
-
-        val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal)
-        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal)
-        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal)
-        val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal)
-        if (arbeidUtland!=null){
-            alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
-        }
-        if (oppholdUtenforEOS!=null){
-            alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
-        }
-        if (oppholdUtenforNorge!=null){
-            alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
-        }
-        if (oppholdstilatesle!=null){
-            alleredespurteBrukersporsmaal.add(Spørsmål.OPPHOLDSTILATELSE)
-        }
-
-
-
-
-        return emptyList()
+        val alleredespurteBrukersporsmaal:List<Spørsmål> = finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker)
+        return alleredespurteBrukersporsmaal
     }
+
 
 
 
