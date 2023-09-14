@@ -115,7 +115,9 @@ open class FlexMessageHandler (
                 status,
                 mapper.brukersp_arb_utland_old_model,
                 mapper.oppholdstilatelse_brukersporsmaal,
-                mapper.arbeidUtlandBrukerSporsmaal
+                mapper.arbeidUtlandBrukerSporsmaal,
+                mapper.oppholdUtenforNorge,
+                mapper.oppholdUtenforEOS
             )
         }
         catch (t:Throwable){

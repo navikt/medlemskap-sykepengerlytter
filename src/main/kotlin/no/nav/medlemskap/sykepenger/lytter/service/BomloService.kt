@@ -20,16 +20,16 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
 
-class BomloService(private val configuration: Configuration)
+class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
+    PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
+    PostgresBrukersporsmaalRepository(DataSourceBuilder(System.getenv()).getDataSource())
+))
 {
     companion object {
         private val log = KotlinLogging.logger { }
 
     }
-    var persistenceService: PersistenceService = PersistenceService(
-        PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
-        PostgresBrukersporsmaalRepository(DataSourceBuilder(System.getenv()).getDataSource())
-    )
+
     val azureAdClient = AzureAdClient(configuration)
     val restClients = RestClients(
         azureAdClient = azureAdClient,

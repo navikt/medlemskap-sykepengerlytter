@@ -417,11 +417,13 @@ public class LovMeMock():LovmeAPI {
     }
 
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        TODO("Not yet implemented")
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
+        return fileContent
     }
 
     override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        TODO("Not yet implemented")
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
+        return fileContent
     }
 
 }
