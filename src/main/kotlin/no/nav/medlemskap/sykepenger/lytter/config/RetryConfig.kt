@@ -10,7 +10,6 @@ val retryConfig: RetryConfig = RetryConfig
     .maxAttempts(3)
     .retryExceptions(RuntimeException::class.java, ResponseException::class.java)
     .waitDuration(Duration.ofSeconds(4))
-    .retryExceptions(RuntimeException::class.java)
     .build()
 
 val noRetryConfig: RetryConfig = RetryConfig
