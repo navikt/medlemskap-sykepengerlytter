@@ -47,7 +47,7 @@ class SoknadRecordHandler(
                 return
             } else if (isPaafolgendeSoknad(soknadRecord.sykepengeSoknad)) {
                 log.info(
-                    "soknad med id ${soknadRecord.sykepengeSoknad.id} er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført} ",
+                    "soknad med id ${soknadRecord.sykepengeSoknad.id} er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
                     kv("callId", soknadRecord.sykepengeSoknad.id)
                 )
                 return

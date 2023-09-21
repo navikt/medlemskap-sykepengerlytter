@@ -42,6 +42,12 @@ open class FlexMessageHandler (
             val soknadRecord =SoknadRecord(flexMessageRecord.partition,flexMessageRecord.offset,flexMessageRecord.value,flexMessageRecord.key,flexMessageRecord.topic,requestObject)
             soknadRecordHandler.handle(soknadRecord)
         }
+         else{
+            secureLogger.info("melding filtrert ut da det ikke fyller kriterier for å bli sendt til regel motor",
+                kv("x_data",JacksonParser().ToJson(requestObject).toPrettyString()),
+                kv("callId", flexMessageRecord.key)
+            )
+        }
     }
 
     fun soknadSkalSendesTeamLovMe(lovmeSoknadDTO: LovmeSoknadDTO) =
