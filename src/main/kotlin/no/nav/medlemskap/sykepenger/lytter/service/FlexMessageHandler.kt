@@ -25,6 +25,7 @@ open class FlexMessageHandler (
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
+        secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
         if  (requestObject.type == SoknadstypeDTO.ARBEIDSTAKERE){
             handleBrukerSporsmaal(flexMessageRecord)
             handleLovmeRequest(flexMessageRecord)
