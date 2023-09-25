@@ -68,12 +68,6 @@ class BomloService(private val configuration: Configuration) {
     suspend fun finnFlexVurdering(flexRequeest: FlexRequest, callId:String):FlexVurderingRespons?{
         val medlemskap = persistenceService.hentMedlemskap(flexRequeest.fnr)
         val found = finnMatchendeMedlemkapsPeriode(medlemskap,flexRequeest)
-        if (found!=null){
-            secureLogger.info("Matcing row ${flexRequeest.fnr} - ${found.fom} - ${found.tom} : ${found.medlem.name}")
-        }
-        if (found==null){
-            secureLogger.info("No Matcing row ${flexRequeest.fnr} - ${flexRequeest.fom} - ${flexRequeest.tom}")
-        }
         //dersom vi har et innslag i vår db med status noe anent en påfølgedne, hent denne!
         if (found != null && ErMedlem.PAFOLGENDE !=(found.medlem)){
             try {
@@ -82,7 +76,7 @@ class BomloService(private val configuration: Configuration) {
             }
             catch (cause: ResponseException){
                 if (cause.response.status.value == 404) {
-                    secureLogger.info("404 for kall mot saga på : fnr : ${found.fnr}, fom:${found.fom}, tom: ${found.tom}")
+                    secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${found.fom}, tom: ${found.tom}")
                     return null
                 }
                 //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
@@ -97,14 +91,14 @@ class BomloService(private val configuration: Configuration) {
             val forste:Medlemskap? = finnRelevantIkkePåfølgende(found!!,medlemskap)
             if (forste!=null){
 
-                secureLogger.info("kaller saga med første vurdering som ikke er paafolgende : fnr : ${forste.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
+                secureLogger.info("kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
                 try {
-                    val response = sagaClient.finnFlexVurdering(FlexRequest(flexRequeest.sykepengesoknad_id,forste.fnr,forste.fom,forste.tom),callId)
+                    val response = sagaClient.finnFlexVurdering(FlexRequest(flexRequeest.sykepengesoknad_id,flexRequeest.fnr,forste.fom,forste.tom),callId)
                     return JacksonParser().parseFlexVurdering(response)
                 }
                 catch (cause: ResponseException){
                     if (cause.response.status.value == 404) {
-                        secureLogger.info("404 for kall mot saga på : fnr : ${forste.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
+                        secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
                         return null
                     }
                     //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
