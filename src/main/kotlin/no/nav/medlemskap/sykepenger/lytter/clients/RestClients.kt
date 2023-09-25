@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.clients
 
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.SagaClient
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaClient
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.flexretryRegistry
 import no.nav.medlemskap.sykepenger.lytter.config.retryRegistry

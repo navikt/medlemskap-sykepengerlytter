@@ -14,10 +14,10 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
@@ -41,7 +41,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             )
             val request = call.receive<BomloRequest>()
             try {
-                val response = bomloService.finnVurdering(request, callId)
+                val response = bomloService.finnFlexVurdering(request, callId)
                 val medlemskapsloggObjekt = response.lagMedlemskapsResultat()
 
                 secureLogger.info(
@@ -61,6 +61,44 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
                     kv("endpoint", "vurdering")
+                )
+                call.respond(HttpStatusCode.InternalServerError, t.message!!)
+            }
+        }
+        post("/flexvurdering") {
+            val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
+            val azp = callerPrincipal.payload.getClaim("azp").asString()
+            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
+            val callId = call.callId ?: UUID.randomUUID().toString()
+            logger.info(
+                "kall autentisert, url : /vurdering",
+                kv("callId", callId),
+                kv("endpoint", "flexvurdering")
+            )
+            val request = call.receive<FlexRequest>()
+            try {
+                val response = bomloService.finnFlexVurdering(request, callId)
+                if (response!=null){
+                    secureLogger.info(
+                        "{} svar funnet for flex for bruker {}", response.status, response.fnr,
+                        kv("fnr", response.fnr),
+                        kv("svar", response.status),
+                        kv("endpoint", "flexvurdering")
+                    )
+                    call.respond(HttpStatusCode.OK, response)
+                }
+                secureLogger.warn("{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.fom,
+                    kv("fnr", request.fnr),
+                    kv("endpoint", "flexvurdering")
+                )
+                call.respond(HttpStatusCode.NotFound,request)
+            } catch (t: Throwable) {
+                secureLogger.error(
+                    "Unexpected error calling Lovme",
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("cause", t.stackTrace),
+                    kv("endpoint", "flexvurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }

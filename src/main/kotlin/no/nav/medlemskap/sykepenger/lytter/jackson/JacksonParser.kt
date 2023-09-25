@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import mu.KotlinLogging
 import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -37,6 +38,21 @@ class JacksonParser {
         }
     }
 
+    fun parseFlexVurdering(jsonString: String): FlexVurderingRespons {
+        try {
+            val mapper: ObjectMapper = ObjectMapper()
+                .registerKotlinModule()
+                .findAndRegisterModules()
+                .configure(SerializationFeature.INDENT_OUTPUT, true)
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+            return mapper.readValue(jsonString)
+        } catch (t: Throwable) {
+            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
+            return FlexVurderingRespons("","","",LocalDate.now(),LocalDate.now(),"UAVKLART")
+        }
+    }
     fun parseFlexBrukerSporsmaal(jsonString: String): FlexBrukerSporsmaal {
         try {
             val mapper: ObjectMapper = ObjectMapper()

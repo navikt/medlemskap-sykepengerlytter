@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
+import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -37,6 +38,10 @@ class JacksonParserTest {
         assertEquals("UAVKLART", resultat.svar)
         assertEquals("REGEL_25", resultat.årsak)
         assertEquals("[\"REGEL_25\", \"REGEL_1_4\"]", resultat.årsaker.toString())
+    }
+    @Test
+    fun `print`() {
+        println("06057032667".sha256())
     }
 
 
