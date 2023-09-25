@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.rest
 import java.time.LocalDate
 
 data class FlexRequest(
+    val sykepengesoknad_id: String,
     val fnr: String,
     val fom: LocalDate,
     val tom: LocalDate,

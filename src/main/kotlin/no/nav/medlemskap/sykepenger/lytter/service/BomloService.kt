@@ -92,7 +92,7 @@ class BomloService(private val configuration: Configuration) {
             val forste:Medlemskap? = finnRelevantIkkePåfølgende(found!!,medlemskap)
             if (forste!=null){
                 try {
-                    val response = sagaClient.finnFlexVurdering(FlexRequest(forste.fnr,forste.fom,forste.tom),callId)
+                    val response = sagaClient.finnFlexVurdering(FlexRequest(flexRequeest.sykepengesoknad_id,forste.fnr,forste.fom,forste.tom),callId)
                     return JacksonParser().parseFlexVurdering(response)
                 }
                 catch (cause: ResponseException){
