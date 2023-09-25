@@ -67,14 +67,13 @@ class BomloService(private val configuration: Configuration) {
     }
     suspend fun finnFlexVurdering(flexRequeest: FlexRequest, callId:String):FlexVurderingRespons?{
         val medlemskap = persistenceService.hentMedlemskap(flexRequeest.fnr)
-        medlemskap.forEach {
-            secureLogger.info("requestfnr : ${flexRequeest.fnr} innslag: fnr: ${it.fnr}, fom: ${it.fom}, tom ${it.tom}, medlem: ${it.medlem.name}")
-        }
-
-
         val found = finnMatchendeMedlemkapsPeriode(medlemskap,flexRequeest)
-
-
+        if (found!=null){
+            secureLogger.info("Matcing row ${flexRequeest.fnr} - ${found.fom} - ${found.tom} : ${found.medlem.name}")
+        }
+        if (found==null){
+            secureLogger.info("No Matcing row ${flexRequeest.fnr} - ${flexRequeest.fom} - ${flexRequeest.tom}")
+        }
         //dersom vi har et innslag i vår db med status noe anent en påfølgedne, hent denne!
         if (found != null && ErMedlem.PAFOLGENDE !=(found.medlem)){
             try {
