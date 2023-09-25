@@ -4,19 +4,21 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
+import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
 
@@ -43,7 +45,7 @@ class BomloService(private val configuration: Configuration) {
         lovmeClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     }
 
-    suspend fun finnVurdering(bomloRequest: BomloRequest, callId:String):JsonNode{
+    suspend fun finnFlexVurdering(bomloRequest: BomloRequest, callId:String):JsonNode{
         try {
             val response = sagaClient.finnVurdering(bomloRequest,callId)
             log.info("Vurdering funnet i database for kall med id $callId")
@@ -56,6 +58,62 @@ class BomloService(private val configuration: Configuration) {
                 val lovmeRequest = mapToMedlemskapRequest(bomloRequest,arbeidUtland)
                 val resultat= lovmeClient.vurderMedlemskapBomlo(lovmeRequest,callId)
                 return JacksonParser().ToJson(resultat)
+            }
+            //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
+            log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
+            throw cause
+        }
+    }
+    suspend fun finnFlexVurdering(flexRequeest: FlexRequest, callId:String):FlexVurderingRespons?{
+        val medlemskap = persistenceService.hentMedlemskap(flexRequeest.fnr)
+
+        val found = finnMatchendeMedlemkapsPeriode(medlemskap,flexRequeest)
+
+        //dersom vi har et innslag i vår db med status noe anent en påfølgedne, hent denne!
+        if (found != null && ErMedlem.PAFOLGENDE !=(found.medlem)){
+            try {
+                val response = sagaClient.finnFlexVurdering(flexRequeest,callId)
+                return JacksonParser().parseFlexVurdering(response)
+            }
+            catch (cause: ResponseException){
+                if (cause.response.status.value == 404) {
+
+                    return null
+                }
+                //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
+                log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
+                throw cause
+            }
+
+        }
+
+        //Vi må finne første søknaden (vi støtter ikke påfølgende)
+        if (found != null && ErMedlem.PAFOLGENDE ==(found.medlem)){
+            val forste:Medlemskap? = finnRelevantIkkePåfølgende(found!!,medlemskap)
+            if (forste!=null){
+                try {
+                    val response = sagaClient.finnFlexVurdering(FlexRequest(forste.fnr,forste.fom,forste.tom),callId)
+                    return JacksonParser().parseFlexVurdering(response)
+                }
+                catch (cause: ResponseException){
+                    if (cause.response.status.value == 404) {
+                        return null
+                    }
+                    //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
+                    log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
+                    throw cause
+                }
+            }
+            return null
+        }
+        try {
+            val response = sagaClient.finnFlexVurdering(flexRequeest,callId)
+            return JacksonParser().parseFlexVurdering(response)
+        }
+        catch (cause: ResponseException){
+            if (cause.response.status.value == 404) {
+
+                return null
             }
             //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
             log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
@@ -113,4 +171,13 @@ class BomloService(private val configuration: Configuration) {
         return MedlOppslagRequest(bomloRequest.fnr,bomloRequest.førsteDagForYtelse.toString(), Periode(bomloRequest.periode.fom.toString(),bomloRequest.periode.tom.toString()), Brukerinput(arbeidUtland))
 
     }
+}
+ fun finnRelevantIkkePåfølgende(paafolgende: Medlemskap, medlemskap: List<Medlemskap>): Medlemskap? {
+    return medlemskap.sortedByDescending { it.tom }.find{it.fnr == paafolgende.fnr && it.tom<paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE}
+}
+fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, flexRequeest: FlexRequest): Medlemskap? {
+    return medlemskap.find {
+        it.fnr == flexRequeest.fnr &&
+                it.fom == flexRequeest.fom &&
+                it.tom == flexRequeest.tom  }
 }
