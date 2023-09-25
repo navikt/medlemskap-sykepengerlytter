@@ -25,6 +25,7 @@ import java.time.LocalDate
 class BomloService(private val configuration: Configuration) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger("tjenestekall")
 
     }
     val persistenceService: PersistenceService = PersistenceService(
@@ -77,7 +78,7 @@ class BomloService(private val configuration: Configuration) {
             }
             catch (cause: ResponseException){
                 if (cause.response.status.value == 404) {
-
+                    secureLogger.info("404 for kall mot saga på : fnr : ${found.fnr}, fom:${found.fom}, tom: ${found.tom}")
                     return null
                 }
                 //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
@@ -91,12 +92,15 @@ class BomloService(private val configuration: Configuration) {
         if (found != null && ErMedlem.PAFOLGENDE ==(found.medlem)){
             val forste:Medlemskap? = finnRelevantIkkePåfølgende(found!!,medlemskap)
             if (forste!=null){
+
+                secureLogger.info("kaller saga med første vurdering som ikke er paafolgende : fnr : ${forste.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
                 try {
                     val response = sagaClient.finnFlexVurdering(FlexRequest(flexRequeest.sykepengesoknad_id,forste.fnr,forste.fom,forste.tom),callId)
                     return JacksonParser().parseFlexVurdering(response)
                 }
                 catch (cause: ResponseException){
                     if (cause.response.status.value == 404) {
+                        secureLogger.info("404 for kall mot saga på : fnr : ${forste.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
                         return null
                     }
                     //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
