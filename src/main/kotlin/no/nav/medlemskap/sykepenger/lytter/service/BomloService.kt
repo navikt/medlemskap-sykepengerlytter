@@ -179,11 +179,10 @@ class BomloService(private val configuration: Configuration) {
     }
 }
  fun finnRelevantIkkePåfølgende(paafolgende: Medlemskap, medlemskap: List<Medlemskap>): Medlemskap? {
-    return medlemskap.sortedByDescending { it.tom }.find{it.fnr == paafolgende.fnr && it.tom<paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE}
+    return medlemskap.sortedByDescending { it.tom }.find{it.tom<paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE}
 }
 fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, flexRequeest: FlexRequest): Medlemskap? {
     return medlemskap.find {
-        it.fnr == flexRequeest.fnr &&
                 it.fom == flexRequeest.fom &&
                 it.tom == flexRequeest.tom  }
 }
