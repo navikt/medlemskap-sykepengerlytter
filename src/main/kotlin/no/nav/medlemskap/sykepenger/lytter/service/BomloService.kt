@@ -187,7 +187,8 @@ class BomloService(private val configuration: Configuration) {
     return medlemskap.sortedByDescending { it.tom }.find{it.tom<paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE}
 }
 fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, flexRequeest: FlexRequest): Medlemskap? {
-    return medlemskap.find {
-                it.fom == flexRequeest.fom &&
-                it.tom == flexRequeest.tom  }
+    return medlemskap.firstOrNull {
+        it.fom.isEqual(flexRequeest.fom) &&
+                it.tom.isEqual(flexRequeest.tom)
+    }
 }
