@@ -6,6 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.*
 
 class bomloservicetest {
     @Test
@@ -16,7 +17,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
             Medlemskap("2", LocalDate.of(2022,1,1,), LocalDate.of(2022,1,31,), ErMedlem.UAVKLART),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest("1",LocalDate.of(2022,1,1),LocalDate.of(2022,1,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,1,1),LocalDate.of(2022,1,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.JA,match!!.medlem)
 
@@ -29,7 +30,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
             Medlemskap("2", LocalDate.of(2022,1,1,), LocalDate.of(2022,1,31,), ErMedlem.UAVKLART),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest("1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
 
@@ -42,7 +43,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,2,1,), LocalDate.of(2022,2,28,), ErMedlem.PAFOLGENDE),
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest("1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
         val forsteIkkePaafolgende = finnRelevantIkkePåfølgende(match,medlemskap)
