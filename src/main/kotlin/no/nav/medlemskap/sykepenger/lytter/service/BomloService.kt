@@ -108,8 +108,10 @@ class BomloService(private val configuration: Configuration) {
                     throw cause
                 }
             }
+            secureLogger.info("ingen førstegangssøknad funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}")
             return null
         }
+        secureLogger.info("ingen matchende treff i vurderinger  funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}")
         try {
             val response = sagaClient.finnFlexVurdering(flexRequeest,callId)
             return JacksonParser().parseFlexVurdering(response)
