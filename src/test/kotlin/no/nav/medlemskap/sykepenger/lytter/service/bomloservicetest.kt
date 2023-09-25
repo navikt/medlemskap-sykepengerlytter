@@ -49,7 +49,22 @@ class bomloservicetest {
         val forsteIkkePaafolgende = finnRelevantIkkePåfølgende(match,medlemskap)
         Assertions.assertEquals(ErMedlem.JA,forsteIkkePaafolgende!!.medlem)
         Assertions.assertEquals(LocalDate.of(2022,1,1,),forsteIkkePaafolgende!!.fom)
+    }
+    @Test
+    fun `prod feil soek`(){
+        val medlemskap = listOf(
+            Medlemskap("1", LocalDate.parse("2022-06-21"), LocalDate.parse("2022-07-07"), ErMedlem.PAFOLGENDE),
+            Medlemskap("1", LocalDate.parse("2022-06-03"), LocalDate.parse("2022-06-20"), ErMedlem.PAFOLGENDE),
+            Medlemskap("1", LocalDate.parse("2022-05-04"), LocalDate.parse("2022-06-02"), ErMedlem.PAFOLGENDE),
+            Medlemskap("1", LocalDate.parse("2022-04-07"), LocalDate.parse("2022-05-03"), ErMedlem.PAFOLGENDE),
+            Medlemskap("1", LocalDate.parse("2022-03-10"), LocalDate.parse("2022-04-06"), ErMedlem.JA),
 
+        )
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.parse("2022-06-21"),LocalDate.parse("2022-07-07")))
+        Assertions.assertNotNull(match)
+        Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
+        val forsteIkkePaafolgende = finnRelevantIkkePåfølgende(match,medlemskap)
+        Assertions.assertEquals(ErMedlem.JA,forsteIkkePaafolgende!!.medlem)
 
     }
 }
