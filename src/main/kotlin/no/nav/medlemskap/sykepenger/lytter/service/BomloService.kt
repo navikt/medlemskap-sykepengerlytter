@@ -76,7 +76,8 @@ class BomloService(private val configuration: Configuration) {
             }
             catch (cause: ResponseException){
                 if (cause.response.status.value == 404) {
-                    secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${found.fom}, tom: ${found.tom}")
+                    secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${found.fom}, tom: ${found.tom}",
+                        StructuredArguments.kv("callId", callId))
                     return null
                 }
                 //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
@@ -91,14 +92,14 @@ class BomloService(private val configuration: Configuration) {
             val forste:Medlemskap? = finnRelevantIkkePåfølgende(found!!,medlemskap)
             if (forste!=null){
 
-                secureLogger.info("kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
+                secureLogger.info("kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}", StructuredArguments.kv("callId", callId))
                 try {
                     val response = sagaClient.finnFlexVurdering(FlexRequest(flexRequeest.sykepengesoknad_id,flexRequeest.fnr,forste.fom,forste.tom),callId)
                     return JacksonParser().parseFlexVurdering(response)
                 }
                 catch (cause: ResponseException){
                     if (cause.response.status.value == 404) {
-                        secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}")
+                        secureLogger.info("404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}", StructuredArguments.kv("callId", callId))
                         return null
                     }
                     //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
@@ -106,10 +107,10 @@ class BomloService(private val configuration: Configuration) {
                     throw cause
                 }
             }
-            secureLogger.info("ingen førstegangssøknad funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}")
+            secureLogger.info("ingen førstegangssøknad funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}", StructuredArguments.kv("callId", callId))
             return null
         }
-        secureLogger.info("ingen matchende treff i vurderinger  funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}")
+        secureLogger.info("ingen matchende treff i vurderinger  funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}", StructuredArguments.kv("callId", callId))
         try {
             val response = sagaClient.finnFlexVurdering(flexRequeest,callId)
             return JacksonParser().parseFlexVurdering(response)
