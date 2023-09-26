@@ -121,13 +121,18 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
+        val value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukermedMedNeiIBrukerspormsaalSoknadFraFlex.json").readText(Charsets.UTF_8)
+        /*
+        * modifiser dato i json fil (sendt arbeidsgiver) til dagens dato så ikke test bryter i fremtiden
+        * */
+        val modified = value.replace("2023-08-23T13:23:22.229663373",LocalDateTime.now().toString())
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
         val message = FlexMessageRecord(
             partition = 0,
             offset = 1,
-            value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukermedMedNeiIBrukerspormsaalSoknadFraFlex.json").readText(Charsets.UTF_8),
+            value = modified,
             key="",
             topic="",
             timestamp = LocalDateTime.now(),
