@@ -44,6 +44,22 @@ class FlexMessageHandlerTest {
         assertEquals("52041604-a94a-38ca-b7a6-3e913b5207fa",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertFalse(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
     }
+
+    @Test
+    fun `test mapping av flere brukersporsmaal`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
+        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = FlexMessageHandler(Configuration(),PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val brukersporsmaal = service.mapMessage(record)
+        assertNotNull(brukersporsmaal)
+        assertNotNull(brukersporsmaal.sporsmaal)
+        assertEquals("51857200482",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
+        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(LocalDateTime.parse("2023-08-23T14:38:09.383084").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
+        assertEquals("4d6d35de-dc50-35ef-8f36-5cf59b2df922",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
+        assertFalse(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
+    }
     @Test
     fun `test mapping av request UTEN ArbeidUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()

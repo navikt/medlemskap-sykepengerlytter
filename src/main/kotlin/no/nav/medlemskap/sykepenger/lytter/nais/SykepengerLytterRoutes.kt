@@ -22,6 +22,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
+import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
 import java.lang.NullPointerException
 import java.util.*
 
@@ -150,13 +151,18 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
                 }
                 else{
-                    val flexRespons= RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+
+                    val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                    val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
+                    val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
                         kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
-                        kv("endpoint", "brukersporsmal")
+                        kv("endpoint", "brukersporsmal"),
+                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(alleredeStilteSporsmaal).toPrettyString())
                     )
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
@@ -169,7 +175,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
     }
 }
 
- fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
+
+
+fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
     var returnMap = mutableMapOf<String,String>()
      val headers = setOf("fnr")
      for (variabel in headers ){

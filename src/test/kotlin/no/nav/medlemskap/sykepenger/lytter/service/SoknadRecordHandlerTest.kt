@@ -398,8 +398,7 @@ class SoknadRecordHandlerTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
-
-
+        service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1,dbResult.size)
 
@@ -418,11 +417,13 @@ public class LovMeMock():LovmeAPI {
     }
 
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        TODO("Not yet implemented")
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
+        return fileContent
     }
 
     override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        TODO("Not yet implemented")
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
+        return fileContent
     }
 
 }
