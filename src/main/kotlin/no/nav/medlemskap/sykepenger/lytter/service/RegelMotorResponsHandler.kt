@@ -7,8 +7,10 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_C")
 
 class RegelMotorResponsHandler {
+
     fun interpretLovmeRespons(lovmeresponse: String) : FlexRespons {
         val lovmeresponseNode = objectMapper.readTree(lovmeresponse)
         when(lovmeresponseNode.svar()){
@@ -25,9 +27,10 @@ class RegelMotorResponsHandler {
 
     private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
 
-        //if (lovmeresponseNode!!.erBritiskBorger() && !lovmeresponseNode.harOppholdsTilatelse()){
-        //    return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
-        //}
+        //Lag bruker spørsmål kun for de reglene som er avklart
+        if (!lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)){
+            return FlexRespons(Svar.UAVKLART, emptySet())
+        }
         if (lovmeresponseNode!!.erEosBorger()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
@@ -49,6 +52,7 @@ class RegelMotorResponsHandler {
 fun JsonNode.erEosBorger():Boolean{
     return this.finnSvarPaaRegel("REGEL_2")
 }
+
 fun JsonNode.finnSvarPaaRegel(regelID:String):Boolean{
     val regel = this.alleRegelResultat().finnRegel(regelID)
     if (regel!=null){
@@ -59,6 +63,16 @@ fun JsonNode.finnSvarPaaRegel(regelID:String):Boolean{
 fun JsonNode.alleRegelResultat():List<JsonNode>{
     return this.get("resultat").get("delresultat").flatMap { it.get("delresultat")}
 }
+fun JsonNode.aarsaker():List<String>{
+    return this.get("resultat").get("årsaker").map { it.get("regelId").asText()}
+}
+fun JsonNode.aarsakerInneholderEnEllerFlereRegler(regler:List<String>):Boolean{
+    return this.aarsaker().any { it in regler }
+}
+fun JsonNode.aarsakerInneholderKunEnReglel(regler:List<String>):Boolean{
+    return this.aarsaker().size == 1 && this.aarsaker().any { it in regler }
+}
+
 fun List<JsonNode>.finnRegel(regelID:String):JsonNode?{
     return this.find { it.get("regelId").asText()==regelID }
 }

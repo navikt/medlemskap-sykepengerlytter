@@ -7,8 +7,7 @@ import io.ktor.server.routing.*
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Job
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.nais.writeMetrics004
-import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
+
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import java.util.*
 

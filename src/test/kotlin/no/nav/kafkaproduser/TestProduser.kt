@@ -60,7 +60,7 @@ class SimpleProducer(brokers: KafkaConfig) {
 
     fun produce(ratePerSecond: Int) {
         //val jsonString: String = File("./src/main/resources/sampleRequest.json").readText(Charsets.UTF_8)
-        val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json  ").readText(Charsets.UTF_8)
         logger.info(fileContent)
         val waitTimeBetweenIterationsMs = 5000L / ratePerSecond
         while(true) {
@@ -70,7 +70,7 @@ class SimpleProducer(brokers: KafkaConfig) {
 
             val futureResult = producer.send(
                 ProducerRecord(
-                    "medlemskap.test-lovme-sykepengerlytter",
+                    "flex.sykepengesoknad",
                     UUID.randomUUID().toString(), fakeSoknadJson
                 )
             )
