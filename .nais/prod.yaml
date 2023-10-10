@@ -55,6 +55,8 @@ spec:
           cluster: prod-fss
         - application: sykepengesoknad-backend
           namespace: flex
+        - application: sykepengesoknad-arkivering-oppgave
+          namespace: flex
     outbound:
       rules:
         - application: medlemskap-oppslag
