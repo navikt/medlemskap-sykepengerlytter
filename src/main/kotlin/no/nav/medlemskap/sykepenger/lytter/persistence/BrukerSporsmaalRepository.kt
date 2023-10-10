@@ -75,18 +75,32 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
 
     val toBrukersporsmaalDao: (Row) -> Brukersporsmaal = { row ->
 
-        val sporsmaal:Brukersporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
 
-        Brukersporsmaal(
-            fnr=row.string("fnr"),
-            soknadid = row.string("soknadid").toString(),
-            eventDate= row.localDate("eventDate"),
-            ytelse= row.string("ytelse"),
-            status= row.string("status"),
-            sporsmaal= sporsmaal.sporsmaal,
-            oppholdstilatelse = sporsmaal.oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge,
-            oppholdUtenforNorge = sporsmaal.oppholdUtenforNorge,
-            oppholdUtenforEOS = sporsmaal.oppholdUtenforEOS)
+        try{
+            val sporsmaal:Brukersporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+             Brukersporsmaal(
+                fnr=row.string("fnr"),
+                soknadid = row.string("soknadid").toString(),
+                eventDate= row.localDate("eventDate"),
+                ytelse= row.string("ytelse"),
+                status= row.string("status"),
+                sporsmaal= sporsmaal.sporsmaal,
+                oppholdstilatelse = sporsmaal.oppholdstilatelse,
+                utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge,
+                oppholdUtenforNorge = sporsmaal.oppholdUtenforNorge,
+                oppholdUtenforEOS = sporsmaal.oppholdUtenforEOS)
+
+        }
+        catch (e:Exception){
+            val sporsmaal:FlexBrukerSporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+            Brukersporsmaal(
+                fnr=row.string("fnr"),
+                soknadid = row.string("soknadid").toString(),
+                eventDate= row.localDate("eventDate"),
+                ytelse= row.string("ytelse"),
+                status= row.string("status"),
+                sporsmaal= sporsmaal)
+        }
+
 
     }
