@@ -5,9 +5,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import mu.KotlinLogging
-import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.saga.persistence.FlexMedlemskapsBrukerSporsmaal
+
 import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import java.time.LocalDate
 import java.time.LocalDateTime

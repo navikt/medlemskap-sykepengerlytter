@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.saga.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

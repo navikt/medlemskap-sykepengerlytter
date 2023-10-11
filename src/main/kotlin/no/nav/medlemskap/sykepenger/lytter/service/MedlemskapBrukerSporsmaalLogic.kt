@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.saga.persistence.*
+
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import java.time.LocalDate
 
 fun finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_utfort_arbeid_utenfor_norge? {

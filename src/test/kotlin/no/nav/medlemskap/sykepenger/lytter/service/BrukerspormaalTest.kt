@@ -1,13 +1,16 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.saga.persistence.*
+
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions

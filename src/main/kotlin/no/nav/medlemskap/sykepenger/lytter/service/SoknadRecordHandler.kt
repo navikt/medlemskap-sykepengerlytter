@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.saga.persistence.*
+
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
 
@@ -150,13 +151,13 @@ class SoknadRecordHandler(
         }
     }
 
-    fun getRelevanteBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO):Brukersporsmaal{
+    fun getRelevanteBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = sykepengeSoknad.fnr, soknadid = sykepengeSoknad.id, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
-        val utfortarbeidutenfornorge:Medlemskap_utfort_arbeid_utenfor_norge? =  finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforNorge:Medlemskap_opphold_utenfor_norge? =  finnMedlemskap_opphold_utenfor_norge(listofbrukersporsmaal)
+        val utfortarbeidutenfornorge: Medlemskap_utfort_arbeid_utenfor_norge? =  finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
+        val oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge? =  finnMedlemskap_opphold_utenfor_norge(listofbrukersporsmaal)
         val oppholdUtenforEOS: Medlemskap_opphold_utenfor_eos? =  finnMedlemskap_opphold_utenfor_eos(listofbrukersporsmaal)
         val oppholdstilatelse: Medlemskap_oppholdstilatelse_brukersporsmaal? =  finnMMedlemskap_oppholdstilatelse_brukersporsmaal(listofbrukersporsmaal)
         val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)

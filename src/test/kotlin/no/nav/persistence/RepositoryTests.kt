@@ -1,13 +1,13 @@
 package no.nav.persistence
 
-import no.nav.medlemskap.saga.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 
 import org.junit.jupiter.api.Assertions.*
@@ -137,6 +137,33 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
 
         ))
+        val result = repo.finnBrukersporsmaal("2222")
+        val brukersporsmaal = result.first();
+        assertNotNull(brukersporsmaal.sporsmaal)
+        assertEquals(false,brukersporsmaal.sporsmaal!!.arbeidUtland,"arbeid utland skal være satt til false")
+        assertEquals("2222".sha256(),brukersporsmaal.fnr,"fnr er ikke korrekt")
+
+    }
+    @Test
+    fun `lagre brukersporsmaal MED flexBrukerSpørsmålGammelModell`() {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val soknadID = UUID.randomUUID().toString()
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+
+        val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
+        val json = JacksonParser().ToJson("{\"arbeidUtland\": false}")
+        val fnr = "2222"
+        using(sessionOf(dsb.getDataSource())) { session ->
+            session.transaction {
+                it.run(queryOf("INSERT INTO brukersporsmaal(fnr,soknadid, eventDate,ytelse,status,sporsmaal) VALUES(?, ?, ?, ?, ?, to_json(?::json))",fnr.sha256(),"1", LocalDate.now(),"SYKEPENGER", "SENDT",
+                    json.toPrettyString()).asExecute)
+            }
+
+        }
+
         val result = repo.finnBrukersporsmaal("2222")
         val brukersporsmaal = result.first();
         assertNotNull(brukersporsmaal.sporsmaal)

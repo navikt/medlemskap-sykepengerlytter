@@ -5,7 +5,7 @@ import javax.sql.DataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.medlemskap.saga.persistence.VurderingDao
+
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 
 interface MedlemskapVurdertRepository {

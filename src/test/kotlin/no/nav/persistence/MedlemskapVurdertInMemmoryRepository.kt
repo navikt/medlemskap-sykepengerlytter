@@ -1,7 +1,7 @@
 package no.nav.persistence
 
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-import no.nav.medlemskap.saga.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 

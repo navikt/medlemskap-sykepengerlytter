@@ -1,4 +1,4 @@
-package no.nav.medlemskap.saga.persistence
+package no.nav.medlemskap.sykepenger.lytter.persistence
 
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
