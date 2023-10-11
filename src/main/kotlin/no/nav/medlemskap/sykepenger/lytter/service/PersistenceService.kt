@@ -3,12 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-import no.nav.medlemskap.saga.persistence.VurderingDao
+
 import no.nav.medlemskap.sykepenger.lytter.domain.*
-import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 

@@ -1,9 +1,9 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.saga.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.saga.persistence.Periode
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

@@ -5,8 +5,7 @@ import javax.sql.DataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.medlemskap.saga.persistence.Brukersporsmaal
-import no.nav.medlemskap.saga.persistence.FlexBrukerSporsmaal
+
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 

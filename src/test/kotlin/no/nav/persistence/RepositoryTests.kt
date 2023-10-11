@@ -3,7 +3,6 @@ package no.nav.persistence
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.medlemskap.saga.persistence.*
 
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser

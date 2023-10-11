@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.saga.persistence.*
+
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -15,13 +16,15 @@ class MedlemskapBrukerSpormaalArbeidUtenforNorgeLogikkTest {
             id="1",
             sporsmalstekst = "",
             svar = true,
-            arbeidUtenforNorge = listOf(ArbeidUtenforNorge(
+            arbeidUtenforNorge = listOf(
+                ArbeidUtenforNorge(
                 id = "",
                 arbeidsgiver = "NAV",
                 land = "",
                 perioder = listOf(Periode(LocalDate.of(2023,1,1), LocalDate.of(2023,1,31)))
 
-            ))
+            )
+            )
         )
 
 
