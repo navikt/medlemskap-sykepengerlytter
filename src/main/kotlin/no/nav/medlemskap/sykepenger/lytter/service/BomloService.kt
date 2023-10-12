@@ -92,7 +92,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
             //Vi må finne første søknaden (vi støtter ikke påfølgende)
             if (found != null && ErMedlem.PAFOLGENDE == (found.medlem)) {
-                val forste: Medlemskap? = finnRelevantIkkePåfølgende(found!!, medlemskap)
+                val forste: Medlemskap? = finnRelevantIkkePåfølgende(found, medlemskap)
                 if (forste != null) {
 
                     secureLogger.info(

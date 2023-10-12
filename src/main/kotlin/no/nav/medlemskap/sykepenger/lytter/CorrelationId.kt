@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter
 
-import io.ktor.client.engine.*
-import io.ktor.server.application.*
+
 import org.slf4j.MDC
 import java.util.*
 

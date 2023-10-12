@@ -67,6 +67,6 @@ class SagaClient(
 
 interface SagaAPI{
     suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String
-    suspend fun finnFlexVurdering(bomloRequest: FlexRequest, callId: String): String
+    suspend fun finnFlexVurdering(flexRequest: FlexRequest, callId: String): String
     suspend fun ping(callId: String): String
 }
