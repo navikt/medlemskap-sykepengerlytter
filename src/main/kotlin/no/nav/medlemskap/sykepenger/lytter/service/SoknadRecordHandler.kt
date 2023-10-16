@@ -105,17 +105,43 @@ class SoknadRecordHandler(
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
-        var arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val brukersporsmaal = getRelevanteBrukerSporsmaal(sykepengeSoknad)
+        val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val brukerinput:Brukerinput= opprettBrukerInput(brukersporsmaal,arbeidUtland)
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
-            brukerinput = Brukerinput(arbeidUtland)
+            brukerinput = brukerinput
         )
         return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
     }
 
-     fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
+     fun opprettBrukerInput(brukersporsmaal: Brukersporsmaal, arbeidUtland: Boolean): Brukerinput
+     {
+         var arbeidUtlandLocal = arbeidUtland
+         val oppholdstilatelse =mapOppholdstilatelse(brukersporsmaal.oppholdstilatelse)
+         val utfortAarbeidUtenforNorge= maputfortAarbeidUtenforNorge(brukersporsmaal.utfort_arbeid_utenfor_norge)
+         /*
+         dersom nye bruker spørsmål er oppgitt for utført arbeid utland skal disse brukes
+         også på gammel modell
+          */
+         if (utfortAarbeidUtenforNorge != null) {
+             arbeidUtlandLocal = utfortAarbeidUtenforNorge.svar
+             }
+         val oppholdUtenforEos = mapOppholdUtenforEOS(brukersporsmaal.oppholdUtenforEOS)
+         val oppholdUtenforNorge = mapOppholdUtenforNorge(brukersporsmaal.oppholdUtenforNorge)
+         return Brukerinput(
+             arbeidUtenforNorge = arbeidUtlandLocal,
+             oppholdstilatelse=oppholdstilatelse,
+             utfortAarbeidUtenforNorge = utfortAarbeidUtenforNorge,
+             oppholdUtenforEos =oppholdUtenforEos,
+             oppholdUtenforNorge = oppholdUtenforNorge
+         )
+
+    }
+
+    fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
         // KRAV 1 : er true oppgitt i søknad, bruk denne verdien
         if (sykepengeSoknad.arbeidUtenforNorge==true){
             return true
@@ -156,10 +182,11 @@ class SoknadRecordHandler(
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = sykepengeSoknad.fnr, soknadid = sykepengeSoknad.id, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
-        val utfortarbeidutenfornorge: Medlemskap_utfort_arbeid_utenfor_norge? =  finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge? =  finnMedlemskap_opphold_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforEOS: Medlemskap_opphold_utenfor_eos? =  finnMedlemskap_opphold_utenfor_eos(listofbrukersporsmaal)
-        val oppholdstilatelse: Medlemskap_oppholdstilatelse_brukersporsmaal? =  finnMMedlemskap_oppholdstilatelse_brukersporsmaal(listofbrukersporsmaal)
+
+        val utfortarbeidutenfornorge = finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
+        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listofbrukersporsmaal)
+        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listofbrukersporsmaal)
+        val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listofbrukersporsmaal)
         val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
         return Brukersporsmaal(fnr = sykepengeSoknad.fnr,
             soknadid = sykepengeSoknad.id,
@@ -167,7 +194,7 @@ class SoknadRecordHandler(
             ytelse = "SYKEPENGER",
             status = "SENDT",
             sporsmaal = FlexBrukerSporsmaal(arbeidUtlandGammelModell),
-            oppholdstilatelse=oppholdstilatelse,
+            oppholdstilatelse=oppholdstilatesle,
             utfort_arbeid_utenfor_norge = utfortarbeidutenfornorge,
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS)

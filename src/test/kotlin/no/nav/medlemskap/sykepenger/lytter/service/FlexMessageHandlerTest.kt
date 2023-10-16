@@ -138,4 +138,21 @@ class FlexMessageHandlerTest {
         service.handle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
+    @Test
+    fun `feilsoek`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("feilsoek.json").readText(Charsets.UTF_8)
+        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = FlexMessageHandler(Configuration(),PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val brukersporsmaal = service.mapMessage(record)
+        assertNotNull(brukersporsmaal)
+        assertNotNull(brukersporsmaal.sporsmaal)
+        assertEquals("43877000266",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
+        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertNotNull(brukersporsmaal.utfort_arbeid_utenfor_norge)
+        assertNotNull(brukersporsmaal.oppholdUtenforNorge)
+        assertNotNull(brukersporsmaal.oppholdstilatelse)
+        assertTrue(brukersporsmaal.oppholdUtenforNorge!!.oppholdUtenforNorge.isEmpty())
+        assertTrue(brukersporsmaal.oppholdUtenforNorge!!.oppholdUtenforNorge.isEmpty())
+    }
 }

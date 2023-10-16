@@ -72,10 +72,13 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
         val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdUtenforNorge)
         val id = flexModel.id
         val sporsmalstekst = flexModel.sporsmalstekst
-        val utlandsopphold: List<OppholdUtenforNorge> =
-            mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
-                ?: emptyList())
         val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        var utlandsopphold: List<OppholdUtenforNorge> = emptyList()
+        if (svar){
+            utlandsopphold = mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
+                    ?: emptyList())
+
+        }
         return Medlemskap_opphold_utenfor_norge(id,sporsmalstekst,svar,utlandsopphold);
     }
 
@@ -109,10 +112,12 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(arbeidutland)
             val id = flexModel.id
             val sporsmalstekst = flexModel.sporsmalstekst
-            val utlandsopphold: List<ArbeidUtenforNorge> =
-                mapArbeidUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
-                    ?: emptyList())
             val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+            var utlandsopphold: List<ArbeidUtenforNorge> = emptyList()
+            if (svar){
+                utlandsopphold  = mapArbeidUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
+                        ?: emptyList())
+            }
             return Medlemskap_utfort_arbeid_utenfor_norge(
                 id = id,
                 sporsmalstekst = sporsmalstekst,

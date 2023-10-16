@@ -20,7 +20,7 @@ fun finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Bruke
         else return null //TODO: Verifiser at dette er funksjonelt korrekt!
     }
     if (ikkeArbeidUtland.isNotEmpty()){
-        val aktuelle = arbeidUtland.filter { it.key.isAfter(LocalDate.now().minusMonths(5)) }
+        val aktuelle = ikkeArbeidUtland.filter { it.key.isAfter(LocalDate.now().minusMonths(5)) }
         if (aktuelle.isNotEmpty()){
             return aktuelle.toSortedMap().map { it.value }.last()
         }
