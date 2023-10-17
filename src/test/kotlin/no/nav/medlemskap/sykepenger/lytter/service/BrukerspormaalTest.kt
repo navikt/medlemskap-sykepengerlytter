@@ -3,11 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import kotlinx.coroutines.runBlocking
 
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
-import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
@@ -37,7 +35,7 @@ class BrukerspormaalTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        val brukersporsmaal = service.getRelevanteBrukerSporsmaal(sykepengeSoknad)
+        val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
         Assertions.assertTrue(brukersporsmaal.sporsmaal?.arbeidUtland!!)
 
@@ -81,12 +79,12 @@ class BrukerspormaalTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        val brukersporsmaal = service.getRelevanteBrukerSporsmaal(sykepengeSoknad)
+        val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
         Assertions.assertNotNull(brukersporsmaal.oppholdstilatelse)
     }
     @Test
-    fun `oppholdstilatelse utenfordagens dato skal ikke returneres`() = runBlocking {
+    fun `oppholdstilatelse utenfordagens dato skal returneres`() = runBlocking {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val sykepengesoknadID = UUID.randomUUID().toString()
@@ -124,9 +122,9 @@ class BrukerspormaalTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        val brukersporsmaal = service.getRelevanteBrukerSporsmaal(sykepengeSoknad)
+        val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
-        Assertions.assertNull(brukersporsmaal.oppholdstilatelse)
+        Assertions.assertNotNull(brukersporsmaal.oppholdstilatelse)
     }
 
 }

@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.service.*
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -55,9 +56,8 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 if (cause.response.status.value == 404) {
                     log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                     val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)
-                    val brukersporsmaal: Brukersporsmaal? = getBrukerSporsmaal(bomloRequest, callId)
-
-                    val lovmeRequest = mapToMedlemskapRequest(bomloRequest, arbeidUtland)
+                    val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(bomloRequest, callId)
+                    val lovmeRequest = mapToMedlemskapRequest(bomloRequest, arbeidUtland,brukersporsmaal)
                     val resultat = lovmeClient.vurderMedlemskapBomlo(lovmeRequest, callId)
                     return JacksonParser().ToJson(resultat)
                 }
@@ -66,6 +66,29 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 throw cause
             }
         }
+    fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
+        val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
+        if (listofbrukersporsmaal.isEmpty()){
+            return Brukersporsmaal(fnr = bomloRequest.fnr, soknadid = callId, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
+        }
+
+        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
+        val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
+        val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
+        val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
+        val arbeidUtlandGammelModell = finnNyesteMedlemskap_utfort_arbeid_utenfor_norgeGammelModell(listofbrukersporsmaal)
+
+        return Brukersporsmaal(fnr = bomloRequest.fnr,
+            soknadid = callId,
+            eventDate = LocalDate.now(),
+            ytelse = "SYKEPENGER",
+            status = "SENDT",
+            sporsmaal = arbeidUtlandGammelModell,
+            oppholdstilatelse=oppholdstilatelse,
+            utfort_arbeid_utenfor_norge = utfortarbeidutenfornorge,
+            oppholdUtenforNorge = oppholdUtenforNorge,
+            oppholdUtenforEOS = oppholdUtenforEOS)
+    }
 
         suspend fun finnFlexVurdering(flexRequeest: FlexRequest, callId: String): FlexVurderingRespons? {
             val medlemskap = persistenceService.hentMedlemskap(flexRequeest.fnr)
@@ -285,15 +308,39 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             }
         }
 
-        private fun mapToMedlemskapRequest(bomloRequest: BomloRequest, arbeidUtland: Boolean): MedlOppslagRequest {
+        private fun mapToMedlemskapRequest(bomloRequest: BomloRequest,arbeidUtland: Boolean,brukersporsmaal: Brukersporsmaal): MedlOppslagRequest {
+            val brukerinput = opprettBrukerInput(brukersporsmaal,arbeidUtland)
             return MedlOppslagRequest(
                 bomloRequest.fnr,
                 bomloRequest.førsteDagForYtelse.toString(),
                 Periode(bomloRequest.periode.fom.toString(), bomloRequest.periode.tom.toString()),
-                Brukerinput(arbeidUtland)
+                brukerinput
             )
 
         }
+    fun opprettBrukerInput(brukersporsmaal: Brukersporsmaal, arbeidUtland: Boolean): Brukerinput
+    {
+        var arbeidUtlandLocal = arbeidUtland
+        val oppholdstilatelse =mapOppholdstilatelse(brukersporsmaal.oppholdstilatelse)
+        val utfortAarbeidUtenforNorge= maputfortAarbeidUtenforNorge(brukersporsmaal.utfort_arbeid_utenfor_norge)
+        /*
+        dersom nye bruker spørsmål er oppgitt for utført arbeid utland skal disse brukes
+        også på gammel modell
+         */
+        if (utfortAarbeidUtenforNorge != null) {
+            arbeidUtlandLocal = utfortAarbeidUtenforNorge.svar
+        }
+        val oppholdUtenforEos = mapOppholdUtenforEOS(brukersporsmaal.oppholdUtenforEOS)
+        val oppholdUtenforNorge = mapOppholdUtenforNorge(brukersporsmaal.oppholdUtenforNorge)
+        return Brukerinput(
+            arbeidUtenforNorge = arbeidUtlandLocal,
+            oppholdstilatelse=oppholdstilatelse,
+            utfortAarbeidUtenforNorge = utfortAarbeidUtenforNorge,
+            oppholdUtenforEos =oppholdUtenforEos,
+            oppholdUtenforNorge = oppholdUtenforNorge
+        )
+
+    }
     }
 
  fun finnRelevantIkkePåfølgende(paafolgende: Medlemskap, medlemskap: List<Medlemskap>): Medlemskap? {
