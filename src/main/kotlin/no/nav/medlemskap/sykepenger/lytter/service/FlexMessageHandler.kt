@@ -18,7 +18,7 @@ open class FlexMessageHandler (
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger("tjenestekall")
 
 
     }
@@ -144,11 +144,6 @@ open class FlexMessageHandler (
 }
 
 open class DatePicker(){
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
-
-    }
     open fun findEarliest(sendArbeidsgiverDato: LocalDate?, sendtNavDato: LocalDate?): LocalDate {
         if (sendArbeidsgiverDato == null  && sendtNavDato == null){
             return LocalDate.now()

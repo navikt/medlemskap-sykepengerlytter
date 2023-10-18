@@ -10,8 +10,7 @@ import java.time.LocalDate
 
 class BrukersporsmaalMapper(val rootNode: JsonNode) {
     companion object {
-        private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger("tjenestekall")
 
 
     }
@@ -54,7 +53,6 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }?.svar!!.first()!!.verdi))
-            println("test")
             OppholdUtenforEOS(it.id,hvor,grunn!!,periode)
         }
 

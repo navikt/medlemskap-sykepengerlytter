@@ -90,7 +90,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 }
                 secureLogger.warn("{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.fom,
                     kv("fnr", request.fnr),
-                    kv("endpoint", "flexvurdering")
+                    kv("endpoint", "flexvurdering"),
+                    kv("callId", callId),
                 )
                 call.respond(HttpStatusCode.NotFound,request)
             } catch (t: Throwable) {
