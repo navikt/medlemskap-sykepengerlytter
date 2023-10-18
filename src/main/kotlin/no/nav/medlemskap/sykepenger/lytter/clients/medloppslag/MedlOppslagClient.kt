@@ -13,6 +13,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
@@ -27,6 +28,10 @@ class MedlOppslagClient(
     private val secureLogger = KotlinLogging.logger("tjenestekall")
 
     override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        secureLogger.info ("kaller regelmotor",
+            kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
+            kv("callId", callId)
+        )
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
             httpClient.post {
@@ -65,6 +70,10 @@ class MedlOppslagClient(
 
     }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        secureLogger.info ("kaller regelmotor",
+            kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
+            kv("callId", callId)
+        )
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
             httpClient.post {
