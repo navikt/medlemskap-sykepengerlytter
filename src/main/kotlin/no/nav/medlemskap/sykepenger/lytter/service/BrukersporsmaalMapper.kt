@@ -38,10 +38,13 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
         val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdutenforEOS)
         val id = flexModel.id
         val sporsmalstekst = flexModel.sporsmalstekst
-        val utlandsopphold: List<OppholdUtenforEOS> =
-            mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
-                ?: emptyList())
         val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        var utlandsopphold: List<OppholdUtenforEOS> = emptyList()
+        if (svar){
+             utlandsopphold=
+                mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+                    ?: emptyList())
+        }
         return Medlemskap_opphold_utenfor_eos(id,sporsmalstekst,svar,utlandsopphold);
     }
 
@@ -139,7 +142,6 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }?.svar!!.first()!!.verdi))
-            println("test")
             OppholdUtenforNorge(it.id,hvor,grunn!!,periode)
         }
 
