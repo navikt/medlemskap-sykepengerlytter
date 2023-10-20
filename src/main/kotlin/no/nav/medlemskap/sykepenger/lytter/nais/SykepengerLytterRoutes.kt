@@ -88,12 +88,14 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     )
                     call.respond(HttpStatusCode.OK, response)
                 }
-                secureLogger.warn("{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.fom,
-                    kv("fnr", request.fnr),
-                    kv("endpoint", "flexvurdering"),
-                    kv("callId", callId),
-                )
-                call.respond(HttpStatusCode.NotFound,request)
+                else{
+                    secureLogger.warn("{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
+                        kv("fnr", request.fnr),
+                        kv("endpoint", "flexvurdering"),
+                        kv("callId", callId),
+                    )
+                    call.respond(HttpStatusCode.NotFound,request)
+                }
             } catch (t: Throwable) {
                 secureLogger.error(
                     "Unexpected error calling Lovme",
