@@ -112,5 +112,92 @@ class MedlemskapBrukerSpormaalArbeidUtenforNorgeLogikkTest {
         Assertions.assertEquals("2",funnet!!.id,"bruker spørsmålet med arbeid utland skal velges")
     }
 
+    @Test
+    fun `hent ut nyeste arbeid utland registrert `(){
+        val fnr = "12345678901"
+        val arbeid1 = Medlemskap_utfort_arbeid_utenfor_norge(
+            id="1",
+            sporsmalstekst = "",
+            svar = true,
+            arbeidUtenforNorge = listOf(
+                ArbeidUtenforNorge(
+                    id = "",
+                    arbeidsgiver = "NAV",
+                    land = "",
+                    perioder = listOf(Periode(LocalDate.of(2023,1,1), LocalDate.of(2023,1,31)))
+
+                )
+            )
+        )
+        val arbeid2 = Medlemskap_utfort_arbeid_utenfor_norge(
+            id="2",
+            sporsmalstekst = "",
+            svar = true,
+            arbeidUtenforNorge = listOf(
+                ArbeidUtenforNorge(
+                    id = "",
+                    arbeidsgiver = "NAV",
+                    land = "",
+                    perioder = listOf(Periode(LocalDate.of(2023,2,1), LocalDate.of(2023,2,20)))
+                )
+            )
+        )
+
+
+        val b1 = Brukersporsmaal("12345678901",UUID.randomUUID().toString(), LocalDate.now().minusDays(15),"SYKEPENGER","SENT",
+            FlexBrukerSporsmaal(false),null,arbeid1
+        )
+        val b2 = Brukersporsmaal("12345678901",UUID.randomUUID().toString(), LocalDate.now().minusDays(1),"SYKEPENGER","SENT",
+            FlexBrukerSporsmaal(false),null,arbeid2
+        )
+
+        val funnet = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listOf(b1,b2))
+        Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
+        Assertions.assertEquals("2",funnet!!.id,"Feil innslag funnet")
+    }
+    @Test
+    fun `hent ut nyeste arbeid utland registrert med omvendt rekkefolge i lagring`(){
+        val fnr = "12345678901"
+        val arbeid1 = Medlemskap_utfort_arbeid_utenfor_norge(
+            id="1",
+            sporsmalstekst = "",
+            svar = true,
+            arbeidUtenforNorge = listOf(
+                ArbeidUtenforNorge(
+                    id = "",
+                    arbeidsgiver = "NAV",
+                    land = "",
+                    perioder = listOf(Periode(LocalDate.of(2023,1,1), LocalDate.of(2023,1,31)))
+
+                )
+            )
+        )
+        val arbeid2 = Medlemskap_utfort_arbeid_utenfor_norge(
+            id="2",
+            sporsmalstekst = "",
+            svar = true,
+            arbeidUtenforNorge = listOf(
+                ArbeidUtenforNorge(
+                    id = "",
+                    arbeidsgiver = "NAV",
+                    land = "",
+                    perioder = listOf(Periode(LocalDate.of(2023,2,1), LocalDate.of(2023,2,20)))
+                )
+            )
+        )
+
+
+        val b1 = Brukersporsmaal("12345678901",UUID.randomUUID().toString(), LocalDate.now().minusDays(15),"SYKEPENGER","SENT",
+            FlexBrukerSporsmaal(false),null,arbeid1
+        )
+        val b2 = Brukersporsmaal("12345678901",UUID.randomUUID().toString(), LocalDate.now().minusDays(1),"SYKEPENGER","SENT",
+            FlexBrukerSporsmaal(false),null,arbeid2
+        )
+
+        val funnet = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listOf(b2,b1))
+        Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
+        Assertions.assertEquals("2",funnet!!.id,"Feil innslag funnet")
+    }
+
 
 }

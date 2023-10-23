@@ -18,7 +18,7 @@ open class FlexMessageHandler (
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger("tjenestekall")
 
 
     }
@@ -92,7 +92,6 @@ open class FlexMessageHandler (
             val JsonNode = ObjectMapper().readTree(json)
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
-            val type = JsonNode.get("type").asText()
             val id = JsonNode.get("id").asText()
             val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
             val sendtNav = JsonNode.get("sendtNav").asText(null)
@@ -145,11 +144,6 @@ open class FlexMessageHandler (
 }
 
 open class DatePicker(){
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
-
-    }
     open fun findEarliest(sendArbeidsgiverDato: LocalDate?, sendtNavDato: LocalDate?): LocalDate {
         if (sendArbeidsgiverDato == null  && sendtNavDato == null){
             return LocalDate.now()

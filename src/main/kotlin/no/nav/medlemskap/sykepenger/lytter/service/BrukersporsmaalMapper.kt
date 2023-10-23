@@ -10,8 +10,7 @@ import java.time.LocalDate
 
 class BrukersporsmaalMapper(val rootNode: JsonNode) {
     companion object {
-        private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger { }
+        private val secureLogger = KotlinLogging.logger("tjenestekall")
 
 
     }
@@ -39,10 +38,13 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
         val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdutenforEOS)
         val id = flexModel.id
         val sporsmalstekst = flexModel.sporsmalstekst
-        val utlandsopphold: List<OppholdUtenforEOS> =
-            mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
-                ?: emptyList())
         val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        var utlandsopphold: List<OppholdUtenforEOS> = emptyList()
+        if (svar){
+             utlandsopphold=
+                mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+                    ?: emptyList())
+        }
         return Medlemskap_opphold_utenfor_eos(id,sporsmalstekst,svar,utlandsopphold);
     }
 
@@ -54,7 +56,6 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }?.svar!!.first()!!.verdi))
-            println("test")
             OppholdUtenforEOS(it.id,hvor,grunn!!,periode)
         }
 
@@ -72,10 +73,13 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
         val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdUtenforNorge)
         val id = flexModel.id
         val sporsmalstekst = flexModel.sporsmalstekst
-        val utlandsopphold: List<OppholdUtenforNorge> =
-            mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
-                ?: emptyList())
         val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+        var utlandsopphold: List<OppholdUtenforNorge> = emptyList()
+        if (svar){
+            utlandsopphold = mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
+                    ?: emptyList())
+
+        }
         return Medlemskap_opphold_utenfor_norge(id,sporsmalstekst,svar,utlandsopphold);
     }
 
@@ -109,10 +113,12 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(arbeidutland)
             val id = flexModel.id
             val sporsmalstekst = flexModel.sporsmalstekst
-            val utlandsopphold: List<ArbeidUtenforNorge> =
-                mapArbeidUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
-                    ?: emptyList())
             val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+            var utlandsopphold: List<ArbeidUtenforNorge> = emptyList()
+            if (svar){
+                utlandsopphold  = mapArbeidUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
+                        ?: emptyList())
+            }
             return Medlemskap_utfort_arbeid_utenfor_norge(
                 id = id,
                 sporsmalstekst = sporsmalstekst,
@@ -136,7 +142,6 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }?.svar!!.first()!!.verdi))
-            println("test")
             OppholdUtenforNorge(it.id,hvor,grunn!!,periode)
         }
 

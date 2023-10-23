@@ -11,8 +11,10 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
+import java.util.*
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -105,17 +107,43 @@ class SoknadRecordHandler(
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
-        var arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
+        val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val brukerinput:Brukerinput= opprettBrukerInput(brukersporsmaal,arbeidUtland)
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
-            brukerinput = Brukerinput(arbeidUtland)
+            brukerinput = brukerinput
         )
         return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
     }
 
-     fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
+     fun opprettBrukerInput(brukersporsmaal: Brukersporsmaal, arbeidUtland: Boolean): Brukerinput
+     {
+         var arbeidUtlandLocal = arbeidUtland
+         val oppholdstilatelse =mapOppholdstilatelse(brukersporsmaal.oppholdstilatelse)
+         val utfortAarbeidUtenforNorge= maputfortAarbeidUtenforNorge(brukersporsmaal.utfort_arbeid_utenfor_norge)
+         /*
+         dersom nye bruker spørsmål er oppgitt for utført arbeid utland skal disse brukes
+         også på gammel modell
+          */
+         if (utfortAarbeidUtenforNorge != null) {
+             arbeidUtlandLocal = utfortAarbeidUtenforNorge.svar
+             }
+         val oppholdUtenforEos = mapOppholdUtenforEOS(brukersporsmaal.oppholdUtenforEOS)
+         val oppholdUtenforNorge = mapOppholdUtenforNorge(brukersporsmaal.oppholdUtenforNorge)
+         return Brukerinput(
+             arbeidUtenforNorge = arbeidUtlandLocal,
+             oppholdstilatelse=oppholdstilatelse,
+             utfortAarbeidUtenforNorge = utfortAarbeidUtenforNorge,
+             oppholdUtenforEos =oppholdUtenforEos,
+             oppholdUtenforNorge = oppholdUtenforNorge
+         )
+
+    }
+
+    fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
         // KRAV 1 : er true oppgitt i søknad, bruk denne verdien
         if (sykepengeSoknad.arbeidUtenforNorge==true){
             return true
@@ -151,15 +179,16 @@ class SoknadRecordHandler(
         }
     }
 
-    fun getRelevanteBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
+    fun hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = sykepengeSoknad.fnr, soknadid = sykepengeSoknad.id, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
-        val utfortarbeidutenfornorge: Medlemskap_utfort_arbeid_utenfor_norge? =  finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge? =  finnMedlemskap_opphold_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforEOS: Medlemskap_opphold_utenfor_eos? =  finnMedlemskap_opphold_utenfor_eos(listofbrukersporsmaal)
-        val oppholdstilatelse: Medlemskap_oppholdstilatelse_brukersporsmaal? =  finnMMedlemskap_oppholdstilatelse_brukersporsmaal(listofbrukersporsmaal)
+
+        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
+        val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
+        val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
+        val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
         val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
         return Brukersporsmaal(fnr = sykepengeSoknad.fnr,
             soknadid = sykepengeSoknad.id,
@@ -172,8 +201,6 @@ class SoknadRecordHandler(
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS)
     }
-
-
 
 
     fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {

@@ -20,19 +20,62 @@ fun finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Bruke
         else return null //TODO: Verifiser at dette er funksjonelt korrekt!
     }
     if (ikkeArbeidUtland.isNotEmpty()){
-        val aktuelle = arbeidUtland.filter { it.key.isAfter(LocalDate.now().minusMonths(5)) }
+        val aktuelle = ikkeArbeidUtland.filter { it.key.isAfter(LocalDate.now().minusMonths(5)) }
         if (aktuelle.isNotEmpty()){
             return aktuelle.toSortedMap().map { it.value }.last()
         }
     }
     return null
 }
-fun finnMedlemskap_opphold_utenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_norge? {
+
+fun finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_utfort_arbeid_utenfor_norge? {
+
+    val mapOfutfortarbeid = listofbrukersporsmaal.associate { Pair(it.eventDate,it.utfort_arbeid_utenfor_norge) }
+    if (mapOfutfortarbeid.isNotEmpty()){
+        return mapOfutfortarbeid.toSortedMap().map { it.value }.last()
+    }
     return null
 }
-fun finnMedlemskap_opphold_utenfor_eos(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_eos? {
+fun finnNyesteMedlemskap_utfort_arbeid_utenfor_norgeGammelModell(listofbrukersporsmaal: List<Brukersporsmaal>): FlexBrukerSporsmaal? {
+
+    val mapOfutfortarbeid = listofbrukersporsmaal.associate { Pair(it.eventDate,it.sporsmaal) }
+    if (mapOfutfortarbeid.isNotEmpty()){
+        return mapOfutfortarbeid.toSortedMap().map { it.value }.last()
+    }
     return null
 }
+
+
+fun finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_norge? {
+
+    val mapOfoppholdUtenforNorge = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforNorge) }
+    if (mapOfoppholdUtenforNorge.isNotEmpty()) {
+        return mapOfoppholdUtenforNorge.toSortedMap().map { it.value }.last()
+    }
+    return null
+}
+
+fun finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_eos? {
+
+    val mapOfoppholdUtenforEOS = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforEOS) }
+    if (mapOfoppholdUtenforEOS.isNotEmpty()) {
+        return mapOfoppholdUtenforEOS.toSortedMap().map { it.value }.last()
+    }
+    return null
+}
+
+fun finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+
+    val mapOfoppholdstilatelse = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdstilatelse) }
+    if (mapOfoppholdstilatelse.isNotEmpty()) {
+        return mapOfoppholdstilatelse.toSortedMap().map { it.value }.last()
+    }
+    return null
+}
+
+
+
+
 fun finnMMedlemskap_oppholdstilatelse_brukersporsmaal(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_oppholdstilatelse_brukersporsmaal? {
     val listofMedlemskap_oppholdstilatelse_brukersporsmaal = listofbrukersporsmaal.map { it.oppholdstilatelse }
     val aktuelleOppgoldstilatelser = listofMedlemskap_oppholdstilatelse_brukersporsmaal.filter { it?.vedtaksTypePermanent ==true || (it?.perioder?.isNotEmpty() ==true &&  it?.perioder?.first()?.erAvsluttetPr(LocalDate.now()) != true) }
