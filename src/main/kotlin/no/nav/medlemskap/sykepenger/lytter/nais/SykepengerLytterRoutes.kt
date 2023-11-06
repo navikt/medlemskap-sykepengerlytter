@@ -51,10 +51,11 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("svar", medlemskapsloggObjekt.svar),
                     kv("årsak", medlemskapsloggObjekt.årsak),
                     kv("årsaker", medlemskapsloggObjekt.årsaker),
+                    kv("response",response.toPrettyString()),
                     kv("endpoint", "vurdering")
                 )
 
-                call.respond(HttpStatusCode.OK, response)
+                call.respond(HttpStatusCode.OK, response.toPrettyString())
             } catch (t: Throwable) {
                 secureLogger.error(
                     "Unexpected error calling Lovme",
