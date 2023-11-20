@@ -51,6 +51,9 @@ open class FlexMessageHandler (
         }
     }
 
+    /*
+    * SP1201 - Skal melding behandles av Lovme
+    * */
     fun soknadSkalSendesTeamLovMe(lovmeSoknadDTO: LovmeSoknadDTO) =
         lovmeSoknadDTO.status == SoknadsstatusDTO.SENDT.name &&
                 lovmeSoknadDTO.type == SoknadstypeDTO.ARBEIDSTAKERE &&

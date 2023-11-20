@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 
-val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_C")
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3")
 
 class RegelMotorResponsHandler {
 

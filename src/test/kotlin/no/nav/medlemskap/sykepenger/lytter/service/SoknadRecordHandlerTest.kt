@@ -537,7 +537,7 @@ public class LovMeMock():LovmeAPI {
 
     override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         request = medlOppslagRequest
-        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_3.json").readText(Charsets.UTF_8)
         return fileContent
     }
 

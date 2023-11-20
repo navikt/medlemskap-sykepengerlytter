@@ -103,11 +103,11 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(respons.sporsmal.isEmpty())
     }
     @Test
-    fun aarsakerInneholderKunRegel_C_test(){
-        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
+    fun aarsakerInneholderKunRegel_3_test(){
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_3.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
         val jsonNode = objectMapper.readTree(fileContent)
-        Assertions.assertTrue(jsonNode.aarsakerInneholderKunEnReglel(listOf("REGEL_C")))
+        Assertions.assertTrue(jsonNode.aarsakerInneholderKunEnReglel(listOf("REGEL_3")))
         Assertions.assertFalse(respons.sporsmal.isEmpty())
     }
 
