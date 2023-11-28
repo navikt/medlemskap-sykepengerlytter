@@ -16,10 +16,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagReques
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Svar
+import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
@@ -63,6 +60,33 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
                     kv("endpoint", "vurdering")
+                )
+                call.respond(HttpStatusCode.InternalServerError, t.message!!)
+            }
+        }
+        post("/speilvurdering") {
+            val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
+            val azp = callerPrincipal.payload.getClaim("azp").asString()
+            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
+            val callId = call.callId ?: UUID.randomUUID().toString()
+            logger.info(
+                "kall autentisert, url : /speilvurdering",
+                kv("callId", callId),
+                kv("endpoint", "speilvurdering")
+            )
+            val request = call.receive<BomloRequest>()
+            try {
+                val response = bomloService.finnFlexVurdering(request, callId)
+                val speilRespons = response.lagSpeilRespons(callId)
+
+                call.respond(HttpStatusCode.OK, speilRespons)
+            } catch (t: Throwable) {
+                secureLogger.error(
+                    "Unexpected error calling Lovme",
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("cause", t.stackTrace),
+                    kv("endpoint", "speilvurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
