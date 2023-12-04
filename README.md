@@ -4,8 +4,10 @@ komponent for lytting på sykepenger-søknad-kafkaTopic
 
 ## URL til tjeneste
 * preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/flexvurdering  -- POST
+* preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/speilvurdering  -- POST
 * preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/brukersporsmal?fom=<dato>&tom=<dato> -- GET
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/flexvurdering  -- POST
+* prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/speilvurdering  -- POST
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/brukersporsmal?fom=<>&tom=<>  -- GET
 
 ## Autentisering
@@ -40,6 +42,28 @@ for brukerspørsmål kreves også at fnr er satt i header
     "fom": "2022-03-10",
     "tom": "2022-04-06",
     "status": "JA"
+}
+```
+
+## Eksempel request (speilvurdering)
+```
+{
+  "fnr" : "12345678765",
+  "førsteDagForYtelse" : "2023-11-01",
+  "periode" : {
+    "fom" : "2023-11-01",
+    "tom" : "2023-11-27"
+  },
+  "ytelse" : "SYKEPENGER"
+}
+
+```
+## Eksempel respons (speilvurdering)
+```
+{
+  "soknadId" : "ed0286f6-6107-3d75-8266-e50d5736f403",
+  "fnr" : "12345678765",
+  "speilSvar" : "UAVKLART_MED_BRUKERSPORSMAAL"
 }
 ```
 # Avhengigheter
