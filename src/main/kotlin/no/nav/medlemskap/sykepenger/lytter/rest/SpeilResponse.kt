@@ -5,7 +5,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.inneholderNyModell
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 
-data class SpeilResponse(val vurderingsID:String,val fnr:String,val speilSvar: Speilsvar)
+data class SpeilResponse(val soknadId:String,val fnr:String,val speilSvar: Speilsvar)
 
 enum class Speilsvar{
     JA,
@@ -16,8 +16,8 @@ enum class Speilsvar{
 
 fun JsonNode.lagSpeilRespons(default:String):SpeilResponse{
     val fnr = this.get("datagrunnlag").get("fnr").asText()
-    val vurderingsID = this.finnSoknadID(default)
-    return SpeilResponse(vurderingsID,fnr,this.finnSpeilSvar())
+    val soknadID = this.finnSoknadID(default)
+    return SpeilResponse(soknadID,fnr,this.finnSpeilSvar())
 }
 
 fun JsonNode.finnSpeilSvar():Speilsvar{

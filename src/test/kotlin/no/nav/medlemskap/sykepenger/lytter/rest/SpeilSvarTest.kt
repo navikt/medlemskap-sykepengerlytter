@@ -12,7 +12,7 @@ class SpeilSvarTest {
         val speilResponse = JacksonParser().ToJson(fileContent).lagSpeilRespons("1")
         Assertions.assertEquals(Speilsvar.JA,speilResponse.speilSvar,"Feil svar : Konklusjon skal benyttes i svar")
         Assertions.assertEquals("98765434567",speilResponse.fnr,"Feil mapping av fnr")
-        Assertions.assertEquals("1",speilResponse.vurderingsID,"når ikke vurderingsID finnes i json skal default brukes")
+        Assertions.assertEquals("1",speilResponse.soknadId,"når ikke vurderingsID finnes i json skal default brukes")
     }
     @Test
     fun `Uavklart uten brukerspormsaal skal svare UAVKLART`(){
@@ -34,6 +34,6 @@ class SpeilSvarTest {
         val json = JacksonParser().ToJson(fileContent)
         val speilResponse = JacksonParser().ToJson(fileContent).lagSpeilRespons("1")
         Assertions.assertEquals(Speilsvar.UAVKLART_MED_BRUKERSPORSMAAL,speilResponse.speilSvar,"Feil svar : Konklusjon skal benyttes i svar")
-        Assertions.assertEquals("ed0286f6-6107-3d75-8266-e50d5736f403",speilResponse.vurderingsID)
+        Assertions.assertEquals("ed0286f6-6107-3d75-8266-e50d5736f403",speilResponse.soknadId)
     }
 }
