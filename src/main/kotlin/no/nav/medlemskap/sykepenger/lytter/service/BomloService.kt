@@ -53,6 +53,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 log.info("Vurdering funnet i database for kall med id $callId")
                 return objectMapper.readTree(response)
             } catch (cause: ResponseException) {
+                //TODO: Avklar her om vi skal returnere 404 eller om vi må kalle Lovme!
                 if (cause.response.status.value == 404) {
                     log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                     val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)

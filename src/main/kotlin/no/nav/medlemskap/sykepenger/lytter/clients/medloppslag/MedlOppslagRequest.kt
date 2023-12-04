@@ -60,3 +60,11 @@ data class Opphold(
     val grunn:String,
     val perioder: List<Periode>
 )
+
+fun Brukerinput.inneholderNyModell():Boolean {
+    return (this.utfortAarbeidUtenforNorge !=null ||
+    this.oppholdUtenforEos != null ||
+    this.oppholdstilatelse !=null ||
+    this.oppholdUtenforNorge != null
+            )
+}
