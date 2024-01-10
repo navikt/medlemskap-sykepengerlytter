@@ -54,6 +54,9 @@ spec:
         - application: sparkel-medlemskap
           namespace: tbd
           cluster: prod-fss
+        - application: sparkel-medlemskap
+          namespace: tbd
+          cluster: prod-gcp
         - application: sykepengesoknad-backend
           namespace: flex
         - application: sykepengesoknad-arkivering-oppgave

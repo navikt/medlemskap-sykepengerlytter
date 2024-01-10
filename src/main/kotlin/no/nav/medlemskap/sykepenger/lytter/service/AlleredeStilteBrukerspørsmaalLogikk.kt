@@ -79,6 +79,9 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
     return null
 }
 
+/*
+* SP1160
+* */
 fun finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker: List<Brukersporsmaal>): List<Spørsmål> {
     val alleredespurteBrukersporsmaal = mutableListOf<Spørsmål>()
     val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(alleBrukerSpormaalForBruker)
