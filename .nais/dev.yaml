@@ -53,9 +53,6 @@ spec:
       rules:
         - application: sparkel-medlemskap
           namespace: tbd
-          cluster: dev-fss
-        - application: sparkel-medlemskap
-          namespace: tbd
           cluster: dev-gcp
         - application: sykepengesoknad-backend
           namespace: flex
