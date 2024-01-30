@@ -17,20 +17,19 @@ spec:
   azure:
     application:
       enabled: true
-      resources:
-        limits:
-          cpu: "200m"
-          memory: "256Mi"
-        requests:
-          cpu: "200m"
-          memory: "256Mi"
-
   image: {{image}}
   liveness:
     path: "/isAlive"
     port: 8080
     initialDelay: 20
     timeout: 60
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
   ingresses:
     - https://medlemskap-vurdering-sykepenger.intern.dev.nav.no
   readiness:
