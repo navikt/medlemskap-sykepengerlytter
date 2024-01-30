@@ -17,10 +17,10 @@ spec:
     sqlInstances:
       - type: POSTGRES_12
         tier: db-custom-1-3840
-        envVarPrefix: DB
         diskAutoresize: true
         databases:
           - name: sykmedlemskap
+            envVarPrefix: DB
   azure:
     application:
       enabled: true
