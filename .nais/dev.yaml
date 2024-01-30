@@ -6,14 +6,21 @@ metadata:
   labels:
     team: medlemskap
 spec:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
   gcp:
     sqlInstances:
       - type: POSTGRES_12
+        diskAutoresize: true
+        tier: db-g1-small
         databases:
           - name: sykmedlemskap
             envVarPrefix: DB
-            diskAutoresize: true
-            tier: db-g1-small
   azure:
     application:
       enabled: true
@@ -37,17 +44,10 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
-  limits:
-    cpu: "200m"
-    memory: "256Mi"
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
   secureLogs:
     enabled: true
   kafka:
     pool: nav-dev
-  protected: true
   accessPolicy:
     inbound:
       rules:

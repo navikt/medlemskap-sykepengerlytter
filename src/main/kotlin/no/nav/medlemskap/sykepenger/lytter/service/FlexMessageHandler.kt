@@ -26,6 +26,9 @@ open class FlexMessageHandler (
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
         secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
+        /*
+        * SP_1201
+        * */
         if  (requestObject.type == SoknadstypeDTO.ARBEIDSTAKERE || requestObject.type == SoknadstypeDTO.GRADERT_REISETILSKUDD){
             log.info("behandler søknad av type ${requestObject.type} ",
                 kv("callId",flexMessageRecord.key)
