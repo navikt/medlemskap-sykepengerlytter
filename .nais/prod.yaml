@@ -10,10 +10,10 @@ spec:
     sqlInstances:
       - type: POSTGRES_12
         tier: db-custom-1-3840
+        envVarPrefix: DB
+        diskAutoresize: true
         databases:
           - name: sykmedlemskap
-            envVarPrefix: DB
-            diskAutoresize: true
   azure:
     application:
       enabled: true
@@ -37,17 +37,10 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
-  limits:
-    cpu: "200m"
-    memory: "256Mi"
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
   secureLogs:
     enabled: true
   kafka:
     pool: nav-prod
-  protected: true
   accessPolicy:
     inbound:
       rules:
