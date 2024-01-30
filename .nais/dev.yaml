@@ -9,11 +9,11 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_12
+        diskAutoresize: true
+        tier: db-g1-small
         databases:
           - name: sykmedlemskap
             envVarPrefix: DB
-            diskAutoresize: true
-            tier: db-g1-small
   azure:
     application:
       enabled: true
