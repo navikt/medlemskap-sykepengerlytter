@@ -38,7 +38,9 @@ class SoknadRecordHandler(
 
     }
 
-
+    /*
+     * SP1202,SP1203
+     * */
     suspend fun handle(soknadRecord: SoknadRecord) {
         if (validerSoknad(soknadRecord.sykepengeSoknad)) {
             val medlemRequest = mapToMedlemskap(soknadRecord.sykepengeSoknad)
@@ -79,6 +81,9 @@ class SoknadRecordHandler(
         }
     }
 
+    /*
+    * SP1230,SP1250,SP1251
+    * */
     private suspend fun getVurdering(
         soknadRecord: SoknadRecord
     ): String {
@@ -106,6 +111,9 @@ class SoknadRecordHandler(
         return sykepengeSoknad.arbeidUtenforNorge == false || sykepengeSoknad.arbeidUtenforNorge ==null
     }
 
+    /*
+    * SP1230, SP1250
+    * */
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
         val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
@@ -179,6 +187,9 @@ class SoknadRecordHandler(
         }
     }
 
+    /*
+    * SP1230
+    * */
     fun hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){

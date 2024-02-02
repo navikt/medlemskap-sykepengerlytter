@@ -26,6 +26,9 @@ open class FlexMessageHandler (
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
         secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
+        /*
+        SP1201
+        * */
         if  (requestObject.type == SoknadstypeDTO.ARBEIDSTAKERE || requestObject.type == SoknadstypeDTO.GRADERT_REISETILSKUDD){
             log.info("behandler søknad av type ${requestObject.type} ",
                 kv("callId",flexMessageRecord.key)
@@ -65,6 +68,9 @@ open class FlexMessageHandler (
                 ) &&
                 false == lovmeSoknadDTO.ettersending
 
+    /*
+    * SP1210,SP1230,SP1220
+    * */
     private fun handleBrukerSporsmaal(flexMessageRecord: FlexMessageRecord) {
         val brukersporsmaal: Brukersporsmaal = mapMessage(flexMessageRecord)
 

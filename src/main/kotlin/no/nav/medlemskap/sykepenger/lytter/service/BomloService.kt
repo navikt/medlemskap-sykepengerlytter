@@ -67,6 +67,10 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 throw cause
             }
         }
+    /**
+     * SP1312
+     */
+
     fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
         if (listofbrukersporsmaal.isEmpty()){
@@ -199,7 +203,10 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return null
         }
 
-        fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
+    /*
+    * SP1160
+    * */
+    fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
 
             val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter {
                 it.eventDate.isAfter(
