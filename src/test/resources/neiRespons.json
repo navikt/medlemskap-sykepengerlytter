@@ -1,0 +1,1242 @@
+{
+  "vurderingsID" : "00f9425b-4814-3622-ac90-12166e6be9b5",
+  "tidspunkt" : "2024-02-04T21:24:54.847749",
+  "versjonTjeneste" : "df17702",
+  "versjonRegler" : "v1",
+  "kanal" : "brukerspørsmål",
+  "datagrunnlag" : {
+    "fnr" : "12345678901",
+    "periode" : {
+      "fom" : "2024-01-22",
+      "tom" : "2024-02-02"
+    },
+    "førsteDagForYtelse" : "2024-01-22",
+    "brukerinput" : {
+      "arbeidUtenforNorge" : false,
+      "oppholdstilatelse" : null,
+      "utfortAarbeidUtenforNorge" : null,
+      "oppholdUtenforEos" : null,
+      "oppholdUtenforNorge" : null
+    },
+    "pdlpersonhistorikk" : {
+      "statsborgerskap" : [ {
+        "landkode" : "DEU",
+        "fom" : null,
+        "tom" : null,
+        "historisk" : false
+      } ],
+      "bostedsadresser" : [ {
+        "landkode" : "NOR",
+        "fom" : "2021-02-04",
+        "tom" : "2022-10-09",
+        "historisk" : true
+      }, {
+        "landkode" : "NOR",
+        "fom" : "2022-10-10",
+        "tom" : null,
+        "historisk" : false
+      } ],
+      "kontaktadresser" : [ {
+        "landkode" : "NLD",
+        "fom" : "2021-01-27",
+        "tom" : "2021-02-04",
+        "historisk" : true
+      } ],
+      "oppholdsadresser" : [ ],
+      "sivilstand" : [ {
+        "type" : "GIFT",
+        "gyldigFraOgMed" : "2022-12-05",
+        "gyldigTilOgMed" : null,
+        "relatertVedSivilstand" : "22048517475"
+      } ],
+      "forelderBarnRelasjon" : [ {
+        "relatertPersonsIdent" : "14012081031",
+        "relatertPersonsRolle" : "BARN",
+        "minRolleForPerson" : "FAR"
+      }, {
+        "relatertPersonsIdent" : "26012383044",
+        "relatertPersonsRolle" : "BARN",
+        "minRolleForPerson" : "FAR"
+      } ],
+      "doedsfall" : [ ],
+      "innflyttingTilNorge" : [ {
+        "fraflyttingsland" : "NLD",
+        "fraflyttingsstedIUtlandet" : null,
+        "folkeregistermetadata" : {
+          "ajourholdstidspunkt" : "2021-02-08T15:12:04",
+          "gyldighetstidspunkt" : "2021-02-04T00:00:00",
+          "opphoerstidspunkt" : null
+        },
+        "metadata" : {
+          "historisk" : false
+        }
+      } ],
+      "utflyttingFraNorge" : [ ],
+      "navn" : [ {
+        "fornavn" : "SNURRE",
+        "mellomnavn" : null,
+        "etternavn" : "SPRETT"
+      } ]
+    },
+    "medlemskap" : [ {
+      "dekning" : "Unntatt",
+      "fraOgMed" : "2021-02-01",
+      "tilOgMed" : "2022-02-28",
+      "erMedlem" : false,
+      "lovvalg" : "ENDL",
+      "lovvalgsland" : "DEU",
+      "periodeStatus" : "AVST"
+    }, {
+      "dekning" : "Unntatt",
+      "fraOgMed" : "2021-02-01",
+      "tilOgMed" : "2022-02-28",
+      "erMedlem" : false,
+      "lovvalg" : "ENDL",
+      "lovvalgsland" : "DEU",
+      "periodeStatus" : "AVST"
+    }, {
+      "dekning" : "Unntatt",
+      "fraOgMed" : "2021-02-01",
+      "tilOgMed" : "2023-02-28",
+      "erMedlem" : false,
+      "lovvalg" : "ENDL",
+      "lovvalgsland" : "DEU",
+      "periodeStatus" : "GYLD"
+    }, {
+      "dekning" : "Unntatt",
+      "fraOgMed" : "2023-03-01",
+      "tilOgMed" : "2025-02-28",
+      "erMedlem" : false,
+      "lovvalg" : "ENDL",
+      "lovvalgsland" : "DEU",
+      "periodeStatus" : "GYLD"
+    } ],
+    "arbeidsforhold" : [ {
+      "periode" : {
+        "fom" : "2021-02-01",
+        "tom" : null
+      },
+      "utenlandsopphold" : null,
+      "arbeidsgivertype" : "Organisasjon",
+      "arbeidsgiver" : {
+        "organisasjonsnummer" : "928259986",
+        "ansatte" : [ {
+          "antall" : 56,
+          "gyldighetsperiode" : {
+            "fom" : "2024-01-11",
+            "tom" : null
+          }
+        } ],
+        "konkursStatus" : null,
+        "juridiskeEnheter" : [ {
+          "organisasjonsnummer" : "928139964",
+          "enhetstype" : "NUF",
+          "antallAnsatte" : 56
+        } ]
+      },
+      "arbeidsforholdstype" : "NORMALT",
+      "arbeidsavtaler" : [ {
+        "periode" : {
+          "fom" : "2024-01-10",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2024-01-01",
+          "tom" : null
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2024-01-10",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-12-01",
+          "tom" : "2023-12-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-12-04",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-11-01",
+          "tom" : "2023-11-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-11-10",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-10-01",
+          "tom" : "2023-10-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-10-04",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-09-01",
+          "tom" : "2023-09-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-09-13",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-08-01",
+          "tom" : "2023-08-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-08-11",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-07-01",
+          "tom" : "2023-07-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-07-31",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-06-01",
+          "tom" : "2023-06-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-06-07",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-05-01",
+          "tom" : "2023-05-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-05-12",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-04-01",
+          "tom" : "2023-04-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-04-12",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-03-01",
+          "tom" : "2023-03-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-03-13",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-02-01",
+          "tom" : "2023-02-28"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-02-13",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2023-01-01",
+          "tom" : "2023-01-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2023-01-11",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-12-01",
+          "tom" : "2022-12-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-12-13",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-11-01",
+          "tom" : "2022-11-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-11-09",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-10-01",
+          "tom" : "2022-10-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-10-12",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-09-01",
+          "tom" : "2022-09-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-09-13",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-08-01",
+          "tom" : "2022-08-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-08-10",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-07-01",
+          "tom" : "2022-07-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-07-07",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-06-01",
+          "tom" : "2022-06-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-07-07",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-05-01",
+          "tom" : "2022-05-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-05-11",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-04-01",
+          "tom" : "2022-04-30"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-04-11",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-03-01",
+          "tom" : "2022-03-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-04-11",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-02-01",
+          "tom" : "2022-02-28"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      }, {
+        "periode" : {
+          "fom" : "2022-02-14",
+          "tom" : null
+        },
+        "gyldighetsperiode" : {
+          "fom" : "2022-01-01",
+          "tom" : "2022-01-31"
+        },
+        "yrkeskode" : "3116161",
+        "skipsregister" : null,
+        "fartsomraade" : null,
+        "stillingsprosent" : 100.0,
+        "beregnetAntallTimerPrUke" : 37.5,
+        "skipstype" : null
+      } ],
+      "permisjonPermittering" : null
+    } ],
+    "oppgaver" : [ {
+      "aktivDato" : "2021-01-22",
+      "prioritet" : "NORM",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    }, {
+      "aktivDato" : "2021-02-01",
+      "prioritet" : "NORM",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    }, {
+      "aktivDato" : "2021-02-01",
+      "prioritet" : "NORM",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    }, {
+      "aktivDato" : "2021-02-08",
+      "prioritet" : "NORM",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    }, {
+      "aktivDato" : "2022-06-29",
+      "prioritet" : "NORM",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    }, {
+      "aktivDato" : "2022-12-15",
+      "prioritet" : "HOY",
+      "status" : "FERDIGSTILT",
+      "tema" : "UFM"
+    } ],
+    "dokument" : [ {
+      "datoOpprettet" : "2023-05-12T18:45:03",
+      "relevanteDatoer" : [ {
+        "dato" : "2023-05-12T18:45:03",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2023-05-12T18:45:05",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2023-05-12T18:45:03",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "614609864",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Anmodning om avslutning",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-247441"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "642206345",
+        "tittel" : "Anmodning om avslutning"
+      } ]
+    }, {
+      "datoOpprettet" : "2023-03-09T16:24:41",
+      "relevanteDatoer" : [ {
+        "dato" : "2023-03-09T16:24:41",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2023-03-09T16:24:41",
+        "datotype" : "DATO_JOURNALFOERT"
+      } ],
+      "journalpostId" : "608150364",
+      "journalfortAvNavn" : "srvmelosys-eessi",
+      "tittel" : "Innvilgelse av søknad om unntak",
+      "journalposttype" : "U",
+      "journalstatus" : "FERDIGSTILT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-247441"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "635364969",
+        "tittel" : "Innvilgelse av søknad om unntak"
+      } ]
+    }, {
+      "datoOpprettet" : "2023-02-09T06:30:32",
+      "relevanteDatoer" : [ {
+        "dato" : "2023-02-09T06:30:32",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2023-02-09T06:30:34",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2023-02-09T06:30:32",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "605119968",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Påminnelse",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-247441"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "632147142",
+        "tittel" : "Påminnelse"
+      } ]
+    }, {
+      "datoOpprettet" : "2022-12-15T06:54:42",
+      "relevanteDatoer" : [ {
+        "dato" : "2022-12-15T06:54:42",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2022-12-15T06:54:43",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2022-12-15T06:54:42",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "596709985",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Søknad om unntak",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-247441"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "623389363",
+        "tittel" : "Søknad om unntak"
+      } ]
+    }, {
+      "datoOpprettet" : "2022-09-14T18:26:21",
+      "relevanteDatoer" : [ {
+        "dato" : "2022-09-14T18:26:21",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2022-09-14T18:26:23",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2022-09-14T18:26:21",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "582844478",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Anmodning om avslutning",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-176063"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "608540123",
+        "tittel" : "Anmodning om avslutning"
+      } ]
+    }, {
+      "datoOpprettet" : "2022-07-01T10:41:01",
+      "relevanteDatoer" : [ {
+        "dato" : "2022-07-01T10:41",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2022-07-01T10:41:01",
+        "datotype" : "DATO_JOURNALFOERT"
+      } ],
+      "journalpostId" : "573556253",
+      "journalfortAvNavn" : "srvmelosys-eessi",
+      "tittel" : "Innvilgelse av søknad om unntak",
+      "journalposttype" : "U",
+      "journalstatus" : "FERDIGSTILT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-176063"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "598810663",
+        "tittel" : "Innvilgelse av søknad om unntak"
+      } ]
+    }, {
+      "datoOpprettet" : "2022-06-29T14:03:03",
+      "relevanteDatoer" : [ {
+        "dato" : "2022-06-29T14:03:03",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2022-06-29T14:03:04",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2022-06-29T14:03:03",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "573197297",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Søknad om unntak",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-176063"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "598433051",
+        "tittel" : "Søknad om unntak"
+      } ]
+    }, {
+      "datoOpprettet" : "2021-04-06T23:59:13",
+      "relevanteDatoer" : [ {
+        "dato" : "2021-04-06T23:59:13",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2021-04-06T23:59:13",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2021-04-06T23:59:13",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "504008774",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Anmodning om avslutning",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-31546"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "526513943",
+        "tittel" : "Anmodning om avslutning"
+      } ]
+    }, {
+      "datoOpprettet" : "2021-02-03T00:35:54",
+      "relevanteDatoer" : [ {
+        "dato" : "2021-02-03T00:35:54",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2021-02-03T00:35:55",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2021-02-03T00:35:54",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "498571099",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Melding om utstasjonering",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-31546"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "520644793",
+        "tittel" : "Melding om utstasjonering"
+      } ]
+    }, {
+      "datoOpprettet" : "2021-02-01T11:17:24",
+      "relevanteDatoer" : [ {
+        "dato" : "2021-02-01T11:17:24",
+        "datotype" : "DATO_DOKUMENT"
+      }, {
+        "dato" : "2021-02-19T09:07:19",
+        "datotype" : "DATO_JOURNALFOERT"
+      }, {
+        "dato" : "2021-02-01T01:00",
+        "datotype" : "DATO_REGISTRERT"
+      } ],
+      "journalpostId" : "498355603",
+      "journalfortAvNavn" : "srvmelosys",
+      "tittel" : "Ugyldiggjøre SED",
+      "journalposttype" : "I",
+      "journalstatus" : "JOURNALFOERT",
+      "tema" : "UFM",
+      "sak" : {
+        "fagsakId" : "MEL-32773"
+      },
+      "dokumenter" : [ {
+        "dokumentId" : "520408049",
+        "tittel" : "Ugyldiggjøre SED"
+      } ]
+    } ],
+    "ytelse" : "SYKEPENGER",
+    "dataOmBarn" : [ {
+      "personhistorikkBarn" : {
+        "ident" : "98765432123",
+        "bostedsadresser" : [ {
+          "landkode" : "NOR",
+          "fom" : "2021-02-04",
+          "tom" : "2022-10-09",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2022-10-10",
+          "tom" : null,
+          "historisk" : false
+        } ],
+        "kontaktadresser" : [ ],
+        "oppholdsadresser" : [ ],
+        "forelderBarnRelasjon" : [ {
+          "relatertPersonsIdent" : "47593749505",
+          "relatertPersonsRolle" : "MOR",
+          "minRolleForPerson" : "BARN"
+        }, {
+          "relatertPersonsIdent" : "12345678901",
+          "relatertPersonsRolle" : "FAR",
+          "minRolleForPerson" : "BARN"
+        } ]
+      }
+    }, {
+      "personhistorikkBarn" : {
+        "ident" : "76564756373",
+        "bostedsadresser" : [ {
+          "landkode" : "NOR",
+          "fom" : "2023-01-26",
+          "tom" : null,
+          "historisk" : false
+        } ],
+        "kontaktadresser" : [ ],
+        "oppholdsadresser" : [ ],
+        "forelderBarnRelasjon" : [ {
+          "relatertPersonsIdent" : "74647583748",
+          "relatertPersonsRolle" : "FAR",
+          "minRolleForPerson" : "BARN"
+        }, {
+          "relatertPersonsIdent" : "657383648494",
+          "relatertPersonsRolle" : "MOR",
+          "minRolleForPerson" : "BARN"
+        } ]
+      }
+    } ],
+    "dataOmEktefelle" : {
+      "personhistorikkEktefelle" : {
+        "ident" : "99999999999",
+        "statsborgerskap" : [ {
+          "landkode" : "GBR",
+          "fom" : null,
+          "tom" : null,
+          "historisk" : false
+        } ],
+        "barn" : [ "11111111111", "22222222222" ],
+        "bostedsadresser" : [ {
+          "landkode" : "NOR",
+          "fom" : "2021-03-19",
+          "tom" : "2022-10-09",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2022-10-10",
+          "tom" : null,
+          "historisk" : false
+        } ],
+        "kontaktadresser" : [ ],
+        "oppholdsadresser" : [ ]
+      },
+      "arbeidsforholdEktefelle" : [ ]
+    },
+    "overstyrteRegler" : { },
+    "oppholdstillatelse" : null,
+    "startDatoForYtelse" : "2024-01-22"
+  },
+  "resultat" : {
+    "regelId" : "REGEL_MEDLEM_KONKLUSJON",
+    "svar" : "NEI",
+    "begrunnelse" : "Kan ikke konkludere med medlemskap",
+    "harDekning" : null,
+    "dekning" : "",
+    "delresultat" : [ {
+      "regelId" : "REGEL_DOED",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_13",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker død?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er det avklart om brukeren er død eller ikke?"
+    }, {
+      "regelId" : "REGEL_FELLES_ARBEIDSFORHOLD",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_17",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker arbeidsforhold?"
+      }, {
+        "regelId" : "REGEL_17_1",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker er ikke frilanser",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker frilanser?"
+      }, {
+        "regelId" : "REGEL_22",
+        "svar" : "NEI",
+        "begrunnelse" : "Det finnes ikke utenlandsopphold i et av arbeidsforholdene de siste 12 månedene",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Arbeidsforhold siste 12 måneder: finnes det utenlandsopphold i et av disse arbeidsforholdene?"
+      }, {
+        "regelId" : "REGEL_21",
+        "svar" : "JA",
+        "begrunnelse" : "Bruker er arbeidstaker i kontrollperiode for stønadsområde",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker arbeidstaker i kontrollperiode for stønadsområde?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er felles regler for arbeidsforhold avklart?"
+    }, {
+      "regelId" : "REGEL_STATSBORGERSKAP",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_2",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker omfattet av grunnforordningen (EØS)? Dvs er bruker statsborger i et EØS-land inkl. Norge?"
+      }, {
+        "regelId" : "REGEL_11",
+        "svar" : "NEI",
+        "begrunnelse" : "Brukeren er ikke norsk statsborger",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker norsk statsborger?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er statsborgerskap avklart?"
+    }, {
+      "regelId" : "REGEL_MEDL",
+      "svar" : "NEI",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_OPPLYSNINGER",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ {
+          "regelId" : "REGEL_A",
+          "svar" : "JA",
+          "begrunnelse" : "Det finnes registrert opplysninger i Medl",
+          "harDekning" : null,
+          "dekning" : "",
+          "delresultat" : [ ],
+          "årsaker" : [ ],
+          "avklaring" : "Finnes det registrerte opplysninger i MEDL?"
+        }, {
+          "regelId" : "REGEL_C",
+          "svar" : "NEI",
+          "begrunnelse" : "",
+          "harDekning" : null,
+          "dekning" : "",
+          "delresultat" : [ ],
+          "årsaker" : [ ],
+          "avklaring" : "Finnes det dokumenter i JOARK på medlemskapsområdet?"
+        }, {
+          "regelId" : "REGEL_B",
+          "svar" : "NEI",
+          "begrunnelse" : "",
+          "harDekning" : null,
+          "dekning" : "",
+          "delresultat" : [ ],
+          "årsaker" : [ ],
+          "avklaring" : "Finnes det åpne oppgaver i GOSYS på medlemskapsområdet?"
+        } ],
+        "årsaker" : [ ],
+        "avklaring" : "Finnes det registrerte opplysninger på bruker?"
+      }, {
+        "regelId" : "REGEL_1_1",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er alle perioder siste 12 mnd avklart (endelig/gyldig)?"
+      }, {
+        "regelId" : "REGEL_1_2",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er det periode både med og uten medlemskap innenfor 12 mnd?"
+      }, {
+        "regelId" : "REGEL_1_3",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er det en periode med medlemskap?"
+      }, {
+        "regelId" : "REGEL_1_3_3",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er unntaket etter USA- eller Canada-avtalen?"
+      }, {
+        "regelId" : "REGEL_1_3_1",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er hele perioden uten medlemskap innenfor 12-måneders perioden?"
+      }, {
+        "regelId" : "REGEL_1_3_4",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Finnes det arbeidsforhold i Aareg i samme periode som unntaket?"
+      }, {
+        "regelId" : "REGEL_1_3_5",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er arbeidsforholdet sammenfallende med perioden uten medlemskap?"
+      } ],
+      "årsaker" : [ {
+        "regelId" : "REGEL_1_3_5",
+        "avklaring" : "Er arbeidsforholdet sammenfallende med perioden uten medlemskap?",
+        "svar" : "JA",
+        "begrunnelse" : ""
+      } ],
+      "avklaring" : "Har bruker avklarte opplysninger i MEDL?"
+    }, {
+      "regelId" : "REGEL_ARBEIDSFORHOLD",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_3",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker hatt et sammenhengende arbeidsforhold i Aa-registeret de siste 12 månedene?"
+      }, {
+        "regelId" : "REGEL_4",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er foretaket registrert i foretaksregisteret?"
+      }, {
+        "regelId" : "REGEL_14",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker er ikke ansatt i staten eller i en kommune",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker ansatt i staten eller i en kommune?"
+      }, {
+        "regelId" : "REGEL_5",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har arbeidsgiver sin hovedaktivitet i Norge?"
+      }, {
+        "regelId" : "REGEL_6",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er foretaket aktivt?"
+      }, {
+        "regelId" : "REGEL_7",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er arbeidsforholdet maritimt?"
+      }, {
+        "regelId" : "REGEL_8",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker er ikke pilot eller kabinansatt",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker pilot eller kabinansatt?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er arbeidsforhold avklart?"
+    }, {
+      "regelId" : "REGEL_BOSATT",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_10",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er bruker folkeregistrert som bosatt i Norge og har vært det i 12 mnd?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er det avklart om bruker bor i Norge?"
+    }, {
+      "regelId" : "REGEL_EØS_BOSATT",
+      "svar" : "JA",
+      "begrunnelse" : "",
+      "harDekning" : null,
+      "dekning" : "",
+      "delresultat" : [ {
+        "regelId" : "REGEL_11_2",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker ektefelle i PDL?"
+      }, {
+        "regelId" : "REGEL_11_3",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker barn i PDL?"
+      }, {
+        "regelId" : "REGEL_11_4",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er brukers ektefelle folkeregistrert som bosatt i Norge?"
+      }, {
+        "regelId" : "REGEL_11_5",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Er brukers barn folkeregistrert som bosatt i Norge?"
+      }, {
+        "regelId" : "REGEL_11_6",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker vært i minst 80 % stilling de siste 12 mnd?"
+      }, {
+        "regelId" : "REGEL_9",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker utført arbeid utenfor Norge?"
+      } ],
+      "årsaker" : [ ],
+      "avklaring" : "Er EØS-borger bosatt i Norge?"
+    } ],
+    "årsaker" : [ {
+      "regelId" : "REGEL_1_3_5",
+      "avklaring" : "Er arbeidsforholdet sammenfallende med perioden uten medlemskap?",
+      "svar" : "JA",
+      "begrunnelse" : ""
+    } ],
+    "avklaring" : "Er bruker medlem?"
+  }
+}
