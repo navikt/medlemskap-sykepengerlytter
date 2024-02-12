@@ -27,6 +27,16 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
     }
     @Test
+    fun tredjelandsBorgerGiftMedEOSPersonSomHarOppholdsTilatelse(){
+        val fileContent = this::class.java.classLoader.getResource("UAVKLART_3LAND_GIFTEOS_BORGER_MED_OPPHOLD.json").readText(Charsets.UTF_8)
+        RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        val jsonNode = objectMapper.readTree(fileContent)
+        Assertions.assertFalse(jsonNode.erEosBorger())
+        Assertions.assertTrue(jsonNode.erTredjelandsborger())
+        Assertions.assertTrue(jsonNode.erTredjelandsborgerMedEØSFamilie())
+        Assertions.assertTrue(jsonNode.harOppholdsTilatelse())
+    }
+    @Test
     fun tredjelandsBorgerIkkeGiftMedEOSPerson(){
         val fileContent = this::class.java.classLoader.getResource("UAVKLART_3LAND_IKKE_GIFT_EOS_BORGER.json").readText(Charsets.UTF_8)
         RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
