@@ -53,6 +53,24 @@ fun JsonNode.erEosBorger():Boolean{
     return this.finnSvarPaaRegel("REGEL_2")
 }
 
+
+fun JsonNode.finnSvarPaaRegelFlyt(regelID:String):Boolean{
+    try{
+
+        val svar = this.get("resultat").get("delresultat")
+            .filter { it.get("regelId").asText().equals(regelID) }.first().get("svar").asText()
+
+        if (svar.equals("JA")){
+            return true
+        }
+        return false
+    }
+    catch (e:Exception){
+        return false
+    }
+}
+
+
 fun JsonNode.finnSvarPaaRegel(regelID:String):Boolean{
     val regel = this.alleRegelResultat().finnRegel(regelID)
     if (regel!=null){
@@ -85,10 +103,19 @@ fun JsonNode.erTredjelandsborger():Boolean{
 fun JsonNode.erBritiskBorger():Boolean{
     return this.finnSvarPaaRegel("REGEL_19_7")
 }
-fun JsonNode.harOppholdsTilatelse():Boolean{
+fun JsonNode.harOppholdsTilatelse():Boolean {
+
+
+    if (finnSvarPaaRegelFlyt("REGEL_OPPHOLDSTILLATELSE")){
+        return true
+    }
+
     /*
     * Sjekk uavklart svar fra UDI
     * */
+    if (this.finnSvarPaaRegel("REGEL_19_1")){
+        return false
+    }
     if (this.finnSvarPaaRegel("REGEL_19_1")){
         return false
     }
