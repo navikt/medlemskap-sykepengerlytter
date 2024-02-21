@@ -235,6 +235,44 @@ class SoknadRecordHandlerTest {
         Assertions.assertTrue(paafolgende)
     }
 
+    @Test
+    fun `test paafolgende foresporsel med mange db innslag og forstegangssoknad = true`() = runBlocking {
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
+
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,3,4),
+            LocalDate.of(2022,3,21),
+            ErMedlem.JA.toString())
+        )
+        repo.lagreVurdering(VurderingDao(
+            UUID.randomUUID().toString(),"01010112345",
+            LocalDate.of(2022,4,9),
+            LocalDate.of(2022,4,26),
+            ErMedlem.JA.toString())
+        )
+
+
+        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengeSoknad = LovmeSoknadDTO(
+            id = UUID.randomUUID().toString(),
+            type=SoknadstypeDTO.ARBEIDSTAKERE,
+            status=SoknadsstatusDTO.SENDT.name,
+            fnr = "01010112345",
+            korrigerer = null,
+            startSyketilfelle = LocalDate.of(2022,4,27),
+            sendtNav = LocalDateTime.now(),
+            fom = LocalDate.of(2022,4,27),
+            tom = LocalDate.of(2022,5,13),
+            arbeidUtenforNorge = null,
+            forstegangssoknad = true
+        )
+        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        Assertions.assertFalse(paafolgende)
+    }
+
 
     @Test
     fun `test påfølgende forespørsel med mange db innslag og arbeidUtland=true`() = runBlocking {
