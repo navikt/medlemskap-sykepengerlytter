@@ -210,6 +210,9 @@ class SoknadRecordHandler(
     }
 
     fun isPaafolgendeSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
+        if (true ==  sykepengeSoknad.forstegangssoknad){
+            return false
+        }
         val medlemRequest = mapToMedlemskap(sykepengeSoknad)
         val vurderinger = persistenceService.hentMedlemskap(sykepengeSoknad.fnr)
         val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
