@@ -481,66 +481,90 @@
       ]
     },
     {
-      "id": "5ab8b1be-a4ff-37d2-8a20-524eef14c796",
-      "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE",
-      "sporsmalstekst": "Har du oppholdstillatelse fra utlendingsdirektoratet?",
-      "undertekst": null,
-      "min": null,
-      "max": null,
-      "svartype": "JA_NEI",
-      "kriterieForVisningAvUndersporsmal": "JA",
-      "svar": [
-        {
-          "verdi": "JA"
-        }
-      ],
-      "undersporsmal": [
-        {
-          "id": "f6e9e360-2713-3250-a441-5b5aed775701",
-          "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO",
-          "sporsmalstekst": "Når fikk du vedtak om oppholdstillatelse?",
-          "undertekst": null,
-          "min": "2013-10-10",
-          "max": "2023-10-10",
-          "svartype": "DATO",
-          "kriterieForVisningAvUndersporsmal": null,
-          "svar": [
-            {
-              "verdi": "2023-07-01"
-            }
-          ],
-          "undersporsmal": []
-        },
-        {
-          "id": "35601aa2-72d5-3982-b9b5-5815161b1854",
-          "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT",
-          "sporsmalstekst": "Har du fått permanent oppholdstillatelse?",
-          "undertekst": null,
-          "min": null,
-          "max": null,
-          "svartype": "JA_NEI",
-          "kriterieForVisningAvUndersporsmal": "NEI",
-          "svar": [
-            {
-              "verdi": "JA"
-            }
-          ],
-          "undersporsmal": [
-            {
-              "id": "a10cec37-359a-3bf1-a2f0-d67d90d9ae46",
-              "tag": "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE",
-              "sporsmalstekst": "Hvilken periode har du fått oppholdstillatelse?",
-              "undertekst": null,
-              "min": "2013-10-10",
-              "max": "2033-10-10",
-              "svartype": "PERIODE",
-              "kriterieForVisningAvUndersporsmal": null,
-              "svar": [],
-              "undersporsmal": []
-            }
-          ]
-        }
-      ]
+      "id" : "120e8447-cd54-3f3d-9a1a-1950f84b51d8",
+      "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE",
+      "sporsmalstekst" : "Har du oppholdstillatelse fra Utlendingsdirektoratet?",
+      "undertekst" : null,
+      "min" : null,
+      "max" : null,
+      "svartype" : "JA_NEI",
+      "kriterieForVisningAvUndersporsmal" : "JA",
+      "svar" : [ {
+        "verdi" : "JA"
+      } ],
+      "undersporsmal" : [ {
+        "id" : "f771bf6f-97d9-396e-8efe-ec1454b629be",
+        "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO",
+        "sporsmalstekst" : "Hvilken dato fikk du denne oppholdstillatelsen?",
+        "undertekst" : null,
+        "min" : "2014-02-12",
+        "max" : "2024-02-12",
+        "svartype" : "DATO",
+        "kriterieForVisningAvUndersporsmal" : null,
+        "svar" : [ {
+          "verdi" : "2023-04-19"
+        } ],
+        "undersporsmal" : [ ]
+      }, {
+        "id" : "ee7f8cbe-7e47-32eb-b727-189430e78d94",
+        "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE",
+        "sporsmalstekst" : "Er oppholdstillatelsen midlertidig eller permanent?",
+        "undertekst" : null,
+        "min" : null,
+        "max" : null,
+        "svartype" : "RADIO_GRUPPE",
+        "kriterieForVisningAvUndersporsmal" : null,
+        "svar" : [ ],
+        "undersporsmal" : [ {
+          "id" : "49214c36-a2f1-3ed9-a3b2-5c68f3671ea1",
+          "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG",
+          "sporsmalstekst" : "Midlertidig",
+          "undertekst" : null,
+          "min" : null,
+          "max" : null,
+          "svartype" : "RADIO",
+          "kriterieForVisningAvUndersporsmal" : "CHECKED",
+          "svar" : [ ],
+          "undersporsmal" : [ {
+            "id" : "7525ceb1-3625-3389-b61d-7d3cf0e742a3",
+            "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG_PERIODE",
+            "sporsmalstekst" : "Periode for oppholdstillatelse",
+            "undertekst" : null,
+            "min" : "2014-02-12",
+            "max" : "2034-02-12",
+            "svartype" : "PERIODE",
+            "kriterieForVisningAvUndersporsmal" : null,
+            "svar" : [ ],
+            "undersporsmal" : [ ]
+          } ]
+        }, {
+          "id" : "a350e903-a89c-304f-9322-cd3ce04a1f3f",
+          "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT",
+          "sporsmalstekst" : "Permanent",
+          "undertekst" : null,
+          "min" : null,
+          "max" : null,
+          "svartype" : "RADIO",
+          "kriterieForVisningAvUndersporsmal" : "CHECKED",
+          "svar" : [ {
+            "verdi" : "CHECKED"
+          } ],
+          "undersporsmal" : [ {
+            "id" : "9cfae886-8ae5-39f4-a200-82cb27a53e20",
+            "tag" : "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT_DATO",
+            "sporsmalstekst" : "Fra og med",
+            "undertekst" : null,
+            "min" : "2014-02-12",
+            "max" : "2024-02-12",
+            "svartype" : "DATO",
+            "kriterieForVisningAvUndersporsmal" : null,
+            "svar" : [ {
+              "verdi" : "2023-04-19"
+            } ],
+            "undersporsmal" : [ ]
+          } ]
+        } ]
+      } ]
     },
     {
       "id": "83b2451f-f55f-3971-8500-7e7b476f0ef4",
