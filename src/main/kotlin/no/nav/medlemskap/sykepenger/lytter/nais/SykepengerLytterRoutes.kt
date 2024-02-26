@@ -74,6 +74,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 kv("callId", callId),
                 kv("endpoint", "speilvurdering")
             )
+            val start = System.currentTimeMillis()
             val request = call.receive<BomloRequest>()
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
@@ -81,11 +82,13 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
 
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (t: Throwable) {
+                val timeInMS = System.currentTimeMillis()-start
                 secureLogger.error(
                     "Unexpected error calling Lovme",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
+                    kv("timeUsedInMS", timeInMS),
                     kv("endpoint", "speilvurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
@@ -146,7 +149,6 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
            * */
             val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
-
             secureLogger.info ("Calling Lovme  : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
                 kv("callId", callId),
                 kv("endpoint", "brukersporsmal")
