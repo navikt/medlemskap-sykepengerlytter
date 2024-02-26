@@ -88,7 +88,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
-                    kv("timeUsedInMS", timeInMS),
+                    kv("tidsbrukInMs", timeInMS),
                     kv("endpoint", "speilvurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
