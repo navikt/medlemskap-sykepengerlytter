@@ -170,22 +170,38 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
             val vedtaksdato = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }
                 ?.first()?.svar?.first()?.verdi
-            val permanentOpphold =
-                flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
-                    ?.first()?.svar?.first()?.verdi
+            val midlertidigEllerPermanentNode =
+                flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE" }?.first()
+            val midlertidig = midlertidigEllerPermanentNode?.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG" }?.first()
+            val permanent = midlertidigEllerPermanentNode?.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }?.first()
+
             var perioder = mutableListOf<Periode>()
-            if (permanentOpphold == "NEI") {
-                val periode = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
-                    ?.first()?.undersporsmal?.first()?.svar?.first()?.verdi
-                val periodedto: Periode = JacksonParser().toDomainObject(periode!!)
+            var vedtaksTypePermanent = ""
+            if (midlertidig!=null && true == midlertidig.svar?.isNotEmpty()){
+                val periode = midlertidig.undersporsmal?.first()?.svar!!.first()
+                val periodedto: Periode = JacksonParser().toDomainObject(periode!!.verdi)
                 perioder.add(periodedto)
+                vedtaksTypePermanent = "NEI"
             }
+            /*
+            if (midlertidig != null && true == midlertidig.undersporsmal?.first()?.svar?.isNotEmpty()){
+                    val periode = midlertidig.undersporsmal?.first()?.svar!!.first()
+                    val periodedto: Periode = JacksonParser().toDomainObject(periode!!.verdi)
+                perioder.add(periodedto)
+                vedtaksTypePermanent = "NEI"
+            }
+
+             */
+            if (permanent!=null && true == permanent.svar?.isNotEmpty()){
+                vedtaksTypePermanent = "JA"
+            }
+
             val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
                 id = id,
                 sporsmalstekst = sporsmalstekst,
                 svar = svar,
                 vedtaksdato = LocalDate.parse(vedtaksdato),
-                vedtaksTypePermanent = "JA" == permanentOpphold,
+                vedtaksTypePermanent = "JA" == vedtaksTypePermanent,
                 perioder = perioder
             )
             return response

@@ -21,12 +21,25 @@ class BrukerspormaalMapperTest {
         brukerspørsmaal?.let { Assertions.assertNotNull(it.vedtaksdato,"det skal finnes vedtaksdato") }
     }
     @Test
-    fun `test mapping av flex_arbeidIUtenforNorge bruker sporsmaal arbeidUlandTrue`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
+    fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json").readText(Charsets.UTF_8)
         val jsonNode = JacksonParser().ToJson(fileContent)
         val mapper = BrukersporsmaalMapper(jsonNode)
         val v = mapper.getOppholdstilatelse_brukerspørsmål()
         Assertions.assertNotNull(v)
+        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        Assertions.assertNotNull(brukerspørsmaal)
+        brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
+        brukerspørsmaal?.let { Assertions.assertTrue(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
+        brukerspørsmaal?.let { Assertions.assertTrue(it.perioder.size==0,"det skal ikke finnes ett innslag i periode liste") }
+        brukerspørsmaal?.let { Assertions.assertNotNull(it.vedtaksdato,"det skal finnes vedtaksdato") }
+    }
+    @Test
+    fun `test mapping av flex_arbeidIUtenforNorge bruker sporsmaal arbeidUlandTrue`(){
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
+        val jsonNode = JacksonParser().ToJson(fileContent)
+        val mapper = BrukersporsmaalMapper(jsonNode)
+
         val brukerspørsmaal = mapper.arbeidUtlandBrukerSporsmaal
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
