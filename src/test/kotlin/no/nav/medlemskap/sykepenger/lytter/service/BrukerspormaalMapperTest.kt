@@ -31,7 +31,7 @@ class BrukerspormaalMapperTest {
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
-        brukerspørsmaal?.let { Assertions.assertTrue(it.perioder.size==0,"det skal ikke finnes ett innslag i periode liste") }
+        brukerspørsmaal?.let { Assertions.assertTrue(it.perioder.size==1,"det skal  finnes ett innslag i periode liste") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.vedtaksdato,"det skal finnes vedtaksdato") }
     }
     @Test

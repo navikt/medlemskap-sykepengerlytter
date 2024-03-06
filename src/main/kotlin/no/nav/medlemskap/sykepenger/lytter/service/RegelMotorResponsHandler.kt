@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 
-val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3")
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1")
 
 class RegelMotorResponsHandler {
 
@@ -113,9 +113,6 @@ fun JsonNode.harOppholdsTilatelse():Boolean {
     /*
     * Sjekk uavklart svar fra UDI
     * */
-    if (this.finnSvarPaaRegel("REGEL_19_1")){
-        return false
-    }
     if (this.finnSvarPaaRegel("REGEL_19_1")){
         return false
     }
