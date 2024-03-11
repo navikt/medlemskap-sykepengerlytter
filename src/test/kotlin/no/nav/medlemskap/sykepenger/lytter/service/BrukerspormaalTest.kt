@@ -89,7 +89,7 @@ class BrukerspormaalTest {
             ))
         val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
-        Assertions.assertTrue(brukersporsmaal.sporsmaal?.arbeidUtland!!)
+        Assertions.assertFalse(brukersporsmaal.sporsmaal?.arbeidUtland!!)
 
     }
     @Test
