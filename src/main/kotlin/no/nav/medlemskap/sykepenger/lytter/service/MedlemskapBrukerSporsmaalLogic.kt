@@ -57,7 +57,7 @@ fun finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal: List<Bruker
 
 fun finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_eos? {
 
-    val mapOfoppholdUtenforEOS = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforEOS) }
+    val mapOfoppholdUtenforEOS = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforEOS) }.filter { it.value != null }
     if (mapOfoppholdUtenforEOS.isNotEmpty()) {
         return mapOfoppholdUtenforEOS.toSortedMap().map { it.value }.last()
     }

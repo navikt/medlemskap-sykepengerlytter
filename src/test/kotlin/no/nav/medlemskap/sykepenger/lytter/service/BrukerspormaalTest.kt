@@ -6,9 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
+import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions
@@ -35,6 +33,60 @@ class BrukerspormaalTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
+        val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
+        Assertions.assertNotNull(brukersporsmaal)
+        Assertions.assertTrue(brukersporsmaal.sporsmaal?.arbeidUtland!!)
+
+    }
+
+
+
+    @Test
+    fun `brukersporsmaal med null verdier skal ikke anses som siste`() = runBlocking {
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val persistenceService = PersistenceService(repo,repo2)
+
+        val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
+            SoknadstypeDTO.ARBEIDSTAKERE,
+            SoknadsstatusDTO.SENDT.name,
+            "01010112345",
+            null,
+            LocalDate.of(2022,3,23),
+            LocalDateTime.now(), LocalDate.of(2022,3,23),
+            LocalDate.of(2022,4,8),
+            null
+        )
+
+        val service= SoknadRecordHandler(Configuration(), persistenceService)
+        /*
+        * legg til to brukerssvar for opphold utenfor EØS der den siste! er null (ikke oppgitt)
+        * */
+        repo2.storage.add(
+            Brukersporsmaal(
+                fnr = "01010112345",
+                soknadid = UUID.randomUUID().toString(),
+                eventDate = LocalDate.now().minusDays(10),
+                sporsmaal = FlexBrukerSporsmaal(false),
+                oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
+                    id = UUID.randomUUID().toString(),
+                    sporsmalstekst = "",
+                    svar=false,
+                    oppholdUtenforEOS = emptyList()
+                ),
+                status = "SENDT",
+                ytelse = "SYKEPENGER"
+        ))
+        repo2.storage.add(
+            Brukersporsmaal(
+                fnr = "01010112345",
+                soknadid = UUID.randomUUID().toString(),
+                eventDate = LocalDate.now().minusDays(5),
+                sporsmaal = FlexBrukerSporsmaal(false),
+                oppholdUtenforEOS = null,
+                status = "SENDT",
+                ytelse = "SYKEPENGER"
+            ))
         val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
         Assertions.assertTrue(brukersporsmaal.sporsmaal?.arbeidUtland!!)
