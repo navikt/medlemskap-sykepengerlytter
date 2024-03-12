@@ -30,7 +30,7 @@ fun finnMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Bruke
 
 fun finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_utfort_arbeid_utenfor_norge? {
 
-    val mapOfutfortarbeid = listofbrukersporsmaal.associate { Pair(it.eventDate,it.utfort_arbeid_utenfor_norge) }
+    val mapOfutfortarbeid = listofbrukersporsmaal.associate { Pair(it.eventDate,it.utfort_arbeid_utenfor_norge) }.filter { it.value != null }
     if (mapOfutfortarbeid.isNotEmpty()){
         return mapOfutfortarbeid.toSortedMap().map { it.value }.last()
     }
@@ -48,7 +48,7 @@ fun finnNyesteMedlemskap_utfort_arbeid_utenfor_norgeGammelModell(listofbrukerspo
 
 fun finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_norge? {
 
-    val mapOfoppholdUtenforNorge = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforNorge) }
+    val mapOfoppholdUtenforNorge = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforNorge) }.filter { it.value != null }
     if (mapOfoppholdUtenforNorge.isNotEmpty()) {
         return mapOfoppholdUtenforNorge.toSortedMap().map { it.value }.last()
     }
@@ -57,7 +57,7 @@ fun finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal: List<Bruker
 
 fun finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_opphold_utenfor_eos? {
 
-    val mapOfoppholdUtenforEOS = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforEOS) }
+    val mapOfoppholdUtenforEOS = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdUtenforEOS) }.filter { it.value != null }
     if (mapOfoppholdUtenforEOS.isNotEmpty()) {
         return mapOfoppholdUtenforEOS.toSortedMap().map { it.value }.last()
     }
@@ -66,7 +66,7 @@ fun finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal: List<Brukersp
 
 fun finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_oppholdstilatelse_brukersporsmaal? {
 
-    val mapOfoppholdstilatelse = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdstilatelse) }
+    val mapOfoppholdstilatelse = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdstilatelse) }.filter { it.value != null }
     if (mapOfoppholdstilatelse.isNotEmpty()) {
         return mapOfoppholdstilatelse.toSortedMap().map { it.value }.last()
     }

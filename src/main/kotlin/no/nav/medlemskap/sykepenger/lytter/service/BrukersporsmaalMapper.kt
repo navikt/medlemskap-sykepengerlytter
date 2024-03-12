@@ -194,6 +194,10 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
              */
             if (permanent!=null && true == permanent.svar?.isNotEmpty()){
                 vedtaksTypePermanent = "JA"
+                val fomdato = permanent.undersporsmal?.first()?.svar!!.first()
+                val fomLocalDate = LocalDate.parse(fomdato.verdi)
+                perioder.add(Periode(fomLocalDate, LocalDate.MAX))
+
             }
 
             val response = Medlemskap_oppholdstilatelse_brukersporsmaal(

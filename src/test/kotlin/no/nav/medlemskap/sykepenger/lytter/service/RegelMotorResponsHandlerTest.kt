@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -55,6 +56,18 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(jsonNode.erTredjelandsborger())
         Assertions.assertFalse(jsonNode.erTredjelandsborgerMedEØSFamilie())
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
+    }
+
+    @Test
+    fun regel_19_3_1(){
+        val fileContent = this::class.java.classLoader.getResource("respons_regelmotor_kunn_19_3_1_brudd.json").readText(Charsets.UTF_8)
+        val anbefalt = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        val jsonNode = objectMapper.readTree(fileContent)
+        Assertions.assertFalse(jsonNode.erEosBorger())
+        Assertions.assertTrue(jsonNode.erTredjelandsborger())
+        Assertions.assertFalse(jsonNode.erTredjelandsborgerMedEØSFamilie())
+        Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
+        Assertions.assertTrue(anbefalt.sporsmal.containsAll(setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE)),"oppholdstilatelse, arbeid utenfor norge og opphold utenfor norge skal finnes")
     }
     @Test
     fun regel_19_8(){
