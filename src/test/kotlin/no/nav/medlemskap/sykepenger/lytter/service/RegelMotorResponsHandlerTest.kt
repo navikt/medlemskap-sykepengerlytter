@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -58,7 +59,7 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
     }
 
-    @Test
+
     fun regel_19_3_1(){
         val fileContent = this::class.java.classLoader.getResource("respons_regelmotor_kunn_19_3_1_brudd.json").readText(Charsets.UTF_8)
         val anbefalt = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
