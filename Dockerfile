@@ -1,2 +1,2 @@
-FROM navikt/java:21
+FROM ghcr.io/navikt/baseimages/temurin:21
 COPY build/libs/*.jar ./
