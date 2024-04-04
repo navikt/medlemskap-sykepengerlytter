@@ -65,7 +65,7 @@ class ArbeidUtlandTest {
         Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
     @Test
-    fun `data i databasen mindre en 1 Ar skal brukes - Nei oppgitt`() = runBlocking {
+    fun `data i databasen mindre en 2 mnd skal brukes - Nei oppgitt`() = runBlocking {
         val fnrInUseCase = "01010112345"
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
@@ -73,7 +73,7 @@ class ArbeidUtlandTest {
         repo2.lagreBrukersporsmaal(Brukersporsmaal
             (fnrInUseCase,
             UUID.randomUUID().toString(),
-            LocalDate.now().minusMonths(11),
+            LocalDate.now().minusMonths(1),
             "SYKEPENGER","SENDT",
             FlexBrukerSporsmaal(false)
         )
@@ -120,7 +120,7 @@ class ArbeidUtlandTest {
         Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
     @Test
-    fun `data i databasen mindre en 1 Ar skal brukes - Ja oppgitt`() = runBlocking {
+    fun `data i databasen mindre en 2 mnd skal brukes - Ja oppgitt`() = runBlocking {
         val fnrInUseCase = "01010112345"
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
@@ -128,7 +128,7 @@ class ArbeidUtlandTest {
         repo2.lagreBrukersporsmaal(Brukersporsmaal
             (fnrInUseCase,
             UUID.randomUUID().toString(),
-            LocalDate.now().minusMonths(11),
+            LocalDate.now().minusMonths(1),
             "SYKEPENGER","SENDT",
             FlexBrukerSporsmaal(true)
             )
