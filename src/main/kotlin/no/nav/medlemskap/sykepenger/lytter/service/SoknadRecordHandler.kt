@@ -153,7 +153,7 @@ class SoknadRecordHandler(
             log.info("arbeid utland ikke oppgitt i søknad ${sykepengeSoknad.id}. Setter verdi fra historiske data",
                 kv("callId", sykepengeSoknad.id))
         }
-        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { it.eventDate.isAfter(LocalDate.now().minusYears(1)) }
+        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { it.eventDate.isAfter(LocalDate.now().minusMonths(2)) }
         val jasvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==true }
         val neisvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==false }
         val ikkeoppgittsvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==null }
