@@ -14,12 +14,14 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
+import no.nav.medlemskap.sykepenger.lytter.service.oppholdsTillatelsePeriode
 import java.lang.NullPointerException
 import java.util.*
 
@@ -185,7 +187,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
                     val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
                     val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
+                        flexRespons.oppholdstilatelse = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(lovmeresponse)
 
+                    }
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),

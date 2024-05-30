@@ -1,10 +1,15 @@
 package no.nav.medlemskap.sykepenger.lytter.rest
 
+
+import java.time.LocalDate
+
 data class FlexRespons(
-  val svar:Svar,
-  val sporsmal:Set<Spørsmål>
+    val svar:Svar,
+    val sporsmal:Set<Spørsmål>,
+    var oppholdstilatelse: Periode? = null
 )
 
+data class Periode(val fom: LocalDate,val tom:LocalDate?)
 enum class Spørsmål{
     OPPHOLDSTILATELSE,
     ARBEID_UTENFOR_NORGE,

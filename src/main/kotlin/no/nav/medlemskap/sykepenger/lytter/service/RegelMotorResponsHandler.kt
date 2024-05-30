@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
+import java.time.LocalDate
 
 val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3")
 
@@ -23,6 +25,18 @@ class RegelMotorResponsHandler {
 
 
 
+    }
+    fun hentOppholdsTilatelsePeriode(lovmeresponse: String) : Periode? {
+        val lovmeresponseNode = objectMapper.readTree(lovmeresponse)
+        val periode = lovmeresponseNode.oppholdsTillatelsePeriode()
+        if (periode != null){
+            val fom:LocalDate = LocalDate.parse(periode.get("fom").asText())
+            val tom:LocalDate? = runCatching {
+                LocalDate.parse(periode.get("tom").asText())}
+                .getOrNull()
+            return Periode(fom,tom)
+        }
+        return null
     }
 
     private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
@@ -139,4 +153,15 @@ fun JsonNode.harOppholdsTilatelse():Boolean {
 }
 fun JsonNode.svar():String{
     return this.get("resultat").get("svar").asText()
+}
+
+/*
+* ment å brukes ved uthenting av perioden for oppholdstilatelser der bruker har gått ut på brudd på regel 19_3.
+* Usikkert om denne vil fungere dersom det ikke er oppholdstillatelse Pa Samme Vilkar
+* */
+fun JsonNode.oppholdsTillatelsePeriode():JsonNode? {
+     runCatching { this.get("datagrunnlag").get("oppholdstillatelse").get("gjeldendeOppholdsstatus").get("oppholdstillatelsePaSammeVilkar").get("periode") }
+        .onSuccess {  return it }
+        .onFailure {  return null }
+    return null
 }
