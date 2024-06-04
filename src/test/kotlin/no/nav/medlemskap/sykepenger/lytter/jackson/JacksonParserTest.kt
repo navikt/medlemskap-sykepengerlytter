@@ -1,10 +1,15 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.rest.Periode
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-
+import java.time.LocalDate
 
 
 class JacksonParserTest {
@@ -42,6 +47,16 @@ class JacksonParserTest {
     @Test
     fun `print`() {
         println("20048139036".sha256())
+    }
+
+    @Test
+    fun`print2`() {
+        val respons = FlexRespons(
+            svar = Svar.UAVKLART,
+            sporsmal = setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.OPPHOLD_UTENFOR_NORGE,Spørsmål.ARBEID_UTENFOR_NORGE),
+            kjentOppholdstilatelse = Periode(LocalDate.now().minusYears(1), LocalDate.now().plusMonths(10))
+        )
+        println(JacksonParser().ToJson(respons).toPrettyString())
     }
 
 
