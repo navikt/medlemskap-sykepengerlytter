@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
@@ -54,7 +53,7 @@ class JacksonParserTest {
         val respons = FlexRespons(
             svar = Svar.UAVKLART,
             sporsmal = setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.OPPHOLD_UTENFOR_NORGE,Spørsmål.ARBEID_UTENFOR_NORGE),
-            kjentOppholdstilatelse = Periode(LocalDate.now().minusYears(1), LocalDate.now().plusMonths(10))
+            kjentOppholdstillatelse = Periode(LocalDate.now().minusYears(1), LocalDate.now().plusMonths(10))
         )
         println(JacksonParser().ToJson(respons).toPrettyString())
     }
