@@ -15,6 +15,7 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(jsonNode.erEosBorger())
         Assertions.assertFalse(jsonNode.erTredjelandsborger())
         Assertions.assertFalse(jsonNode.erTredjelandsborgerMedEØSFamilie())
+        Assertions.assertNull(jsonNode.oppholdsTillatelsePeriode())
 
 
     }
@@ -39,6 +40,14 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(jsonNode.harOppholdsTilatelse())
     }
     @Test
+    fun kanHenteUtPeriodeFraOppholdsTilatelse(){
+        val fileContent = this::class.java.classLoader.getResource("UAVKLART_3LAND_GIFTEOS_BORGER_MED_OPPHOLD.json").readText(Charsets.UTF_8)
+        val jsonNode = objectMapper.readTree(fileContent)
+        val periode = jsonNode.oppholdsTillatelsePeriode()
+        Assertions.assertNotNull(periode)
+
+    }
+    @Test
     fun tredjelandsBorgerIkkeGiftMedEOSPerson(){
         val fileContent = this::class.java.classLoader.getResource("UAVKLART_3LAND_IKKE_GIFT_EOS_BORGER.json").readText(Charsets.UTF_8)
         RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
@@ -59,7 +68,7 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
     }
 
-
+    //denne testen skal legges til når vi falktisk lager nye brukerspørsmål for oppholdstilatelse
     fun regel_19_3_1(){
         val fileContent = this::class.java.classLoader.getResource("respons_regelmotor_kunn_19_3_1_brudd.json").readText(Charsets.UTF_8)
         val anbefalt = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
@@ -68,7 +77,22 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertTrue(jsonNode.erTredjelandsborger())
         Assertions.assertFalse(jsonNode.erTredjelandsborgerMedEØSFamilie())
         Assertions.assertFalse(jsonNode.harOppholdsTilatelse())
+        val periode = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(fileContent)
+        Assertions.assertNotNull(periode)
+        Assertions.assertNotNull(periode!!.fom)
+        Assertions.assertNotNull(periode!!.tom)
         Assertions.assertTrue(anbefalt.sporsmal.containsAll(setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE)),"oppholdstilatelse, arbeid utenfor norge og opphold utenfor norge skal finnes")
+    }
+    @Test
+    fun regel_19_3_1_medPermanentOpphold(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_19_3_1_med_Permanent.json").readText(Charsets.UTF_8)
+        val anbefalt = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        val jsonNode = objectMapper.readTree(fileContent)
+        val periode = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(fileContent)
+        Assertions.assertNotNull(periode)
+        Assertions.assertNotNull(periode!!.fom)
+        Assertions.assertNull(periode!!.tom)
+        // Assertions.assertTrue(anbefalt.sporsmal.containsAll(setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE)),"oppholdstilatelse, arbeid utenfor norge og opphold utenfor norge skal finnes")
     }
     @Test
     fun regel_19_8(){

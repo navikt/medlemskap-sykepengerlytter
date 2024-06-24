@@ -97,12 +97,19 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
 
 
     fun getOppholdstilatelse_brukerspørsmål(): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+        val medlemskap_oppholdstilatelse_jsonv2 =
+            sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLDSTILLATELSE_V2") }
+        if (medlemskap_oppholdstilatelse_jsonv2 != null) {
+            return mapOppholdstilatele_BrukerSpørsmålv2(medlemskap_oppholdstilatelse_jsonv2)
+
+        }
         val medlemskap_oppholdstilatelse_json =
             sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLDSTILLATELSE") }
         if (medlemskap_oppholdstilatelse_json != null) {
             return mapOppholdstilatele_BrukerSpørsmål(medlemskap_oppholdstilatelse_json)
 
-        } else {
+        }
+        else {
             return null
         }
 
@@ -199,6 +206,43 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
                 perioder.add(Periode(fomLocalDate, LocalDate.MAX))
 
             }
+
+            val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                id = id,
+                sporsmalstekst = sporsmalstekst,
+                svar = svar,
+                vedtaksdato = LocalDate.parse(vedtaksdato),
+                vedtaksTypePermanent = "JA" == vedtaksTypePermanent,
+                perioder = perioder
+            )
+            return response
+        } catch (e: Exception) {
+            secureLogger.error(
+                "Not able to parse Medlemskap_oppholdstilatelse_brukersporsmaal",
+                StructuredArguments.kv("json", medlemskapOppholdstillatelse.toPrettyString())
+            )
+            return null
+        }
+    }
+    fun mapOppholdstilatele_BrukerSpørsmålv2(medlemskapOppholdstillatelse: JsonNode): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+        try {
+            val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(medlemskapOppholdstillatelse)
+            val id = flexModel.id
+            val sporsmalstekst = flexModel.sporsmalstekst
+            val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+            val vedtaksdato = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }
+                ?.first()?.svar?.first()?.verdi
+            val periode = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }?.first()
+
+            var perioder = mutableListOf<Periode>()
+            var vedtaksTypePermanent = ""
+            if (periode!=null && true == periode.svar?.isNotEmpty()){
+                val periode = periode.svar!!.first()
+                val periodedto: Periode = JacksonParser().toDomainObject(periode!!.verdi)
+                perioder.add(periodedto)
+                vedtaksTypePermanent = "NEI"
+            }
+
 
             val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
                 id = id,

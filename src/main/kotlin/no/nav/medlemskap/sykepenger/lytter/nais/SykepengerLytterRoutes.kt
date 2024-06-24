@@ -79,6 +79,15 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 val speilRespons = response.lagSpeilRespons(callId)
+                val timeInMS = System.currentTimeMillis()-start
+                secureLogger.info("{} svar funnet for Speil for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("tidsbrukInMs", timeInMS),
+                    kv("endpoint", "speilvurdering"),
+                    kv("soknadId", speilRespons.soknadId),
+                    kv("konklusjon", speilRespons.speilSvar.name),
+                )
 
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (t: Throwable) {
@@ -111,7 +120,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     secureLogger.info(
                         "{} svar funnet for flex for bruker {}", response.status, response.fnr,
                         kv("fnr", response.fnr),
-                        kv("svar", response.status),
+                        kv("konklusjon", response.status),
                         kv("endpoint", "flexvurdering")
                     )
                     call.respond(HttpStatusCode.OK, response)
@@ -185,7 +194,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
                     val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
                     val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
+                        flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(lovmeresponse)
 
+                    }
                     secureLogger.info("Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
