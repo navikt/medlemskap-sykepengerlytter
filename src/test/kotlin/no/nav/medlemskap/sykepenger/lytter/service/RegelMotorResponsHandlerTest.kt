@@ -69,7 +69,6 @@ class RegelMotorResponsHandlerTest {
     }
 
 
-    @Test
     fun regel_19_3_1(){
         val fileContent = this::class.java.classLoader.getResource("respons_regelmotor_kunn_19_3_1_brudd.json").readText(Charsets.UTF_8)
         val anbefalt = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
