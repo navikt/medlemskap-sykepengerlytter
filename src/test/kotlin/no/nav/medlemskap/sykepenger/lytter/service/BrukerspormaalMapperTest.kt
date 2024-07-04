@@ -36,6 +36,18 @@ class BrukerspormaalMapperTest {
         brukerspørsmaal?.let { Assertions.assertNotNull(it.vedtaksdato,"det skal finnes vedtaksdato") }
     }
     @Test
+    fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json").readText(Charsets.UTF_8)
+        val jsonNode = JacksonParser().ToJson(fileContent)
+        val mapper = BrukersporsmaalMapper(jsonNode)
+        val v = mapper.getOppholdstilatelse_brukerspørsmål()
+        Assertions.assertNotNull(v)
+        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        Assertions.assertNotNull(brukerspørsmaal)
+        Assertions.assertFalse(brukerspørsmaal!!.svar)
+
+    }
+    @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json").readText(Charsets.UTF_8)
         val jsonNode = JacksonParser().ToJson(fileContent)
