@@ -94,7 +94,7 @@ fun mapOppholdstilatelse(oppholdstilatelse: Medlemskap_oppholdstilatelse_brukers
            vedtaksdato = oppholdstilatelse.vedtaksdato,
            vedtaksTypePermanent = oppholdstilatelse.vedtaksTypePermanent,
            perioder = oppholdstilatelse.perioder.map
-           { Periode(it.fom.toString(),it.fom.toString()) }.toList())
+           { Periode(it.fom.toString(),it.tom.toString()) }.toList())
    }
     return null
 
