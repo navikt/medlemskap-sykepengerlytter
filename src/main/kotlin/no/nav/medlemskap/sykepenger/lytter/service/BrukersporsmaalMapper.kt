@@ -230,6 +230,17 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             val id = flexModel.id
             val sporsmalstekst = flexModel.sporsmalstekst
             val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
+            //Bruker har svart NEI på oppholdstilatelse
+            if (!svar)
+            {
+               return  Medlemskap_oppholdstilatelse_brukersporsmaal(
+                   id = id,
+                   sporsmalstekst = sporsmalstekst,
+                   svar = svar,
+                   vedtaksdato = LocalDate.now(),
+                   vedtaksTypePermanent = false,
+                   perioder = emptyList())
+            }
             val vedtaksdato = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }
                 ?.first()?.svar?.first()?.verdi
             val periode = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }?.first()
