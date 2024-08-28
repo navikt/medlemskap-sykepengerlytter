@@ -65,8 +65,8 @@ fun finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal: List<Brukersp
 }
 
 fun finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal: List<Brukersporsmaal>): Medlemskap_oppholdstilatelse_brukersporsmaal? {
-
-    val mapOfoppholdstilatelse = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdstilatelse) }.filter { it.value != null }
+    val datoForNyModell = LocalDate.of(2024,4,23)
+    val mapOfoppholdstilatelse = listofbrukersporsmaal.associate { Pair(it.eventDate, it.oppholdstilatelse) }.filter { it.value != null && it.key.isAfter(datoForNyModell) }
     if (mapOfoppholdstilatelse.isNotEmpty()) {
         return mapOfoppholdstilatelse.toSortedMap().map { it.value }.last()
     }

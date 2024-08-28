@@ -52,7 +52,8 @@ fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal: List<Br
     return null
 }
 fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Brukersporsmaal>) : Medlemskap_oppholdstilatelse_brukersporsmaal?{
-    val oppholdstilatelse_brukersporsmaal = brukersporsmaal.associate { Pair(it.eventDate,it.oppholdstilatelse) }.filter { it.value!=null }
+    val datoForNyModell = LocalDate.of(2024,4,23)
+    val oppholdstilatelse_brukersporsmaal = brukersporsmaal.associate { Pair(it.eventDate,it.oppholdstilatelse) }.filter { it.value!=null && it.key.isAfter(datoForNyModell) }
     if (oppholdstilatelse_brukersporsmaal.isEmpty()){
         return null
     }
@@ -61,22 +62,8 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
     if (!sistOppgitteOpphldstilatelseBrukersporsmaal!!.svar){
         return null //her skal vi tvinge frem nye bruker spørsmål. kommer dog trolig aldri til å skje
     }
-    if (sistOppgitteOpphldstilatelseBrukersporsmaal.vedtaksTypePermanent){
-        if (datoSisteBrukerspørsmålStilt.isBefore(LocalDate.now().minusYears(1))){
-            return null
-        }
-        return sistOppgitteOpphldstilatelseBrukersporsmaal
 
-    }
-    else if (!sistOppgitteOpphldstilatelseBrukersporsmaal.vedtaksTypePermanent){
-        if (sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.first().erAvsluttetPr(LocalDate.now())){
-            return null
-        }
-        else{
-            return sistOppgitteOpphldstilatelseBrukersporsmaal
-        }
-    }
-    return null
+    return sistOppgitteOpphldstilatelseBrukersporsmaal
 }
 
 /*

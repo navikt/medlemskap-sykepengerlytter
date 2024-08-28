@@ -387,114 +387,7 @@ class AlleredeStilteBrukerSpormaalTest {
         Assertions.assertNull(funnet,"Dersom siste brukerspørsmål har oppholdtilatelse false skal det ikke finnes")
 
     }
-    @Test
-    fun `oppholdstilatelse PERMANENT skal finnes om det er registrert for mindre en 1 år siden`(){
-        val fnr = "12345678901"
-        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.MIN, LocalDate.MAX))
-        )
-        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = true,
-            perioder = emptyList()
-        )
-        val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(15),opphold1)
-        val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(10),opphold2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2))
-        Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
-        Assertions.assertEquals("1",funnet!!.id,"Nyeste bruker spørsmål skal alltid vurderes")
-        Assertions.assertTrue(funnet.svar)
-        Assertions.assertTrue(funnet.vedtaksTypePermanent)
-    }
-    @Test
-    fun `oppholdstilatelse PERMANENT skal IKKE finnes om det er registrert for mer en 1 år siden`(){
-        val fnr = "12345678901"
-        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.MIN, LocalDate.MAX))
-        )
-        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = true,
-            perioder = emptyList()
-        )
-        val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(15),opphold1)
-        val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(13),opphold2)
-
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2))
-        Assertions.assertNull(funnet,"Permanent oppholdstilatelse skal ikke finnes om det er registrert for mer en 1 år siden")
-    }
-
-    @Test
-    fun `oppholdstilatelse MIDLERTIDIG skal IKKE finnes om perioden er gått ut på dato`(){
-        val fnr = "12345678901"
-        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = true,
-            perioder = emptyList()
-        )
-        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.MIN, LocalDate.now().minusDays(1)))
-        )
-        val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(15),opphold1)
-        val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(13),opphold2)
-
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2))
-        Assertions.assertNull(funnet,"MIDLERTIDIG oppholdstilatelse skal ikke finnes om perioden er gått ut")
-    }
-
-    @Test
-    fun `oppholdstilatelse MIDLERTIDIG skal  finnes om perioden IKKE er gått ut på dato`(){
-        val fnr = "12345678901"
-        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = true,
-            perioder = emptyList()
-        )
-        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.MIN, LocalDate.now().plusDays(30)))
-        )
-        val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(15),opphold1)
-        val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(13),opphold2)
-
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2))
-        Assertions.assertNotNull(funnet,"MIDLERTIDIG oppholdstilatelse skal  finnes om perioden ikke er gått ut")
-        Assertions.assertEquals("1",funnet!!.id,"feil brukerspørsmål funnet")
-        Assertions.assertFalse(funnet!!.vedtaksTypePermanent,"vedtaktype skal være midlertidig")
-        Assertions.assertFalse(funnet!!.perioder.first().erAvsluttetPr(LocalDate.now()),"Perioden på oppholdsperioden skal være løpende")
-    }
 
 
 
@@ -510,6 +403,71 @@ class AlleredeStilteBrukerSpormaalTest {
         Assertions.assertEquals(Svar.UAVKLART,actual_response.svar)
         Assertions.assertTrue(actual_response.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
         Assertions.assertFalse(actual_response.sporsmal.contains(Spørsmål.ARBEID_UTENFOR_NORGE))
+    }
+    @Test
+    fun `Oppholdstilatelse brukerspørsmål på gammel modell skal sorteres ut`(){
+        val fnr = "12345678901"
+        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id="1",
+            sporsmalstekst = "Har du oppholdstillatelse fra Utlendingsdirektoratet?",
+            svar = true,
+            vedtaksdato = LocalDate.now(),
+            vedtaksTypePermanent = false,
+            perioder = listOf(Periode(LocalDate.of(2024,1,1), LocalDate.now().plusDays(30)))
+        )
+        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id="1",
+            sporsmalstekst = "Har Utlendingsdirektoratet gitt deg en oppholdstillatelse før 1. januar 2024?",
+            svar = true,
+            vedtaksdato = LocalDate.now(),
+            vedtaksTypePermanent = false,
+            perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.of(2023,12,31)))
+        )
+        val sp1 = Brukersporsmaal(
+            soknadid = UUID.randomUUID().toString(),
+            eventDate = LocalDate.of(2023,4,23),
+            fnr = fnr,
+            sporsmaal = FlexBrukerSporsmaal(false),
+            status = "",
+            ytelse = "SYKEPENGER",
+            oppholdstilatelse = opphold1
+        )
+        val sp2 = Brukersporsmaal(
+            soknadid = UUID.randomUUID().toString(),
+            eventDate = LocalDate.of(2024,4,24),
+            fnr = fnr,
+            sporsmaal = FlexBrukerSporsmaal(false),
+            status = "",
+            ytelse = "SYKEPENGER",
+            oppholdstilatelse = opphold2
+        )
+        val response = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp1))
+        Assertions.assertNull(response,"Skal ikke funne spørsmål på gammel modell")
+    }
+
+    @Test
+
+    fun `Oppholdstilatelse brukerspørsmål på ny modell skal ikke sorteres ut`(){
+        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id="1",
+            sporsmalstekst = "Har Utlendingsdirektoratet gitt deg en oppholdstillatelse før 1. januar 2024?",
+            svar = true,
+            vedtaksdato = LocalDate.now(),
+            vedtaksTypePermanent = false,
+            perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.of(2023,12,31)))
+        )
+        val sp2 = Brukersporsmaal(
+            soknadid = UUID.randomUUID().toString(),
+            eventDate = LocalDate.of(2024,4,24),
+            fnr = "12345678910",
+            sporsmaal = FlexBrukerSporsmaal(false),
+            status = "",
+            ytelse = "SYKEPENGER",
+            oppholdstilatelse = opphold2
+
+        )
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2))
+        Assertions.assertNotNull(res, "Nye brukerspørsmål er sortert ut")
     }
 
     fun mockBrukerSpørsmål(fnr:String, eventDate:LocalDate, arbeidUtenforNorge:Medlemskap_utfort_arbeid_utenfor_norge):Brukersporsmaal{
