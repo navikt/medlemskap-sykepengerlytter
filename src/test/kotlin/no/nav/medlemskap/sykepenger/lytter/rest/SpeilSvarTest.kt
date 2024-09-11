@@ -33,6 +33,13 @@ class SpeilSvarTest {
         Assertions.assertEquals(Speilsvar.UAVKLART_MED_BRUKERSPORSMAAL,speilResponse.speilSvar,"Feil svar : Konklusjon skal benyttes i svar")
     }
     @Test
+    fun `hentAvklaringer Skal ikke feile selv på gammel modell`(){
+        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
+        val json = JacksonParser().ToJson(fileContent)
+        Assertions.assertTrue(json.hentAvklaringer().isEmpty())
+
+    }
+    @Test
     fun `vureringsID skal hentes fra Json dersom det finnes`(){
         val fileContent = this::class.java.classLoader.getResource("SagaResponsUavklartMedBrukerSporsmaalOgVurderingsId.json").readText(Charsets.UTF_8)
         val json = JacksonParser().ToJson(fileContent)

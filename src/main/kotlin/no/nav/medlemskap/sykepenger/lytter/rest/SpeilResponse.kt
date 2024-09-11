@@ -20,7 +20,13 @@ fun JsonNode.lagSpeilRespons(default:String):SpeilResponse{
     return SpeilResponse(soknadID,fnr,this.finnSpeilSvar())
 }
 fun JsonNode.hentAvklaringer():List<String>{
-    return this.get("konklusjon").get(0).get("avklaringsListe").toList().map { it.get("regel_id").asText() }
+    try{
+        return this.get("konklusjon").get(0).get("avklaringsListe").toList().map { it.get("regel_id").asText() }
+    }
+    catch (e:Exception){
+        return emptyList()
+    }
+
 }
 
 fun JsonNode.finnSpeilSvar():Speilsvar{
