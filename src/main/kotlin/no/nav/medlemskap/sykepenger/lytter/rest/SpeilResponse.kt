@@ -19,6 +19,9 @@ fun JsonNode.lagSpeilRespons(default:String):SpeilResponse{
     val soknadID = this.finnSoknadID(default)
     return SpeilResponse(soknadID,fnr,this.finnSpeilSvar())
 }
+fun JsonNode.hentAvklaringer():List<String>{
+    return this.get("konklusjon").get(0).get("avklaringsListe").toList().map { it.get("regel_id").asText() }
+}
 
 fun JsonNode.finnSpeilSvar():Speilsvar{
     val brukerinput:Brukerinput = JacksonParser().toDomainObject(this.get("datagrunnlag").get("brukerinput"))
