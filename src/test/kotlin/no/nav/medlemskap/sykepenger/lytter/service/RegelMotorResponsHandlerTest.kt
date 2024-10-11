@@ -159,5 +159,14 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(respons.sporsmal.isEmpty())
     }
 
+    @Test
+    fun medlbrudd_skal_fore_til_bruersporsmaal(){
+        val fileContent = this::class.java.classLoader.getResource("Medl_brudd_sample.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        val jsonNode = objectMapper.readTree(fileContent)
+        Assertions.assertTrue(jsonNode.aarsakerInneholderMEDLRegler(MEDL_REGLER))
+        Assertions.assertFalse(respons.sporsmal.isEmpty())
+    }
+
 
 }
