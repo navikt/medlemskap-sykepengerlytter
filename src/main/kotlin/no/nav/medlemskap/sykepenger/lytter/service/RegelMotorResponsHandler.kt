@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import java.time.LocalDate
 
 val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1")
+val MEDL_REGLER:List<String> = listOf("REGEL_1_3_1","REGEL_1_3_3","REGEL_1_3_4","REGEL_1_3_5")
 
 
 class RegelMotorResponsHandler {
@@ -43,7 +44,7 @@ class RegelMotorResponsHandler {
     private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
 
         //Lag bruker spørsmål kun for de reglene som er avklart
-        if (!lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)){
+        if (!lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) && !lovmeresponseNode!!.aarsakerInneholderMEDLRegler(MEDL_REGLER)){
             return FlexRespons(Svar.UAVKLART, emptySet())
         }
         if (lovmeresponseNode!!.erEosBorger()){
@@ -104,6 +105,10 @@ fun JsonNode.aarsakerInneholderEnEllerFlereRegler(regler:List<String>):Boolean{
 }
 fun JsonNode.aarsakerInneholderKunEnReglel(regler:List<String>):Boolean{
     return this.aarsaker().size == 1 && this.aarsaker().any { it in regler }
+}
+
+fun JsonNode.aarsakerInneholderMEDLRegler(regler:List<String>):Boolean{
+    return this.aarsaker().any { it in regler }
 }
 
 fun List<JsonNode>.finnRegel(regelID:String):JsonNode?{
