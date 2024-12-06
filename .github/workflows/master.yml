@@ -1,45 +1,37 @@
 name: build
-
+permissions:
+  contents: "read"
+  id-token: "write"
+  packages: "write"
 on:
   push:
     branches:
       - main
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/medlemskap-sykepengerlytter:${{ github.sha }}
+  IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 jobs:
-  build:
+  build_and_push:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@master
-      - name: Cache
-        uses: actions/cache@v1.1.2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+        uses: actions/checkout@v4
       - name: test and build
         uses: actions/setup-java@v4.2.1
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: '20'
           check-latest: true
       - run: ./gradlew test shadowJar
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build docker image
-        run: docker build -t $IMAGE .
-      - name: Login to Github package registry
-        run: docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push docker image
-        run: docker push $IMAGE
+      - uses: nais/docker-build-push@v0
+        id: docker-push
+        with:
+          team: medlemskap # required
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
       - name: Post failures to Slack
         if: failure()
         run: |
@@ -48,29 +40,33 @@ jobs:
           MESSAGE: "Bygg feilet"
           CHANNEL: "#team-p3-medlemskap-notifications"
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
   deploypreprod:
     name: Deploy to Preprod
-    needs: build
-    if: github.ref == 'refs/heads/main'
+    needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: nais/deploy/actions/deploy@v1
-      env:
-        APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-        CLUSTER: dev-gcp
-        RESOURCE: .nais/dev.yaml
-        VAR: image=${{ env.IMAGE }}
-  deployprod:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/dev.yaml
+          IMAGE: ${{ needs.build_and_push.outputs.image }}
+          TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
+  prod:
     name: Deploy to Prod
-    needs: deploypreprod
+    needs: build_and_push
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: nais/deploy/actions/deploy@v1
-      env:
-        APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-        CLUSTER: prod-gcp
-        RESOURCE: .nais/prod.yaml
-        VAR: image=${{ env.IMAGE }}
+      - uses: actions/checkout@v4
+        name: Checkout code
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/prod.yaml
+          IMAGE: ${{ needs.build_and_push.outputs.image }}
+          TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
