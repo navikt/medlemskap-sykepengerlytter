@@ -106,12 +106,27 @@ open class FlexMessageHandler (
             val status = JsonNode.get("status").asText()
             val id = JsonNode.get("id").asText()
             val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
+            val dodsdato = JsonNode.get("dodsdato").asText(null)
             val sendtNav = JsonNode.get("sendtNav").asText(null)
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
             // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
             if (status != Soknadstatus.SENDT.toString()){
 
+                return Brukersporsmaal(
+                    fnr,
+                    id,
+                    DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                    "SYKEPENGER",
+                    status,
+                    null,
+                    null,
+                    null
+                )
+            }
+            //dersom bruker er død er alle brukerspørsmål ikke oppgitt.
+
+            if (dodsdato!=null){
                 return Brukersporsmaal(
                     fnr,
                     id,
