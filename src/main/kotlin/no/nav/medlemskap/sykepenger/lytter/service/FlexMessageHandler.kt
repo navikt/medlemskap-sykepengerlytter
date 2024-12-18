@@ -106,7 +106,7 @@ open class FlexMessageHandler (
             val status = JsonNode.get("status").asText()
             val id = JsonNode.get("id").asText()
             val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
-            val dodsdato = JsonNode.get("sendtArbeidsgiver").asText(null)
+            val dodsdato = JsonNode.get("dodsdato").asText(null)
             val sendtNav = JsonNode.get("sendtNav").asText(null)
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
@@ -125,6 +125,7 @@ open class FlexMessageHandler (
                 )
             }
             //dersom bruker er død er alle brukerspørsmål ikke oppgitt.
+
             if (dodsdato!=null){
                 return Brukersporsmaal(
                     fnr,
