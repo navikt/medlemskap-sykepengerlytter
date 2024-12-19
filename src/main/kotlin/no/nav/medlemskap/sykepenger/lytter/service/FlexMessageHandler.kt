@@ -68,6 +68,9 @@ open class FlexMessageHandler (
                 ) &&
                 false == lovmeSoknadDTO.ettersending
 
+    /*
+     * SP1220
+     * */
     private fun handleBrukerSporsmaal(flexMessageRecord: FlexMessageRecord) {
         val brukersporsmaal: Brukersporsmaal = mapMessage(flexMessageRecord)
 
