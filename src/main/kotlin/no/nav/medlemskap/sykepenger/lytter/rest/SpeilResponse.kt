@@ -24,7 +24,17 @@ fun JsonNode.hentAvklaringer():List<String>{
         return this.get("konklusjon").get(0).get("avklaringsListe").toList().map { it.get("regel_id").asText() }
     }
     catch (e:Exception){
-        return emptyList()
+        return this.get("resultat").get("årsaker").toList().map { it.get("regelId").asText() }
+
+    }
+
+}
+fun JsonNode.hentKanal():String{
+    try{
+        return this.get("kanal").asText()
+    }
+    catch (e:Exception){
+        return "Ukjent"
     }
 
 }
