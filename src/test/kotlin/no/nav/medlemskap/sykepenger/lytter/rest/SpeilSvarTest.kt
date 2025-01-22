@@ -36,7 +36,7 @@ class SpeilSvarTest {
     fun `hentAvklaringer Skal ikke feile selv på gammel modell`(){
         val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart_REGEL_C.json").readText(Charsets.UTF_8)
         val json = JacksonParser().ToJson(fileContent)
-        Assertions.assertTrue(json.hentAvklaringer().isEmpty())
+        Assertions.assertTrue(json.hentAvklaringer().isNotEmpty())
 
     }
     @Test

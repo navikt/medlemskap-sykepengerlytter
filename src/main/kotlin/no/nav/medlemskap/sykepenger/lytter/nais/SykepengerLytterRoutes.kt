@@ -88,6 +88,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("soknadId", speilRespons.soknadId),
                     kv("konklusjon", speilRespons.speilSvar.name),
                     kv("avklaringer", response.hentAvklaringer()),
+                    kv("kanal", response.hentKanal()),
                 )
 
                 call.respond(HttpStatusCode.OK, speilRespons)
