@@ -181,4 +181,11 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_C")
     }
 
+    @Test
+    fun regel11_skal_fore_til_bruersporsmaal(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_11_2_3.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_11_2_3")
+    }
+
 }
