@@ -14,6 +14,7 @@ val MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGE
 val MEDL_REGLER:List<String> = listOf("REGEL_1_3_1","REGEL_1_3_3","REGEL_1_3_4","REGEL_1_3_5")
 
 
+
 class RegelMotorResponsHandler {
 
     fun interpretLovmeRespons(lovmeresponse: String) : FlexRespons {
@@ -42,12 +43,19 @@ class RegelMotorResponsHandler {
         return null
     }
 
+    fun enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode?): Boolean{
+        return !lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode!!.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode!!.aarsakerInneholderMEDLRegler(MEDL_REGLER)
+    }
+    fun multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode?): Boolean{
+        return !lovmeresponseNode!!.alleAarsakerErILista(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+    }
+
     private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
 
         //Lag bruker spørsmål kun for de reglene som er avklart
-        if (!lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-            !lovmeresponseNode!!.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-            !lovmeresponseNode!!.aarsakerInneholderMEDLRegler(MEDL_REGLER)){
+        if (enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)  &&  multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)){
             return FlexRespons(Svar.UAVKLART, emptySet())
         }
         if (lovmeresponseNode!!.erEosBorger()){
@@ -120,6 +128,32 @@ fun JsonNode.aarsakerInneholderKunEnReglelSomStarterMed(regler:List<String>):Boo
 fun JsonNode.aarsakerInneholderMEDLRegler(regler:List<String>):Boolean{
     return this.aarsaker().any { it in regler }
 }
+
+/**
+ * Sjekker om alle årsaker enten er i listen over enkeltregler eller starter med en av multireglene.
+ *
+ * @param listeAvEnkeltRegler Liste over regler som kan aksepteres direkte.
+ * @param listeAvmultiregler Liste over regler som kan aksepteres hvis de starter med en av disse.
+ * @return `true` hvis alle årsaker er i en av listene, ellers `false`.
+ */
+private fun JsonNode.alleAarsakerErILista(
+    listeAvEnkeltRegler: List<String>,
+    listeAvmultiregler: List<String>
+): Boolean {
+    val aarsaker = this.aarsaker() // Henter ut alle årsaker fra JSON-noden.
+
+    // Hvis alle årsakene finnes i listen over enkeltregler, returner true umiddelbart.
+    if (listeAvEnkeltRegler.containsAll(aarsaker)) {
+        return true
+    }
+
+    // Filtrer ut årsaker som ikke finnes i listen over enkeltregler
+    // og sjekk om alle gjenværende starter med en av multireglene.
+    return aarsaker.filterNot { it in listeAvEnkeltRegler }
+        .all { rest -> listeAvmultiregler.any { rest.startsWith(it) } }
+}
+
+
 
 fun List<JsonNode>.finnRegel(regelID:String):JsonNode?{
     return this.find { it.get("regelId").asText()==regelID }
