@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
+import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
@@ -7,6 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import no.nav.medlemskap.sykepenger.lytter.service.SoknadRecordHandlerTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -25,6 +27,14 @@ class JacksonParserTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         assertNotNull(sykepengeSoknad)
+        assertEquals(SoknadstypeDTO.ARBEIDSTAKERE,sykepengeSoknad.type)
+    }
+    @Test
+    fun `parse Json med ukjent type`() {
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_ukjent_type.json").readText(Charsets.UTF_8)
+        val sykepengeSoknad = JacksonParser().parse(fileContent)
+        assertNotNull(sykepengeSoknad)
+        assertEquals(SoknadstypeDTO.UKJENT,sykepengeSoknad.type)
     }
     @Test
     fun `parse Json String med UTLAND data`() {
