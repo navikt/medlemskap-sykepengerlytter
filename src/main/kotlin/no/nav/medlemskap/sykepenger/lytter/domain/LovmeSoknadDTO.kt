@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.domain
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -36,4 +37,13 @@ enum class SoknadstypeDTO {
     REISETILSKUDD,
     GRADERT_REISETILSKUDD,
     FRISKMELDT_TIL_ARBEIDSFORMIDLING,
+    UKJENT(); // Default-verdi
+
+    companion object {
+        @JsonCreator
+        @JvmStatic
+        fun fromValue(value: String?): SoknadstypeDTO {
+            return entries.find { it.name.equals(value, ignoreCase = true) } ?: UKJENT
+        }
+    }
 }

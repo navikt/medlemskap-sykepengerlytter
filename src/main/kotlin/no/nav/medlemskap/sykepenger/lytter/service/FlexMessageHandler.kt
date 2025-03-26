@@ -38,6 +38,13 @@ open class FlexMessageHandler (
         }
         else{
             log.info("Melding med id ${flexMessageRecord.key} filtrert ut. Ikke ønsket meldingstype : ${requestObject.type.name}")
+            if (requestObject.type == SoknadstypeDTO.UKJENT){
+                secureLogger.warn ("ukjent soknadsType mottatt i søknad  ${flexMessageRecord.key} ",
+                    kv("callId",flexMessageRecord.key),
+                    kv("fnr",requestObject.fnr)
+
+                )
+            }
         }
 
 
