@@ -5,6 +5,9 @@ import io.github.resilience4j.retry.RetryRegistry
 import io.ktor.client.plugins.*
 import java.time.Duration
 
+/*
+ * SP 1311 - prøv opp til 4 ganger før vi gir opp å finne treff
+ * */
 val retryConfig: RetryConfig = RetryConfig
     .custom<RetryConfig>()
     .maxAttempts(4)

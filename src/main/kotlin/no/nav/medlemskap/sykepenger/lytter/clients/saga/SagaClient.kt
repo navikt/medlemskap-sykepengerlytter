@@ -11,7 +11,6 @@ import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 
 
 class SagaClient(
@@ -21,6 +20,10 @@ class SagaClient(
     private val retry: Retry? = null
 ): SagaAPI {
 
+    /*
+    * SP1310
+    * - Gjør kall mot "Medlemskap Saga" , Søk etter vurderinger som passer med input.
+    * */
     override suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "vurdering", retry) {

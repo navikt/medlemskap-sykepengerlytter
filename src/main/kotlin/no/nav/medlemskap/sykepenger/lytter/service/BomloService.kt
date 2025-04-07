@@ -3,7 +3,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.service.*
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -55,6 +54,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             } catch (cause: ResponseException) {
                 //TODO: Avklar her om vi skal returnere 404 eller om vi må kalle Lovme!
                 if (cause.response.status.value == 404) {
+                    /*
+                    * SP1312 - hent gamle brukersvar fra databasen
+                    * */
                     log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                     val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)
                     val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(bomloRequest, callId)
@@ -67,6 +69,10 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 throw cause
             }
         }
+
+    /*
+    *   SP1240 - HentNyesteBrukersporsmalFromDatabase
+    * */
     fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
         if (listofbrukersporsmaal.isEmpty()){

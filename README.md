@@ -69,6 +69,8 @@ for brukerspørsmål kreves også at fnr er satt i header
 # Avhengigheter
 * Kafka
 * Medlemskap-Oppslag
+* Medlemskap-saga
+* Postgress
 
 #UseCase diagram
 

@@ -8,7 +8,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.time.withTimeout
-import kotlinx.coroutines.withTimeout
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -16,7 +15,6 @@ import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import java.time.Duration
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 
 class MedlOppslagClient(
@@ -27,6 +25,9 @@ class MedlOppslagClient(
 ):LovmeAPI {
     private val secureLogger = KotlinLogging.logger("tjenestekall")
 
+    /*
+    * SP1250
+    * */
     override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         secureLogger.info ("kaller regelmotor",
             kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
@@ -69,6 +70,10 @@ class MedlOppslagClient(
         }
 
     }
+
+    /*
+     * SP1313 - Kall medlemsskap-oppslagg
+     * */
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
         secureLogger.info ("kaller regelmotor",
             kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),

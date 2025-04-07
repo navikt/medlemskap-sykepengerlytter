@@ -11,10 +11,8 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
-import java.util.*
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -179,6 +177,9 @@ class SoknadRecordHandler(
         }
     }
 
+    /*
+    * SP1230
+    * */
     fun hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){
@@ -203,12 +204,18 @@ class SoknadRecordHandler(
     }
 
 
+    /*
+    * SP1202
+    * */
     fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {
         val vurderinger = persistenceService.hentMedlemskap(medlemRequest.fnr)
         val erFunksjoneltLik = vurderinger.find { medlemRequest.erFunkskjoneltLik(it) }
         return erFunksjoneltLik
     }
 
+    /*
+    * SP1203
+    * */
     fun isPaafolgendeSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
         if (true ==  sykepengeSoknad.forstegangssoknad){
             return false
