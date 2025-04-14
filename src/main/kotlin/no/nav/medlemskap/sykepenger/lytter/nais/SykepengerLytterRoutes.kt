@@ -14,7 +14,6 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
@@ -27,43 +26,6 @@ private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
 fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
     authenticate("azureAuth") {
-        post("/vurdering") {
-            val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
-            val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
-            val callId = call.callId ?: UUID.randomUUID().toString()
-            logger.info(
-                "kall autentisert, url : /vurdering",
-                kv("callId", callId),
-                kv("endpoint", "vurdering")
-            )
-            val request = call.receive<BomloRequest>()
-            try {
-                val response = bomloService.finnFlexVurdering(request, callId)
-                val medlemskapsloggObjekt = response.lagMedlemskapsResultat()
-
-                secureLogger.info(
-                    "{} konklusjon gitt for bruker {}", medlemskapsloggObjekt.svar, medlemskapsloggObjekt.fnr,
-                    kv("fnr", medlemskapsloggObjekt.fnr),
-                    kv("svar", medlemskapsloggObjekt.svar),
-                    kv("årsak", medlemskapsloggObjekt.årsak),
-                    kv("årsaker", medlemskapsloggObjekt.årsaker),
-                    kv("response",response.toPrettyString()),
-                    kv("endpoint", "vurdering")
-                )
-
-                call.respond(HttpStatusCode.OK, response.toPrettyString())
-            } catch (t: Throwable) {
-                secureLogger.error(
-                    "Unexpected error calling Lovme",
-                    kv("callId", callId),
-                    kv("fnr", request.fnr),
-                    kv("cause", t.stackTrace),
-                    kv("endpoint", "vurdering")
-                )
-                call.respond(HttpStatusCode.InternalServerError, t.message!!)
-            }
-        }
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()

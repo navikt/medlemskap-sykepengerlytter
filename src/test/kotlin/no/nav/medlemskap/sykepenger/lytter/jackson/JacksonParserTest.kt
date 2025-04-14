@@ -1,6 +1,5 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
-import no.nav.medlemskap.sykepenger.lytter.domain.lagMedlemskapsResultat
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
@@ -33,17 +32,6 @@ class JacksonParserTest {
         assertNotNull(sykepengeSoknad)
     }
 
-    @Test
-    fun `MedlemskapResultat mappes riktig`() {
-        val fileContent = this::class.java.classLoader.getResource("sampleVurdering_uavklart.json").readText(Charsets.UTF_8)
-        val vurdering = JacksonParser().ToJson(fileContent)
-        val resultat = vurdering.lagMedlemskapsResultat()
-
-        assertEquals("15076500565", resultat.fnr )
-        assertEquals("UAVKLART", resultat.svar)
-        assertEquals("REGEL_25", resultat.årsak)
-        assertEquals("[\"REGEL_25\", \"REGEL_1_4\"]", resultat.årsaker.toString())
-    }
     @Test
     fun `print`() {
         println("20048139036".sha256())
