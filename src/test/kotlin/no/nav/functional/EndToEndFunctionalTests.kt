@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.service.*
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
@@ -92,6 +93,12 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
 
     }
+
+    @Test
+    fun delete(){
+        println("25110085802".sha256())
+    }
+
     @Test
     fun `brukerspormaal ende til ende simulering der begge bruker spørsmål har svar NEI`() = runBlocking {
         postgresqlContainer.withUrlParam("user", postgresqlContainer.username)

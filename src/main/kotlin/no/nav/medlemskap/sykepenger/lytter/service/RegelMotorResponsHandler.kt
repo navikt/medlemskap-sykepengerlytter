@@ -9,7 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import java.time.LocalDate
 
-val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25")
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25","REGEL_5")
 val MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_11")
 val MEDL_REGLER:List<String> = listOf("REGEL_1_3_1","REGEL_1_3_3","REGEL_1_3_4","REGEL_1_3_5")
 
@@ -43,34 +43,34 @@ class RegelMotorResponsHandler {
         return null
     }
 
-    fun enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode?): Boolean{
-        return !lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-                !lovmeresponseNode!!.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-                !lovmeresponseNode!!.aarsakerInneholderMEDLRegler(MEDL_REGLER)
+    fun enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
+        return !lovmeresponseNode.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode.aarsakerInneholderMEDLRegler(MEDL_REGLER)
     }
-    fun multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode?): Boolean{
-        return !lovmeresponseNode!!.alleAarsakerErILista(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+    fun multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
+        return !lovmeresponseNode.alleAarsakerErILista(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
     }
 
-    private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
+    private fun createFlexRespons(lovmeresponseNode: JsonNode) :FlexRespons{
 
         //Lag bruker spørsmål kun for de reglene som er avklart
         if (enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)  &&  multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)){
             return FlexRespons(Svar.UAVKLART, emptySet())
         }
-        if (lovmeresponseNode!!.erEosBorger()){
+        if (lovmeresponseNode.erEosBorger()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborgerMedEØSFamilie() && lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborgerMedEØSFamilie() && lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborgerMedEØSFamilie() && !lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborgerMedEØSFamilie() && !lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborger() && !lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborger() && !lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborger() && lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborger() && lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
         }
          throw IllegalStateException()
