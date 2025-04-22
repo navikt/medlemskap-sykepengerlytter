@@ -2,7 +2,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -174,6 +173,25 @@ class RegelMotorResponsHandlerTest {
         val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_15")
     }
+
+    @Test
+    fun kombinasjonerAvEnkeltReglerIListaSkalFøreTilBrukerSpørsmål(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_3_OG_REGEL_34.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Det skal opprettes brukersporsmaal paa kobinasjoner av godkjente regler")
+    }
+    @Test
+    fun kombinasjonerAvEnkeltReglerOgMultiReglerIListaSkalFøreTilBrukerSpørsmål(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_3_OG_REGEL_11_2_2_1.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Det skal opprettes brukersporsmaal paa kobinasjoner av godkjente regler")
+    }
+    @Test
+    fun Ulovlig_kombinasjonerAvEnkeltReglerOgMultiReglerIListaSkalIkkeFøreTilBrukerSpørsmål(){
+        val fileContent = this::class.java.classLoader.getResource("REGEL_3_10_OG_11_2_2_1.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
+        Assertions.assertTrue(respons.sporsmal.isEmpty(), "Det skal ikke opprettes brukersporsmaal paa ulovlige kobinasjoner av ikke godkjente regler")
+    }
     @Test
     fun regelC_skal_fore_til_bruersporsmaal(){
         val fileContent = this::class.java.classLoader.getResource("REGEL_C.json").readText(Charsets.UTF_8)
@@ -222,7 +240,7 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_25")
     }
 
-    @Test
+    //@Test
     fun regel10_skal_fore_til_bruersporsmaal(){
         val fileContent = this::class.java.classLoader.getResource("REGEL_10.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)

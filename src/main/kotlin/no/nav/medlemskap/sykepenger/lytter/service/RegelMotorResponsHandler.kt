@@ -9,9 +9,10 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import java.time.LocalDate
 
-val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25", "REGEL_10")
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25")
 val MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_11")
 val MEDL_REGLER:List<String> = listOf("REGEL_1_3_1","REGEL_1_3_3","REGEL_1_3_4","REGEL_1_3_5")
+
 
 
 class RegelMotorResponsHandler {
@@ -42,27 +43,34 @@ class RegelMotorResponsHandler {
         return null
     }
 
-    private fun createFlexRespons(lovmeresponseNode: JsonNode?) :FlexRespons{
+    fun enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
+        return !lovmeresponseNode.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
+                !lovmeresponseNode.aarsakerInneholderMEDLRegler(MEDL_REGLER)
+    }
+    fun multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
+        return !lovmeresponseNode.alleAarsakerErILista(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+    }
+
+    private fun createFlexRespons(lovmeresponseNode: JsonNode) :FlexRespons{
 
         //Lag bruker spørsmål kun for de reglene som er avklart
-        if (!lovmeresponseNode!!.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-            !lovmeresponseNode!!.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-            !lovmeresponseNode!!.aarsakerInneholderMEDLRegler(MEDL_REGLER)){
+        if (enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)  &&  multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)){
             return FlexRespons(Svar.UAVKLART, emptySet())
         }
-        if (lovmeresponseNode!!.erEosBorger()){
+        if (lovmeresponseNode.erEosBorger()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborgerMedEØSFamilie() && lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborgerMedEØSFamilie() && lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborgerMedEØSFamilie() && !lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborgerMedEØSFamilie() && !lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborger() && !lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborger() && !lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
         }
-        if (lovmeresponseNode!!.erTredjelandsborger() && lovmeresponseNode.harOppholdsTilatelse()){
+        if (lovmeresponseNode.erTredjelandsborger() && lovmeresponseNode.harOppholdsTilatelse()){
             return FlexRespons(Svar.UAVKLART, setOf(Spørsmål.ARBEID_UTENFOR_NORGE,Spørsmål.OPPHOLD_UTENFOR_NORGE))
         }
          throw IllegalStateException()
@@ -120,6 +128,32 @@ fun JsonNode.aarsakerInneholderKunEnReglelSomStarterMed(regler:List<String>):Boo
 fun JsonNode.aarsakerInneholderMEDLRegler(regler:List<String>):Boolean{
     return this.aarsaker().any { it in regler }
 }
+
+/**
+ * Sjekker om alle årsaker enten er i listen over enkeltregler eller starter med en av multireglene.
+ *
+ * @param listeAvEnkeltRegler Liste over regler som kan aksepteres direkte.
+ * @param listeAvmultiregler Liste over regler som kan aksepteres hvis de starter med en av disse.
+ * @return `true` hvis alle årsaker er i en av listene, ellers `false`.
+ */
+private fun JsonNode.alleAarsakerErILista(
+    listeAvEnkeltRegler: List<String>,
+    listeAvmultiregler: List<String>
+): Boolean {
+    val aarsaker = this.aarsaker() // Henter ut alle årsaker fra JSON-noden.
+
+    // Hvis alle årsakene finnes i listen over enkeltregler, returner true umiddelbart.
+    if (listeAvEnkeltRegler.containsAll(aarsaker)) {
+        return true
+    }
+
+    // Filtrer ut årsaker som ikke finnes i listen over enkeltregler
+    // og sjekk om alle gjenværende starter med en av multireglene.
+    return aarsaker.filterNot { it in listeAvEnkeltRegler }
+        .all { rest -> listeAvmultiregler.any { rest.startsWith(it) } }
+}
+
+
 
 fun List<JsonNode>.finnRegel(regelID:String):JsonNode?{
     return this.find { it.get("regelId").asText()==regelID }
