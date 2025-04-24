@@ -9,7 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import java.time.LocalDate
 
-val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25")
+val REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_3","REGEL_19_3_1", "REGEL_15","REGEL_C","REGEL_12", "REGEL_20", "REGEL_34", "REGEL_21", "REGEL_25", "REGEL_5")
 val MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR:List<String> = listOf("REGEL_11")
 val MEDL_REGLER:List<String> = listOf("REGEL_1_3_1","REGEL_1_3_3","REGEL_1_3_4","REGEL_1_3_5")
 
