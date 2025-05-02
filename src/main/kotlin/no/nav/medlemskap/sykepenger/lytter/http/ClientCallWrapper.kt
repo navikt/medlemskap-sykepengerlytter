@@ -6,10 +6,10 @@ import io.ktor.client.plugins.*
 import io.micrometer.core.instrument.Timer
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientCounter
 import no.nav.medlemskap.sykepenger.lytter.nais.Metrics.clientTimer
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+
 
 private val logger = KotlinLogging.logger { }
 
@@ -36,6 +36,37 @@ suspend fun <T> runWithRetryAndMetrics(service: String, operation: String, retry
     }
     catch (t: Throwable) {
         logger.warn("Feilet under kall mot $service:$operation : ${t.message}", t)
+        throw t
+    }
+}
+suspend fun <T> runWithRetryAndMetrics(service: String, operation: String, retry: Retry?,callId:String, block: suspend () -> T): T {
+    try {
+        retry?.let {
+            return it.executeSuspendFunction {
+                runWithMetrics(service, operation, block)
+            }
+        }
+        return runWithMetrics(service, operation, block)
+    } catch (jce: CancellationException) {
+        logger.info("Kall mot $service:$operation kanselleres pga feil i kall mot annet baksystem", jce,
+            kv("callId",callId)
+        )
+        throw jce
+    }
+    catch (cause: ResponseException){
+        if (cause.response.status.value == 404) {
+            throw cause
+        }
+        else{
+            logger.warn("Feilet under kall mot $service:$operation : ${cause.message}", cause,
+                kv("callId",callId)
+            )
+            throw cause
+        }
+    }
+    catch (t: Throwable) {
+        logger.warn("Feilet under kall mot $service:$operation : ${t.message}", t,
+            kv("callId",callId))
         throw t
     }
 }
