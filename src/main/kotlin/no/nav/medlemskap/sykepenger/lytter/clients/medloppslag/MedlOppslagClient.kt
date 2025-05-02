@@ -8,7 +8,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.time.withTimeout
-import kotlinx.coroutines.withTimeout
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -16,7 +15,6 @@ import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import java.time.Duration
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 
 class MedlOppslagClient(
@@ -33,7 +31,7 @@ class MedlOppslagClient(
             kv("callId", callId)
         )
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
-        return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry) {
+        return runWithRetryAndMetrics("MEDL-OPPSLAG", "vurdermedlemskap", retry,callId) {
             httpClient.post {
                 url("$baseUrl/kafka")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
