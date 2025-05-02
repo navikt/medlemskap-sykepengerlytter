@@ -77,6 +77,7 @@ class BrukerSporsmaalConsumer(
         }.onEach {
             try {
                 consumer.commitSync()
+
             } catch (e: CommitFailedException) {
                 logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
             }
