@@ -14,6 +14,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import org.apache.kafka.clients.consumer.CommitFailedException
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
@@ -65,16 +66,21 @@ class BrukerSporsmaalConsumer(
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
-                    emit(emptyList<FlexMessageRecord>())
+                    emit(emptyList())
                 } else {
                     emit(pollMessages())
                 }
             }
-        }.onEach { it ->
-            logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic }
+        }.onEach {
+            logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic}
             it.forEach {  record ->service.handle(record) }
         }.onEach {
-            consumer.commitAsync()
+            try {
+                consumer.commitSync()
+            } catch (e: CommitFailedException) {
+                logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
+            }
+
         }.onEach {
             Metrics.incProcessedVurderingerTotal(it.count())
         }
