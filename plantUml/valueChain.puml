@@ -6,14 +6,17 @@ cloud {
 database postgres
 }
 component medlemskap_saga
+component SP6000
 component medlemskap_oppslag
 component medlemskap_Joark
 component sykepenge_lytter  <<contekst>>
 
 kafka -down-> sykepenge_lytter :flex-topic
 sykepenge_lytter -down-> medlemskap_oppslag :http
+kafka -up-> SP6000 : stage1
+SP6000 -down-> kafka :medlemskap-vurdert
 kafka -up-> medlemskap_saga :medlemskap-vurdert
-kafka <- medlemskap_oppslag :medlemskap-vurdert
+kafka <- medlemskap_oppslag :stage1
 kafka -> medlemskap_Joark :medlemskap-vurdert
 medlemskap_saga -down-> postgres : SQL
 

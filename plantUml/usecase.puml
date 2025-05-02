@@ -9,19 +9,23 @@ database "syk_vurdering\nbrukersporsmaal" as medlemskap
 component medlemskap_sykepenge_lytter
 component medlemskap_oppslag
 actor flex
-actor team_bomlo
+actor flex_frontend
+actor speil
 interface "/" as rest2
+interface "brukerspørsmål" as brukerspørsmål
 interface "/kafka" as rest
 interface "/vurderinger" as vurderinger
 rest-down-medlemskap_oppslag
 rest2-down-medlemskap_oppslag
 vurderinger-right-medlemskap_sykepenge_lytter
-flex -> kafka
+flex -down-> kafka
+flex_frontend --> brukerspørsmål
 kafka --> medlemskap_sykepenge_lytter
 medlemskap_sykepenge_lytter -->rest :Bearer token
+medlemskap_sykepenge_lytter -up->brukerspørsmål :Bearer token
 medlemskap_sykepenge_lytter -->medlemskap :SQL
 
-team_bomlo -->vurderinger :Bearer token
+speil -->vurderinger :Bearer token
 
 note right of kafka
 Flex published messages to kafka topic
