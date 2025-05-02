@@ -32,7 +32,7 @@ open class FlexMessageHandler (
             kv("offset", flexMessageRecord.offset)
         )
 
-        secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
+        secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}, offset  ${flexMessageRecord.offset}, offset  ${flexMessageRecord.partition} ",)
         /*
         * SP_1201
         * */
