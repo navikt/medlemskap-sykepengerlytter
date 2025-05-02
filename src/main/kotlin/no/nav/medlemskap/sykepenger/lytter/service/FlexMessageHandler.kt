@@ -89,7 +89,8 @@ open class FlexMessageHandler (
             log.info(
                 "Brukerspørsmål for søknad ${flexMessageRecord.key} lagret til databasen",
                 kv("callId", flexMessageRecord.key),
-                kv("dato", brukersporsmaal.eventDate)
+                kv("dato", brukersporsmaal.eventDate),
+                kv("partition", flexMessageRecord.partition),
             )
         } else {
             log.info(
