@@ -75,7 +75,11 @@ class BrukerSporsmaalConsumer(
             logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic }
             it.forEach {  record ->service.handle(record) }
         }.onEach {
-            consumer.commitAsync()
+            try {
+                consumer.commitSync()
+            } catch (e: CommitFailedException) {
+                logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
+            }
         }.onEach {
             Metrics.incProcessedVurderingerTotal(it.count())
         }
