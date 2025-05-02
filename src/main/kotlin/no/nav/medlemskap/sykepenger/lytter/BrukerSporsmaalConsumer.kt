@@ -66,21 +66,16 @@ class BrukerSporsmaalConsumer(
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
-                    emit(emptyList())
+                    emit(emptyList<FlexMessageRecord>())
                 } else {
                     emit(pollMessages())
                 }
             }
-        }.onEach {
-            logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic}
+        }.onEach { it ->
+            logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic }
             it.forEach {  record ->service.handle(record) }
         }.onEach {
-            try {
-                consumer.commitSync()
-            } catch (e: CommitFailedException) {
-                logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
-            }
-
+            consumer.commitAsync()
         }.onEach {
             Metrics.incProcessedVurderingerTotal(it.count())
         }
