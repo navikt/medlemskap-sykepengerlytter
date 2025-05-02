@@ -25,6 +25,12 @@ open class FlexMessageHandler (
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
+        secureLogger.info("Kafka: Mottatt melding fra Flex for: ${requestObject.fnr}, status: ${requestObject.status}, type: ${requestObject.type}",
+            kv("callId", flexMessageRecord.key),
+            kv("topic", flexMessageRecord.topic),
+            kv("partition", flexMessageRecord.partition),
+            kv("offset", flexMessageRecord.offset)
+        )
         secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
         /*
         * SP_1201
