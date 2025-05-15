@@ -473,7 +473,7 @@
       "harDekning" : null,
       "dekning" : "",
       "delresultat" : [ {
-        "regelId" : "REGEL_10",
+        "regelId" : "REGEL_8",
         "svar" : "NEI",
         "begrunnelse" : "Ikke alle adressene til bruker er norske, eller bruker mangler bostedsadresse",
         "harDekning" : null,
@@ -483,7 +483,7 @@
         "avklaring" : "Er bruker folkeregistrert som bosatt i Norge og har vært det i 12 mnd?"
       } ],
       "årsaker" : [ {
-        "regelId" : "REGEL_10",
+        "regelId" : "REGEL_8",
         "avklaring" : "Er bruker folkeregistrert som bosatt i Norge og har vært det i 12 mnd?",
         "svar" : "NEI",
         "begrunnelse" : "Ikke alle adressene til bruker er norske, eller bruker mangler bostedsadresse"
@@ -537,7 +537,7 @@
       "svar" : "NEI",
       "begrunnelse" : "Arbeidstaker har ikke sammenhengende arbeidsforhold siste 12 mnd"
     }, {
-      "regelId" : "REGEL_10",
+      "regelId" : "REGEL_8",
       "avklaring" : "Er bruker folkeregistrert som bosatt i Norge og har vært det i 12 mnd?",
       "svar" : "NEI",
       "begrunnelse" : "Ikke alle adressene til bruker er norske, eller bruker mangler bostedsadresse"
