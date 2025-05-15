@@ -235,7 +235,7 @@ class RegelMotorResponsHandlerTest {
     @Test
     fun Ulovlig_kombinasjonerAvEnkeltReglerOgMultiReglerIListaSkalIkkeFøreTilBrukerSpørsmål() {
         val fileContent =
-            this::class.java.classLoader.getResource("REGEL_3_10_OG_11_2_2_1.json").readText(Charsets.UTF_8)
+            this::class.java.classLoader.getResource("REGEL_3_8_OG_11_2_2_1.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().interpretLovmeRespons(fileContent)
         Assertions.assertTrue(
             respons.sporsmal.isEmpty(),
