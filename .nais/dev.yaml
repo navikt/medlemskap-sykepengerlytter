@@ -6,6 +6,12 @@ metadata:
   labels:
     team: medlemskap
 spec:
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+        - id: secure_logs
   resources:
     limits:
       cpu: 500m
