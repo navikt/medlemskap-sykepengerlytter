@@ -68,6 +68,8 @@ spec:
       rules:
         - application: medlemskap-oppslag
         - application: medlemskap-saga
+        - application: logging
+          namespace: nais-system
       external:
         - host: api-gw.oera.no
         - host: login.microsoftonline.com

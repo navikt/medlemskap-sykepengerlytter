@@ -5,7 +5,7 @@ val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
 val resilience4jVersion = "1.5.0"
 val logstashVersion = "7.2"
-val logbackVersion = "1.2.9"
+val logbackVersion = "1.3.14"
 val flywayVersion = "9.5.1"
 val hikariVersion = "3.4.5"
 val kotliqueryVersion = "1.3.1"
@@ -61,6 +61,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.1.2")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
