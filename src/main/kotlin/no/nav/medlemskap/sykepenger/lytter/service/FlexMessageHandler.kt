@@ -8,6 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -19,18 +20,27 @@ open class FlexMessageHandler (
     companion object {
         private val log = KotlinLogging.logger { }
         private val secureLogger = KotlinLogging.logger("tjenestekall")
-
-
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
+        log.info(teamLogs, "team logs fra sykepengerlytter")
+
         secureLogger.info("Kafka: Mottatt melding fra Flex for: ${requestObject.fnr}, status: ${requestObject.status}, type: ${requestObject.type}",
             kv("callId", flexMessageRecord.key),
             kv("topic", flexMessageRecord.topic),
             kv("partition", flexMessageRecord.partition),
             kv("offset", flexMessageRecord.offset)
         )
+
+        log.info(teamLogs,
+            "Kafka: Mottatt melding fra Flex for: ${requestObject.fnr}, status: ${requestObject.status}, type: ${requestObject.type}",
+            kv("callId", flexMessageRecord.key),
+            kv("topic", flexMessageRecord.topic),
+            kv("partition", flexMessageRecord.partition),
+            kv("offset", flexMessageRecord.offset))
+
         secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
         /*
         * SP_1201
