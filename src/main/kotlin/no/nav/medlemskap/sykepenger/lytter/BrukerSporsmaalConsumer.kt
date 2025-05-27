@@ -34,7 +34,6 @@ class BrukerSporsmaalConsumer(
 
     ) {
 
-    private val secureLogger = KotlinLogging.logger("tjenestekall")
     private val logger = KotlinLogging.logger { }
 
     init {

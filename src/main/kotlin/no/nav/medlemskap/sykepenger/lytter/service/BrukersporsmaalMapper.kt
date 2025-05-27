@@ -6,14 +6,12 @@ import net.logstash.logback.argument.StructuredArguments
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
-class BrukersporsmaalMapper(val rootNode: JsonNode) {
-    companion object {
-        private val secureLogger = KotlinLogging.logger("tjenestekall")
-
-
-    }
+class BrukersporsmaalMapper(rootNode: JsonNode) {
+    private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+    private val log  = KotlinLogging.logger { }
 
     val sporsmålArray = rootNode.get("sporsmal")
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
@@ -133,7 +131,8 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
                 utlandsopphold
             )
         } catch (e: Exception) {
-            secureLogger.error(
+            log.error(
+                teamLogs,
                 "Not able to parse Medlemskap_utfort_arbeid_utenfor_norge",
                 StructuredArguments.kv("json", arbeidutland.toPrettyString())
             )
@@ -217,7 +216,8 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             )
             return response
         } catch (e: Exception) {
-            secureLogger.error(
+            log.error(
+                teamLogs,
                 "Not able to parse Medlemskap_oppholdstilatelse_brukersporsmaal",
                 StructuredArguments.kv("json", medlemskapOppholdstillatelse.toPrettyString())
             )
@@ -265,7 +265,8 @@ class BrukersporsmaalMapper(val rootNode: JsonNode) {
             )
             return response
         } catch (e: Exception) {
-            secureLogger.error(
+            log.error(
+                teamLogs,
                 "Not able to parse Medlemskap_oppholdstilatelse_brukersporsmaal",
                 StructuredArguments.kv("json", medlemskapOppholdstillatelse.toPrettyString())
             )

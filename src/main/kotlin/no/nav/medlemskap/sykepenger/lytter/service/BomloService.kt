@@ -3,7 +3,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.service.*
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
@@ -21,6 +20,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
 class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
@@ -29,7 +29,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 )) {
         companion object {
             private val log = KotlinLogging.logger { }
-            private val secureLogger = KotlinLogging.logger("tjenestekall")
+            private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
         }
 
@@ -101,7 +101,8 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                     return JacksonParser().parseFlexVurdering(response)
                 } catch (cause: ResponseException) {
                     if (cause.response.status.value == 404) {
-                        secureLogger.info(
+                        log.info(
+                            teamLogs,
                             "404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${found.fom}, tom: ${found.tom}",
                             StructuredArguments.kv("callId", callId)
                         )
@@ -119,7 +120,8 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 val forste: Medlemskap? = finnRelevantIkkePåfølgende(found, medlemskap)
                 if (forste != null) {
 
-                    secureLogger.info(
+                    log.info(
+                        teamLogs,
                         "kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
                         StructuredArguments.kv("callId", callId)
                     )
@@ -135,7 +137,8 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                         return JacksonParser().parseFlexVurdering(response)
                     } catch (cause: ResponseException) {
                         if (cause.response.status.value == 404) {
-                            secureLogger.info(
+                            log.info(
+                                teamLogs,
                                 "404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
                                 StructuredArguments.kv("callId", callId)
                             )
@@ -146,13 +149,15 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                         throw cause
                     }
                 }
-                secureLogger.info(
+                log.info(
+                    teamLogs,
                     "ingen førstegangssøknad funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}",
                     StructuredArguments.kv("callId", callId)
                 )
                 return null
             }
-            secureLogger.info(
+            log.info(
+                teamLogs,
                 "ingen matchende treff i vurderinger  funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}",
                 StructuredArguments.kv("callId", callId)
             )

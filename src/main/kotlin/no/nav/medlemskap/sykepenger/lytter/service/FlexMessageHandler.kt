@@ -19,21 +19,11 @@ open class FlexMessageHandler (
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
-        private val secureLogger = KotlinLogging.logger("tjenestekall")
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
     suspend fun handle(flexMessageRecord: FlexMessageRecord) {
         val requestObject = JacksonParser().parse(flexMessageRecord.value)
-        log.info(teamLogs, "team logs fra sykepengerlytter")
-
-        secureLogger.info("Kafka: Mottatt melding fra Flex for: ${requestObject.fnr}, status: ${requestObject.status}, type: ${requestObject.type}",
-            kv("callId", flexMessageRecord.key),
-            kv("topic", flexMessageRecord.topic),
-            kv("partition", flexMessageRecord.partition),
-            kv("offset", flexMessageRecord.offset)
-        )
-
         log.info(teamLogs,
             "Kafka: Mottatt melding fra Flex for: ${requestObject.fnr}, status: ${requestObject.status}, type: ${requestObject.type}",
             kv("callId", flexMessageRecord.key),
@@ -41,7 +31,7 @@ open class FlexMessageHandler (
             kv("partition", flexMessageRecord.partition),
             kv("offset", flexMessageRecord.offset))
 
-        secureLogger.info("mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
+        log.info(teamLogs, "mapping fnr to messageID. messageID ${flexMessageRecord.key} is regarding ${requestObject.fnr}",)
         /*
         * SP_1201
         * */
@@ -66,7 +56,7 @@ open class FlexMessageHandler (
             soknadRecordHandler.handle(soknadRecord)
         }
          else{
-            secureLogger.info("melding filtrert ut da det ikke fyller kriterier for å bli sendt til regel motor",
+            log.info(teamLogs, "melding filtrert ut da det ikke fyller kriterier for å bli sendt til regel motor",
                 kv("x_data",JacksonParser().ToJson(requestObject).toPrettyString()),
                 kv("callId", flexMessageRecord.key)
             )
@@ -175,7 +165,7 @@ open class FlexMessageHandler (
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
-            secureLogger.error("not able to parse message ${t.message}", kv("body",flexMessageRecord.value))
+            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",flexMessageRecord.value))
             throw t
         }
     }
