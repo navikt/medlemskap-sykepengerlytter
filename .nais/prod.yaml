@@ -10,7 +10,6 @@ spec:
     logging:
         destinations:
           - id: loki
-          - id: elastic
   resources:
     limits:
       cpu: 500m
