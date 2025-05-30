@@ -11,9 +11,6 @@ spec:
         destinations:
           - id: loki
           - id: elastic
-    autoInstrumentation:
-      enabled: true
-      runtime: java
   resources:
     limits:
       cpu: 500m
