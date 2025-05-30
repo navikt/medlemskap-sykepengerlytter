@@ -11,9 +11,6 @@ import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import java.util.*
 
-private val logger = KotlinLogging.logger { }
-private val secureLogger = KotlinLogging.logger("tjenestekall")
-
 fun Routing.naisRoutes(
     consumeJob: Job,bomloService: BomloService
 ) {

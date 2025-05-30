@@ -19,17 +19,19 @@ import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
+import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
-private val secureLogger = KotlinLogging.logger("tjenestekall")
+private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+
 fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
+            logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
                 "kall autentisert, url : /speilvurdering",
@@ -42,7 +44,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 val speilRespons = response.lagSpeilRespons(callId)
                 val timeInMS = System.currentTimeMillis()-start
-                secureLogger.info("{} svar funnet for Speil for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
+                logger.info(
+                    teamLogs,
+                    "{} svar funnet for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("tidsbrukInMs", timeInMS),
@@ -50,14 +54,15 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     kv("soknadId", speilRespons.soknadId),
                     kv("konklusjon", speilRespons.speilSvar.name),
                     kv("avklaringer", response.hentAvklaringer().toString()),
-                    kv("kanal", response.hentKanal()),
+                    kv("kanal", response.hentKanal())
                 )
 
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (t: Throwable) {
                 val timeInMS = System.currentTimeMillis()-start
-                secureLogger.error(
-                    "Unexpected error calling Lovme",
+                logger.info(
+                    teamLogs,
+                    "Feil ved kall mot medlemskap-oppslag",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
@@ -70,10 +75,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
         post("/flexvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
+            logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
-                "kall autentisert, url : /vurdering",
+                "kall autentisert, url : /flexvurdering",
                 kv("callId", callId),
                 kv("endpoint", "flexvurdering")
             )
@@ -81,8 +86,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 if (response!=null){
-                    secureLogger.info(
-                        "{} svar funnet for flex for bruker {}", response.status, response.fnr,
+                    logger.info(
+                        teamLogs,
+                        "{} svar funnet for bruker {}", response.status, response.fnr,
                         kv("fnr", response.fnr),
                         kv("konklusjon", response.status),
                         kv("endpoint", "flexvurdering")
@@ -90,7 +96,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.OK, response)
                 }
                 else{
-                    secureLogger.warn("{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
+                    logger.info(
+                        teamLogs,
+                        "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
                         kv("fnr", request.fnr),
                         kv("endpoint", "flexvurdering"),
                         kv("callId", callId),
@@ -98,8 +106,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.NotFound,request)
                 }
             } catch (t: Throwable) {
-                secureLogger.error(
-                    "Unexpected error calling Lovme",
+                logger.info(
+                    teamLogs,
+                    "Feil ved kall mot medlemskap-oppslag",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
@@ -112,17 +121,19 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             val start = System.currentTimeMillis()
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {} ", azp)
+            logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
-                "kall autentisert, url : /brukerspørsmål",
+                "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
             )
            /*
            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
            * */
             val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
-            secureLogger.info ("Calling Lovme  : ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
+            logger.info(
+                teamLogs,
+                "Forespørsel til medlemskap-oppslag: ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
                 kv("callId", callId),
                 kv("endpoint", "brukersporsmal")
             )
@@ -136,22 +147,25 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     brukerinput = Brukerinput(false))
                 val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
                 if (lovmeresponse=="GradertAdresse"){
-                    secureLogger.warn("Kall fra flex på gradert adresse",
+                    logger.info(
+                        teamLogs,
+                        "Gradert adresse",
                         kv("callId", callId),
-                        kv("fnr", lovmeRequest.fnr),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal")
                     )
                     call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
                 }
                 if (lovmeresponse=="TimeoutCancellationException"){
-                    secureLogger.warn("Kall mot Lovme Timet ut",
+                    logger.info(
+                        teamLogs,
+                        "Forespørsmål mot medlemskap-oppslag timet ut",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal")
                     )
-                    call.respond(HttpStatusCode.InternalServerError,"Kall mot Lovme timed ut")
+                    call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
 
@@ -162,7 +176,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(lovmeresponse)
 
                     }
-                    secureLogger.info("Svarer brukerspørsmål",
+                    logger.info(
+                        teamLogs,
+                        "Svarer brukerspørsmål",
                         kv("callId", callId),
                         kv("fnr", lovmeRequest.fnr),
                         kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),

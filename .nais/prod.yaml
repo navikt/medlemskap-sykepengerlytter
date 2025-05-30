@@ -10,8 +10,6 @@ spec:
     logging:
         destinations:
           - id: loki
-          - id: elastic
-          - id: secure_logs
   resources:
     limits:
       cpu: 500m
@@ -50,8 +48,6 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
-  secureLogs:
-    enabled: true
   kafka:
     pool: nav-prod
   accessPolicy:

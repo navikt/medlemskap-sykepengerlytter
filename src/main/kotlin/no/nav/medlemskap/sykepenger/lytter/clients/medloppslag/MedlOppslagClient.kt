@@ -13,6 +13,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import org.slf4j.MarkerFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -23,10 +24,13 @@ class MedlOppslagClient(
     private val httpClient: HttpClient,
     private val retry: Retry? = null
 ):LovmeAPI {
-    private val secureLogger = KotlinLogging.logger("tjenestekall")
+    private val log = KotlinLogging.logger { }
+    private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
     override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        secureLogger.info ("kaller regelmotor",
+        log.info (
+            teamLogs,
+            "Kaller regelmotor",
             kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
             kv("callId", callId)
         )
@@ -58,7 +62,9 @@ class MedlOppslagClient(
         }
         }
             catch (t: TimeoutCancellationException){
-                secureLogger.warn("Timeout i kall mot Lovme",
+                log.warn(
+                    teamLogs,
+                    "Timeout i kall mot Lovme",
                     kv("fnr",medlOppslagRequest.fnr),
                     kv("callId",callId)
                 )
@@ -68,7 +74,9 @@ class MedlOppslagClient(
 
     }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-        secureLogger.info ("kaller regelmotor",
+        log.info (
+            teamLogs,
+            "kaller regelmotor",
             kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
             kv("callId", callId)
         )
