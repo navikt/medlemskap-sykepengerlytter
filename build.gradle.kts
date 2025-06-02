@@ -72,6 +72,7 @@ dependencies {
     testImplementation("org.testcontainers:kafka:1.16.1")
     testImplementation ("org.testcontainers:postgresql:1.16.0")
     testImplementation ("org.testcontainers:junit-jupiter:1.16.0")
+    testImplementation("org.assertj:assertj-core:3.27.3")
     //Database
     implementation("org.postgresql:postgresql:42.5.1")
     implementation("org.flywaydb:flyway-core:$flywayVersion")

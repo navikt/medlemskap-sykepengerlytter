@@ -1,8 +1,9 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import org.hamcrest.MatcherAssert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.util.Arrays
 
 class GenererBrukerSporsmaalTest {
     @Test
@@ -27,31 +28,42 @@ class GenererBrukerSporsmaalTest {
             "REGEL_10",
             "REGEL_5"
         )
-        gyldigeRegler.forEach { regelbrudd ->
-            {
-                assertThat(
-                    "Skal lage brukerspørsmål når det er ett regelbrudd",
-                    genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))
-                )
-                equals(true)
-            }
+        assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
+            assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
         }
-
     }
+
     @Test
     fun skalLageBrukerspørsmålNårDetErEttRegelbruddPåEnMedlRegel() {
         val genererBrukerspørsmål = GenererBrukerSporsmaal()
         val gyldigeRegler = listOf(
             "REGEL_1_3_1", "REGEL_1_3_3", "REGEL_1_3_4", "REGEL_1_3_5"
         )
-        gyldigeRegler.forEach { regelbrudd ->
-            {
-                assertThat(
-                    "Skal lage brukerspørsmål når det er ett regelbrudd",
-                    genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))
-                )
-                equals(true)
-            }
+        assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
+            assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
         }
+    }
+
+    @Test
+    fun skalLageBrukerspørsmålNårDetErEttRegelbruddPåEnAv11Reglene() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val gyldigeRegler = listOf(
+            "REGEL_11", "REGEL_11_2", "REGEL_11_2_1", "REGEL_11_3_1", "REGEL_11_3_1_1"
+        )
+        assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
+            assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
+        }
+    }
+
+    @Test
+    fun skalIkkeLageBrukerspørsmålNårDetErUgyldigRegelbrudd() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val ugyldigeRegler = listOf(
+            "REGEL_1", "REGEL_2", "REGEL_4", "REGEL_6", "REGEL_7", "REGEL_8", "REGEL_9", "REGEL_1_2", "REGEL_1_2_1"
+        )
+        assertThat(ugyldigeRegler).allSatisfy { regelbrudd ->
+            assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(false)
+        }
+
     }
 }
