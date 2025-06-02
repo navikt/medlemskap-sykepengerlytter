@@ -24,6 +24,7 @@ class GenererBrukerSporsmaal {
                 val flereRegelbrudd = årsaker
                 flereRegelbrudd.all { regelbrudd ->
                     regelbrudd.erEnAv(ENKELTREGLER) ||
+                            regelbrudd.erEnAv(MEDL_REGLER) ||
                             MULTIREGLER_FOR_REGEL11.any { regelbrudd.startsWith(it) }
 
                 }
