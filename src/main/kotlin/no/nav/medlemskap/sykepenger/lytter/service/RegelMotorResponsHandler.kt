@@ -43,19 +43,28 @@ class RegelMotorResponsHandler {
         return null
     }
 
-    fun enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
-        return !lovmeresponseNode.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-                !lovmeresponseNode.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR) &&
-                !lovmeresponseNode.aarsakerInneholderMEDLRegler(MEDL_REGLER)
-    }
-    fun multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode: JsonNode): Boolean{
-        return !lovmeresponseNode.alleAarsakerErILista(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+    fun enkeltReglerSomIkkeSkalHaBrukerSpørsmål(lovmeresponseNode: JsonNode): Boolean {
+        val harKunEnRegelSomSkalHaSpørsmål = lovmeresponseNode.aarsakerInneholderKunEnReglel(REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+        val harKunEnMultiRegelSomSkalHaSpørsmål = lovmeresponseNode.aarsakerInneholderKunEnReglelSomStarterMed(MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR)
+        val harMEDLRegelSomSkalHaSpørsmål = lovmeresponseNode.aarsakerInneholderMEDLRegler(MEDL_REGLER)
+
+        return !(harKunEnRegelSomSkalHaSpørsmål || harKunEnMultiRegelSomSkalHaSpørsmål || harMEDLRegelSomSkalHaSpørsmål)
     }
 
-    private fun createFlexRespons(lovmeresponseNode: JsonNode) :FlexRespons{
+    fun multiReglerSomIkkeSkalHaBrukerSpørsmål(lovmeresponseNode: JsonNode): Boolean {
+        val alleAarsakerErIKjenteLister = lovmeresponseNode.alleAarsakerErILista(
+            REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR,
+            MULTI_REGLER_DET_SKAL_LAGES_BRUKERSPØRSMÅL_FOR
+        )
 
-        //Lag bruker spørsmål kun for de reglene som er avklart
-        if (enkeltReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)  &&  multiReglerDetIkkeSkalLagesBrukerSporsmaalPaa(lovmeresponseNode)){
+        return !alleAarsakerErIKjenteLister
+    }
+
+
+    private fun createFlexRespons(lovmeresponseNode: JsonNode): FlexRespons {
+        // Lag bruker spørsmål kun for de reglene som er avklart
+        if (enkeltReglerSomIkkeSkalHaBrukerSpørsmål(lovmeresponseNode) &&
+            multiReglerSomIkkeSkalHaBrukerSpørsmål(lovmeresponseNode)) {
             return FlexRespons(Svar.UAVKLART, emptySet())
         }
         if (lovmeresponseNode.erEosBorger()){
