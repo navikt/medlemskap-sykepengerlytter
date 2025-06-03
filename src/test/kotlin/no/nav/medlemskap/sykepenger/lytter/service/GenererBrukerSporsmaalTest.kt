@@ -1,9 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
-import java.util.Arrays
 
 class GenererBrukerSporsmaalTest {
     @Test
@@ -75,10 +74,37 @@ class GenererBrukerSporsmaalTest {
     }
 
     @Test
+    fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbruddForMEDL() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val flereGyldigeRegler = listOf("REGEL_1_3_1", "REGEL_1_3_3", "REGEL_1_3_4", "REGEL_1_3_5")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler)).isEqualTo(true)
+    }
+
+    @Test
+    fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbruddFor11Reglene() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val flereGyldigeRegler = listOf("REGEL_11", "REGEL_11_2", "REGEL_11_2_1", "REGEL_11_3_1", "REGEL_11_3_1_1")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler)).isEqualTo(true)
+    }
+
+    @Test
     fun skalIkkeLageBrukerspørsmålNårGyldigOgUgyldigRegelKombineres() {
         val genererBrukerspørsmål = GenererBrukerSporsmaal()
         val blandingAvRegler = listOf("REGEL_3", "REGEL_1", "REGEL_15", "REGEL_2")
         assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
-
     }
+
+    @Test
+    fun skalIkkeLageBrukerspørsmålPåMEDLogUgyldigRegel() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val blandingAvRegler = listOf("REGEL_1_3_1", "REGEL_2")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
+    }
+    @Test
+    fun skalIkkeLageBrukerspørsmålPå11RegelogUgyldigRegel() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val blandingAvRegler = listOf("REGEL_11_2", "REGEL_2")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
+    }
+
 }
