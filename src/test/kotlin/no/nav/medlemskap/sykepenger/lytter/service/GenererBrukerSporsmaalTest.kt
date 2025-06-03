@@ -66,4 +66,19 @@ class GenererBrukerSporsmaalTest {
         }
 
     }
+
+    @Test
+    fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbrudd() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val flereGyldigeRegler = listOf("REGEL_3", "REGEL_15", "REGEL_20")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler)).isEqualTo(true)
+    }
+
+    @Test
+    fun skalIkkeLageBrukerspørsmålNårGyldigOgUgyldigRegelKombineres() {
+        val genererBrukerspørsmål = GenererBrukerSporsmaal()
+        val blandingAvRegler = listOf("REGEL_3", "REGEL_1", "REGEL_15", "REGEL_2")
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
+
+    }
 }
