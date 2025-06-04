@@ -169,7 +169,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 }
                 else{
 
-                    val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+                    val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
                     val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
                     val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){

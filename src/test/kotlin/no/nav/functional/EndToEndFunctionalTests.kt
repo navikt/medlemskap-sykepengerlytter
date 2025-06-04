@@ -14,7 +14,6 @@ import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.service.*
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
-import no.nav.persistence.RepositoryTests
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
@@ -62,7 +61,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
@@ -86,7 +85,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
-        val foreslaattRespons2 = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse2)
+        val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
         val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal være like da svar på begge brukerspørsmålene er JA")
@@ -124,7 +123,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse)
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
@@ -153,7 +152,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
-        val foreslaattRespons2 = RegelMotorResponsHandler().interpretLovmeRespons(lovmeresponse2)
+        val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
         val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
