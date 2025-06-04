@@ -25,23 +25,17 @@ class GenererBrukerSporsmaalTest {
             "REGEL_21",
             "REGEL_25",
             "REGEL_10",
-            "REGEL_5"
+            "REGEL_5",
+            "REGEL_1_3_1",
+            "REGEL_1_3_3",
+            "REGEL_1_3_4",
+            "REGEL_1_3_5"
         )
         assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
             assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
         }
     }
 
-    @Test
-    fun skalLageBrukerspørsmålNårDetErEttRegelbruddPåEnMedlRegel() {
-        val genererBrukerspørsmål = GenererBrukerSporsmaal()
-        val gyldigeRegler = listOf(
-            "REGEL_1_3_1", "REGEL_1_3_3", "REGEL_1_3_4", "REGEL_1_3_5"
-        )
-        assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
-            assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
-        }
-    }
 
     @Test
     fun skalLageBrukerspørsmålNårDetErEttRegelbruddPåEnAv11Reglene() {
@@ -70,15 +64,13 @@ class GenererBrukerSporsmaalTest {
     fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbrudd() {
         val genererBrukerspørsmål = GenererBrukerSporsmaal()
         val flereGyldigeRegler = listOf("REGEL_3", "REGEL_15", "REGEL_20")
+        val flereGyldigeRegler_2 = listOf("REGEL_1_3_1", "REGEL_1_3_3", "REGEL_1_3_4", "REGEL_1_3_5")
+
         assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler)).isEqualTo(true)
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler_2)).isEqualTo(true)
+
     }
 
-    @Test
-    fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbruddForMEDL() {
-        val genererBrukerspørsmål = GenererBrukerSporsmaal()
-        val flereGyldigeRegler = listOf("REGEL_1_3_1", "REGEL_1_3_3", "REGEL_1_3_4", "REGEL_1_3_5")
-        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(flereGyldigeRegler)).isEqualTo(true)
-    }
 
     @Test
     fun skalLageBrukerspørsmålNårDetErFlerGyldigeRegelbruddFor11Reglene() {
@@ -91,15 +83,13 @@ class GenererBrukerSporsmaalTest {
     fun skalIkkeLageBrukerspørsmålNårGyldigOgUgyldigRegelKombineres() {
         val genererBrukerspørsmål = GenererBrukerSporsmaal()
         val blandingAvRegler = listOf("REGEL_3", "REGEL_1", "REGEL_15", "REGEL_2")
+        val blandingAvRegler_2 = listOf("REGEL_1_3_1", "REGEL_2")
         assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
+        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler_2)).isEqualTo(false)
+
     }
 
-    @Test
-    fun skalIkkeLageBrukerspørsmålPåMEDLogUgyldigRegel() {
-        val genererBrukerspørsmål = GenererBrukerSporsmaal()
-        val blandingAvRegler = listOf("REGEL_1_3_1", "REGEL_2")
-        assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(blandingAvRegler)).isEqualTo(false)
-    }
+
     @Test
     fun skalIkkeLageBrukerspørsmålPå11RegelogUgyldigRegel() {
         val genererBrukerspørsmål = GenererBrukerSporsmaal()
