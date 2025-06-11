@@ -1,20 +1,21 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
+import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import java.time.LocalDate
 
-
 class RegelMotorResponsHandler {
 
     fun utledResultat(medlemskapsVurdering: String): FlexRespons {
-        val medlemskapsVurderingen = objectMapper.readTree(medlemskapsVurdering)
-        when (medlemskapsVurderingen.svar()) {
-            "UAVKLART" -> return håndterBrukerspørsmål(medlemskapsVurderingen)
+        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapsVurdering)
+
+        when (medlemskapVurdering.resultat.svar) {
+            "UAVKLART" -> return håndterBrukerspørsmål(medlemskapVurdering)
             "JA" -> return FlexRespons(svar = Svar.JA, emptySet())
             "NEI" -> return FlexRespons(svar = Svar.NEI, emptySet())
             else -> throw IllegalStateException()
@@ -22,28 +23,28 @@ class RegelMotorResponsHandler {
     }
 
     fun hentOppholdsTilatelsePeriode(lovmeresponse: String): Periode? {
-        val lovmeresponseNode = objectMapper.readTree(lovmeresponse)
-        val periode = lovmeresponseNode.oppholdsTillatelsePeriode()
-        if (periode != null) {
-            val fom: LocalDate = LocalDate.parse(periode.get("fom").asText())
-            val tom: LocalDate? = runCatching {
-                LocalDate.parse(periode.get("tom").asText())
-            }
-                .getOrNull()
-            return Periode(fom, tom)
-        }
-        return null
+        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(lovmeresponse)
+
+        val datagrunnlag = medlemskapVurdering.datagrunnlag ?: return null
+        val oppholdstillatelse = datagrunnlag.oppholdstillatelse ?: return null
+        val gjeldendeStatus = oppholdstillatelse.gjeldendeOppholdsstatus ?: return null
+        val paSammeVilkar = gjeldendeStatus.oppholdstillatelsePaSammeVilkar ?: return null
+        val periode = paSammeVilkar.periode ?: return null
+
+        return Periode(
+            fom = periode.fom,
+            tom = periode.tom
+        )
     }
 
+    private fun håndterBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): FlexRespons {
+        val årsaker = medlemskapVurdering.resultat.årsaker.map { it.regelId }
 
-    private fun håndterBrukerspørsmål(respons: JsonNode): FlexRespons {
-        val årsaker = respons.aarsaker()
         if (GenererBrukerSporsmaal().skalGenerereBrukerSpørsmål(årsaker)) {
-
-            val erEØSborger = respons.erEosBorger()
-            val erTredjelandsborger = respons.erTredjelandsborger()
-            val erTredjelandsborgerMedEØSfamilie = respons.erTredjelandsborgerMedEØSFamilie()
-            val harOppholdtillatelse = respons.harOppholdsTilatelse()
+            val erEØSborger = medlemskapVurdering.erEosBorger()
+            val erTredjelandsborger = medlemskapVurdering.erTredjelandsborger()
+            val erTredjelandsborgerMedEØSfamilie = medlemskapVurdering.erTredjelandsborgerMedEØSFamilie()
+            val harOppholdtillatelse = medlemskapVurdering.harOppholdsTilatelse()
 
             val brukerspørsmål: Set<Spørsmål> = when {
                 erEØSborger -> setOf(
@@ -81,108 +82,63 @@ class RegelMotorResponsHandler {
         return FlexRespons(svar = Svar.UAVKLART, sporsmal = emptySet())
     }
 
-
-    fun JsonNode.erEosBorger(): Boolean {
+    private fun MedlemskapVurdering.erEosBorger(): Boolean {
         return this.finnSvarPaaRegel("REGEL_2")
     }
 
-
-    fun JsonNode.finnSvarPaaRegelFlyt(regelID: String): Boolean {
+    private fun MedlemskapVurdering.finnSvarPaaRegelFlyt(regelID: String): Boolean {
         try {
+            val delresultat = this.resultat.delresultat
+                .firstOrNull { it.regelId == regelID }
 
-            val svar = this.get("resultat").get("delresultat")
-                .filter { it.get("regelId").asText().equals(regelID) }.first().get("svar").asText()
-
-            if (svar.equals("JA")) {
-                return true
-            }
-            return false
+            return delresultat?.svar == "JA"
         } catch (e: Exception) {
             return false
         }
     }
 
-
-    fun JsonNode.finnSvarPaaRegel(regelID: String): Boolean {
-        val regel = this.alleRegelResultat().finnRegel(regelID)
-        if (regel != null) {
-            return regel.get("svar").asText() == "JA"
-        }
-        return false
+    private fun MedlemskapVurdering.finnSvarPaaRegel(regelID: String): Boolean {
+        val regel = this.alleRegelResultat().firstOrNull { it.regelId == regelID }
+        return regel?.svar == "JA"
     }
 
-    fun JsonNode.alleRegelResultat(): List<JsonNode> {
-        return this.get("resultat").get("delresultat").flatMap { it.get("delresultat") }
+    private fun MedlemskapVurdering.alleRegelResultat(): List<Delresultat> {
+        return this.resultat.delresultat.flatMap { it.delresultat ?: emptyList() }
     }
 
-    fun JsonNode.aarsaker(): List<String> {
-        return this.get("resultat").get("årsaker").map { it.get("regelId").asText() }
-    }
-
-
-    fun List<JsonNode>.finnRegel(regelID: String): JsonNode? {
-        return this.find { it.get("regelId").asText() == regelID }
-    }
-
-    fun JsonNode.erTredjelandsborgerMedEØSFamilie(): Boolean {
+    private fun MedlemskapVurdering.erTredjelandsborgerMedEØSFamilie(): Boolean {
         return finnSvarPaaRegel("REGEL_28") && finnSvarPaaRegel("REGEL_29")
     }
 
-    fun JsonNode.erTredjelandsborger(): Boolean {
+    private fun MedlemskapVurdering.erTredjelandsborger(): Boolean {
         return !this.finnSvarPaaRegel("REGEL_2")
     }
 
-
-    fun JsonNode.harOppholdsTilatelse(): Boolean {
-
-
+    private fun MedlemskapVurdering.harOppholdsTilatelse(): Boolean {
         if (finnSvarPaaRegelFlyt("REGEL_OPPHOLDSTILLATELSE")) {
             return true
         }
 
-        /*
-        * Sjekk uavklart svar fra UDI
-        * */
+        // Sjekk uavklart svar fra UDI
         if (this.finnSvarPaaRegel("REGEL_19_1")) {
             return false
         }
-        /*
-        * Sjekk Oppholdstilatelse tilbake i tid
-        * */
+
+        // Sjekk Oppholdstilatelse tilbake i tid
         if (!this.finnSvarPaaRegel("REGEL_19_3")) {
             return false
         }
-        /*
-        * Sjekk oppholdstilatelsen i  arbeidsperioden
-        * */
+
+        // Sjekk oppholdstilatelsen i arbeidsperioden
         if (!this.finnSvarPaaRegel("REGEL_19_3_1")) {
             return false
         }
-        /*
-         *Har bruker opphold på samme vilkår flagg?
-         */
+
+        // Har bruker opphold på samme vilkår flagg?
         if (this.finnSvarPaaRegel("REGEL_19_8")) {
             return false
-
         }
+
         return true
-    }
-
-    fun JsonNode.svar(): String {
-        return this.get("resultat").get("svar").asText()
-    }
-
-    /*
-    * ment å brukes ved uthenting av perioden for oppholdstilatelser der bruker har gått ut på brudd på regel 19_3.
-    * Usikkert om denne vil fungere dersom det ikke er oppholdstillatelse Pa Samme Vilkar
-    * */
-    fun JsonNode.oppholdsTillatelsePeriode(): JsonNode? {
-        runCatching {
-            this.get("datagrunnlag").get("oppholdstillatelse").get("gjeldendeOppholdsstatus")
-                .get("oppholdstillatelsePaSammeVilkar").get("periode")
-        }
-            .onSuccess { return it }
-            .onFailure { return null }
-        return null
     }
 }
