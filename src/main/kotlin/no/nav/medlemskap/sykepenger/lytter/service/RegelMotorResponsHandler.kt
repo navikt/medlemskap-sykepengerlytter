@@ -25,16 +25,15 @@ class RegelMotorResponsHandler {
     fun hentOppholdsTilatelsePeriode(lovmeresponse: String): Periode? {
         val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(lovmeresponse)
 
-        val datagrunnlag = medlemskapVurdering.datagrunnlag ?: return null
-        val oppholdstillatelse = datagrunnlag.oppholdstillatelse ?: return null
-        val gjeldendeStatus = oppholdstillatelse.gjeldendeOppholdsstatus ?: return null
-        val paSammeVilkar = gjeldendeStatus.oppholdstillatelsePaSammeVilkar ?: return null
-        val periode = paSammeVilkar.periode ?: return null
-
-        return Periode(
-            fom = periode.fom,
-            tom = periode.tom
-        )
+        return medlemskapVurdering
+            .datagrunnlag
+            ?.oppholdstillatelse
+            ?.gjeldendeOppholdsstatus
+            ?.oppholdstillatelsePaSammeVilkar
+            ?.periode
+            ?.let {
+                Periode(fom = it.fom, tom = it.tom)
+            }
     }
 
     private fun håndterBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): FlexRespons {
