@@ -7,13 +7,14 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
-import java.time.LocalDate
 
 class RegelMotorResponsHandler {
 
-    fun utledResultat(medlemskapsVurdering: String): FlexRespons {
-        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapsVurdering)
+    fun parseTilMedlemskapVurdering(jsonString: String): MedlemskapVurdering {
+        return objectMapper.readValue<MedlemskapVurdering>(jsonString)
+    }
 
+    fun utledResultat(medlemskapVurdering: MedlemskapVurdering): FlexRespons {
         when (medlemskapVurdering.resultat.svar) {
             "UAVKLART" -> return håndterBrukerspørsmål(medlemskapVurdering)
             "JA" -> return FlexRespons(svar = Svar.JA, emptySet())
@@ -22,9 +23,7 @@ class RegelMotorResponsHandler {
         }
     }
 
-    fun hentOppholdsTilatelsePeriode(lovmeresponse: String): Periode? {
-        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(lovmeresponse)
-
+    fun hentOppholdsTilatelsePeriode(medlemskapVurdering: MedlemskapVurdering): Periode? {
         return medlemskapVurdering
             .datagrunnlag
             ?.oppholdstillatelse
@@ -34,6 +33,18 @@ class RegelMotorResponsHandler {
             ?.let {
                 Periode(fom = it.fom, tom = it.tom)
             }
+    }
+
+    @Deprecated("Bruk parseToMedlemskapVurdering + utledResultat(MedlemskapVurdering)")
+    fun utledResultat(medlemskapsVurdering: String): FlexRespons {
+        val medlemskapVurdering = parseTilMedlemskapVurdering(medlemskapsVurdering)
+        return utledResultat(medlemskapVurdering)
+    }
+
+    @Deprecated("Bruk parseToMedlemskapVurdering + hentOppholdsTilatelsePeriode(MedlemskapVurdering)")
+    fun hentOppholdsTilatelsePeriode(lovmeresponse: String): Periode? {
+        val medlemskapVurdering = parseTilMedlemskapVurdering(lovmeresponse)
+        return hentOppholdsTilatelsePeriode(medlemskapVurdering)
     }
 
     private fun håndterBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): FlexRespons {
