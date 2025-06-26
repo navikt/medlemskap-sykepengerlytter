@@ -40,6 +40,6 @@ data class OppholdstillatelsePaSammeVilkar(
 )
 
 data class OppholdstillatelsePeriode(
-    val fom: LocalDate,
+    val fom: LocalDate?,
     val tom: LocalDate?
 )

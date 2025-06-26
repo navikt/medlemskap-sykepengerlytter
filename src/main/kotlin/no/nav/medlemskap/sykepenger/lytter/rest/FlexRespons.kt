@@ -9,7 +9,7 @@ data class FlexRespons(
     var kjentOppholdstillatelse: Periode? = null
 )
 
-data class Periode(val fom: LocalDate,val tom:LocalDate?)
+data class Periode(val fom: LocalDate?,val tom:LocalDate?)
 enum class Spørsmål{
     OPPHOLDSTILATELSE,
     ARBEID_UTENFOR_NORGE,
