@@ -23,6 +23,7 @@ import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
 
+private val secureLogger = KotlinLogging.logger("tjenestekall")
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
@@ -44,6 +45,17 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 val speilRespons = response.lagSpeilRespons(callId)
                 val timeInMS = System.currentTimeMillis()-start
+                secureLogger.info(
+                    "{} svar funnet for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("tidsbrukInMs", timeInMS),
+                    kv("endpoint", "speilvurdering"),
+                    kv("soknadId", speilRespons.soknadId),
+                    kv("konklusjon", speilRespons.speilSvar.name),
+                    kv("avklaringer", response.hentAvklaringer().toString()),
+                    kv("kanal", response.hentKanal())
+                )
                 logger.info(
                     teamLogs,
                     "{} svar funnet for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
@@ -60,6 +72,14 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (t: Throwable) {
                 val timeInMS = System.currentTimeMillis()-start
+                secureLogger.info(
+                    "Feil ved kall mot medlemskap-oppslag",
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("cause", t.stackTrace),
+                    kv("tidsbrukInMs", timeInMS),
+                    kv("endpoint", "speilvurdering")
+                )
                 logger.info(
                     teamLogs,
                     "Feil ved kall mot medlemskap-oppslag",
@@ -86,6 +106,12 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 if (response!=null){
+                    secureLogger.info(
+                        "{} svar funnet for bruker {}", response.status, response.fnr,
+                        kv("fnr", response.fnr),
+                        kv("konklusjon", response.status),
+                        kv("endpoint", "flexvurdering")
+                    )
                     logger.info(
                         teamLogs,
                         "{} svar funnet for bruker {}", response.status, response.fnr,
@@ -96,6 +122,12 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.OK, response)
                 }
                 else{
+                    secureLogger.info(
+                        "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
+                        kv("fnr", request.fnr),
+                        kv("endpoint", "flexvurdering"),
+                        kv("callId", callId),
+                    )
                     logger.info(
                         teamLogs,
                         "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
@@ -106,6 +138,13 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.NotFound,request)
                 }
             } catch (t: Throwable) {
+                secureLogger.info(
+                    "Feil ved kall mot medlemskap-oppslag",
+                    kv("callId", callId),
+                    kv("fnr", request.fnr),
+                    kv("cause", t.stackTrace),
+                    kv("endpoint", "flexvurdering")
+                )
                 logger.info(
                     teamLogs,
                     "Feil ved kall mot medlemskap-oppslag",
@@ -157,6 +196,13 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
                 }
                 if (lovmeresponse=="TimeoutCancellationException"){
+                    secureLogger.info(
+                        "Forespørsmål mot medlemskap-oppslag timet ut",
+                        kv("callId", callId),
+                        kv("fnr", lovmeRequest.fnr),
+                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
+                        kv("endpoint", "brukersporsmal")
+                    )
                     logger.info(
                         teamLogs,
                         "Forespørsmål mot medlemskap-oppslag timet ut",
@@ -176,6 +222,15 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdsTilatelsePeriode(lovmeresponse)
 
                     }
+                    secureLogger.info(
+                        "Svarer brukerspørsmål",
+                        kv("callId", callId),
+                        kv("fnr", lovmeRequest.fnr),
+                        kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
+                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
+                        kv("endpoint", "brukersporsmal"),
+                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(alleredeStilteSporsmaal).toPrettyString())
+                    )
                     logger.info(
                         teamLogs,
                         "Svarer brukerspørsmål",
