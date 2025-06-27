@@ -24,10 +24,16 @@ class MedlOppslagClient(
     private val httpClient: HttpClient,
     private val retry: Retry? = null
 ):LovmeAPI {
+    private val secureLogger = KotlinLogging.logger("tjenestekall")
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
     override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        secureLogger.info(
+            "Kaller regelmotor",
+            kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
+            kv("callId", callId)
+        )
         log.info (
             teamLogs,
             "Kaller regelmotor",
@@ -62,6 +68,11 @@ class MedlOppslagClient(
         }
         }
             catch (t: TimeoutCancellationException){
+                secureLogger.warn(
+                    "Timeout i kall mot Lovme",
+                    kv("fnr",medlOppslagRequest.fnr),
+                    kv("callId",callId)
+                )
                 log.warn(
                     teamLogs,
                     "Timeout i kall mot Lovme",
@@ -74,6 +85,11 @@ class MedlOppslagClient(
 
     }
     override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        secureLogger.info (
+            "kaller regelmotor",
+            kv("request",JacksonParser().ToJson(medlOppslagRequest).toPrettyString()),
+            kv("callId", callId)
+        )
         log.info (
             teamLogs,
             "kaller regelmotor",
