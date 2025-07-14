@@ -11,6 +11,7 @@ class GenererBrukerSporsmaal {
         "REGEL_20",
         "REGEL_34",
         "REGEL_21",
+        "REGEL_23",
         "REGEL_25",
         "REGEL_10",
         "REGEL_5",

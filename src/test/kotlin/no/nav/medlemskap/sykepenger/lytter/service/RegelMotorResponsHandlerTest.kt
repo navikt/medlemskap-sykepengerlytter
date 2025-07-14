@@ -109,11 +109,17 @@ class RegelMotorResponsHandlerTest {
     }
 
     @Test
-    fun regel5_i_kombinasjon_med_regel3_skal_fore_til_bruersporsmaal() {
+    fun regel5_i_kombinasjon_med_regel10_skal_fore_til_bruersporsmaal() {
         val fileContent = this::class.java.classLoader.getResource("REGEL_5_og_10.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_5 med REGEL_10")
     }
 
+    @Test
+    fun regel23_i_kombinasjon_med_regel23_skal_fore_til_bruersporsmaal() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_23.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_23")
+    }
 
 }
