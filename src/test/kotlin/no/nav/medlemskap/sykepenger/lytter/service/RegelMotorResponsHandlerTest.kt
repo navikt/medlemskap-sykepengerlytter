@@ -116,10 +116,30 @@ class RegelMotorResponsHandlerTest {
     }
 
     @Test
-    fun regel23_i_kombinasjon_med_regel23_skal_fore_til_bruersporsmaal() {
+    fun regel23_skal_fore_til_bruersporsmaal() {
         val fileContent = this::class.java.classLoader.getResource("REGEL_23.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_23")
+    }
+    @Test
+    fun regel30_skal_fore_til_bruersporsmaal() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_30.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_30")
+    }
+
+    @Test
+    fun regel19_8_skal_fore_til_bruersporsmaal() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_19_8.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_19_8")
+    }
+
+    @Test
+    fun regel19_6_1_skal_fore_til_bruersporsmaal() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_19_6_1.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_19_6_1")
     }
 
 }

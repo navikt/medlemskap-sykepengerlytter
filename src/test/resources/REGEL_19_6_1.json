@@ -1,16 +1,16 @@
 {
-  "vurderingsID" : "2a158114-2ca6-39ab-8ca9-48f6df7ad169",
-  "tidspunkt" : "2025-06-09T00:17:22.151787133",
+  "vurderingsID" : "eb9391a2-920e-31c7-b63d-acabaf913c78",
+  "tidspunkt" : "2025-06-09T13:10:32.435308454",
   "versjonTjeneste" : "2025.06",
   "versjonRegler" : "v1",
-  "kanal" : "brukerspørsmål",
+  "kanal" : "kafka",
   "datagrunnlag" : {
     "fnr" : "123",
     "periode" : {
-      "fom" : "2025-06-01",
-      "tom" : "2025-06-08"
+      "fom" : "2025-03-06",
+      "tom" : "2025-03-09"
     },
-    "førsteDagForYtelse" : "2025-06-01",
+    "førsteDagForYtelse" : "2025-03-06",
     "brukerinput" : {
       "arbeidUtenforNorge" : false,
       "oppholdstilatelse" : null,
@@ -20,29 +20,24 @@
     },
     "pdlpersonhistorikk" : {
       "statsborgerskap" : [ {
-        "landkode" : "MKD",
+        "landkode" : "CHN",
         "fom" : null,
         "tom" : null,
         "historisk" : false
       } ],
       "bostedsadresser" : [ {
         "landkode" : "NOR",
-        "fom" : "2019-06-20",
-        "tom" : "2020-08-24",
+        "fom" : "2021-01-27",
+        "tom" : "2022-01-22",
         "historisk" : true
       }, {
         "landkode" : "NOR",
-        "fom" : "2020-08-25",
-        "tom" : "2021-10-27",
+        "fom" : "2022-01-23",
+        "tom" : "2023-06-28",
         "historisk" : true
       }, {
         "landkode" : "NOR",
-        "fom" : "2021-10-28",
-        "tom" : "2021-12-31",
-        "historisk" : true
-      }, {
-        "landkode" : "NOR",
-        "fom" : "2022-01-01",
+        "fom" : "2023-06-29",
         "tom" : null,
         "historisk" : false
       } ],
@@ -50,7 +45,7 @@
       "oppholdsadresser" : [ ],
       "sivilstand" : [ {
         "type" : "GIFT",
-        "gyldigFraOgMed" : "2020-12-29",
+        "gyldigFraOgMed" : "2010-09-08",
         "gyldigTilOgMed" : null,
         "relatertVedSivilstand" : "123"
       } ],
@@ -58,16 +53,20 @@
         "relatertPersonsIdent" : "123",
         "relatertPersonsRolle" : "BARN",
         "minRolleForPerson" : "FAR"
+      }, {
+        "relatertPersonsIdent" : "123",
+        "relatertPersonsRolle" : "BARN",
+        "minRolleForPerson" : "FAR"
       } ],
       "doedsfall" : [ ],
       "innflyttingTilNorge" : [ {
-        "fraflyttingsland" : "MKD",
+        "fraflyttingsland" : "CHN",
         "fraflyttingsstedIUtlandet" : null,
         "folkeregistermetadata" : {
-          "ajourholdstidspunkt" : "2019-07-17T08:39:02",
-          "gyldighetstidspunkt" : "2019-06-20T00:00:00",
+          "ajourholdstidspunkt" : "2021-01-27T12:54:56",
+          "gyldighetstidspunkt" : "2021-01-27T00:00:00",
           "opphoerstidspunkt" : null,
-          "aarsak" : "Innvandring"
+          "aarsak" : "Innflytting"
         },
         "metadata" : {
           "historisk" : false
@@ -81,64 +80,43 @@
       } ],
       "oppholdstilatelser" : [ {
         "type" : "MIDLERTIDIG",
-        "oppholdFra" : null,
-        "oppholdTil" : "2020-06-17",
+        "oppholdFra" : "2021-01-27",
+        "oppholdTil" : "2023-07-27",
         "medtadata" : {
           "historisk" : true,
-          "master" : "Freg",
-          "endringer" : [ {
-            "type" : "OPPRETT",
-            "kilde" : "KILDE_DSF",
-            "registrert" : "2020-01-24T15:12:36",
-            "registrertAv" : "Folkeregisteret",
-            "systemkilde" : "FREG"
-          } ]
-        },
-        "folkeregistermetadata" : {
-          "ajourholdstidspunkt" : null,
-          "gyldighetstidspunkt" : null,
-          "opphoerstidspunkt" : null,
-          "aarsak" : null
-        }
-      }, {
-        "type" : "MIDLERTIDIG",
-        "oppholdFra" : "2020-06-17",
-        "oppholdTil" : "2022-06-17",
-        "medtadata" : {
-          "historisk" : true,
-          "master" : "Freg",
+          "master" : "FREG",
           "endringer" : [ {
             "type" : "OPPRETT",
             "kilde" : "utlendingsdirektoratet",
-            "registrert" : "2020-12-04T14:32:33",
+            "registrert" : "2021-01-27T12:55:08",
             "registrertAv" : "Folkeregisteret",
             "systemkilde" : "FREG"
           } ]
         },
         "folkeregistermetadata" : {
-          "ajourholdstidspunkt" : "2020-12-04T14:32:21",
-          "gyldighetstidspunkt" : "2020-12-04T00:00:00",
+          "ajourholdstidspunkt" : "2021-01-27T12:54:56",
+          "gyldighetstidspunkt" : "2021-01-27T00:00:00",
           "opphoerstidspunkt" : null,
           "aarsak" : "Innflytting"
         }
       }, {
         "type" : "MIDLERTIDIG",
-        "oppholdFra" : "2022-06-17",
-        "oppholdTil" : "2024-06-17",
+        "oppholdFra" : "2023-06-29",
+        "oppholdTil" : "2026-06-29",
         "medtadata" : {
           "historisk" : false,
           "master" : "FREG",
           "endringer" : [ {
             "type" : "OPPRETT",
             "kilde" : "utlendingsdirektoratet",
-            "registrert" : "2022-08-22T14:29:45",
+            "registrert" : "2023-08-30T13:06:31",
             "registrertAv" : "Folkeregisteret",
             "systemkilde" : "FREG"
           } ]
         },
         "folkeregistermetadata" : {
-          "ajourholdstidspunkt" : "2022-08-22T14:29:34",
-          "gyldighetstidspunkt" : "2022-08-22T00:00:00",
+          "ajourholdstidspunkt" : "2023-08-30T13:06:24",
+          "gyldighetstidspunkt" : "2023-08-30T00:00:00",
           "opphoerstidspunkt" : null,
           "aarsak" : "Innflytting"
         }
@@ -147,7 +125,7 @@
     "medlemskap" : [ ],
     "arbeidsforhold" : [ {
       "periode" : {
-        "fom" : "2019-06-20",
+        "fom" : "2023-06-01",
         "tom" : null
       },
       "utenlandsopphold" : null,
@@ -156,135 +134,30 @@
         "navn" : "Bedrift",
         "organisasjonsnummer" : "123",
         "ansatte" : [ {
-          "antall" : 105,
+          "antall" : 18,
           "gyldighetsperiode" : {
-            "fom" : "2025-05-12",
+            "fom" : "2025-03-11",
             "tom" : null
           }
         } ],
         "konkursStatus" : null,
         "juridiskeEnheter" : [ {
           "organisasjonsnummer" : "123",
-          "enhetstype" : "AS",
-          "antallAnsatte" : 105
+          "enhetstype" : "STI",
+          "antallAnsatte" : 304
         } ]
       },
       "arbeidsforholdstype" : "NORMALT",
       "arbeidsavtaler" : [ {
         "periode" : {
-          "fom" : "2025-05-05",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2023-12-01",
-          "tom" : null
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2019-07-01",
-          "tom" : "2020-12-31"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2021-01-01",
-          "tom" : "2021-02-28"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2021-03-01",
-          "tom" : "2021-04-30"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2021-05-01",
-          "tom" : "2022-03-31"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2022-04-01",
-          "tom" : "2022-10-31"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
-          "tom" : null
-        },
-        "gyldighetsperiode" : {
-          "fom" : "2022-11-01",
-          "tom" : "2023-04-30"
-        },
-        "yrkeskode" : "7121101",
-        "skipsregister" : null,
-        "fartsomraade" : null,
-        "stillingsprosent" : 100.0,
-        "beregnetAntallTimerPrUke" : 37.5,
-        "skipstype" : null
-      }, {
-        "periode" : {
-          "fom" : "2025-04-23",
+          "fom" : "2025-05-28",
           "tom" : null
         },
         "gyldighetsperiode" : {
           "fom" : "2023-05-01",
-          "tom" : "2023-11-30"
+          "tom" : null
         },
-        "yrkeskode" : "7121101",
+        "yrkeskode" : "2149119",
         "skipsregister" : null,
         "fartsomraade" : null,
         "stillingsprosent" : 100.0,
@@ -301,7 +174,48 @@
         "ident" : "123",
         "bostedsadresser" : [ {
           "landkode" : "NOR",
-          "fom" : "2022-11-15",
+          "fom" : "2021-01-27",
+          "tom" : "2022-01-22",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2022-01-23",
+          "tom" : "2023-06-28",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2023-06-29",
+          "tom" : null,
+          "historisk" : false
+        } ],
+        "kontaktadresser" : [ ],
+        "oppholdsadresser" : [ ],
+        "forelderBarnRelasjon" : [ {
+          "relatertPersonsIdent" : "123",
+          "relatertPersonsRolle" : "FAR",
+          "minRolleForPerson" : "BARN"
+        }, {
+          "relatertPersonsIdent" : "123",
+          "relatertPersonsRolle" : "MOR",
+          "minRolleForPerson" : "BARN"
+        } ]
+      }
+    }, {
+      "personhistorikkBarn" : {
+        "ident" : "123",
+        "bostedsadresser" : [ {
+          "landkode" : "NOR",
+          "fom" : "2021-10-11",
+          "tom" : "2022-01-22",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2022-01-23",
+          "tom" : "2023-06-28",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2023-06-29",
           "tom" : null,
           "historisk" : false
         } ],
@@ -322,20 +236,25 @@
       "personhistorikkEktefelle" : {
         "ident" : "123",
         "statsborgerskap" : [ {
-          "landkode" : "MKD",
+          "landkode" : "CHN",
           "fom" : null,
           "tom" : null,
           "historisk" : false
         } ],
-        "barn" : [ "123" ],
+        "barn" : [ "123", "123" ],
         "bostedsadresser" : [ {
           "landkode" : "NOR",
-          "fom" : "2021-10-13",
-          "tom" : "2022-04-27",
+          "fom" : "2021-01-27",
+          "tom" : "2022-01-22",
           "historisk" : true
         }, {
           "landkode" : "NOR",
-          "fom" : "2022-04-28",
+          "fom" : "2022-01-23",
+          "tom" : "2023-06-28",
+          "historisk" : true
+        }, {
+          "landkode" : "NOR",
+          "fom" : "2023-06-29",
           "tom" : null,
           "historisk" : false
         } ],
@@ -346,18 +265,18 @@
     },
     "overstyrteRegler" : { },
     "oppholdstillatelse" : {
-      "uttrekkstidspunkt" : "2025-06-09T00:17:22.123",
+      "uttrekkstidspunkt" : "2025-06-09T13:10:32.411",
       "foresporselsfodselsnummer" : "123",
       "avgjoerelse" : null,
       "gjeldendeOppholdsstatus" : {
         "oppholdstillatelsePaSammeVilkar" : {
           "periode" : {
-            "fom" : "2023-05-02",
-            "tom" : null
+            "fom" : "2023-06-29",
+            "tom" : "2026-06-29"
           },
-          "type" : "PERMANENT",
+          "type" : "MIDLERTIDIG",
           "harTillatelse" : true,
-          "soknadIkkeAvgjort" : true
+          "soknadIkkeAvgjort" : false
         },
         "eosellerEFTAOpphold" : null,
         "uavklart" : null,
@@ -365,8 +284,8 @@
       },
       "arbeidsadgang" : {
         "periode" : {
-          "fom" : "2023-05-02",
-          "tom" : null
+          "fom" : "2023-06-29",
+          "tom" : "2026-06-29"
         },
         "harArbeidsadgang" : true,
         "arbeidsadgangType" : "BESTEMT_ARBEID_ELLER_OPPDRAG",
@@ -376,7 +295,7 @@
       "harFlyktningstatus" : null,
       "udiFeilKode" : null
     },
-    "startDatoForYtelse" : "2025-06-01"
+    "startDatoForYtelse" : "2025-03-06"
   },
   "resultat" : {
     "regelId" : "REGEL_MEDLEM_KONKLUSJON",
@@ -725,19 +644,100 @@
         "avklaring" : "Er oppholdstillatelsen uavklart?"
       }, {
         "regelId" : "REGEL_19_8",
-        "svar" : "JA",
-        "begrunnelse" : "Opphold på samme vilkår flagget er satt",
+        "svar" : "NEI",
+        "begrunnelse" : "Opphold på samme vilkår flagget er ikke satt",
         "harDekning" : null,
         "dekning" : "",
         "delresultat" : [ ],
         "årsaker" : [ ],
         "avklaring" : "Har bruker opphold på samme vilkår flagg?"
+      }, {
+        "regelId" : "REGEL_19_2",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker har ikke to oppholdstillatelser som overlapper",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker to ulike oppholdstillatelser som overlapper?"
+      }, {
+        "regelId" : "REGEL_23",
+        "svar" : "NEI",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Returnerer UDI Ikke oppholdstillatelse eller ikke opphold på samme vilkår?"
+      }, {
+        "regelId" : "REGEL_30",
+        "svar" : "NEI",
+        "begrunnelse" : "Britisk bruker har ikke EØS eller EFTA oppholdstillatelse",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har britisk bruker EØS eller EFTA oppholdstillatelse?"
+      }, {
+        "regelId" : "REGEL_19_4",
+        "svar" : "NEI",
+        "begrunnelse" : "brukers ektefelle er ikke statsborger i UK",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Når brukers tillatelse er EØS eller EFTA; er brukers ektefelle statsborger i UK?"
+      }, {
+        "regelId" : "REGEL_19_3",
+        "svar" : "JA",
+        "begrunnelse" : "",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker en gyldig oppholdstillatelse 12 måneder bakover og 2 måned fremover i tid?"
+      }, {
+        "regelId" : "REGEL_31",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker har ikke permanent oppholdstillatelse",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker en permanent oppholdstillatelse?"
+      }, {
+        "regelId" : "REGEL_19_5",
+        "svar" : "NEI",
+        "begrunnelse" : "UDI-tjenesten svarer ikke uavklart",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Svarer UDI-tjenesten uavklart ift arbeidsadgang"
+      }, {
+        "regelId" : "REGEL_19_6",
+        "svar" : "NEI",
+        "begrunnelse" : "Bruker har ikke gyldig arbeidstillatelse",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Har bruker en gyldig arbeidstillatelse 12 måneder bakover og 2 måned fremover i tid?"
+      }, {
+        "regelId" : "REGEL_19_6_1",
+        "svar" : "NEI",
+        "begrunnelse" : "arbeidstillatelsen dekker ikke arbeidsperioden",
+        "harDekning" : null,
+        "dekning" : "",
+        "delresultat" : [ ],
+        "årsaker" : [ ],
+        "avklaring" : "Dekker arbeidstillatelsen arbeidsperioden bakover i tid?"
       } ],
       "årsaker" : [ {
-        "regelId" : "REGEL_19_8",
-        "avklaring" : "Har bruker opphold på samme vilkår flagg?",
-        "svar" : "JA",
-        "begrunnelse" : "Opphold på samme vilkår flagget er satt"
+        "regelId" : "REGEL_19_6_1",
+        "avklaring" : "Dekker arbeidstillatelsen arbeidsperioden bakover i tid?",
+        "svar" : "NEI",
+        "begrunnelse" : "arbeidstillatelsen dekker ikke arbeidsperioden"
       } ],
       "avklaring" : "Har bruker gyldig oppholdstillatelse?"
     }, {
@@ -787,10 +787,10 @@
       "avklaring" : "Er andre borgere arbeidstakere?"
     } ],
     "årsaker" : [ {
-      "regelId" : "REGEL_19_8",
-      "avklaring" : "Har bruker opphold på samme vilkår flagg?",
-      "svar" : "JA",
-      "begrunnelse" : "Opphold på samme vilkår flagget er satt"
+      "regelId" : "REGEL_19_6_1",
+      "avklaring" : "Dekker arbeidstillatelsen arbeidsperioden bakover i tid?",
+      "svar" : "NEI",
+      "begrunnelse" : "arbeidstillatelsen dekker ikke arbeidsperioden"
     } ],
     "avklaring" : "Er bruker medlem?"
   }
