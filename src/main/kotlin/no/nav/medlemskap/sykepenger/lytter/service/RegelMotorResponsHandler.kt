@@ -7,7 +7,6 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
-import java.time.LocalDate
 
 class RegelMotorResponsHandler {
 
@@ -43,7 +42,9 @@ class RegelMotorResponsHandler {
             val erEØSborger = medlemskapVurdering.erEosBorger()
             val erTredjelandsborger = medlemskapVurdering.erTredjelandsborger()
             val erTredjelandsborgerMedEØSfamilie = medlemskapVurdering.erTredjelandsborgerMedEØSFamilie()
-            val harOppholdtillatelse = medlemskapVurdering.harOppholdsTilatelse()
+            val harOppholdsTillatelse = medlemskapVurdering.harOppholdsTillatelse()
+
+            val harRegelbruddPåRegel23 = harRegelbruddPåRegel23(årsaker)
 
             val brukerspørsmål: Set<Spørsmål> = when {
                 erEØSborger -> setOf(
@@ -51,24 +52,36 @@ class RegelMotorResponsHandler {
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborgerMedEØSfamilie && harOppholdtillatelse -> setOf(
+                erTredjelandsborgerMedEØSfamilie && harOppholdsTillatelse -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborgerMedEØSfamilie && !harOppholdtillatelse -> setOf(
+                //Hack for å unngå å lage brukerspørsmål om oppholdstillatelse ved regelbrudd på regel 23
+                erTredjelandsborgerMedEØSfamilie && harRegelbruddPåRegel23 -> setOf(
+                    Spørsmål.ARBEID_UTENFOR_NORGE,
+                    Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
+                )
+
+                erTredjelandsborgerMedEØSfamilie && !harOppholdsTillatelse -> setOf(
                     Spørsmål.OPPHOLDSTILATELSE,
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborger && !harOppholdtillatelse -> setOf(
-                    Spørsmål.OPPHOLDSTILATELSE,
+                erTredjelandsborger && harOppholdsTillatelse -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_NORGE
                 )
 
-                erTredjelandsborger && harOppholdtillatelse -> setOf(
+                //Hack for å unngå å lage brukerspørsmål om oppholdstillatelse ved regelbrudd på regel 23
+                erTredjelandsborger && !harOppholdsTillatelse && harRegelbruddPåRegel23 -> setOf(
+                    Spørsmål.ARBEID_UTENFOR_NORGE,
+                    Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
+                )
+
+                erTredjelandsborger && !harOppholdsTillatelse -> setOf(
+                    Spørsmål.OPPHOLDSTILATELSE,
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_NORGE
                 )
@@ -113,7 +126,7 @@ class RegelMotorResponsHandler {
         return !this.finnSvarPaaRegel("REGEL_2")
     }
 
-    private fun MedlemskapVurdering.harOppholdsTilatelse(): Boolean {
+    private fun MedlemskapVurdering.harOppholdsTillatelse(): Boolean {
         if (finnSvarPaaRegelFlyt("REGEL_OPPHOLDSTILLATELSE")) {
             return true
         }
@@ -139,5 +152,9 @@ class RegelMotorResponsHandler {
         }
 
         return true
+    }
+
+    private fun harRegelbruddPåRegel23(årsaker: List<String>): Boolean {
+        return årsaker.contains("REGEL_23")
     }
 }

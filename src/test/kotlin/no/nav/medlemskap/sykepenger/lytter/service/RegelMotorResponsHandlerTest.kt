@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -141,5 +142,34 @@ class RegelMotorResponsHandlerTest {
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_19_6_1")
     }
+
+    @Test
+    fun regel23_og_ikke_oppholdstillatelse_med_familie_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_23_og_ikke_oppholdstillatelse_med_familie.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun ikke_oppholdstillatelse_med_familie_skal_føre_til_brukerspørsmål_med_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("ikke_oppholdstillatelse_med_familie.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertTrue(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun regel23_og_ikke_oppholdstillatelse_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_23_og_ikke_oppholdstillatelse.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun ikke_oppholdstillatelse_skal_føre_til_brukerspørsmål_med_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("ikke_oppholdstillatelse.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertTrue(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
 
 }
