@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
+import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -140,6 +141,20 @@ class RegelMotorResponsHandlerTest {
         val fileContent = this::class.java.classLoader.getResource("REGEL_19_6_1.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_19_6_1")
+    }
+
+    @Test
+    fun regel23_tredjelandsborger_med_EØS_familie_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_23_EOS_familie.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun regel23_tredjelandsborger_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_23_tredjelandsborger.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
     }
 
 }
