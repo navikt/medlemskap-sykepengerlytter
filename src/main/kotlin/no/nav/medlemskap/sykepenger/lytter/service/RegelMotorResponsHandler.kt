@@ -44,7 +44,7 @@ class RegelMotorResponsHandler {
             val erTredjelandsborgerMedEØSfamilie = medlemskapVurdering.erTredjelandsborgerMedEØSFamilie()
             val harOppholdsTillatelse = medlemskapVurdering.harOppholdsTillatelse()
 
-            val harRegelbruddPåRegel23 = harRegelbruddPåRegel23(årsaker)
+            val harBruddPåRegel23 = harBruddPåRegel23(årsaker)
 
             val brukerspørsmål: Set<Spørsmål> = when {
                 erEØSborger -> setOf(
@@ -57,8 +57,8 @@ class RegelMotorResponsHandler {
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                //Hack for å unngå å lage brukerspørsmål om oppholdstillatelse ved regelbrudd på regel 23
-                erTredjelandsborgerMedEØSfamilie && harRegelbruddPåRegel23 -> setOf(
+                //Unngå å stille spørsmål om oppholdstillatelse ved brudd på regel 23
+                erTredjelandsborgerMedEØSfamilie && harBruddPåRegel23 -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
@@ -74,8 +74,8 @@ class RegelMotorResponsHandler {
                     Spørsmål.OPPHOLD_UTENFOR_NORGE
                 )
 
-                //Hack for å unngå å lage brukerspørsmål om oppholdstillatelse ved regelbrudd på regel 23
-                erTredjelandsborger && !harOppholdsTillatelse && harRegelbruddPåRegel23 -> setOf(
+                //Unngå å stille spørsmål om oppholdstillatelse ved brudd på regel 23
+                erTredjelandsborger && harBruddPåRegel23 -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
@@ -154,7 +154,7 @@ class RegelMotorResponsHandler {
         return true
     }
 
-    private fun harRegelbruddPåRegel23(årsaker: List<String>): Boolean {
+    private fun harBruddPåRegel23(årsaker: List<String>): Boolean {
         return årsaker.contains("REGEL_23")
     }
 }
