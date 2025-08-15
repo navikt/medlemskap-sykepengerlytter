@@ -21,7 +21,7 @@ class RegelMotorResponsHandler {
         }
     }
 
-    fun hentOppholdsTilatelsePeriode(lovmeresponse: String): Periode? {
+    fun hentOppholdstillatelsePeriode(lovmeresponse: String): Periode? {
         val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(lovmeresponse)
 
         return medlemskapVurdering
@@ -39,9 +39,9 @@ class RegelMotorResponsHandler {
         val årsaker = medlemskapVurdering.resultat.årsaker.map { it.regelId }
 
         if (GenererBrukerSporsmaal().skalGenerereBrukerSpørsmål(årsaker)) {
-            val erEØSborger = medlemskapVurdering.erEosBorger()
-            val erTredjelandsborger = medlemskapVurdering.erTredjelandsborger()
-            val erTredjelandsborgerMedEØSfamilie = medlemskapVurdering.erTredjelandsborgerMedEØSFamilie()
+            val erEØSborger = medlemskapVurdering.erEØSBorger()
+            val erAndreBorgere = medlemskapVurdering.erAndreBorgere()
+            val erAndreBorgereMedEØSfamilie = medlemskapVurdering.erAndreBorgereMedEØSFamilie()
             val harOppholdsTillatelse = medlemskapVurdering.harOppholdsTillatelse()
 
             val harBruddPåRegel23 = harBruddPåRegel23(årsaker)
@@ -52,35 +52,35 @@ class RegelMotorResponsHandler {
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborgerMedEØSfamilie && harOppholdsTillatelse -> setOf(
+                erAndreBorgereMedEØSfamilie && harOppholdsTillatelse -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
                 //Unngå å stille spørsmål om oppholdstillatelse ved brudd på regel 23
-                erTredjelandsborgerMedEØSfamilie && harBruddPåRegel23 -> setOf(
+                erAndreBorgereMedEØSfamilie && harBruddPåRegel23 -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborgerMedEØSfamilie && !harOppholdsTillatelse -> setOf(
+                erAndreBorgereMedEØSfamilie && !harOppholdsTillatelse -> setOf(
                     Spørsmål.OPPHOLDSTILATELSE,
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborger && harOppholdsTillatelse -> setOf(
+                erAndreBorgere && harOppholdsTillatelse -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_NORGE
                 )
 
                 //Unngå å stille spørsmål om oppholdstillatelse ved brudd på regel 23
-                erTredjelandsborger && harBruddPåRegel23 -> setOf(
+                erAndreBorgere && harBruddPåRegel23 -> setOf(
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
                 )
 
-                erTredjelandsborger && !harOppholdsTillatelse -> setOf(
+                erAndreBorgere && !harOppholdsTillatelse -> setOf(
                     Spørsmål.OPPHOLDSTILATELSE,
                     Spørsmål.ARBEID_UTENFOR_NORGE,
                     Spørsmål.OPPHOLD_UTENFOR_NORGE
@@ -94,22 +94,11 @@ class RegelMotorResponsHandler {
         return FlexRespons(svar = Svar.UAVKLART, sporsmal = emptySet())
     }
 
-    private fun MedlemskapVurdering.erEosBorger(): Boolean {
-        return this.finnSvarPaaRegel("REGEL_2")
+    private fun MedlemskapVurdering.erEØSBorger(): Boolean {
+        return this.erSvarPåRegelJa("REGEL_2")
     }
 
-    private fun MedlemskapVurdering.finnSvarPaaRegelFlyt(regelID: String): Boolean {
-        try {
-            val delresultat = this.resultat.delresultat
-                .firstOrNull { it.regelId == regelID }
-
-            return delresultat?.svar == "JA"
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    private fun MedlemskapVurdering.finnSvarPaaRegel(regelID: String): Boolean {
+    private fun MedlemskapVurdering.erSvarPåRegelJa(regelID: String): Boolean {
         val regel = this.alleRegelResultat().firstOrNull { it.regelId == regelID }
         return regel?.svar == "JA"
     }
@@ -118,40 +107,16 @@ class RegelMotorResponsHandler {
         return this.resultat.delresultat.flatMap { it.delresultat ?: emptyList() }
     }
 
-    private fun MedlemskapVurdering.erTredjelandsborgerMedEØSFamilie(): Boolean {
-        return finnSvarPaaRegel("REGEL_28") && finnSvarPaaRegel("REGEL_29")
+    private fun MedlemskapVurdering.erAndreBorgereMedEØSFamilie(): Boolean {
+        return erSvarPåRegelJa("REGEL_28") && erSvarPåRegelJa("REGEL_29")
     }
 
-    private fun MedlemskapVurdering.erTredjelandsborger(): Boolean {
-        return !this.finnSvarPaaRegel("REGEL_2")
+    private fun MedlemskapVurdering.erAndreBorgere(): Boolean {
+        return !this.erSvarPåRegelJa("REGEL_2")
     }
 
     private fun MedlemskapVurdering.harOppholdsTillatelse(): Boolean {
-        if (finnSvarPaaRegelFlyt("REGEL_OPPHOLDSTILLATELSE")) {
-            return true
-        }
-
-        // Sjekk uavklart svar fra UDI
-        if (this.finnSvarPaaRegel("REGEL_19_1")) {
-            return false
-        }
-
-        // Sjekk Oppholdstilatelse tilbake i tid
-        if (!this.finnSvarPaaRegel("REGEL_19_3")) {
-            return false
-        }
-
-        // Sjekk oppholdstilatelsen i arbeidsperioden
-        if (!this.finnSvarPaaRegel("REGEL_19_3_1")) {
-            return false
-        }
-
-        // Har bruker opphold på samme vilkår flagg?
-        if (this.finnSvarPaaRegel("REGEL_19_8")) {
-            return false
-        }
-
-        return true
+        return this.erSvarPåRegelJa("REGEL_19_3")
     }
 
     private fun harBruddPåRegel23(årsaker: List<String>): Boolean {

@@ -4,7 +4,7 @@ class GenererBrukerSporsmaal {
 
     val ENKELTREGLER = listOf(
         "REGEL_3",
-        "REGEL_19_3_1",
+        "REGEL_19_3",
         "REGEL_15",
         "REGEL_C",
         "REGEL_12",

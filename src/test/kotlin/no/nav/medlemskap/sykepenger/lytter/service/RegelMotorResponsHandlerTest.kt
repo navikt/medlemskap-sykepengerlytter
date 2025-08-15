@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 
 class RegelMotorResponsHandlerTest {
 
+    //Tester for om det skal genereres brukerspørsmål basert på type regelbrudd
     @Test
     fun regel10_skal_fore_til_bruersporsmaal() {
         val fileContent = this::class.java.classLoader.getResource("REGEL_10.json").readText(Charsets.UTF_8)
@@ -143,16 +144,32 @@ class RegelMotorResponsHandlerTest {
         Assertions.assertFalse(respons.sporsmal.isEmpty(), "Skal opprettes brukersporsmaal paa REGEL_19_6_1")
     }
 
+
+    // Tester for innhold i brukerspørsmål
     @Test
-    fun regel23_tredjelandsborger_med_EØS_familie_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+    fun regel23_andre_borgere_med_EØS_familie_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
         val fileContent = this::class.java.classLoader.getResource("REGEL_23_EOS_familie.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
     }
 
     @Test
-    fun regel23_tredjelandsborger_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+    fun regel23_andre_borgere_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
         val fileContent = this::class.java.classLoader.getResource("REGEL_23_tredjelandsborger.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun regel19_3_ikke_oppholdstillatelse_skal_føre_til_brukerspørsmål_med_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_19_3_har_ikke_oppholdstillatelse.json").readText(Charsets.UTF_8)
+        val respons = RegelMotorResponsHandler().utledResultat(fileContent)
+        Assertions.assertTrue(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
+    }
+
+    @Test
+    fun regel19_3_med_oppholdstillatelse_skal_føre_til_brukerspørsmål_uten_oppholdstillatelse() {
+        val fileContent = this::class.java.classLoader.getResource("REGEL_19_3_har_oppholdstillatelse.json").readText(Charsets.UTF_8)
         val respons = RegelMotorResponsHandler().utledResultat(fileContent)
         Assertions.assertFalse(respons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
     }
