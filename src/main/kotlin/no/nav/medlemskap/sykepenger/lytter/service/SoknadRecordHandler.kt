@@ -179,6 +179,7 @@ class SoknadRecordHandler(
         }
     }
 
+    //SP1230
     fun hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){

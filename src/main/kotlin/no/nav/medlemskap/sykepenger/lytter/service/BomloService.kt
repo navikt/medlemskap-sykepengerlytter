@@ -68,12 +68,13 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             }
         }
     fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
+        val førsteDagForYtelse = bomloRequest.førsteDagForYtelse ?: bomloRequest.periode.fom
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = bomloRequest.fnr, soknadid = callId, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
 
-        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
+        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal, førsteDagForYtelse)
         val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
         val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
         val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
@@ -204,15 +205,15 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return null
         }
 
-        fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
-
-            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter {
+        fun hentAlleredeStilteBrukerSpørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
+            val førsteDagForYtelse = lovmeRequest.førsteDagForYtelse
+            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(lovmeRequest.fnr).filter {
                 it.eventDate.isAfter(
                     LocalDate.now().minusYears(1)
                 )
             }
             val alleredespurteBrukersporsmaal: List<Spørsmål> =
-                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker)
+                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker, førsteDagForYtelse)
             return alleredespurteBrukersporsmaal
         }
 

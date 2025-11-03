@@ -216,7 +216,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 else{
 
                     val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-                    val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
+                    val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest)
                     val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
