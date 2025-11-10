@@ -58,11 +58,12 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn et kall til bruker spørsmål api
         * */
-        val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
+        val medlemskapOppslagRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2023-08-15", periode = Periode("2023-08-16","2023-08-22"),
             Brukerinput(arbeidUtenforNorge = true)
-        ),"2345")
+        )
+        val lovmeresponse = bomloService.kallLovme(medlemskapOppslagRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
         /*
@@ -82,11 +83,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
-        val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
+        val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2023-08-15", periode = Periode("2023-08-16","2023-08-22"),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal være like da svar på begge brukerspørsmålene er JA")
 
@@ -120,11 +121,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn et kall til bruker spørsmål api
         * */
+        val medlemskapOppslagRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2023-08-15", periode = Periode("2023-08-16","2023-08-22"),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
         val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
         val value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukermedMedNeiIBrukerspormsaalSoknadFraFlex.json").readText(Charsets.UTF_8)
@@ -153,7 +157,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål("15076500565")
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
         Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())

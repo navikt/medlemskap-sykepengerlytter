@@ -74,10 +74,10 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return Brukersporsmaal(fnr = bomloRequest.fnr, soknadid = callId, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
 
-        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
-        val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
-        val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
+        val utfortarbeidutenfornorge = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdstilatelse = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listofbrukersporsmaal, førsteDagForYtelse)
         val arbeidUtlandGammelModell = finnNyesteMedlemskap_utfort_arbeid_utenfor_norgeGammelModell(listofbrukersporsmaal)
 
         return Brukersporsmaal(fnr = bomloRequest.fnr,
