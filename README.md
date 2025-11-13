@@ -70,11 +70,18 @@ for brukerspørsmål kreves også at fnr er satt i header
 * Kafka
 * Medlemskap-Oppslag
 
-#UseCase diagram
+# UseCase diagram
 
 ![usecase](./plantUml/usecase.png)
 
 
-#Value Chain diagram
+# Value Chain diagram
 
 ![valuechain](./plantUml/valueChain.png)
+
+
+# Revisjonslogging
+Revisjonslogging for databasen `sykmedlemskap` er aktivert.
+Loggene er tilgjengelig inne på instancen i [Nais Console](https://console.nav.cloud.nais.io/team/medlemskap/postgres)
+
+
