@@ -17,7 +17,6 @@ import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.logging.Level
@@ -101,7 +100,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     }
 
     @Test
-    fun `Ikke anbefal burkerspørsmål fordi det har gått mindre enn 32 dager`() = runBlocking {
+    fun `20 dager mellom sykmeldingsperiode 1 og 2 skal levetiden være aktiv og vi skal ikke stille spørsmål på nytt`() = runBlocking {
         postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
@@ -121,7 +120,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn et kall til bruker spørsmål api
         * */
-        val medlemskapOppslagRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2023-08-15", periode = Periode("2023-08-16","2023-08-22"),
+        //Periode: 2020-01-01 til 2020-01-20
+        //Første dag for ytelse: 2020-01-01
+        val medlemskapOppslagRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2020-01-01", periode = Periode("2020-01-01","2020-01-20"),
             Brukerinput(arbeidUtenforNorge = true)
         )
         val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
@@ -131,7 +132,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
-        val value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukermedMedNeiIBrukerspormsaalSoknadFraFlex.json").readText(Charsets.UTF_8)
+
+        //Sender inn søknad+brukersvar med NEI på begge spørsmål
+        //Blir "lagret" 2020-01-02
+        //SendtArbeidsgiver = 2020-01-02
+        val value = this::class.java.classLoader.getResource("EndeTilEndeTestFraFlexOmSoknadForSykepenger.json").readText(Charsets.UTF_8)
         /*
         * modifiser dato i json fil (sendt arbeidsgiver) til dagens dato så ikke test bryter i fremtiden
         * */
@@ -145,20 +150,107 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             value = value,
             key="",
             topic="",
-            timestamp = LocalDateTime.now(),
+            timestamp = LocalDateTime.of(2020,1,1,10,10),
             timestampType = ""
         )
         fmh.handle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
+        //Periode: 2020-01-21 til 2020-01-31
+        //Første dag for ytelse: 2020-01-21
+        val medlemskapOppslagRequest2 = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2020-01-21", periode = Periode("2020-01-21","2020-01-31"),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
         val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
+
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val TiDagerEtterVurderingGjort = LocalDate.parse("2019-01-21")
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmålForDato(medlemskapOppslagRequest, TiDagerEtterVurderingGjort)
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2)
+        val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
+        Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
+        Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())
+
+    }
+
+
+
+
+
+    @Test
+    fun `1 år mellom sykmeldingsperiode 1 og 2 så skal levetiden ikke være aktiv og vi skal stille spørsmål på nytt`() = runBlocking {
+        postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
+        postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
+        val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
+        dsb.migrate();
+
+        val brukerspormsalRepo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
+        dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
+        dsb.getDataSource().connection.createStatement().execute("delete  from syk_vurdering")
+        val medlemskapVurdertRepo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
+        val containerPersistenceService = PersistenceService(medlemskapVurdertRepo,brukerspormsalRepo)
+        val bomloService = BomloService(Configuration(), containerPersistenceService)
+        bomloService.lovmeClient = LovMeMock()
+
+        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+
+
+        /*
+        * Simuler at det kommer inn et kall til bruker spørsmål api
+        * */
+        //Periode: 2020-01-01 til 2020-01-20
+        //Første dag for ytelse: 2020-01-01
+        val medlemskapOppslagRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2020-01-01", periode = Periode("2020-01-01","2020-01-20"),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
+        val lovmeresponse = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = true)
+        ),"2345")
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+        println(flexRespons)
+
+        //Sender inn søknad+brukersvar med NEI på begge spørsmål
+        //Blir "lagret" 2020-01-02
+        //SendtArbeidsgiver = 2020-01-02
+        val value = this::class.java.classLoader.getResource("EndeTilEndeTestFraFlexOmSoknadForSykepenger.json").readText(Charsets.UTF_8)
+        /*
+        * modifiser dato i json fil (sendt arbeidsgiver) til dagens dato så ikke test bryter i fremtiden
+        * */
+        //val modified = value.replace("2023-08-23T13:23:22.229663373", eventdateLagretVurdering.toString())
+        /*
+        * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
+        * */
+        val message = FlexMessageRecord(
+            partition = 0,
+            offset = 1,
+            value = value,
+            key="",
+            topic="",
+            timestamp = LocalDateTime.of(2020,1,1,10,10),
+            timestampType = ""
+        )
+        fmh.handle(message)
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+
+        /*
+       * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
+       * */
+        //Periode: 2021-01-01 til 2021-01-20
+        //Første dag for ytelse: 2021-01-01
+        val medlemskapOppslagRequest2 = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "2021-01-01", periode = Periode("2021-01-01","2021-01-20"),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
+        val lovmeresponse2 = bomloService.kallLovme(MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = "", periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = true)
+        ),"2345")
+
+        val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
         Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())
