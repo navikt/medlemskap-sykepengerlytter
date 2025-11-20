@@ -17,6 +17,7 @@ import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.logging.Level
@@ -100,10 +101,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     }
 
     @Test
-    fun `brukerspormaal ende til ende simulering der begge bruker spørsmål har svar NEI`() = runBlocking {
+    fun `Ikke anbefal burkerspørsmål fordi det har gått mindre enn 32 dager`() = runBlocking {
         postgresqlContainer.withUrlParam("user", postgresqlContainer.username)
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
-        val soknadID = UUID.randomUUID().toString()
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
 
@@ -135,14 +135,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * modifiser dato i json fil (sendt arbeidsgiver) til dagens dato så ikke test bryter i fremtiden
         * */
-        val modified = value.replace("2023-08-23T13:23:22.229663373",LocalDateTime.now().toString())
+        //val modified = value.replace("2023-08-23T13:23:22.229663373", eventdateLagretVurdering.toString())
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
         val message = FlexMessageRecord(
             partition = 0,
             offset = 1,
-            value = modified,
+            value = value,
             key="",
             topic="",
             timestamp = LocalDateTime.now(),
@@ -157,7 +157,8 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val TiDagerEtterVurderingGjort = LocalDate.parse("2019-01-21")
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmålForDato(medlemskapOppslagRequest, TiDagerEtterVurderingGjort)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
         Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())

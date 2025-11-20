@@ -17,7 +17,7 @@ fun finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal: List<Brukers
     val sistOppgitteArbeidUtenforNorgeBrukersporsmaal = arbeidUtenForNorge[datoSisteBrukerspørsmålStilt]
 
     if (!sistOppgitteArbeidUtenforNorgeBrukersporsmaal!!.svar){
-        if (antallDagerMellomToDager(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteArbeidUtenforNorgeBrukersporsmaal
         }
     }
@@ -32,7 +32,7 @@ fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal: List<
     val datoSisteBrukerspørsmålStilt = opphold_utenfor_norge.toSortedMap().lastKey()
     val sistOppgitteOppholdUtenforNorgeBrukersporsmaal = opphold_utenfor_norge[datoSisteBrukerspørsmålStilt]
     if (!sistOppgitteOppholdUtenforNorgeBrukersporsmaal!!.svar){
-        if (antallDagerMellomToDager(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteOppholdUtenforNorgeBrukersporsmaal
         }
     }
@@ -47,7 +47,7 @@ fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal: List<Br
     val datoSisteBrukerspørsmålStilt = opphold_utenfor_eos.toSortedMap().lastKey()
     val sistOppgitteOppholdUtenforEOSBrukersporsmaal = opphold_utenfor_eos[datoSisteBrukerspørsmålStilt]
     if (!sistOppgitteOppholdUtenforEOSBrukersporsmaal!!.svar){
-        if (antallDagerMellomToDager(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteOppholdUtenforEOSBrukersporsmaal
         }
     }
@@ -65,12 +65,12 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
     // ellers skal levetiden være mellom perioden bruker har oppgitt
     return when (sistOppgitteOpphldstilatelseBrukersporsmaal?.vedtaksTypePermanent) {
         true ->
-            if(antallDagerMellomToDager(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32) {
+            if(antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32) {
                 sistOppgitteOpphldstilatelseBrukersporsmaal
         } else null
         false ->
-            if (datoSisteBrukerspørsmålStilt.isBefore(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().tom)
-            && datoSisteBrukerspørsmålStilt.isAfter(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().fom)) {
+            if (førsteDagForYtelse.isBefore(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().tom)
+            && førsteDagForYtelse.isAfter(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().fom)) {
                 sistOppgitteOpphldstilatelseBrukersporsmaal
         } else null
         else -> null
@@ -110,5 +110,5 @@ fun createFlexRespons(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: Li
 
 }
 
-fun antallDagerMellomToDager(førsteDato: LocalDate, andreDato: LocalDate): Int =
+fun antallDagerMellomToDatoer(førsteDato: LocalDate, andreDato: LocalDate): Int =
     ChronoUnit.DAYS.between(førsteDato,andreDato).toInt().absoluteValue

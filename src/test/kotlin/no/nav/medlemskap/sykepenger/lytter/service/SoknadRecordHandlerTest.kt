@@ -433,7 +433,7 @@ class SoknadRecordHandlerTest {
         val persistenceService = PersistenceService(repo,repo2)
         val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
         service.medlOppslagClient = LovMeMock()
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json").readText(Charsets.UTF_8)
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV_2.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
         service.handle(SoknadRecord(1,1,"","","",sykepengeSoknad))
@@ -546,11 +546,11 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1,dbResult.size)
         Assertions.assertNotNull(mock.request)
-        Assertions.assertTrue(mock.request!!.brukerinput.arbeidUtenforNorge)
         Assertions.assertNotNull(mock.request!!.brukerinput.oppholdstilatelse)
         Assertions.assertNotNull(mock.request!!.brukerinput.arbeidUtenforNorge)
         Assertions.assertNotNull(mock.request!!.brukerinput.oppholdUtenforNorge)
         Assertions.assertNotNull(mock.request!!.brukerinput.oppholdUtenforEos)
+        Assertions.assertFalse(mock.request!!.brukerinput.arbeidUtenforNorge)
     }
 
 }

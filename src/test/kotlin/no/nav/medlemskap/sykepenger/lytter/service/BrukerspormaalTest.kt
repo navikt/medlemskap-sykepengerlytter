@@ -154,7 +154,7 @@ class BrukerspormaalTest {
                     sporsmalstekst = "",
                     svar = true,
                     vedtaksdato = LocalDate.now(),
-                    vedtaksTypePermanent = false,
+                    vedtaksTypePermanent = true,
                     perioder = listOf(Periode(LocalDate.MIN, LocalDate.of(2000,1,1)))
                 ),
                 utfort_arbeid_utenfor_norge = null,
@@ -170,7 +170,7 @@ class BrukerspormaalTest {
             startSyketilfelle = LocalDate.of(2022,3,23),
             sendtNav = LocalDateTime.now(),
             fom = LocalDate.now(),
-            tom = LocalDate.of(2022,4,8)
+            tom = LocalDate.now().plusMonths(2)
         )
 
         val service= SoknadRecordHandler(Configuration(), persistenceService)

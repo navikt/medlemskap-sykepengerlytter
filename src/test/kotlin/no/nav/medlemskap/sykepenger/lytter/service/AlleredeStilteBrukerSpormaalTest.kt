@@ -362,34 +362,6 @@ class AlleredeStilteBrukerSpormaalTest {
         Assertions.assertFalse(funnet.vedtaksTypePermanent)
     }
 
-    @Test
-    fun `oppholdstilatelse =false skal ikke finnes om det dette er det sist registrete innslaget`(){
-        val fnr = "12345678901"
-        val opphold1 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = false,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.MIN, LocalDate.MAX))
-        )
-        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
-            id="1",
-            sporsmalstekst = "",
-            svar = true,
-            vedtaksdato = LocalDate.now(),
-            vedtaksTypePermanent = true,
-            perioder = emptyList()
-        )
-        val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(10),opphold1)
-        val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),opphold2)
-
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2), LocalDate.now())
-        Assertions.assertNull(funnet,"Dersom siste brukerspørsmål har oppholdtilatelse false skal det ikke finnes")
-    }
-
-
-
 
     /*
     * Test av filtrerings logikk
@@ -454,7 +426,7 @@ class AlleredeStilteBrukerSpormaalTest {
             svar = true,
             vedtaksdato = LocalDate.now(),
             vedtaksTypePermanent = false,
-            perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.of(2023,12,31)))
+            perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.now().plusDays(1)))
         )
         val sp2 = Brukersporsmaal(
             soknadid = UUID.randomUUID().toString(),
@@ -466,7 +438,7 @@ class AlleredeStilteBrukerSpormaalTest {
             oppholdstilatelse = opphold2
 
         )
-        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), LocalDate.of(2024,4,30))
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), LocalDate.now())
         Assertions.assertNotNull(res, "Nye brukerspørsmål er sortert ut")
     }
 

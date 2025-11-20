@@ -217,6 +217,18 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return alleredespurteBrukersporsmaal
         }
 
+        fun hentAlleredeStilteBrukerSpørsmålForDato(lovmeRequest: MedlOppslagRequest, dato: LocalDate): List<Spørsmål> {
+            val førsteDagForYtelse = lovmeRequest.førsteDagForYtelse
+            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(lovmeRequest.fnr).filter {
+                it.eventDate.isAfter(
+                    dato.minusYears(1)
+                )
+            }
+            val alleredespurteBrukersporsmaal: List<Spørsmål> =
+                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker, LocalDate.parse(førsteDagForYtelse))
+            return alleredespurteBrukersporsmaal
+        }
+
 
         private fun arbeidUtenForNorgeGammelModell(
             brukersporsmaal: List<Brukersporsmaal>,
