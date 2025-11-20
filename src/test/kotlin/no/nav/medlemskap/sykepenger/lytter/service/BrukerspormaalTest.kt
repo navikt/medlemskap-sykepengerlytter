@@ -154,7 +154,7 @@ class BrukerspormaalTest {
                     sporsmalstekst = "",
                     svar = true,
                     vedtaksdato = LocalDate.now(),
-                    vedtaksTypePermanent = false,
+                    vedtaksTypePermanent = true,
                     perioder = listOf(Periode(LocalDate.MIN, LocalDate.of(2000,1,1)))
                 ),
                 utfort_arbeid_utenfor_norge = null,
@@ -164,15 +164,15 @@ class BrukerspormaalTest {
         val persistenceService = PersistenceService(repo,repo2)
 
         val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
-            SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT.name,
-            "01010112345",
-            null,
-            LocalDate.of(2022,3,23),
-            LocalDateTime.now(), LocalDate.of(2022,3,23),
-            LocalDate.of(2022,4,8),
-            null
+            type = SoknadstypeDTO.ARBEIDSTAKERE,
+            status = SoknadsstatusDTO.SENDT.name,
+            fnr = "01010112345",
+            startSyketilfelle = LocalDate.of(2022,3,23),
+            sendtNav = LocalDateTime.now(),
+            fom = LocalDate.now(),
+            tom = LocalDate.now().plusMonths(2)
         )
+
         val service= SoknadRecordHandler(Configuration(), persistenceService)
         val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)

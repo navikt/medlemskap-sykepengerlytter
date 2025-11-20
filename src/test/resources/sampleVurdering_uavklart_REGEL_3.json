@@ -6,10 +6,10 @@
   "datagrunnlag": {
     "fnr": "15076500565",
     "periode": {
-      "fom": "2019-01-01",
-      "tom": "2019-12-31"
+      "fom": "2020-01-01",
+      "tom": "2020-01-20"
     },
-    "førsteDagForYtelse": "2019-01-01",
+    "førsteDagForYtelse": "2020-01-01",
     "brukerinput": {
       "arbeidUtenforNorge": false
     },

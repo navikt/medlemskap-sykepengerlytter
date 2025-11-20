@@ -5,9 +5,11 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 
-fun finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal: List<Brukersporsmaal>) : Medlemskap_utfort_arbeid_utenfor_norge?{
-     val arbeidUtenForNorge = brukersporsmaal.associate { Pair(it.eventDate,it.utfort_arbeid_utenfor_norge) }.filter { it.value!=null }
+fun finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal: List<Brukersporsmaal>, førsteDagForYtelse: LocalDate) : Medlemskap_utfort_arbeid_utenfor_norge?{
+    val arbeidUtenForNorge = brukersporsmaal.associate { Pair(it.eventDate,it.utfort_arbeid_utenfor_norge) }.filter { it.value!=null }
     if (arbeidUtenForNorge.isEmpty()){
         return null
     }
@@ -15,14 +17,14 @@ fun finnAlleredeStilteBrukerSpørsmålArbeidUtland(brukersporsmaal: List<Brukers
     val sistOppgitteArbeidUtenforNorgeBrukersporsmaal = arbeidUtenForNorge[datoSisteBrukerspørsmålStilt]
 
     if (!sistOppgitteArbeidUtenforNorgeBrukersporsmaal!!.svar){
-        if (datoSisteBrukerspørsmålStilt.isAfter(LocalDate.now().minusDays(32))){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteArbeidUtenforNorgeBrukersporsmaal
         }
     }
     return null
 }
 
-fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal: List<Brukersporsmaal>) : Medlemskap_opphold_utenfor_norge?{
+fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal: List<Brukersporsmaal>, førsteDagForYtelse: LocalDate) : Medlemskap_opphold_utenfor_norge?{
     val opphold_utenfor_norge = brukersporsmaal.associate { Pair(it.eventDate,it.oppholdUtenforNorge) }.filter { it.value!=null }
     if (opphold_utenfor_norge.isEmpty()){
         return null
@@ -30,14 +32,14 @@ fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(brukersporsmaal: List<
     val datoSisteBrukerspørsmålStilt = opphold_utenfor_norge.toSortedMap().lastKey()
     val sistOppgitteOppholdUtenforNorgeBrukersporsmaal = opphold_utenfor_norge[datoSisteBrukerspørsmålStilt]
     if (!sistOppgitteOppholdUtenforNorgeBrukersporsmaal!!.svar){
-        if (datoSisteBrukerspørsmålStilt.isAfter(LocalDate.now().minusMonths(5).minusDays(15))){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteOppholdUtenforNorgeBrukersporsmaal
         }
     }
     return null
 
 }
-fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal: List<Brukersporsmaal>) : Medlemskap_opphold_utenfor_eos?{
+fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal: List<Brukersporsmaal>, førsteDagForYtelse: LocalDate) : Medlemskap_opphold_utenfor_eos?{
     val opphold_utenfor_eos = brukersporsmaal.associate { Pair(it.eventDate,it.oppholdUtenforEOS) }.filter { it.value!=null }
     if (opphold_utenfor_eos.isEmpty()){
         return null
@@ -45,13 +47,13 @@ fun finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(brukersporsmaal: List<Br
     val datoSisteBrukerspørsmålStilt = opphold_utenfor_eos.toSortedMap().lastKey()
     val sistOppgitteOppholdUtenforEOSBrukersporsmaal = opphold_utenfor_eos[datoSisteBrukerspørsmålStilt]
     if (!sistOppgitteOppholdUtenforEOSBrukersporsmaal!!.svar){
-        if (datoSisteBrukerspørsmålStilt.isAfter(LocalDate.now().minusMonths(5).minusDays(15))){
+        if (antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32){
             return sistOppgitteOppholdUtenforEOSBrukersporsmaal
         }
     }
     return null
 }
-fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Brukersporsmaal>) : Medlemskap_oppholdstilatelse_brukersporsmaal?{
+fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Brukersporsmaal>, førsteDagForYtelse: LocalDate) : Medlemskap_oppholdstilatelse_brukersporsmaal?{
     val datoForNyModell = LocalDate.of(2024,4,23)
     val oppholdstilatelse_brukersporsmaal = brukersporsmaal.associate { Pair(it.eventDate,it.oppholdstilatelse) }.filter { it.value!=null && it.key.isAfter(datoForNyModell) }
     if (oppholdstilatelse_brukersporsmaal.isEmpty()){
@@ -59,22 +61,31 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
     }
     val datoSisteBrukerspørsmålStilt = oppholdstilatelse_brukersporsmaal.toSortedMap().lastKey()
     val sistOppgitteOpphldstilatelseBrukersporsmaal = oppholdstilatelse_brukersporsmaal[datoSisteBrukerspørsmålStilt]
-    if (!sistOppgitteOpphldstilatelseBrukersporsmaal!!.svar){
-        return null //her skal vi tvinge frem nye bruker spørsmål. kommer dog trolig aldri til å skje
+    //Dersom oppholdstillatelse er permanent, skal levetiden på brukersvar være 32 dager,
+    // ellers skal levetiden være mellom perioden bruker har oppgitt
+    return when (sistOppgitteOpphldstilatelseBrukersporsmaal?.vedtaksTypePermanent) {
+        true ->
+            if(antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32) {
+                sistOppgitteOpphldstilatelseBrukersporsmaal
+        } else null
+        false ->
+            if (førsteDagForYtelse.isBefore(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().tom)
+            && førsteDagForYtelse.isAfter(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().fom)) {
+                sistOppgitteOpphldstilatelseBrukersporsmaal
+        } else null
+        else -> null
     }
-
-    return sistOppgitteOpphldstilatelseBrukersporsmaal
 }
 
 /*
 * SP1160
 * */
-fun finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker: List<Brukersporsmaal>): List<Spørsmål> {
+fun finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker: List<Brukersporsmaal>, førsteDagForYtelse: LocalDate): List<Spørsmål> {
     val alleredespurteBrukersporsmaal = mutableListOf<Spørsmål>()
-    val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(alleBrukerSpormaalForBruker)
-    val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(alleBrukerSpormaalForBruker)
-    val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(alleBrukerSpormaalForBruker)
-    val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(alleBrukerSpormaalForBruker)
+    val arbeidUtland = finnAlleredeStilteBrukerSpørsmålArbeidUtland(alleBrukerSpormaalForBruker, førsteDagForYtelse)
+    val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(alleBrukerSpormaalForBruker, førsteDagForYtelse)
+    val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(alleBrukerSpormaalForBruker, førsteDagForYtelse)
+    val oppholdstilatesle = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(alleBrukerSpormaalForBruker, førsteDagForYtelse)
     if (arbeidUtland!=null){
         alleredespurteBrukersporsmaal.add(Spørsmål.ARBEID_UTENFOR_NORGE)
     }
@@ -98,3 +109,6 @@ fun createFlexRespons(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: Li
     )
 
 }
+
+fun antallDagerMellomToDatoer(førsteDato: LocalDate, andreDato: LocalDate): Int =
+    ChronoUnit.DAYS.between(førsteDato,andreDato).toInt().absoluteValue

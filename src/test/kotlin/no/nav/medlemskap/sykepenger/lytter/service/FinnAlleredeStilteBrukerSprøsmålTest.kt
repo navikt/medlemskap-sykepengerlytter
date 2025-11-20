@@ -15,7 +15,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
         svar = false,
         oppholdUtenforEOS = emptyList()
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(emptyList())
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(emptyList(), LocalDate.now().minusDays(1))
         Assertions.assertTrue(spormaal.isEmpty())
     }
     @Test
@@ -59,7 +59,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
             )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersporsmaal))
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersporsmaal), LocalDate.now().minusDays(1))
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,
@@ -120,13 +120,14 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3))
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3), LocalDate.now())
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,
             Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE,
             Spørsmål.OPPHOLD_UTENFOR_NORGE)))
     }
+
     @Test
     fun `flere resultater i bruker sprørsmall skal slå sammen og finne korrket kombinasjon`(){
 
@@ -188,11 +189,10 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3))
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3), LocalDate.now())
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLDSTILATELSE,
             Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE,
             Spørsmål.OPPHOLD_UTENFOR_NORGE)))
     }

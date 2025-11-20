@@ -179,16 +179,19 @@ class SoknadRecordHandler(
         }
     }
 
+    //SP1230
     fun hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad:LovmeSoknadDTO): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr)
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = sykepengeSoknad.fnr, soknadid = sykepengeSoknad.id, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
 
-        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
-        val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
-        val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
+        val førsteDagForYtelse = sykepengeSoknad.fom!!
+
+        val utfortarbeidutenfornorge = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdstilatelse = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listofbrukersporsmaal, førsteDagForYtelse)
         val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
         return Brukersporsmaal(fnr = sykepengeSoknad.fnr,
             soknadid = sykepengeSoknad.id,
