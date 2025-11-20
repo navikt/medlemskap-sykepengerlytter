@@ -173,10 +173,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
         Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())
-
     }
-
-
 
 
 
@@ -252,9 +249,8 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
         val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
-        Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
-        Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())
-
+        Assertions.assertEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal være like")
+        Assertions.assertTrue(flexRespons2.sporsmal.isNotEmpty())
     }
 
 }
