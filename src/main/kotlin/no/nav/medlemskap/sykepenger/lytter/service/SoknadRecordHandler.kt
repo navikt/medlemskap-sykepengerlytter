@@ -108,7 +108,7 @@ class SoknadRecordHandler(
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
         val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
-        val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!)
         val brukerinput:Brukerinput= opprettBrukerInput(brukersporsmaal,arbeidUtland)
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
@@ -143,7 +143,7 @@ class SoknadRecordHandler(
 
     }
 
-    fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO): Boolean {
+    fun getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad:LovmeSoknadDTO, førsteDagForYtelse: LocalDate): Boolean {
         // KRAV 1 : er true oppgitt i søknad, bruk denne verdien
         if (sykepengeSoknad.arbeidUtenforNorge==true){
             return true
@@ -153,7 +153,7 @@ class SoknadRecordHandler(
             log.info("arbeid utland ikke oppgitt i søknad ${sykepengeSoknad.id}. Setter verdi fra historiske data",
                 kv("callId", sykepengeSoknad.id))
         }
-        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { it.eventDate.isAfter(LocalDate.now().minusMonths(2)) }
+        val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(sykepengeSoknad.fnr).filter { antallDagerMellomToDatoer(førsteDagForYtelse, it.eventDate) < 32 }
         val jasvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==true }
         val neisvar =  brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==false }
         val ikkeoppgittsvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland ==null }
@@ -192,7 +192,7 @@ class SoknadRecordHandler(
         val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listofbrukersporsmaal, førsteDagForYtelse)
         val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listofbrukersporsmaal, førsteDagForYtelse)
         val oppholdstilatelse = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listofbrukersporsmaal, førsteDagForYtelse)
-        val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        val arbeidUtlandGammelModell = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, førsteDagForYtelse)
         return Brukersporsmaal(fnr = sykepengeSoknad.fnr,
             soknadid = sykepengeSoknad.id,
             eventDate = LocalDate.now(),
