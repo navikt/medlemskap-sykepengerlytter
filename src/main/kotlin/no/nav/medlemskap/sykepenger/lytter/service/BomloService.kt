@@ -22,6 +22,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
     PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
@@ -68,15 +69,16 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             }
         }
     fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
+        val førsteDagForYtelse = bomloRequest.førsteDagForYtelse ?: bomloRequest.periode.fom
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
         if (listofbrukersporsmaal.isEmpty()){
             return Brukersporsmaal(fnr = bomloRequest.fnr, soknadid = callId, eventDate = LocalDate.now(), ytelse = "SYKEPENGER", status = "IKKE_SENDT",sporsmaal = FlexBrukerSporsmaal(true))
         }
 
-        val utfortarbeidutenfornorge = finnNyesteMedlemskap_utfort_arbeid_utenfor_norge(listofbrukersporsmaal)
-        val oppholdUtenforEOS = finnNyesteMedlemskap_oppholdutenfor_eos(listofbrukersporsmaal)
-        val oppholdUtenforNorge = finnNyesteMedlemskap_oppholdutenfor_norge(listofbrukersporsmaal)
-        val oppholdstilatelse = finnNyesteMedlemskap_oppholdstilatelse(listofbrukersporsmaal)
+        val utfortarbeidutenfornorge = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforEOS = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdUtenforNorge = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listofbrukersporsmaal, førsteDagForYtelse)
+        val oppholdstilatelse = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listofbrukersporsmaal, førsteDagForYtelse)
         val arbeidUtlandGammelModell = finnNyesteMedlemskap_utfort_arbeid_utenfor_norgeGammelModell(listofbrukersporsmaal)
 
         return Brukersporsmaal(fnr = bomloRequest.fnr,
@@ -204,18 +206,17 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return null
         }
 
-        fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
-
-            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter {
+        fun hentAlleredeStilteBrukerSpørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
+            val førsteDagForYtelse = lovmeRequest.førsteDagForYtelse
+            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(lovmeRequest.fnr).filter {
                 it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
+                    LocalDate.parse(førsteDagForYtelse).minusYears(1)
                 )
             }
             val alleredespurteBrukersporsmaal: List<Spørsmål> =
-                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker)
+                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker, LocalDate.parse(førsteDagForYtelse))
             return alleredespurteBrukersporsmaal
         }
-
 
         private fun arbeidUtenForNorgeGammelModell(
             brukersporsmaal: List<Brukersporsmaal>,
@@ -284,7 +285,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
             val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr).filter {
                 it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
+                    bomloRequest.førsteDagForYtelse?.minusYears(1)
                 )
             }
             val jasvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland == true }

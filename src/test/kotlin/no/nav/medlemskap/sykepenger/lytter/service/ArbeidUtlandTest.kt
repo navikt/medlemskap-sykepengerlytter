@@ -35,7 +35,7 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
     }
     @Test
     fun `data i databasen eldre en 1 Ar skal ignoreres`() = runBlocking {
@@ -62,10 +62,11 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
     }
+
     @Test
-    fun `data i databasen mindre en 2 mnd skal brukes - Nei oppgitt`() = runBlocking {
+    fun `data i databasen mindre en 32 dager gammelt skal brukes - Nei oppgitt`() = runBlocking {
         val fnrInUseCase = "01010112345"
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
@@ -78,19 +79,22 @@ class ArbeidUtlandTest {
             FlexBrukerSporsmaal(false)
         )
         )
-        val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
-            SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT.name,
-            fnrInUseCase,
-            null,
-            LocalDate.of(2022,3,23),
-            LocalDateTime.now(), LocalDate.of(2022,3,23),
-            LocalDate.of(2022,4,8),
-            null
+        val sykepengeSoknad = LovmeSoknadDTO(
+            id = UUID.randomUUID().toString(),
+            type = SoknadstypeDTO.ARBEIDSTAKERE,
+            status = SoknadsstatusDTO.SENDT.name,
+            fnr = fnrInUseCase,
+            korrigerer = null,
+            startSyketilfelle = LocalDate.of(2022,3,23),
+            sendtNav = LocalDateTime.now(),
+            fom = LocalDate.of(2025,10,30),
+            tom = LocalDate.of(2022,4,8),
+            ettersending = null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertFalse(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
+        Assertions.assertFalse(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
     }
+
     @Test
     fun `true i arbeid utland paa soknad skal alltid returnere true`() = runBlocking {
         val fnrInUseCase = "01010112345"
@@ -105,19 +109,21 @@ class ArbeidUtlandTest {
             FlexBrukerSporsmaal(false)
         )
         )
-        val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
-            SoknadstypeDTO.ARBEIDSTAKERE,
-            SoknadsstatusDTO.SENDT.name,
-            fnrInUseCase,
-            null,
-            LocalDate.of(2022,3,23),
-            LocalDateTime.now(), LocalDate.of(2022,3,23),
-            LocalDate.of(2022,4,8),
-            true,
+        val sykepengeSoknad = LovmeSoknadDTO(
+            id = UUID.randomUUID().toString(),
+            type = SoknadstypeDTO.ARBEIDSTAKERE,
+            status = SoknadsstatusDTO.SENDT.name,
+            fnr = fnrInUseCase,
+            korrigerer = null,
+            startSyketilfelle = LocalDate.of(2022,3,23),
+            sendtNav = LocalDateTime.now(),
+            fom = LocalDate.of(2022,3,23),
+            tom = LocalDate.of(2022,4,8),
+            ettersending = true,
             arbeidUtenforNorge = true
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
     }
     @Test
     fun `data i databasen mindre en 2 mnd skal brukes - Ja oppgitt`() = runBlocking {
@@ -160,6 +166,6 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
     }
 }
