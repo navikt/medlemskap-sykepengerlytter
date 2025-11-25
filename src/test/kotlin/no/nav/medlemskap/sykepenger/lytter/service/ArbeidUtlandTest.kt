@@ -66,7 +66,7 @@ class ArbeidUtlandTest {
     }
 
     @Test
-    fun `data i databasen mindre en 32 dager skal brukes - Nei oppgitt`() = runBlocking {
+    fun `data i databasen mindre en 32 dager gammelt skal brukes - Nei oppgitt`() = runBlocking {
         val fnrInUseCase = "01010112345"
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()

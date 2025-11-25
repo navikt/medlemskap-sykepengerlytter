@@ -285,7 +285,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
             val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr).filter {
                 it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
+                    bomloRequest.førsteDagForYtelse?.minusYears(1)
                 )
             }
             val jasvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland == true }
