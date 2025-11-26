@@ -246,6 +246,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
             }
             catch (t:Throwable){
+                logger.error("Feil oppstått for brukerspørsmål",
+                    kv("callId", callId),
+                    kv("Stacktrace", t.stackTrace),
+                    kv("Feilmelding", t.message))
                 call.respond(HttpStatusCode.InternalServerError,t.message!!)
             }
         }
