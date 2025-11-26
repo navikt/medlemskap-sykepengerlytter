@@ -185,6 +185,14 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                         tom = requiredVariables["tom"]!!),
                     brukerinput = Brukerinput(false))
                 val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
+                logger.info(
+                    teamLogs,
+                    "Mottatt respons fra lovme for brukerspørsmål",
+                    kv("callId", callId),
+                    kv("endpoint", "brukersporsmal"),
+                    kv("respons", lovmeresponse)
+                )
+
                 if (lovmeresponse=="GradertAdresse"){
                     logger.info(
                         teamLogs,
@@ -248,7 +256,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
             catch (t:Throwable){
                 logger.error("Feil oppstått for brukerspørsmål",
                     kv("callId", callId),
-                    kv("Stacktrace", t.stackTrace),
+                    kv("Stacktrace", t.stackTraceToString()),
                     kv("Feilmelding", t.message))
                 call.respond(HttpStatusCode.InternalServerError,t.message!!)
             }
