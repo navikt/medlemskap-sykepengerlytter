@@ -95,16 +95,20 @@ class BrukerspormaalTest {
 
     }
     @Test
-    fun `oppholdstilatelse innenfor med dato innenfor dagens dato skal returneres`() = runBlocking {
+    fun `brukersvar for oppholdstillatelse med svar Ja som er etter ny modell skal gjenbrukes`() = runBlocking {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val sykepengesoknadID = UUID.randomUUID().toString()
+
+        val startSyketilfelle = LocalDate.of(2025,3,23)
+        val datoSendtNav = LocalDateTime.of(2025,3,25,0,0)
+        val datoLagretBrukersvar = LocalDate.of(2025,3,25)
 
         repo2.storage = mutableListOf(
             Brukersporsmaal(
                 fnr = "01010112345",
                 soknadid = sykepengesoknadID,
-                eventDate = LocalDate.now(),
+                eventDate = datoLagretBrukersvar,
                 ytelse = "SYKEPENGER",
                 status = "SENDT",
                 sporsmaal = null,
@@ -112,7 +116,7 @@ class BrukerspormaalTest {
                     id="",
                     sporsmalstekst = "",
                     svar = true,
-                    vedtaksdato = LocalDate.now(),
+                    vedtaksdato = datoLagretBrukersvar,
                     vedtaksTypePermanent = false,
                     perioder = listOf(Periode(LocalDate.MIN, LocalDate.MAX))
                 ),
@@ -127,9 +131,10 @@ class BrukerspormaalTest {
             SoknadsstatusDTO.SENDT.name,
             "01010112345",
             null,
-            LocalDate.of(2022,3,23),
-            LocalDateTime.now(), LocalDate.of(2022,3,23),
-            LocalDate.of(2022,4,8),
+            startSyketilfelle,
+            datoSendtNav,
+            LocalDate.of(2025,3,23),
+            LocalDate.of(2025,4,8),
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
@@ -137,17 +142,22 @@ class BrukerspormaalTest {
         Assertions.assertNotNull(brukersporsmaal)
         Assertions.assertNotNull(brukersporsmaal.oppholdstilatelse)
     }
+
     @Test
-    fun `oppholdstilatelse utenfordagens dato skal returneres`() = runBlocking {
+    fun `brukersvar for oppholdstillatelse med svar Ja som er før ny modell skal ikke gjenbrukes`() = runBlocking {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val sykepengesoknadID = UUID.randomUUID().toString()
+
+        val startSyketilfelle = LocalDate.of(2022,3,23)
+        val datoSendtNav = LocalDateTime.of(2022,3,25, 0,0)
+        val datoLagretBrukersvar = LocalDate.of(2022,3,25)
 
         repo2.storage = mutableListOf(
             Brukersporsmaal(
                 fnr = "01010112345",
                 soknadid = sykepengesoknadID,
-                eventDate = LocalDate.now(),
+                eventDate = datoLagretBrukersvar,
                 ytelse = "SYKEPENGER",
                 status = "SENDT",
                 sporsmaal = null,
@@ -155,7 +165,7 @@ class BrukerspormaalTest {
                     id="",
                     sporsmalstekst = "",
                     svar = true,
-                    vedtaksdato = LocalDate.now(),
+                    vedtaksdato = datoLagretBrukersvar,
                     vedtaksTypePermanent = true,
                     perioder = listOf(Periode(LocalDate.MIN, LocalDate.of(2000,1,1)))
                 ),
@@ -169,16 +179,66 @@ class BrukerspormaalTest {
             type = SoknadstypeDTO.ARBEIDSTAKERE,
             status = SoknadsstatusDTO.SENDT.name,
             fnr = "01010112345",
-            startSyketilfelle = LocalDate.of(2022,3,23),
-            sendtNav = LocalDateTime.now(),
-            fom = LocalDate.now(),
-            tom = LocalDate.now().plusMonths(2)
+            startSyketilfelle = startSyketilfelle,
+            sendtNav = datoSendtNav,
+            fom = LocalDate.of(2022,3,23),
+            tom = LocalDate.of(2022,3,30)
         )
 
         val service= SoknadRecordHandler(Configuration(), persistenceService)
         val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         Assertions.assertNotNull(brukersporsmaal)
-        Assertions.assertNotNull(brukersporsmaal.oppholdstilatelse)
+        Assertions.assertNull(brukersporsmaal.oppholdstilatelse)
+    }
+
+    @Test
+    fun `brukersvar for oppholdstillatelse med svar Nei skal ikke gjenbrukes`() = runBlocking {
+        val repo = MedlemskapVurdertInMemmoryRepository()
+        val repo2 = BrukersporsmaalInMemmoryRepository()
+        val sykepengesoknadID = UUID.randomUUID().toString()
+
+        val startSyketilfelle = LocalDate.of(2025,3,23)
+        val datoSendtNav = LocalDateTime.of(2025,3,25,0,0)
+        val datoLagretBrukersvar = LocalDate.of(2025,3,25)
+
+        val oppgittNei = false
+
+        repo2.storage = mutableListOf(
+            Brukersporsmaal(
+                fnr = "01010112345",
+                soknadid = sykepengesoknadID,
+                eventDate = datoLagretBrukersvar,
+                ytelse = "SYKEPENGER",
+                status = "SENDT",
+                sporsmaal = null,
+                oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                    id="",
+                    sporsmalstekst = "",
+                    svar = oppgittNei,
+                    vedtaksdato = datoLagretBrukersvar,
+                    vedtaksTypePermanent = false,
+                    perioder = emptyList()
+                ),
+                utfort_arbeid_utenfor_norge = null,
+                oppholdUtenforNorge = null,
+                oppholdUtenforEOS = null)
+        )
+        val persistenceService = PersistenceService(repo,repo2)
+
+        val sykepengeSoknad = LovmeSoknadDTO(UUID.randomUUID().toString(),
+            SoknadstypeDTO.ARBEIDSTAKERE,
+            SoknadsstatusDTO.SENDT.name,
+            "01010112345",
+            null,
+            startSyketilfelle,
+            datoSendtNav,
+            LocalDate.of(2025,3,23),
+            LocalDate.of(2025,4,8),
+            null
+        )
+        val service= SoknadRecordHandler(Configuration(), persistenceService)
+        val brukersporsmaal = service.hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
+        Assertions.assertNull(brukersporsmaal.oppholdstilatelse)
     }
 
 }

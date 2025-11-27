@@ -1,12 +1,10 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 
-import com.natpryce.konfig.localDateType
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
-import org.apache.kafka.clients.admin.ListOffsetsOptions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -420,17 +418,21 @@ class AlleredeStilteBrukerSpormaalTest {
     @Test
 
     fun `Oppholdstilatelse brukerspørsmål på ny modell skal ikke sorteres ut`(){
+
+        val førsteDagForYtelse = LocalDate.of(2024,5,1)
+        val datoBrukersvarLagret = LocalDate.of(2024,4,24)
+
         val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
             id="1",
             sporsmalstekst = "Har Utlendingsdirektoratet gitt deg en oppholdstillatelse før 1. januar 2024?",
             svar = true,
-            vedtaksdato = LocalDate.now(),
+            vedtaksdato = datoBrukersvarLagret,
             vedtaksTypePermanent = false,
             perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.now().plusDays(1)))
         )
         val sp2 = Brukersporsmaal(
             soknadid = UUID.randomUUID().toString(),
-            eventDate = LocalDate.of(2024,4,24),
+            eventDate = datoBrukersvarLagret,
             fnr = "12345678910",
             sporsmaal = FlexBrukerSporsmaal(false),
             status = "",
@@ -438,9 +440,67 @@ class AlleredeStilteBrukerSpormaalTest {
             oppholdstilatelse = opphold2
 
         )
-        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), LocalDate.now())
-        Assertions.assertNotNull(res, "Nye brukerspørsmål er sortert ut")
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        Assertions.assertNotNull(res, "Skal gjenbruke brukerspørsmål")
     }
+
+    @Test
+    fun `oppholdstilatelse brukerspørsmål før ny modell skal ikke gjenbrukes`(){
+
+        val førsteDagForYtelse = LocalDate.of(2023,5,1)
+        val datoBrukersvarLagret = LocalDate.of(2023,4,24)
+
+        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id="1",
+            sporsmalstekst = "Har Utlendingsdirektoratet gitt deg en oppholdstillatelse før 1. januar 2024?",
+            svar = true,
+            vedtaksdato = datoBrukersvarLagret,
+            vedtaksTypePermanent = false,
+            perioder = listOf(Periode(LocalDate.of(2022,1,1), LocalDate.now().plusDays(1)))
+        )
+        val sp2 = Brukersporsmaal(
+            soknadid = UUID.randomUUID().toString(),
+            eventDate = datoBrukersvarLagret,
+            fnr = "12345678910",
+            sporsmaal = FlexBrukerSporsmaal(false),
+            status = "",
+            ytelse = "SYKEPENGER",
+            oppholdstilatelse = opphold2
+
+        )
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        Assertions.assertNull(res, "Skal ikke gjenbruke brukerspørsmål")
+    }
+
+    @Test
+    fun `oppholdstilatelse brukerspørsmål med svar Nei skal ikke gjenbrukes`(){
+        val førsteDagForYtelse = LocalDate.of(2025,5,1)
+        val datoBrukersvarLagret = LocalDate.of(2025,4,24)
+
+        val oppgittNei = false
+
+        val opphold2 = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id="1",
+            sporsmalstekst = "Har Utlendingsdirektoratet gitt deg en oppholdstillatelse før 1. januar 2024?",
+            svar = oppgittNei,
+            vedtaksdato = datoBrukersvarLagret,
+            vedtaksTypePermanent = false,
+            perioder = emptyList()
+        )
+        val sp2 = Brukersporsmaal(
+            soknadid = UUID.randomUUID().toString(),
+            eventDate = datoBrukersvarLagret,
+            fnr = "12345678910",
+            sporsmaal = FlexBrukerSporsmaal(false),
+            status = "",
+            ytelse = "SYKEPENGER",
+            oppholdstilatelse = opphold2
+
+        )
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        Assertions.assertNull(res, "Skal ikke gjenbruke brukerspørsmål")
+    }
+
 
     fun mockBrukerSpørsmål(fnr:String, eventDate:LocalDate, arbeidUtenforNorge:Medlemskap_utfort_arbeid_utenfor_norge):Brukersporsmaal{
         return Brukersporsmaal(
