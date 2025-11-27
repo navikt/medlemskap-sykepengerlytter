@@ -60,21 +60,14 @@ fun finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(brukersporsmaal: List<Br
         return null
     }
     val datoSisteBrukerspørsmålStilt = oppholdstilatelse_brukersporsmaal.toSortedMap().lastKey()
-    val sistOppgitteOpphldstilatelseBrukersporsmaal = oppholdstilatelse_brukersporsmaal[datoSisteBrukerspørsmålStilt]
-    //Dersom oppholdstillatelse er permanent, skal levetiden på brukersvar være 32 dager,
-    // ellers skal levetiden være mellom perioden bruker har oppgitt
-    return when (sistOppgitteOpphldstilatelseBrukersporsmaal?.vedtaksTypePermanent) {
-        true ->
-            if(antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32) {
-                sistOppgitteOpphldstilatelseBrukersporsmaal
-        } else null
-        false ->
-            if (førsteDagForYtelse.isBefore(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().tom)
-            && førsteDagForYtelse.isAfter(sistOppgitteOpphldstilatelseBrukersporsmaal.perioder.last().fom)) {
-                sistOppgitteOpphldstilatelseBrukersporsmaal
-        } else null
-        else -> null
+    val sisteOppgitteOppholdstillatelseBrukerspørsmål = oppholdstilatelse_brukersporsmaal[datoSisteBrukerspørsmålStilt]
+
+    if (sisteOppgitteOppholdstillatelseBrukerspørsmål!!.svar) {
+        if(antallDagerMellomToDatoer(førsteDagForYtelse, datoSisteBrukerspørsmålStilt) < 32) {
+           return  sisteOppgitteOppholdstillatelseBrukerspørsmål
+        }
     }
+    return null
 }
 
 /*
