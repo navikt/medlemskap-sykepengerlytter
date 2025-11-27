@@ -217,7 +217,7 @@ class BrukerspormaalTest {
                     svar = oppgittNei,
                     vedtaksdato = datoLagretBrukersvar,
                     vedtaksTypePermanent = false,
-                    perioder = listOf(Periode(LocalDate.MIN, LocalDate.MAX))
+                    perioder = emptyList()
                 ),
                 utfort_arbeid_utenfor_norge = null,
                 oppholdUtenforNorge = null,
