@@ -35,7 +35,7 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
     @Test
     fun `data i databasen eldre en 1 Ar skal ignoreres`() = runBlocking {
@@ -62,7 +62,7 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
 
     @Test
@@ -92,7 +92,7 @@ class ArbeidUtlandTest {
             ettersending = null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertFalse(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
+        Assertions.assertFalse(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
 
     @Test
@@ -123,7 +123,7 @@ class ArbeidUtlandTest {
             arbeidUtenforNorge = true
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
     @Test
     fun `data i databasen mindre en 2 mnd skal brukes - Ja oppgitt`() = runBlocking {
@@ -166,6 +166,6 @@ class ArbeidUtlandTest {
             null
         )
         val service= SoknadRecordHandler(Configuration(), persistenceService)
-        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad, sykepengeSoknad.fom!!))
+        Assertions.assertTrue(service.getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad))
     }
 }

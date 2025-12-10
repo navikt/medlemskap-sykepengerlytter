@@ -15,7 +15,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
         svar = false,
         oppholdUtenforEOS = emptyList()
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(emptyList(), LocalDate.now().minusDays(1))
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(emptyList())
         Assertions.assertTrue(spormaal.isEmpty())
     }
     @Test
@@ -59,7 +59,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
             )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersporsmaal), LocalDate.now().minusDays(1))
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersporsmaal))
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,
@@ -120,7 +120,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3), LocalDate.now())
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3))
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,
@@ -189,7 +189,7 @@ class FinnAlleredeStilteBrukerSprøsmålTest {
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEOS
         )
-        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3), LocalDate.now())
+        val spormaal = finnAlleredeStilteBrukerSprøsmål(listOf(brukersp1,brukersp2,brukersp3))
         Assertions.assertFalse(spormaal.isEmpty())
         Assertions.assertTrue(spormaal.containsAll(listOf(
             Spørsmål.ARBEID_UTENFOR_NORGE,

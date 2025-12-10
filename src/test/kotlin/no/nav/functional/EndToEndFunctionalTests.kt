@@ -63,7 +63,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
         val lovmeresponse = bomloService.kallLovme(medlemskapOppslagRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest.fnr)
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
         /*
@@ -87,7 +87,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest.fnr)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal være like da svar på begge brukerspørsmålene er JA")
 
@@ -129,7 +129,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest.fnr)
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
 
@@ -169,7 +169,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         ),"2345")
 
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2)
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2.fnr)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertNotEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal ikke være like da svar på begge brukerspørsmålene er NEI")
         Assertions.assertTrue(flexRespons2.sporsmal.isEmpty())
@@ -207,7 +207,8 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             Brukerinput(arbeidUtenforNorge = true)
         ),"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest)
+        val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest.fnr
+        )
         val flexRespons: FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
         println(flexRespons)
 
@@ -247,7 +248,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         ),"2345")
 
         val foreslaattRespons2 = RegelMotorResponsHandler().utledResultat(lovmeresponse2)
-        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2)
+        val alleredeStilteSporsmaal2 = bomloService.hentAlleredeStilteBrukerSpørsmål(medlemskapOppslagRequest2.fnr)
         val flexRespons2: FlexRespons =  createFlexRespons(foreslaattRespons2,alleredeStilteSporsmaal2)
         Assertions.assertEquals(flexRespons,flexRespons2,"respons i begge tilfellene skal være like")
         Assertions.assertTrue(flexRespons2.sporsmal.isNotEmpty())

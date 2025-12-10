@@ -44,7 +44,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(10),arbeid1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),arbeid2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
         Assertions.assertEquals("1",funnet!!.id,"Nyeste bruker spørsmål skal alltid vurderes")
         Assertions.assertTrue(funnet.arbeidUtenforNorge.isEmpty())
@@ -70,7 +70,7 @@ class AlleredeStilteBrukerSpormaalTest {
         )
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),arbeid2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2))
         Assertions.assertNull(funnet,"Arbeid utland sant skal ikke 'finnes'")
 
 
@@ -87,7 +87,7 @@ class AlleredeStilteBrukerSpormaalTest {
             )
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),arbeid2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2))
         Assertions.assertNotNull(funnet,"Arbeid utland sant skal ikke 'finnes'")
         Assertions.assertEquals("2",funnet!!.id,"ukorrekt bruker spørsmål funnet")
         Assertions.assertTrue(funnet.arbeidUtenforNorge.isEmpty())
@@ -106,7 +106,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),arbeid2)
         val b3 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(1))
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2,b3), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2,b3))
         Assertions.assertNotNull(funnet,"Arbeid utland sant skal ikke 'finnes'")
         Assertions.assertEquals("2",funnet!!.id,"ukorrekt bruker spørsmål funnet")
         Assertions.assertTrue(funnet.arbeidUtenforNorge.isEmpty())
@@ -124,7 +124,7 @@ class AlleredeStilteBrukerSpormaalTest {
         )
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(32),arbeid2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2), LocalDate.now().plusDays(1))
+        val funnet = finnAlleredeStilteBrukerSpørsmålArbeidUtland(listOf(b2))
         Assertions.assertNull(funnet,"Arbeid utland sant skal ikke 'finnes'")
     }
 
@@ -161,7 +161,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(10),opphold1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),opphold2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
         Assertions.assertEquals("1",funnet!!.id,"Nyeste bruker spørsmål skal alltid vurderes")
         Assertions.assertTrue(funnet.oppholdUtenforNorge.isEmpty())
@@ -187,7 +187,7 @@ class AlleredeStilteBrukerSpormaalTest {
 
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(6),opphold1)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1))
         Assertions.assertNull(funnet,"gamle spørsmål skal filtreres ut")
     }
     @Test
@@ -203,7 +203,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().plusDays(10),opphold1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().plusDays(32))
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"gamle spørsmål skal filtreres ut")
         Assertions.assertFalse(funnet!!.svar,"svar skal være false")
         Assertions.assertEquals("1",funnet!!.id,"Feil brukerspørmål funnet")
@@ -221,7 +221,7 @@ class AlleredeStilteBrukerSpormaalTest {
 
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(6),opphold1)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforNorge(listOf(b1))
         Assertions.assertNull(funnet,"gamle spørsmål skal filtreres ut")
     }
 
@@ -259,7 +259,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(10),opphold1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),opphold2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
         Assertions.assertEquals("1",funnet!!.id,"Nyeste bruker spørsmål skal alltid vurderes")
         Assertions.assertTrue(funnet.oppholdUtenforEOS.isEmpty())
@@ -285,7 +285,7 @@ class AlleredeStilteBrukerSpormaalTest {
 
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(6),opphold1)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1))
         Assertions.assertNull(funnet,"gamle spørsmål skal filtreres ut")
     }
     @Test
@@ -301,7 +301,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().plusDays(10),opphold1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().plusDays(32))
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"gamle spørsmål skal filtreres ut")
         Assertions.assertFalse(funnet!!.svar,"svar skal være false")
         Assertions.assertEquals("1",funnet!!.id,"Feil brukerspørmål funnet")
@@ -319,7 +319,7 @@ class AlleredeStilteBrukerSpormaalTest {
 
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusMonths(6),opphold1)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmålOppholdUtenforEOS(listOf(b1))
         Assertions.assertNull(funnet,"gamle spørsmål skal filtreres ut")
     }
 
@@ -353,7 +353,7 @@ class AlleredeStilteBrukerSpormaalTest {
         val b1 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(10),opphold1)
         val b2 = mockBrukerSpørsmål(fnr,LocalDate.now().minusDays(15),opphold2)
 
-        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2), LocalDate.now())
+        val funnet = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(b1,b2))
         Assertions.assertNotNull(funnet,"Det skal finnes et releavant bruker spørsmål")
         Assertions.assertEquals("1",funnet!!.id,"Nyeste bruker spørsmål skal alltid vurderes")
         Assertions.assertTrue(funnet.svar)
@@ -411,7 +411,7 @@ class AlleredeStilteBrukerSpormaalTest {
             ytelse = "SYKEPENGER",
             oppholdstilatelse = opphold2
         )
-        val response = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp1), LocalDate.now())
+        val response = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp1))
         Assertions.assertNull(response,"Skal ikke funne spørsmål på gammel modell")
     }
 
@@ -440,7 +440,7 @@ class AlleredeStilteBrukerSpormaalTest {
             oppholdstilatelse = opphold2
 
         )
-        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2))
         Assertions.assertNotNull(res, "Skal gjenbruke brukerspørsmål")
     }
 
@@ -468,7 +468,7 @@ class AlleredeStilteBrukerSpormaalTest {
             oppholdstilatelse = opphold2
 
         )
-        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2))
         Assertions.assertNull(res, "Skal ikke gjenbruke brukerspørsmål")
     }
 
@@ -497,7 +497,7 @@ class AlleredeStilteBrukerSpormaalTest {
             oppholdstilatelse = opphold2
 
         )
-        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2), førsteDagForYtelse)
+        val res = finnAlleredeStilteBrukerSpørsmåloppholdstilatelse(listOf(sp2))
         Assertions.assertNull(res, "Skal ikke gjenbruke brukerspørsmål")
     }
 
