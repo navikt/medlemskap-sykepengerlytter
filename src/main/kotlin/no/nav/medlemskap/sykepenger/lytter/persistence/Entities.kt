@@ -45,6 +45,16 @@ data class Brukersporsmaal(
 
 )
 
+
+fun List<Brukersporsmaal>.nyesteMedSvar(): Brukersporsmaal? =
+    this.filter {
+        it.oppholdstilatelse != null ||
+                it.utfort_arbeid_utenfor_norge != null ||
+                it.oppholdUtenforNorge != null ||
+                it.oppholdUtenforEOS != null
+    }.maxByOrNull { it.eventDate }
+
+
 data class FlexBrukerSporsmaal(
     val arbeidUtland: Boolean?
 )
