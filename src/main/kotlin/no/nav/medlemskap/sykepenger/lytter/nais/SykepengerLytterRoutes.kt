@@ -19,6 +19,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
+import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
@@ -225,7 +226,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
 
                     val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
                     val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest)
-                    val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    //val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    val flexRespons:FlexRespons = opprettResponsTilFlex(foreslaattRespons,alleredeStilteSporsmaal)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
 

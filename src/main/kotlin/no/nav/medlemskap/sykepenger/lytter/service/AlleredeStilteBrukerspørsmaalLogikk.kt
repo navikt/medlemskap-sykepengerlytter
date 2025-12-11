@@ -103,5 +103,17 @@ fun createFlexRespons(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: Li
 
 }
 
+fun opprettResponsTilFlex(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: List<Spørsmål>): FlexRespons {
+    val anbefalteSpørsmål = filtrerSpørsmålSomSkalStilles(
+        suggestedRespons.sporsmal,
+        alleredeStilteSporsmaal.toSet()
+    )
+
+    return FlexRespons(
+        svar = suggestedRespons.svar,
+        sporsmal = anbefalteSpørsmål
+    )
+}
+
 fun antallDagerMellomToDatoer(førsteDato: LocalDate, andreDato: LocalDate): Int =
     ChronoUnit.DAYS.between(førsteDato,andreDato).toInt().absoluteValue

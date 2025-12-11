@@ -47,16 +47,18 @@ class BrukerspormaalTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo,repo2)
 
+        val dato = LocalDate.of(2025,10,30)
+
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type = SoknadstypeDTO.ARBEIDSTAKERE,
             status = SoknadsstatusDTO.SENDT.name,
             fnr = "01010112345",
             korrigerer = null,
-            startSyketilfelle = LocalDate.of(2025,10,30),
-            sendtNav = LocalDateTime.now(),
-            fom = LocalDate.of(2025,10,30),
-            tom = LocalDate.of(2022,4,8),
+            startSyketilfelle = dato,
+            sendtNav = dato.atStartOfDay(),
+            fom = dato,
+            tom = dato.plusDays(20),
             ettersending = null
         )
 
@@ -64,11 +66,12 @@ class BrukerspormaalTest {
         /*
         * legg til to brukerssvar for opphold utenfor EØS der den siste! er null (ikke oppgitt)
         * */
+        val eventDate =
         repo2.storage.add(
             Brukersporsmaal(
                 fnr = "01010112345",
                 soknadid = UUID.randomUUID().toString(),
-                eventDate = LocalDate.now().minusDays(10),
+                eventDate = dato.minusDays(10),
                 sporsmaal = FlexBrukerSporsmaal(false),
                 oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
                     id = UUID.randomUUID().toString(),
@@ -83,7 +86,7 @@ class BrukerspormaalTest {
             Brukersporsmaal(
                 fnr = "01010112345",
                 soknadid = UUID.randomUUID().toString(),
-                eventDate = LocalDate.now().minusDays(5),
+                eventDate = dato.minusDays(5),
                 sporsmaal = FlexBrukerSporsmaal(false),
                 oppholdUtenforEOS = null,
                 status = "SENDT",

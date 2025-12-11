@@ -22,7 +22,6 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
     PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
@@ -206,17 +205,22 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             return null
         }
 
-        fun hentAlleredeStilteBrukerSpørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
-            val førsteDagForYtelse = lovmeRequest.førsteDagForYtelse
-            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(lovmeRequest.fnr).filter {
-                it.eventDate.isAfter(
-                    LocalDate.parse(førsteDagForYtelse).minusYears(1)
-                )
-            }
-            val alleredespurteBrukersporsmaal: List<Spørsmål> =
-                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker, LocalDate.parse(førsteDagForYtelse))
-            return alleredespurteBrukersporsmaal
+    fun hentAlleredeStilteBrukerSpørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
+        val førsteDagForYtelse = LocalDate.parse(lovmeRequest.førsteDagForYtelse)
+
+        val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(lovmeRequest.fnr).filter {
+            it.eventDate.isAfter(
+                førsteDagForYtelse.minusYears(1)
+            )
         }
+
+        val alleredespurteBrukersporsmål = finnForrigeBrukersporsmaal(
+            alleBrukerSpormaalForBruker.nyesteMedSvar(),
+            førsteDagForYtelse
+        )
+
+        return alleredespurteBrukersporsmål
+    }
 
         private fun arbeidUtenForNorgeGammelModell(
             brukersporsmaal: List<Brukersporsmaal>,
