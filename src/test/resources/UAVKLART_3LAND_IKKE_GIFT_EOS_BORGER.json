@@ -4,7 +4,7 @@
   "versjonRegler" : "v1",
   "kanal" : "kafka",
   "datagrunnlag" : {
-    "fnr" : "20069023380",
+    "fnr" : "123",
     "periode" : {
       "fom" : "2023-04-24",
       "tom" : "2023-04-28"
@@ -80,9 +80,9 @@
       } ],
       "utflyttingFraNorge" : [ ],
       "navn" : [ {
-        "fornavn" : "SAMUEL TSEHAYE",
+        "fornavn" : "Navn",
         "mellomnavn" : null,
-        "etternavn" : "BRUK"
+        "etternavn" : "Etternavn"
       } ]
     },
     "medlemskap" : [ ],
@@ -312,7 +312,7 @@
     "overstyrteRegler" : { },
     "oppholdstillatelse" : {
       "uttrekkstidspunkt" : "2023-06-01T13:55:59.373",
-      "foresporselsfodselsnummer" : "20069023380",
+      "foresporselsfodselsnummer" : "123",
       "avgjoerelse" : null,
       "gjeldendeOppholdsstatus" : null,
       "arbeidsadgang" : null,

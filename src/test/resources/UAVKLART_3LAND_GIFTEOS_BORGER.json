@@ -4,7 +4,7 @@
   "versjonRegler" : "v1",
   "kanal" : "kafka",
   "datagrunnlag" : {
-    "fnr" : "28118823704",
+    "fnr" : "123",
     "periode" : {
       "fom" : "2023-05-05",
       "tom" : "2023-05-18"
@@ -72,17 +72,17 @@
         "type" : "GIFT",
         "gyldigFraOgMed" : "2008-07-04",
         "gyldigTilOgMed" : "2012-10-29",
-        "relatertVedSivilstand" : "01098847061"
+        "relatertVedSivilstand" : "123"
       }, {
         "type" : "SEPARERT",
         "gyldigFraOgMed" : "2012-10-30",
         "gyldigTilOgMed" : "2015-02-17",
-        "relatertVedSivilstand" : "01098847061"
+        "relatertVedSivilstand" : "123"
       }, {
         "type" : "SKILT",
         "gyldigFraOgMed" : "2015-02-18",
         "gyldigTilOgMed" : null,
-        "relatertVedSivilstand" : "01098847061"
+        "relatertVedSivilstand" : "123"
       } ],
       "forelderBarnRelasjon" : [ ],
       "doedsfall" : [ ],
@@ -100,9 +100,9 @@
       } ],
       "utflyttingFraNorge" : [ ],
       "navn" : [ {
-        "fornavn" : "NICOLAS IGNACIO",
+        "fornavn" : "Navn",
         "mellomnavn" : null,
-        "etternavn" : "SEREY MALIG"
+        "etternavn" : "Etternavn"
       } ]
     },
     "medlemskap" : [ ],
@@ -310,7 +310,7 @@
     "dataOmBarn" : [ ],
     "dataOmEktefelle" : {
       "personhistorikkEktefelle" : {
-        "ident" : "01098847061",
+        "ident" : "123",
         "statsborgerskap" : [ {
           "landkode" : "NOR",
           "fom" : null,
@@ -403,7 +403,7 @@
     "overstyrteRegler" : { },
     "oppholdstillatelse" : {
       "uttrekkstidspunkt" : "2023-06-01T12:35:03.66",
-      "foresporselsfodselsnummer" : "28118823704",
+      "foresporselsfodselsnummer" : "123",
       "avgjoerelse" : null,
       "gjeldendeOppholdsstatus" : null,
       "arbeidsadgang" : null,

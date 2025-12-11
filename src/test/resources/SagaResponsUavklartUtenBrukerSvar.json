@@ -4,7 +4,7 @@
   "versjonRegler" : "v1",
   "kanal" : "kafka",
   "datagrunnlag" : {
-    "fnr" : "02038917407",
+    "fnr" : "123",
     "periode" : {
       "fom" : "2023-10-31",
       "tom" : "2023-11-10"
@@ -41,7 +41,7 @@
         "type" : "GIFT",
         "gyldigFraOgMed" : "2021-07-14",
         "gyldigTilOgMed" : null,
-        "relatertVedSivilstand" : "01058615303"
+        "relatertVedSivilstand" : "123"
       } ],
       "forelderBarnRelasjon" : [ ],
       "doedsfall" : [ ],
@@ -59,9 +59,9 @@
       } ],
       "utflyttingFraNorge" : [ ],
       "navn" : [ {
-        "fornavn" : "SILVIA-MIHAELA",
+        "fornavn" : "Navn",
         "mellomnavn" : null,
-        "etternavn" : "DIACONU"
+        "etternavn" : "Etternavn"
       } ]
     },
     "medlemskap" : [ ],
@@ -180,7 +180,7 @@
     "dataOmBarn" : [ ],
     "dataOmEktefelle" : {
       "personhistorikkEktefelle" : {
-        "ident" : "01058615303",
+        "ident" : "123",
         "statsborgerskap" : [ {
           "landkode" : "ROU",
           "fom" : null,
