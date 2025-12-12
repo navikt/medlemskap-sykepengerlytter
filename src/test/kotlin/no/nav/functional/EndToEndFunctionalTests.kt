@@ -38,6 +38,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     }
 
 
+    //Testcaser som fører til nye spørsmål
     @Test
     fun `skal anbefale nytt spørsmålssett - har ingen brukerspørsmål fra før`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
@@ -51,29 +52,25 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
-
         //Steg 1: Bruker blir syk for første gang
         val førsteDagForYtelse_mockData = "2023-08-16"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val testperson = "15076500565"
+        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
-        )
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
+        val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
     @Test
@@ -89,10 +86,13 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
+        val testperson = "15076500565"
+
         val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
 
-        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i EndeTilEndeTestEOSBrukerSoknadFraFlex.json
-        //førsteDagForYtelse "fom": "2023-08-16"
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
+        //førsteDagForYtelse: "2023-08-16"
+        //sendtArbeidsgiver/eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
@@ -106,32 +106,29 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestampType = ""
         )
         fmh.handle(message)
-        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
 
         //Steg 2: Bruker blir syk igjen og det skal sjekkes om forrige brukerspørsmål skal gjenbrukes
-        val førsteDagForYtelse_mockData = "2023-08-16"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
-            Brukerinput(arbeidUtenforNorge = true)
+        val førsteDagForYtelse_mockData = "2024-08-16"
+        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = false)
         )
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
-        )
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeforrigeBrukerspørsmål = emptyList<Spørsmål>()
+        val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeforrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
     @Test
@@ -147,9 +144,10 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
+        val testperson = "15076500565"
         val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
 
-        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i EndeTilEndeTestEOSBrukerSoknadFraFlex.json
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
@@ -164,33 +162,29 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestampType = ""
         )
         fmh.handle(message)
-        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
-            Brukerinput(arbeidUtenforNorge = true)
+        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = false)
         )
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.OPPHOLDSTILATELSE,
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_NORGE
-        )
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.OPPHOLDSTILATELSE, Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeSpørsmål = setOf(Spørsmål.OPPHOLDSTILATELSE, Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
     @Test
@@ -206,9 +200,10 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
+        val testperson = "15076500565"
         val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
 
-        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i EndeTilEndeTestEOSBrukerSoknadFraFlex.json
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
@@ -223,32 +218,29 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestampType = ""
         )
         fmh.handle(message)
-        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_NORGE
-        )
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
     @Test
@@ -264,9 +256,10 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
+        val testperson = "15076500565"
         val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
 
-        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i EndeTilEndeTestEOSBrukerSoknadFraFlex.json
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         //Bruker har svart JA på arbeid utenfor norge
         /*
@@ -282,32 +275,29 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestampType = ""
         )
         fmh.handle(message)
-        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
        * */
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
-            Brukerinput(arbeidUtenforNorge = true)
+        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = false)
         )
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
-        )
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
     @Test
@@ -325,9 +315,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
 
-        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i EndeTilEndeTestEOSBrukerSoknadFraFlex.json
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
-        //Bruker har svart JA på arbeid utenfor norge
+        //Bruker har svart JA på arbeid utenfor norge og Ja på opphold utenfor EØS
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
@@ -354,29 +344,188 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val alleredeStilteSporsmaal = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, alleredeStilteSporsmaal)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
-        val forventedeSpørsmål = setOf(
-            Spørsmål.ARBEID_UTENFOR_NORGE,
-            Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE
-        )
 
-        Assertions.assertEquals(
-            forventedeSpørsmål,
-            flexRespons.sporsmal,
-            "Listen mangler noen av de forventede spørsmålene"
-        )
+        val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
+        val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
     }
 
 
+    //Testcaser som fører til ingen nye spørsmål
+    @Test
+    fun `skal ikke bruke nytt spørsmålssett - kort mellom hvor nytt spørsmålssett er et subset av forrige brukersvar`() = runBlocking {
+        val containerPersistenceService = settOppKonfig()
+        val bomloService = BomloService(Configuration(), containerPersistenceService)
+
+        bomloService.lovmeClient = LovMeApiMock(
+            mapOf(
+                "vurderMedlemskap" to "sampleVurdering.json",
+                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart_brudd_23.json"
+            )
+        )
+
+        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
+        //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
+        /*
+        * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
+        * */
+        val message = FlexMessageRecord(
+            partition = 0,
+            offset = 1,
+            value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
+            key="",
+            topic="",
+            timestamp = LocalDateTime.now(),
+            timestampType = ""
+        )
+        fmh.handle(message)
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        /*
+       * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
+       * */
+
+        //Steg 2: Bruker blir syk igjen
+        val førsteDagForYtelse_mockData = "2023-08-30"
+        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
+
+        val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+
+        val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
+        val forventedeSpørsmål = emptySet<Spørsmål>()
+
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
+    }
 
 
+    @Test
+    fun `skal ikke bruke nytt spørsmålssett - kort mellom hvor nytt spørsmålssett identisk med forrige brukersvar`() = runBlocking {
+        val containerPersistenceService = settOppKonfig()
+        val bomloService = BomloService(Configuration(), containerPersistenceService)
+
+        bomloService.lovmeClient = LovMeApiMock(
+            mapOf(
+                "vurderMedlemskap" to "sampleVurdering.json",
+                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart.json"
+            )
+        )
+
+        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
+        //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
+        /*
+        * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
+        * */
+        val message = FlexMessageRecord(
+            partition = 0,
+            offset = 1,
+            value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
+            key="",
+            topic="",
+            timestamp = LocalDateTime.now(),
+            timestampType = ""
+        )
+        fmh.handle(message)
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        /*
+       * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
+       * */
+
+        //Steg 2: Bruker blir syk igjen
+        val førsteDagForYtelse_mockData = "2023-08-30"
+        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
+
+        val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
 
 
+        val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
+        val forventedeSpørsmål = emptySet<Spørsmål>()
+
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
+    }
 
 
+    @Test
+    fun `skal ikke bruke nytt spørsmålssett - kort mellom med ingen nye spørsmålsett fordi bruker har gått til JA`() = runBlocking {
+        val containerPersistenceService = settOppKonfig()
+        val bomloService = BomloService(Configuration(), containerPersistenceService)
 
+        bomloService.lovmeClient = LovMeApiMock(
+            mapOf(
+                "vurderMedlemskap" to "sampleVurdering.json",
+                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_ja.json"
+            )
+        )
+
+        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+
+        //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
+        //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
+        /*
+        * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
+        * */
+        val message = FlexMessageRecord(
+            partition = 0,
+            offset = 1,
+            value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
+            key="",
+            topic="",
+            timestamp = LocalDateTime.now(),
+            timestampType = ""
+        )
+        fmh.handle(message)
+        Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
+        /*
+       * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
+       * */
+
+        //Steg 2: Bruker blir syk igjen
+        val førsteDagForYtelse_mockData = "2023-08-30"
+        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+            Brukerinput(arbeidUtenforNorge = true)
+        )
+
+        val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
+        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+
+        val forventedeForeslåtteSpørsmål = emptySet<Spørsmål>()
+        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
+        val forventedeSpørsmål = emptySet<Spørsmål>()
+
+        Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
+        Assertions.assertEquals(forventedeForrigeBrukerspørsmål, forrigeBrukerspørsmål, "Forrige brukerspørsmål")
+        Assertions.assertEquals(forventedeSpørsmål, flexRespons.sporsmal, "Anbefalte")
+    }
 
 
     @Test
