@@ -5,7 +5,7 @@
   "versjonRegler" : "v1",
   "kanal" : "brukerspørsmål",
   "datagrunnlag" : {
-    "fnr" : "12345678987",
+    "fnr" : "123",
     "periode" : {
       "fom" : "2024-02-07",
       "tom" : "2024-02-09"
@@ -37,7 +37,7 @@
         "type" : "GIFT",
         "gyldigFraOgMed" : "2023-04-06",
         "gyldigTilOgMed" : null,
-        "relatertVedSivilstand" : "25089430820"
+        "relatertVedSivilstand" : "123"
       } ],
       "forelderBarnRelasjon" : [ {
         "relatertPersonsIdent" : null,
@@ -474,7 +474,7 @@
     "overstyrteRegler" : { },
     "oppholdstillatelse" : {
       "uttrekkstidspunkt" : "2024-02-12T16:10:12.029",
-      "foresporselsfodselsnummer" : "30118922324",
+      "foresporselsfodselsnummer" : "123",
       "avgjoerelse" : null,
       "gjeldendeOppholdsstatus" : {
         "oppholdstillatelsePaSammeVilkar" : {
