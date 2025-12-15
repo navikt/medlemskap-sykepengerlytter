@@ -189,37 +189,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
         }
 
-        fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
-
-            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter {
-                it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
-                )
-            }
-            val alleredespurteBrukersporsmaal: List<Spørsmål> =
-                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker)
-            return alleredespurteBrukersporsmaal
-        }
-
-
 
     fun finnForrigeBrukerspørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
-
-        val førsteDagForYtelse = LocalDate.parse(lovmeRequest.førsteDagForYtelse)
-        val fnr = lovmeRequest.fnr
-
-        val aktuelleBrukersvar = persistenceService
-            .hentbrukersporsmaalForFnr(fnr)
-            .filter { spm ->
-                val dagerMellom = antallDagerMellomToDatoer(spm.eventDate, førsteDagForYtelse)
-                dagerMellom < Levetid.STANDARD_LEVETID_32.dager
-            }
-
-        val forrigeBrukersvar = aktuelleBrukersvar.nyesteMedSvar()
-
-        val forrigeBrukerspørsmål = finnForrigeBrukerspørsmålFra(forrigeBrukersvar)
-
-        return forrigeBrukerspørsmål
+        return finnForrigeBrukerspørsmål(lovmeRequest, persistenceService)
     }
 
         fun getArbeidUtlandFromBrukerSporsmaal(bomloRequest: BomloRequest, callId: String): Boolean {

@@ -214,10 +214,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
-                    val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-                    //val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest)
+                    val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
                     val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-                    val flexRespons:FlexRespons = opprettResponsTilFlex(foreslaattRespons,forrigeBrukerspørsmål)
+                    val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
 

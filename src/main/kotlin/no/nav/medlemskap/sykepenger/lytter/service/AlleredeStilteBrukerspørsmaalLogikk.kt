@@ -89,26 +89,3 @@ fun finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker: List<Brukers
     }
     return alleredespurteBrukersporsmaal
 }
-fun createFlexRespons(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: List<Spørsmål>): FlexRespons {
-
-    val questions = suggestedRespons.sporsmal.filter { !alleredeStilteSporsmaal.contains(it) }
-    return FlexRespons(
-        svar = suggestedRespons.svar,
-        sporsmal = questions.toSet()
-    )
-
-}
-
-
-fun opprettResponsTilFlex(suggestedRespons: FlexRespons, alleredeStilteSporsmaal: List<Spørsmål>): FlexRespons {
-
-    val spørsmålSomSkalStilles = finnSpørsmålSomSkalStilles(
-        suggestedRespons.sporsmal,
-        alleredeStilteSporsmaal.toSet()
-    )
-    return FlexRespons(
-        svar = suggestedRespons.svar,
-        sporsmal = spørsmålSomSkalStilles
-    )
-
-}

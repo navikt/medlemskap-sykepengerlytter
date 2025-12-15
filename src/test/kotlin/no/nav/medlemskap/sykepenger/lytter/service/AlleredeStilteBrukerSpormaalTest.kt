@@ -391,19 +391,6 @@ class AlleredeStilteBrukerSpormaalTest {
 
 
 
-    /*
-    * Test av filtrerings logikk
-    *   - Brukerspørsmål som er stilt tidligere (ref tester over) skal filtreres vekk fra foreslåtte bruker spørsmål
-    * */
-    @Test
-    fun `allerede stile brukerspormaal skal filtreres ut fra foreslaat respons`(){
-        val foreslaateSpørsmål = FlexRespons(Svar.UAVKLART, setOf(Spørsmål.OPPHOLDSTILATELSE,Spørsmål.ARBEID_UTENFOR_NORGE))
-        val allereredeStilteBrukerSpørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE)
-        val actual_response = createFlexRespons(foreslaateSpørsmål,allereredeStilteBrukerSpørsmål)
-        Assertions.assertEquals(Svar.UAVKLART,actual_response.svar)
-        Assertions.assertTrue(actual_response.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE))
-        Assertions.assertFalse(actual_response.sporsmal.contains(Spørsmål.ARBEID_UTENFOR_NORGE))
-    }
     @Test
     fun `Oppholdstilatelse brukerspørsmål på gammel modell skal sorteres ut`(){
         val fnr = "12345678901"
