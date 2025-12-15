@@ -62,7 +62,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
@@ -120,7 +120,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeforrigeBrukerspørsmål = emptyList<Spørsmål>()
@@ -176,7 +176,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.OPPHOLDSTILATELSE, Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -232,7 +232,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -289,7 +289,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -345,7 +345,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
 
         val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -403,7 +403,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
@@ -459,7 +459,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
@@ -516,7 +516,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val lovmeresponse = bomloService.kallLovme(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons =  opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = emptySet<Spørsmål>()
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)

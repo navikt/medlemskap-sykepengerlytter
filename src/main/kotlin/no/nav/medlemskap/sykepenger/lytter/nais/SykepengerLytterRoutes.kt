@@ -216,7 +216,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 else{
                     val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
                     val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-                    val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål)
+                    val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
 
