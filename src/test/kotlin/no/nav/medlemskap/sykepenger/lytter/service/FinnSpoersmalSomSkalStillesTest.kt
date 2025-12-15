@@ -16,7 +16,7 @@ class FinnSpoersmalSomSkalStillesTest {
     }
 
     @Test
-    fun `når foreslått spørsmål er ett nytt spørsmålsett så skal disse brukes`() {
+    fun `når foreslått spørsmål er ett nytt spørsmålsett så skal foreslåtte spørsmål brukes`() {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
 
@@ -25,7 +25,7 @@ class FinnSpoersmalSomSkalStillesTest {
     }
 
     @Test
-    fun `når foreslått brukerspørsmål overlapper delvis så skal alltid foreslått spørsmål brukes`() {
+    fun `når foreslått brukerspørsmål overlapper delvis med forrige spørsmål så skal alltid foreslått spørsmål brukes`() {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
 
