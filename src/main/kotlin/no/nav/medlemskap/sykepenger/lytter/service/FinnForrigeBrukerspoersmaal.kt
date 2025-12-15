@@ -1,14 +1,18 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 
+import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.nyesteMedSvar
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
+private val log = KotlinLogging.logger { }
+private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun finnForrigeBrukerspørsmål(
     lovmeRequest: MedlOppslagRequest,
@@ -23,6 +27,13 @@ fun finnForrigeBrukerspørsmål(
             antallDagerMellomToDatoer(spm.eventDate, førsteDagForYtelse) < Levetid.STANDARD_LEVETID_32.dager
         }
         .nyesteMedSvar()
+        .also { kanskjeNyeste ->
+            if (kanskjeNyeste == null) {
+                log.info(teamLogs, "Fant ingen tidligere brukersvar innenfor levetid på ${Levetid.STANDARD_LEVETID_32.dager} dager")
+            } else {
+                log.info(teamLogs, "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}")
+            }
+        }
         ?.let(::finnForrigeBrukerspørsmålFra)
         ?: emptyList()
 }
