@@ -20,21 +20,38 @@ fun finnForrigeBrukerspørsmål(
 ): List<Spørsmål> {
 
     val førsteDagForYtelse = LocalDate.parse(lovmeRequest.førsteDagForYtelse)
+    val fnr = lovmeRequest.fnr
 
     return persistenceService
-        .hentbrukersporsmaalForFnr(lovmeRequest.fnr)
+        .hentbrukersporsmaalForFnr(fnr)
         .filter { spm ->
             antallDagerMellomToDatoer(spm.eventDate, førsteDagForYtelse) < Levetid.STANDARD_LEVETID_32.dager
         }
         .nyesteMedSvar()
         .also { kanskjeNyeste ->
             if (kanskjeNyeste == null) {
-                log.info(teamLogs, "Fant ingen tidligere brukersvar innenfor levetid på ${Levetid.STANDARD_LEVETID_32.dager} dager")
+                log.info(
+                    teamLogs,
+                    "Fant ingen tidligere brukersvar innenfor levetid på ${Levetid.STANDARD_LEVETID_32.dager} dager for $fnr"
+                )
             } else {
-                log.info(teamLogs, "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}")
+                log.info(
+                    teamLogs,
+                    "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
+                )
             }
         }
         ?.let(::finnForrigeBrukerspørsmålFra)
+        .also { kanskjeNyeste ->
+            if (kanskjeNyeste != null) {
+                log.info(
+                    teamLogs,
+                    "Fant følgende tidligere brukersvar innenfor levetiden med gyldig svartype for $fnr: ${
+                        kanskjeNyeste.joinToString(", ")
+                    }"
+                )
+            }
+        }
         ?: emptyList()
 }
 

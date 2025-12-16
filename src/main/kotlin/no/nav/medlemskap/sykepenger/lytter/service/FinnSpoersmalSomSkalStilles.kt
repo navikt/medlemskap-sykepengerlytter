@@ -33,20 +33,14 @@ fun opprettResponsTilFlex(foreløpigResponse: FlexRespons, forrigeBrukerspørsm�
 
     log.info(
         teamLogs,
-        "Oppretter brukerspørsmål for callId $callId",
-        kv("forrige brukerspørsmål", forrigeBrukerspørsmål),
-        kv("foreslåtte brukerspørsmål", foreløpigResponse.sporsmal),
-        kv("spørsmål som skal stilles", spørsmålSomSkalStilles)
+        "Sammenstiller brukerspørsmål for callId $callId",
+        kv("Forrige brukerspørsmål (innenfor levetid)", forrigeBrukerspørsmål),
+        kv("Foreslåtte brukerspørsmål", foreløpigResponse.sporsmal),
+        kv("Spørsmål som skal stilles", spørsmålSomSkalStilles)
     )
 
     return FlexRespons(
         svar = foreløpigResponse.svar,
         sporsmal = spørsmålSomSkalStilles
     )
-
-}
-
-
-fun test(a: String) : String? {
-    return a.takeIf { a == "a" }
 }
