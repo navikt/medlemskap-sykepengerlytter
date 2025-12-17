@@ -189,96 +189,10 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
         }
 
-        //TODO: Logikken under må avklares så vi kan forholde oss til ny modell
-        fun getBrukerSporsmaal(bomloRequest: BomloRequest, callId: String): Brukersporsmaal? {
 
-            val brukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr).filter {
-                it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
-                )
-            }
-            val arbeidUtenForNorge: Medlemskap_utfort_arbeid_utenfor_norge? =
-                UtfortArbeidUtenForNorge(brukersporsmaal, callId)
-            val arbeidUtlandGammelModell: Boolean =
-                arbeidUtenForNorgeGammelModell(brukersporsmaal, callId, bomloRequest)
-            return null
-        }
-
-        fun hentAlleredeStilteBrukerSpørsmål(fnr: String): List<Spørsmål> {
-
-            val alleBrukerSpormaalForBruker = persistenceService.hentbrukersporsmaalForFnr(fnr).filter {
-                it.eventDate.isAfter(
-                    LocalDate.now().minusYears(1)
-                )
-            }
-            val alleredespurteBrukersporsmaal: List<Spørsmål> =
-                finnAlleredeStilteBrukerSprøsmål(alleBrukerSpormaalForBruker)
-            return alleredespurteBrukersporsmaal
-        }
-
-
-        private fun arbeidUtenForNorgeGammelModell(
-            brukersporsmaal: List<Brukersporsmaal>,
-            callId: String,
-            bomloRequest: BomloRequest
-        ): Boolean {
-            val jasvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland == true }
-            val neisvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland == false }
-            val ikkeoppgittsvar = brukersporsmaal.filter { it.sporsmaal?.arbeidUtland == null }
-            //krav 2 : Er det svart JA på tidligere spørsmål, bruk denne verdien
-            if (jasvar.isNotEmpty()) {
-                log.info(
-                    "arbeid utland ja oppgitt i tidligere søknader siste året (${jasvar.first().soknadid}) for fnr (kryptert) ${bomloRequest.fnr.sha256()}. Setter arbeid utland lik true",
-                    StructuredArguments.kv("callId", callId)
-                )
-                return true
-            }
-            //krav 3 : er det svart NEI på tidligere søknader så bruk denne verdien
-            if (neisvar.isNotEmpty()) {
-                log.info(
-                    "arbeid utland Nei oppgitt i tidligere søknader siste året (${neisvar.first().soknadid}) for fnr (kryptert) ${bomloRequest.fnr.sha256()}. Setter arbeid utland lik false",
-                    StructuredArguments.kv("callId", callId)
-                )
-                return false
-            }
-            if (ikkeoppgittsvar.isEmpty()) {
-                log.info("arbeid utland er ikke oppgitt  i søknad ${callId}, og heller aldri oppgitt i tidligere søknader siste året for fnr (kryptert) ${bomloRequest.fnr.sha256()}. Setter arbeid utland lik true")
-                return true
-            } else {
-                return false
-            }
-        }
-
-        private fun UtfortArbeidUtenForNorge(
-            brukersporsmaal: List<Brukersporsmaal>,
-            callId: String
-        ): Medlemskap_utfort_arbeid_utenfor_norge? {
-            val jasvar = brukersporsmaal.filter { it.utfort_arbeid_utenfor_norge?.svar == true }
-            val neisvar = brukersporsmaal.filter { it.utfort_arbeid_utenfor_norge?.svar == false }
-            val ikkeoppgittsvar = brukersporsmaal.filter { it.utfort_arbeid_utenfor_norge == null }
-            //krav 2 : Er det svart JA på tidligere spørsmål, bruk denne verdien
-            if (jasvar.isNotEmpty()) {
-                log.info(
-                    "arbeid utland ja oppgitt i tidligere søknader siste året (${jasvar.first().soknadid}) for fnr (kryptert) ${jasvar.first().fnr}. Setter arbeid utland lik true",
-                    StructuredArguments.kv("callId", callId)
-                )
-                return jasvar.first().utfort_arbeid_utenfor_norge
-            }
-            //krav 3 : er det svart NEI på tidligere søknader så bruk denne verdien
-            if (neisvar.isNotEmpty()) {
-                log.info(
-                    "arbeid utland Nei oppgitt i tidligere søknader siste året (${neisvar.first().soknadid}) for fnr (kryptert) ${neisvar.first().fnr}. Setter arbeid utland lik false",
-                    StructuredArguments.kv("callId", callId)
-                )
-                return neisvar.first().utfort_arbeid_utenfor_norge
-            }
-            if (ikkeoppgittsvar.isEmpty()) {
-                log.info("arbeid utland er ikke oppgitt  i søknad ${callId}, og heller aldri oppgitt i tidligere søknader siste året for fnr (kryptert) ${ikkeoppgittsvar.first().fnr}. Setter arbeid utland lik true")
-                return null
-            } else {
-                return null
-            }
-        }
+    fun finnForrigeBrukerspørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
+        return finnForrigeBrukerspørsmål(lovmeRequest, persistenceService)
+    }
 
         fun getArbeidUtlandFromBrukerSporsmaal(bomloRequest: BomloRequest, callId: String): Boolean {
 

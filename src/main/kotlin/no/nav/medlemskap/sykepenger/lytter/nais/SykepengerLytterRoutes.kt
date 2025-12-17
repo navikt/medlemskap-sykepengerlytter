@@ -18,7 +18,7 @@ import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
-import no.nav.medlemskap.sykepenger.lytter.service.createFlexRespons
+import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
@@ -214,10 +214,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
-
-                    val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-                    val alleredeStilteSporsmaal = bomloService.hentAlleredeStilteBrukerSpørsmål(lovmeRequest.fnr)
-                    val flexRespons:FlexRespons =  createFlexRespons(foreslaattRespons,alleredeStilteSporsmaal)
+                    val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+                    val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+                    val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
                     if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
                         flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
 
@@ -229,7 +228,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                         kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal"),
-                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(alleredeStilteSporsmaal).toPrettyString())
+                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(forrigeBrukerspørsmål).toPrettyString())
                     )
                     logger.info(
                         teamLogs,
@@ -239,7 +238,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                         kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal"),
-                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(alleredeStilteSporsmaal).toPrettyString())
+                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(forrigeBrukerspørsmål).toPrettyString())
                     )
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }

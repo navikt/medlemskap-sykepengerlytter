@@ -494,7 +494,7 @@
       "kriterieForVisningAvUndersporsmal": "JA",
       "svar": [
         {
-          "verdi": "NEI"
+          "verdi": "JA"
         }
       ],
       "undersporsmal": [
@@ -633,7 +633,7 @@
       "kriterieForVisningAvUndersporsmal": "JA",
       "svar": [
         {
-          "verdi": "NEI"
+          "verdi": "JA"
         }
       ],
       "undersporsmal": [
