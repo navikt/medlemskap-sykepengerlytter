@@ -11,10 +11,8 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import java.time.LocalDate
-import java.util.*
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -83,7 +81,8 @@ class SoknadRecordHandler(
         soknadRecord: SoknadRecord
     ): String {
         try {
-            val vurdering = callLovMe(soknadRecord.sykepengeSoknad)
+            /*val vurdering = callLovMe(soknadRecord.sykepengeSoknad)*/
+            val vurdering = kjørRegelmotorMedBrukersvar(soknadRecord.sykepengeSoknad)
             soknadRecord.logSendt()
             return vurdering
         } catch (t: Throwable) {
@@ -107,9 +106,12 @@ class SoknadRecordHandler(
     }
 
     private suspend fun callLovMe(sykepengeSoknad: LovmeSoknadDTO) :String{
+        //Henter brukerspørsmål
         val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(sykepengeSoknad)
         val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(sykepengeSoknad)
+        // Oppretter brukerinput basert på svar fra database
         val brukerinput:Brukerinput= opprettBrukerInput(brukersporsmaal,arbeidUtland)
+        // Pakker data til format som medlemskal-oppslag krever
         val lovMeRequest = MedlOppslagRequest(
             fnr = sykepengeSoknad.fnr,
             førsteDagForYtelse = sykepengeSoknad.fom.toString(),
@@ -117,6 +119,26 @@ class SoknadRecordHandler(
             brukerinput = brukerinput
         )
         return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
+    }
+
+    private suspend fun kjørRegelmotorMedBrukersvar(sykepengeSoknad: LovmeSoknadDTO): String {
+        val callId = sykepengeSoknad.id
+        val gjenbruk = BrukersvarGjenbruk()
+        val brukerinput = gjenbruk.skalKanskjeGjenbrukes(
+            callId,
+            persistenceService
+        )
+        val medlemskapOppslagRequest = MedlOppslagRequest(
+            fnr = sykepengeSoknad.fnr,
+            førsteDagForYtelse = sykepengeSoknad.fom.toString(),
+            periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
+            brukerinput = brukerinput
+        )
+        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, sykepengeSoknad.id)
+
+
+
+        // i klassen BrukersvarGjenbruk finnes det en metode. Hvordan får jeg tak i den?
     }
 
      fun opprettBrukerInput(brukersporsmaal: Brukersporsmaal, arbeidUtland: Boolean): Brukerinput

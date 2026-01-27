@@ -14,18 +14,21 @@ import kotlin.math.absoluteValue
 private val log = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
+fun finnForrigeBrukersvarForSøknad(fnr: String, førsteDagForYtelse: String, persistenceService: PersistenceService) {
+
+}
+
+
+
 fun finnForrigeBrukerspørsmål(
-    lovmeRequest: MedlOppslagRequest,
+    fnr: String,
+    førsteDagForYtelse: String,
     persistenceService: PersistenceService
 ): List<Spørsmål> {
-
-    val førsteDagForYtelse = LocalDate.parse(lovmeRequest.førsteDagForYtelse)
-    val fnr = lovmeRequest.fnr
-
     return persistenceService
         .hentbrukersporsmaalForFnr(fnr)
         .filter { spm ->
-            antallDagerMellomToDatoer(spm.eventDate, førsteDagForYtelse) < Levetid.STANDARD_LEVETID_32.dager
+            antallDagerMellomToDatoer(spm.eventDate, LocalDate.parse(førsteDagForYtelse)) < Levetid.STANDARD_LEVETID_32.dager
         }
         .nyesteMedSvar()
         .also { kanskjeNyeste ->

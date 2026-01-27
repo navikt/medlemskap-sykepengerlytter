@@ -191,7 +191,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
 
     fun finnForrigeBrukerspørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukerspørsmål(lovmeRequest, persistenceService)
+        return finnForrigeBrukerspørsmål(lovmeRequest.fnr, lovmeRequest.førsteDagForYtelse, persistenceService)
     }
 
         fun getArbeidUtlandFromBrukerSporsmaal(bomloRequest: BomloRequest, callId: String): Boolean {
