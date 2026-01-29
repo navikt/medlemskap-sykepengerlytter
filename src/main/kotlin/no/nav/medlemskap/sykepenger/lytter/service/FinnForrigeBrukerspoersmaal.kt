@@ -2,7 +2,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.nyesteMedSvar
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
@@ -14,8 +13,31 @@ import kotlin.math.absoluteValue
 private val log = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun finnForrigeBrukersvarForSøknad(fnr: String, førsteDagForYtelse: String, persistenceService: PersistenceService) {
 
+fun finnForrigeBrukersvar(
+    fnr: String,
+    førsteDagForYtelse: String,
+    persistenceService: PersistenceService
+): Brukersporsmaal? {
+    return persistenceService
+        .hentbrukersporsmaalForFnr(fnr)
+        .filter { spm ->
+            antallDagerMellomToDatoer(spm.eventDate, LocalDate.parse(førsteDagForYtelse)) < Levetid.STANDARD_LEVETID_32.dager
+        }
+        .nyesteMedSvar()
+        .also { kanskjeNyeste ->
+            if (kanskjeNyeste == null) {
+                log.info(
+                    teamLogs,
+                    "Fant ingen tidligere brukersvar innenfor levetid på ${Levetid.STANDARD_LEVETID_32.dager} dager for $fnr"
+                )
+            } else {
+                log.info(
+                    teamLogs,
+                    "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
+                )
+            }
+        }
 }
 
 
@@ -61,6 +83,14 @@ fun finnForrigeBrukerspørsmål(
 
 private inline fun <T> taHvis(felt: T?, predicate: T.() -> Boolean) =
     felt?.takeIf(predicate)
+
+fun finnForrigeBrukerspørsmålFra(forrigeBrukersvar: Brukersporsmaal?) = listOfNotNull(
+    taHvis(forrigeBrukersvar?.utfort_arbeid_utenfor_norge) { neiSvar(svar) }?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
+    taHvis(forrigeBrukersvar?.oppholdUtenforNorge) { neiSvar(svar) }?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
+    taHvis(forrigeBrukersvar?.oppholdUtenforEOS) { neiSvar(svar) }?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
+    taHvis(forrigeBrukersvar?.oppholdstilatelse) { jaSvar(svar) }?.let { Spørsmål.OPPHOLDSTILATELSE }
+)
+
 
 fun finnForrigeBrukerspørsmålFra(forrigeBrukersvar: Brukersporsmaal?) = listOfNotNull(
     taHvis(forrigeBrukersvar?.utfort_arbeid_utenfor_norge) { neiSvar(svar) }?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
