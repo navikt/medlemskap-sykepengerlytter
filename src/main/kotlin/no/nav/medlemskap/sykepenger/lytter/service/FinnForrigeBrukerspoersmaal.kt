@@ -91,14 +91,6 @@ fun finnForrigeBrukerspørsmålFra(forrigeBrukersvar: Brukersporsmaal?) = listOf
     taHvis(forrigeBrukersvar?.oppholdstilatelse) { jaSvar(svar) }?.let { Spørsmål.OPPHOLDSTILATELSE }
 )
 
-
-fun finnForrigeBrukerspørsmålFra(forrigeBrukersvar: Brukersporsmaal?) = listOfNotNull(
-    taHvis(forrigeBrukersvar?.utfort_arbeid_utenfor_norge) { neiSvar(svar) }?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
-    taHvis(forrigeBrukersvar?.oppholdUtenforNorge) { neiSvar(svar) }?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
-    taHvis(forrigeBrukersvar?.oppholdUtenforEOS) { neiSvar(svar) }?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
-    taHvis(forrigeBrukersvar?.oppholdstilatelse) { jaSvar(svar) }?.let { Spørsmål.OPPHOLDSTILATELSE }
-)
-
 fun jaSvar(svar: Boolean) = svar
 
 fun neiSvar(svar: Boolean) = !svar
