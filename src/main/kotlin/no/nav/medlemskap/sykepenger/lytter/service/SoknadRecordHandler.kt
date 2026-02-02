@@ -126,6 +126,8 @@ class SoknadRecordHandler(
         val gjenbruk = BrukersvarGjenbruk()
         val brukerinput = gjenbruk.skalKanskjeGjenbrukes(
             callId,
+            sykepengeSoknad.fnr,
+            sykepengeSoknad.fom.toString(),
             persistenceService
         )
         val medlemskapOppslagRequest = MedlOppslagRequest(
