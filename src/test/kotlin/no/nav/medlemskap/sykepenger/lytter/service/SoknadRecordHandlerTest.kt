@@ -680,10 +680,15 @@ class SoknadRecordHandlerTest {
         Assertions.assertNotNull(mock.request)
         val gjenbruk = BrukersvarGjenbruk()
         val førsteDagForYtelse = "2025-01-01"
-        val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+        val søknadsParametere = SoeknadsParametere(
             "52041604-a94a-38ca-b7a6-3e913b5207fa",
             "12345678901",
-            førsteDagForYtelse,
+            førsteDagForYtelse
+            )
+
+        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
             persistenceService
         )
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -723,10 +728,15 @@ class SoknadRecordHandlerTest {
         Assertions.assertNotNull(mock.request)
         val gjenbruk = BrukersvarGjenbruk()
         val førsteDagForYtelse = "2025-01-01"
-        val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+        val søknadsParametere = SoeknadsParametere(
             "52041604-a94a-38ca-b7a6-3e913b5207fa",
             "12345678901",
-            førsteDagForYtelse,
+            førsteDagForYtelse
+        )
+
+        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
             persistenceService
         )
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -770,10 +780,15 @@ class SoknadRecordHandlerTest {
         Assertions.assertNotNull(mock.request)
         val gjenbruk = BrukersvarGjenbruk()
         val førsteDagForYtelse = "2025-01-01"
-        val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+        val søknadsParametere = SoeknadsParametere(
             "52041604-a94a-38ca-b7a6-3e913b5207fa",
             "12345678901",
-            førsteDagForYtelse,
+            førsteDagForYtelse
+        )
+
+        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
             persistenceService
         )
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -863,10 +878,15 @@ class SoknadRecordHandlerTest {
         Assertions.assertNotNull(mock.request)
         val gjenbruk = BrukersvarGjenbruk()
         val førsteDagForYtelse = "2025-01-01"
-        val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+        val søknadsParametere = SoeknadsParametere(
             "52041604-a94a-38ca-b7a6-3e913b5207fa",
             "12345678901",
-            førsteDagForYtelse,
+            førsteDagForYtelse
+        )
+
+        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
             persistenceService
         )
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -956,10 +976,15 @@ class SoknadRecordHandlerTest {
             Assertions.assertNotNull(mock.request)
             val gjenbruk = BrukersvarGjenbruk()
             val førsteDagForYtelse = "2025-01-01"
-            val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+            val søknadsParametere = SoeknadsParametere(
                 "52041604-a94a-38ca-b7a6-3e913b5207fa",
                 "12345678901",
-                førsteDagForYtelse,
+                førsteDagForYtelse
+            )
+
+            val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+                søknadsParametere,
                 persistenceService
             )
             val faktiskBrukerinput = mock.request?.brukerinput
@@ -1049,10 +1074,15 @@ class SoknadRecordHandlerTest {
             Assertions.assertNotNull(mock.request)
             val gjenbruk = BrukersvarGjenbruk()
             val førsteDagForYtelse = "2025-01-01"
-            val forventetBrukerinput = gjenbruk.skalKanskjeGjenbrukes(
+
+            val søknadsParametere = SoeknadsParametere(
                 "52041604-a94a-38ca-b7a6-3e913b5207fa",
                 "12345678901",
-                førsteDagForYtelse,
+                førsteDagForYtelse
+            )
+
+            val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+                søknadsParametere,
                 persistenceService
             )
             val faktiskBrukerinput = mock.request?.brukerinput
@@ -1062,8 +1092,6 @@ class SoknadRecordHandlerTest {
             Assertions.assertEquals(mock.request?.brukerinput?.oppholdUtenforEos, null)
             Assertions.assertEquals(mock.request?.brukerinput?.oppholdUtenforNorge, null)
         }
-
-
 }
 
 /*

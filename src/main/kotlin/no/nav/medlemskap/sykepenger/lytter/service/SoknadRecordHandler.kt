@@ -82,7 +82,7 @@ class SoknadRecordHandler(
     ): String {
         try {
             /*val vurdering = callLovMe(soknadRecord.sykepengeSoknad)*/
-            val vurdering = kjørRegelmotorMedBrukersvar(soknadRecord.sykepengeSoknad)
+            val vurdering = mapBrukersvarOgKjørRegelmotor(soknadRecord.sykepengeSoknad)
             soknadRecord.logSendt()
             return vurdering
         } catch (t: Throwable) {
@@ -121,26 +121,21 @@ class SoknadRecordHandler(
         return medlOppslagClient.vurderMedlemskap(lovMeRequest, sykepengeSoknad.id)
     }
 
-    private suspend fun kjørRegelmotorMedBrukersvar(sykepengeSoknad: LovmeSoknadDTO): String {
-        val callId = sykepengeSoknad.id
+    private suspend fun mapBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
+        val søknadsParametere = sykepengeSoknad.tilSøknadsParametere()
+
         val gjenbruk = BrukersvarGjenbruk()
-        val brukerinput = gjenbruk.skalKanskjeGjenbrukes(
-            callId,
-            sykepengeSoknad.fnr,
-            sykepengeSoknad.fom.toString(),
+        val brukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
             persistenceService
         )
         val medlemskapOppslagRequest = MedlOppslagRequest(
-            fnr = sykepengeSoknad.fnr,
-            førsteDagForYtelse = sykepengeSoknad.fom.toString(),
+            fnr = søknadsParametere.fnr,
+            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
             periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
             brukerinput = brukerinput
         )
-        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, sykepengeSoknad.id)
-
-
-
-        // i klassen BrukersvarGjenbruk finnes det en metode. Hvordan får jeg tak i den?
+        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, søknadsParametere.callId)
     }
 
      fun opprettBrukerInput(brukersporsmaal: Brukersporsmaal, arbeidUtland: Boolean): Brukerinput
@@ -276,3 +271,10 @@ class SoknadRecordHandler(
 
     }
 }
+
+fun LovmeSoknadDTO.tilSøknadsParametere(): SoeknadsParametere =
+    SoeknadsParametere(
+        callId = id,
+        fnr = fnr,
+        førsteDagForYtelse = fom.toString()
+    )
