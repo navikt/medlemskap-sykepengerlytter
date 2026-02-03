@@ -12,6 +12,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
@@ -56,10 +57,11 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 //TODO: Avklar her om vi skal returnere 404 eller om vi må kalle Lovme!
                 if (cause.response.status.value == 404) {
                     log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
-                    val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)
+                /*    val arbeidUtland = getArbeidUtlandFromBrukerSporsmaal(bomloRequest, callId)
                     val brukersporsmaal = hentNyesteBrukerSporsmaalFromDatabase(bomloRequest, callId)
                     val lovmeRequest = mapToMedlemskapRequest(bomloRequest, arbeidUtland,brukersporsmaal)
-                    val resultat = lovmeClient.vurderMedlemskapBomlo(lovmeRequest, callId)
+                    val resultat = lovmeClient.vurderMedlemskapBomlo(lovmeRequest, callId)*/
+                    val resultat = mapBrukersvarOgKjørRegelmotor(callId, bomloRequest)
                     return JacksonParser().ToJson(resultat)
                 }
                 //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
@@ -67,6 +69,32 @@ class BomloService(private val configuration: Configuration, var persistenceServ
                 throw cause
             }
         }
+
+    private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
+        val søknadsParametere = request.tilSøknadsParametere(callId)
+
+        val gjenbruk = BrukersvarGjenbruk()
+        val brukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere,
+            persistenceService
+        )
+        val medlemskapOppslagRequest = MedlOppslagRequest(
+            fnr = søknadsParametere.fnr,
+            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
+            periode = Periode(request.periode.fom.toString(), request.periode.tom.toString()),
+            brukerinput = brukerinput
+        )
+        val resultat = lovmeClient.vurderMedlemskapBomlo(medlemskapOppslagRequest, callId)
+        return resultat
+    }
+
+    fun BomloRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =
+        SoeknadsParametere(
+            callId = callId,
+            fnr = fnr,
+            førsteDagForYtelse = førsteDagForYtelse.toString()
+        )
+
     fun hentNyesteBrukerSporsmaalFromDatabase(bomloRequest: BomloRequest, callId: String): Brukersporsmaal {
         val listofbrukersporsmaal = persistenceService.hentbrukersporsmaalForFnr(bomloRequest.fnr)
         if (listofbrukersporsmaal.isEmpty()){
