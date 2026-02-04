@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
@@ -778,19 +779,9 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
-        val gjenbruk = BrukersvarGjenbruk()
-        val førsteDagForYtelse = "2025-01-01"
 
-        val søknadsParametere = SoeknadsParametere(
-            "52041604-a94a-38ca-b7a6-3e913b5207fa",
-            "12345678901",
-            førsteDagForYtelse
-        )
+        val forventetBrukerinput = Brukerinput(arbeidUtenforNorge = false)
 
-        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            persistenceService
-        )
         val faktiskBrukerinput = mock.request?.brukerinput
         Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
         Assertions.assertEquals(mock.request?.brukerinput?.utfortAarbeidUtenforNorge, null)
@@ -812,44 +803,46 @@ class SoknadRecordHandlerTest {
 
         //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
         val datoPåForrigeSøknad = LocalDate.of(2025, 1, 1)
-        repo2.lagreBrukersporsmaal(
-            Brukersporsmaal(
-                fnr = "12345678901",
-                soknadid = "aa-bb-cc-dd",
-                eventDate = datoPåForrigeSøknad,
-                ytelse = "SYKEPENGER",
-                status = "SENDT",
-                sporsmaal = null,
-                oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
-                    id = "123",
-                    sporsmalstekst = "abc",
-                    svar = true,
-                    vedtaksdato = datoPåForrigeSøknad,
-                    vedtaksTypePermanent = true,
-                    perioder = emptyList()
-                ),
-                utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
-                    id = "123",
-                    sporsmalstekst = "test",
-                    svar = false,
-                    arbeidUtenforNorge = emptyList()
-                ),
-                oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
-                    id = "123",
-                    svar = false,
-                    sporsmalstekst = "abc",
-                    oppholdUtenforNorge = emptyList()
 
-                ),
-                oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
-                    id = "123",
-                    sporsmalstekst = "abc",
-                    svar = false,
-                    oppholdUtenforEOS = emptyList()
-                )
+        val forrigeBrukersvar = Brukersporsmaal(
+            fnr = "12345678901",
+            soknadid = "aa-bb-cc-dd",
+            eventDate = datoPåForrigeSøknad,
+            ytelse = "SYKEPENGER",
+            status = "SENDT",
+            sporsmaal = null,
+            oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                id = "123",
+                sporsmalstekst = "abc",
+                svar = true,
+                vedtaksdato = datoPåForrigeSøknad,
+                vedtaksTypePermanent = true,
+                perioder = emptyList()
+            ),
+            utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+                id = "123",
+                sporsmalstekst = "test",
+                svar = false,
+                arbeidUtenforNorge = emptyList()
+            ),
+            oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
+                id = "123",
+                svar = false,
+                sporsmalstekst = "abc",
+                oppholdUtenforNorge = emptyList()
 
+            ),
+            oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
+                id = "123",
+                sporsmalstekst = "abc",
+                svar = false,
+                oppholdUtenforEOS = emptyList()
             )
+
         )
+
+
+        repo2.lagreBrukersporsmaal(forrigeBrukersvar)
 
         //Simulerer at søknad kommer inn MED gammelt brukerspørsmål
         val datoPåSøknadSomKommerInn = LocalDate.of(2025, 1, 15)
@@ -876,19 +869,17 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
-        val gjenbruk = BrukersvarGjenbruk()
-        val førsteDagForYtelse = "2025-01-01"
 
-        val søknadsParametere = SoeknadsParametere(
-            "52041604-a94a-38ca-b7a6-3e913b5207fa",
-            "12345678901",
-            førsteDagForYtelse
+        val mapBrukersvar = MapBrukersvar
+
+        val forventetBrukerinput = Brukerinput(
+            arbeidUtenforNorge = false,
+            oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(forrigeBrukersvar.oppholdstilatelse),
+            utfortAarbeidUtenforNorge = mapBrukersvar.mapUtførtArbeidUtenforNorge(forrigeBrukersvar.utfort_arbeid_utenfor_norge),
+            oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(forrigeBrukersvar.oppholdUtenforNorge),
+            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEos(forrigeBrukersvar.oppholdUtenforEOS)
         )
 
-        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            persistenceService
-        )
         val faktiskBrukerinput = mock.request?.brukerinput
         Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
         Assertions.assertNotNull(mock.request?.brukerinput?.utfortAarbeidUtenforNorge)
@@ -974,19 +965,9 @@ class SoknadRecordHandlerTest {
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
-            val gjenbruk = BrukersvarGjenbruk()
-            val førsteDagForYtelse = "2025-01-01"
 
-            val søknadsParametere = SoeknadsParametere(
-                "52041604-a94a-38ca-b7a6-3e913b5207fa",
-                "12345678901",
-                førsteDagForYtelse
-            )
+            val forventetBrukerinput = Brukerinput(arbeidUtenforNorge = true)
 
-            val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-                søknadsParametere,
-                persistenceService
-            )
             val faktiskBrukerinput = mock.request?.brukerinput
             Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
             Assertions.assertEquals(mock.request?.brukerinput?.utfortAarbeidUtenforNorge, null)
@@ -1072,19 +1053,9 @@ class SoknadRecordHandlerTest {
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
-            val gjenbruk = BrukersvarGjenbruk()
-            val førsteDagForYtelse = "2025-01-01"
 
-            val søknadsParametere = SoeknadsParametere(
-                "52041604-a94a-38ca-b7a6-3e913b5207fa",
-                "12345678901",
-                førsteDagForYtelse
-            )
+            val forventetBrukerinput = Brukerinput(arbeidUtenforNorge = false)
 
-            val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-                søknadsParametere,
-                persistenceService
-            )
             val faktiskBrukerinput = mock.request?.brukerinput
             Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
             Assertions.assertEquals(mock.request?.brukerinput?.utfortAarbeidUtenforNorge, null)

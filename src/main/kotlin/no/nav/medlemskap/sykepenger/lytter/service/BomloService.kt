@@ -41,6 +41,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         )
         var sagaClient: SagaAPI
         var lovmeClient: LovmeAPI
+        private val brukersvarGjenbruk = BrukersvarGjenbruk()
 
 
         init {
@@ -73,8 +74,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
         val søknadsParametere = request.tilSøknadsParametere(callId)
 
-        val gjenbruk = BrukersvarGjenbruk()
-        val brukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
             søknadsParametere,
             persistenceService
         )

@@ -12,7 +12,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfo
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
 
-class MapBrukersvar {
+object MapBrukersvar {
     fun mapOppholdstillatelse(oppholdstillatelse: Medlemskap_oppholdstilatelse_brukersporsmaal?): Oppholdstilatelse? =
         oppholdstillatelse?.let {
             Oppholdstilatelse(

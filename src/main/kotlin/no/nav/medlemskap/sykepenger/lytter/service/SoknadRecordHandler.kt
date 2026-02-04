@@ -29,6 +29,7 @@ class SoknadRecordHandler(
         configuration = configuration
     )
     var medlOppslagClient: LovmeAPI
+    private val brukersvarGjenbruk = BrukersvarGjenbruk()
 
 
     init {
@@ -124,8 +125,7 @@ class SoknadRecordHandler(
     private suspend fun mapBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
         val søknadsParametere = sykepengeSoknad.tilSøknadsParametere()
 
-        val gjenbruk = BrukersvarGjenbruk()
-        val brukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
+        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
             søknadsParametere,
             persistenceService
         )
