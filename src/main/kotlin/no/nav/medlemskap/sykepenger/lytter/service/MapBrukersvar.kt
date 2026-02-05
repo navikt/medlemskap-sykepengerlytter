@@ -66,8 +66,8 @@ object MapBrukersvar {
             )
         }
 
-    fun mapOppholdUtenforEos(oppholdutenforEos: Medlemskap_opphold_utenfor_eos?): OppholdUtenforEos? =
-        oppholdutenforEos?.let {
+    fun mapOppholdUtenforEØS(oppholdutenforEØS: Medlemskap_opphold_utenfor_eos?): OppholdUtenforEos? =
+        oppholdutenforEØS?.let {
             OppholdUtenforEos(
                 id = it.id,
                 sporsmalstekst = it.sporsmalstekst,

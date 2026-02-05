@@ -683,12 +683,14 @@ class SoknadRecordHandlerTest {
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
 
+        val mapBrukersvar = MapBrukersvar
+
         val forventetBrukerinput = Brukerinput(
             false,
-            oppholdstilatelse = mapOppholdstilatelse(brukersvarISøknaden.oppholdstilatelse),
-            utfortAarbeidUtenforNorge = maputfortAarbeidUtenforNorge(brukersvarISøknaden.utfort_arbeid_utenfor_norge),
-            oppholdUtenforEos = mapOppholdUtenforEOS(brukersvarISøknaden.oppholdUtenforEOS),
-            oppholdUtenforNorge = mapOppholdUtenforNorge(brukersvarISøknaden.oppholdUtenforNorge)
+            oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(brukersvarISøknaden.oppholdstilatelse),
+            utfortAarbeidUtenforNorge = mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvarISøknaden.utfort_arbeid_utenfor_norge),
+            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEØS(brukersvarISøknaden.oppholdUtenforEOS),
+            oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(brukersvarISøknaden.oppholdUtenforNorge)
         )
 
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -866,7 +868,7 @@ class SoknadRecordHandlerTest {
             oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(forrigeBrukersvar.oppholdstilatelse),
             utfortAarbeidUtenforNorge = mapBrukersvar.mapUtførtArbeidUtenforNorge(forrigeBrukersvar.utfort_arbeid_utenfor_norge),
             oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(forrigeBrukersvar.oppholdUtenforNorge),
-            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEos(forrigeBrukersvar.oppholdUtenforEOS)
+            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEØS(forrigeBrukersvar.oppholdUtenforEOS)
         )
 
         val faktiskBrukerinput = mock.request?.brukerinput
@@ -1121,7 +1123,7 @@ class SoknadRecordHandlerTest {
                 oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(forrigeBrukersvar.oppholdstilatelse),
                 utfortAarbeidUtenforNorge = mapBrukersvar.mapUtførtArbeidUtenforNorge(forrigeBrukersvar.utfort_arbeid_utenfor_norge),
                 oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(forrigeBrukersvar.oppholdUtenforNorge),
-                oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEos(forrigeBrukersvar.oppholdUtenforEOS)
+                oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEØS(forrigeBrukersvar.oppholdUtenforEOS)
             )
 
             val faktiskBrukerinput = mock.request?.brukerinput

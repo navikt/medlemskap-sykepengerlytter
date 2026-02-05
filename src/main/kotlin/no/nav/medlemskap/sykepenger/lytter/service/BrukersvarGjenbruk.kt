@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
@@ -83,7 +82,7 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
             ),
             oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(brukersvar?.oppholdstilatelse),
             utfortAarbeidUtenforNorge = utførtArbeidUtenforNorge,
-            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEos(brukersvar?.oppholdUtenforEOS),
+            oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEØS(brukersvar?.oppholdUtenforEOS),
             oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(brukersvar?.oppholdUtenforNorge)
         )
     }
