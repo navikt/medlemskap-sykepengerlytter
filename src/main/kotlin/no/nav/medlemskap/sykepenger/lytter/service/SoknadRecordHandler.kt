@@ -12,6 +12,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
 class SoknadRecordHandler(
@@ -20,6 +21,7 @@ class SoknadRecordHandler(
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
     }
 
@@ -29,8 +31,9 @@ class SoknadRecordHandler(
         configuration = configuration
     )
     var medlOppslagClient: LovmeAPI
-    private val brukersvarGjenbruk = BrukersvarGjenbruk()
 
+    private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
+    private val brukersvarGjenbruk = BrukersvarGjenbruk(finnForrigeBrukersvar)
 
     init {
         medlOppslagClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
@@ -125,10 +128,19 @@ class SoknadRecordHandler(
     private suspend fun mapBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
         val søknadsParametere = sykepengeSoknad.tilSøknadsParametere()
 
+        val brukersvarPåSøknad = persistenceService.hentbrukersporsmaalForSoknadID(søknadsParametere.callId)
+
+        log.info(
+            teamLogs, "Sjekker om det finnes gjenbrukbare brukersvar for søknad fra sykepengebackend",
+            kv("fnr", søknadsParametere.fnr),
+            kv("førsteDagForYtelse", søknadsParametere.førsteDagForYtelse)
+        )
+
         val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
             søknadsParametere,
-            persistenceService
+            brukersvarPåSøknad
         )
+
         val medlemskapOppslagRequest = MedlOppslagRequest(
             fnr = søknadsParametere.fnr,
             førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
@@ -12,7 +13,6 @@ import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
@@ -41,8 +41,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         )
         var sagaClient: SagaAPI
         var lovmeClient: LovmeAPI
-        private val brukersvarGjenbruk = BrukersvarGjenbruk()
 
+        private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
+        private val brukersvarGjenbruk = BrukersvarGjenbruk(finnForrigeBrukersvar)
 
         init {
             sagaClient = restClients.saga(configuration.register.medlemskapSagaBaseUrl)
@@ -74,16 +75,19 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
         val søknadsParametere = request.tilSøknadsParametere(callId)
 
-        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            persistenceService
+        log.info(teamLogs, "Sjekker om det finnes gjenbrukbare brukersvar for forespørsel fra Speil",
+            kv("fnr", søknadsParametere.fnr),
+            kv("førsteDagForYtelse", søknadsParametere.førsteDagForYtelse)
         )
+        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(søknadsParametere)
+
         val medlemskapOppslagRequest = MedlOppslagRequest(
             fnr = søknadsParametere.fnr,
             førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
             periode = Periode(request.periode.fom.toString(), request.periode.tom.toString()),
             brukerinput = brukerinput
         )
+
         val resultat = lovmeClient.vurderMedlemskapBomlo(medlemskapOppslagRequest, callId)
         return resultat
     }
@@ -219,7 +223,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
 
     fun finnForrigeBrukerspørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukerspørsmål(lovmeRequest.fnr, lovmeRequest.førsteDagForYtelse, persistenceService)
+        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(lovmeRequest.fnr, lovmeRequest.førsteDagForYtelse)
     }
 
         fun getArbeidUtlandFromBrukerSporsmaal(bomloRequest: BomloRequest, callId: String): Boolean {

@@ -635,43 +635,46 @@ class SoknadRecordHandlerTest {
         val mock = LovMeMock()
         service.medlOppslagClient = mock
         val dato = LocalDate.of(2025, 1, 1)
-        repo2.lagreBrukersporsmaal(
-            Brukersporsmaal(
-                fnr = "12345678901",
-                soknadid = "52041604-a94a-38ca-b7a6-3e913b5207fa",
-                eventDate = dato,
-                ytelse = "SYKEPENGER",
-                status = "SENDT",
-                sporsmaal = null,
-                oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
-                    id = "123",
-                    sporsmalstekst = "abc",
-                    svar = true,
-                    vedtaksdato = dato,
-                    vedtaksTypePermanent = true,
-                    perioder = emptyList()
-                ),
-                utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
-                    id = "123",
-                    sporsmalstekst = "test",
-                    svar = false,
-                    arbeidUtenforNorge = emptyList()
-                ),
-                oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
-                    id = "123",
-                    svar = false,
-                    sporsmalstekst = "abc",
-                    oppholdUtenforNorge = emptyList()
+        val brukersvarISøknaden = Brukersporsmaal(
+            fnr = "12345678901",
+            soknadid = "52041604-a94a-38ca-b7a6-3e913b5207fa",
+            eventDate = dato,
+            ytelse = "SYKEPENGER",
+            status = "SENDT",
+            sporsmaal = null,
+            oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                id = "123",
+                sporsmalstekst = "abc",
+                svar = true,
+                vedtaksdato = dato,
+                vedtaksTypePermanent = true,
+                perioder = emptyList()
+            ),
+            utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+                id = "123",
+                sporsmalstekst = "test",
+                svar = false,
+                arbeidUtenforNorge = emptyList()
+            ),
+            oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
+                id = "123",
+                svar = false,
+                sporsmalstekst = "abc",
+                oppholdUtenforNorge = emptyList()
 
-                ),
-                oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
-                    id = "123",
-                    sporsmalstekst = "abc",
-                    svar = false,
-                    oppholdUtenforEOS = emptyList()
-                )
+            ),
+            oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
+                id = "123",
+                sporsmalstekst = "abc",
+                svar = false,
+                oppholdUtenforEOS = emptyList()
             )
         )
+
+        repo2.lagreBrukersporsmaal(
+            brukersvarISøknaden
+        )
+
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
@@ -679,19 +682,15 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
-        val gjenbruk = BrukersvarGjenbruk()
-        val førsteDagForYtelse = "2025-01-01"
 
-        val søknadsParametere = SoeknadsParametere(
-            "52041604-a94a-38ca-b7a6-3e913b5207fa",
-            "12345678901",
-            førsteDagForYtelse
-            )
-
-        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            persistenceService
+        val forventetBrukerinput = Brukerinput(
+            false,
+            oppholdstilatelse = mapOppholdstilatelse(brukersvarISøknaden.oppholdstilatelse),
+            utfortAarbeidUtenforNorge = maputfortAarbeidUtenforNorge(brukersvarISøknaden.utfort_arbeid_utenfor_norge),
+            oppholdUtenforEos = mapOppholdUtenforEOS(brukersvarISøknaden.oppholdUtenforEOS),
+            oppholdUtenforNorge = mapOppholdUtenforNorge(brukersvarISøknaden.oppholdUtenforNorge)
         )
+
         val faktiskBrukerinput = mock.request?.brukerinput
         Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
     }
@@ -727,19 +726,9 @@ class SoknadRecordHandlerTest {
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
-        val gjenbruk = BrukersvarGjenbruk()
-        val førsteDagForYtelse = "2025-01-01"
 
-        val søknadsParametere = SoeknadsParametere(
-            "52041604-a94a-38ca-b7a6-3e913b5207fa",
-            "12345678901",
-            førsteDagForYtelse
-        )
+        val forventetBrukerinput = Brukerinput(arbeidUtenforNorge = true)
 
-        val forventetBrukerinput = gjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            persistenceService
-        )
         val faktiskBrukerinput = mock.request?.brukerinput
         Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
         Assertions.assertEquals(mock.request?.brukerinput?.utfortAarbeidUtenforNorge, null)
@@ -1045,6 +1034,156 @@ class SoknadRecordHandlerTest {
 
                 )
             )
+
+            val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
+                .readText(Charsets.UTF_8)
+            val sykepengeSoknad = JacksonParser().parse(fileContent)
+            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            val dbResult = repo.finnVurdering("12345678901")
+            Assertions.assertEquals(1, dbResult.size)
+            Assertions.assertNotNull(mock.request)
+
+            val forventetBrukerinput = Brukerinput(arbeidUtenforNorge = false)
+
+            val faktiskBrukerinput = mock.request?.brukerinput
+            Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
+            Assertions.assertEquals(mock.request?.brukerinput?.utfortAarbeidUtenforNorge, null)
+            Assertions.assertEquals(mock.request?.brukerinput?.oppholdstilatelse, null)
+            Assertions.assertEquals(mock.request?.brukerinput?.oppholdUtenforEos, null)
+            Assertions.assertEquals(mock.request?.brukerinput?.oppholdUtenforNorge, null)
+        }
+
+
+    @Test
+    fun `søknad kommer uten nye brukerspørsmål eller gamle spørsmål - Gjenbruk skal aktiveres`() =
+        runBlocking {
+            val repo = MedlemskapVurdertInMemmoryRepository()
+            val repo2 = BrukersporsmaalInMemmoryRepository()
+            val persistenceService = PersistenceService(repo, repo2)
+            val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+            val mock = LovMeMock()
+            service.medlOppslagClient = mock
+
+
+            //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
+            val datoPåForrigeSøknad = LocalDate.of(2025, 1, 1)
+
+            val forrigeBrukersvar =  Brukersporsmaal(
+                fnr = "12345678901",
+                soknadid = "aa-bb-cc-dd",
+                eventDate = datoPåForrigeSøknad,
+                ytelse = "SYKEPENGER",
+                status = "SENDT",
+                sporsmaal = null,
+                oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                    id = "123",
+                    sporsmalstekst = "abc",
+                    svar = true,
+                    vedtaksdato = datoPåForrigeSøknad,
+                    vedtaksTypePermanent = true,
+                    perioder = emptyList()
+                ),
+                utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+                    id = "123",
+                    sporsmalstekst = "test",
+                    svar = false,
+                    arbeidUtenforNorge = emptyList()
+                ),
+                oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
+                    id = "123",
+                    svar = false,
+                    sporsmalstekst = "abc",
+                    oppholdUtenforNorge = emptyList()
+
+                ),
+                oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
+                    id = "123",
+                    sporsmalstekst = "abc",
+                    svar = false,
+                    oppholdUtenforEOS = emptyList()
+                )
+            )
+
+            repo2.lagreBrukersporsmaal(forrigeBrukersvar)
+
+            val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
+                .readText(Charsets.UTF_8)
+            val sykepengeSoknad = JacksonParser().parse(fileContent)
+            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            val dbResult = repo.finnVurdering("12345678901")
+            Assertions.assertEquals(1, dbResult.size)
+            Assertions.assertNotNull(mock.request)
+
+            val mapBrukersvar = MapBrukersvar
+
+            val forventetBrukerinput = Brukerinput(
+                arbeidUtenforNorge = false,
+                oppholdstilatelse = mapBrukersvar.mapOppholdstillatelse(forrigeBrukersvar.oppholdstilatelse),
+                utfortAarbeidUtenforNorge = mapBrukersvar.mapUtførtArbeidUtenforNorge(forrigeBrukersvar.utfort_arbeid_utenfor_norge),
+                oppholdUtenforNorge = mapBrukersvar.mapOppholdUtenforNorge(forrigeBrukersvar.oppholdUtenforNorge),
+                oppholdUtenforEos = mapBrukersvar.mapOppholdUtenforEos(forrigeBrukersvar.oppholdUtenforEOS)
+            )
+
+            val faktiskBrukerinput = mock.request?.brukerinput
+            Assertions.assertEquals(forventetBrukerinput, faktiskBrukerinput)
+            Assertions.assertNotNull(mock.request?.brukerinput?.utfortAarbeidUtenforNorge)
+            Assertions.assertNotNull(mock.request?.brukerinput?.oppholdstilatelse)
+            Assertions.assertNotNull(mock.request?.brukerinput?.oppholdUtenforEos)
+            Assertions.assertNotNull(mock.request?.brukerinput?.oppholdUtenforNorge)
+        }
+
+
+    @Test
+    fun `søknad kommer uten nye brukerspørsmål eller gamle spørsmål - Gjenbruk skal ikke aktiveres av gamle brukersvar`() =
+        runBlocking {
+            val repo = MedlemskapVurdertInMemmoryRepository()
+            val repo2 = BrukersporsmaalInMemmoryRepository()
+            val persistenceService = PersistenceService(repo, repo2)
+            val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+            val mock = LovMeMock()
+            service.medlOppslagClient = mock
+
+
+            //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
+            val datoPåForrigeSøknad = LocalDate.of(2024, 1, 1)
+
+            val forrigeBrukersvar =  Brukersporsmaal(
+                fnr = "12345678901",
+                soknadid = "aa-bb-cc-dd",
+                eventDate = datoPåForrigeSøknad,
+                ytelse = "SYKEPENGER",
+                status = "SENDT",
+                sporsmaal = null,
+                oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+                    id = "123",
+                    sporsmalstekst = "abc",
+                    svar = true,
+                    vedtaksdato = datoPåForrigeSøknad,
+                    vedtaksTypePermanent = true,
+                    perioder = emptyList()
+                ),
+                utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+                    id = "123",
+                    sporsmalstekst = "test",
+                    svar = false,
+                    arbeidUtenforNorge = emptyList()
+                ),
+                oppholdUtenforNorge = Medlemskap_opphold_utenfor_norge(
+                    id = "123",
+                    svar = false,
+                    sporsmalstekst = "abc",
+                    oppholdUtenforNorge = emptyList()
+
+                ),
+                oppholdUtenforEOS = Medlemskap_opphold_utenfor_eos(
+                    id = "123",
+                    sporsmalstekst = "abc",
+                    svar = false,
+                    oppholdUtenforEOS = emptyList()
+                )
+            )
+
+            repo2.lagreBrukersporsmaal(forrigeBrukersvar)
 
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
