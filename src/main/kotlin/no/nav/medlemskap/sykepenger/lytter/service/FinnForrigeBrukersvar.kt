@@ -23,7 +23,10 @@ class FinnForrigeBrukersvar(val persistenceService: PersistenceService) {
             .filter { spm ->
                 antallDagerMellomToDatoer(spm.eventDate, LocalDate.parse(førsteDagForYtelse)) < Levetid.STANDARD_LEVETID_32.dager
             }
-            .nyesteMedSvar()
+            .filter { spm ->
+                spm.normaliser().erGjenbrukbart()
+            }
+            .maxByOrNull { it.eventDate }
             .also { kanskjeNyeste ->
                 if (kanskjeNyeste == null) {
                     log.info(
