@@ -14,7 +14,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 
 
-class SagaClient(
+open class SagaClient(
     private val baseUrl: String,
     private val azureAdClient: AzureAdClient,
     private val httpClient: HttpClient,
