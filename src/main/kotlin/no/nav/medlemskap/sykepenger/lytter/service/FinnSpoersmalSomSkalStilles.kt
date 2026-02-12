@@ -24,7 +24,10 @@ fun finnSpørsmålSomSkalStilles(
     }
 }
 
-fun opprettResponsTilFlex(foreløpigResponse: FlexRespons, forrigeBrukerspørsmål: List<Spørsmål>, callId: String): FlexRespons {
+fun opprettResponsTilFlex(
+    foreløpigResponse: FlexRespons,
+    forrigeBrukerspørsmål: List<Spørsmål>,
+    fnr: String): FlexRespons {
 
     val spørsmålSomSkalStilles = finnSpørsmålSomSkalStilles(
         foreløpigResponse.sporsmal,
@@ -33,7 +36,7 @@ fun opprettResponsTilFlex(foreløpigResponse: FlexRespons, forrigeBrukerspørsm�
 
     log.info(
         teamLogs,
-        "Sammenstiller brukerspørsmål for callId $callId",
+        "Sammenstiller brukerspørsmål for: $fnr",
         kv("Forrige brukerspørsmål (innenfor levetid)", forrigeBrukerspørsmål),
         kv("Foreslåtte brukerspørsmål", foreløpigResponse.sporsmal),
         kv("Spørsmål som skal stilles", spørsmålSomSkalStilles)
