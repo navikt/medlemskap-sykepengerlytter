@@ -138,8 +138,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 kv("endpoint", "brukersporsmal")
             )
             try {
+                val fnr = requiredVariables["fnr"]!!
                 val lovmeRequest = MedlOppslagRequest(
-                    fnr=requiredVariables["fnr"]!!,
+                    fnr,
                     førsteDagForYtelse = requiredVariables["fom"]!!,
                     periode = Periode(
                         fom=requiredVariables["fom"]!!,
