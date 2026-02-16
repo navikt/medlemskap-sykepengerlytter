@@ -36,7 +36,7 @@ class FinnForrigeBrukersvar(val persistenceService: PersistenceService) {
                 } else {
                     log.info(
                         teamLogs,
-                        "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
+                        "Nyeste brukersvar funnet for $fnr med id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
                     )
                 }
             }
@@ -62,7 +62,7 @@ class FinnForrigeBrukersvar(val persistenceService: PersistenceService) {
                 } else {
                     log.info(
                         teamLogs,
-                        "Nyeste brukersvar funnet: id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
+                        "Nyeste brukersvar funnet for $fnr med id=${kanskjeNyeste.soknadid}, eventDate=${kanskjeNyeste.eventDate}"
                     )
                 }
             }
