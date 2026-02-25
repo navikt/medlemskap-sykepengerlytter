@@ -46,6 +46,8 @@ spec:
     timeout: 60
   ingresses:
     - https://medlemskap-vurdering-sykepenger.intern.dev.nav.no
+  envFrom:
+    - secret: medlemskap-sykepengerlytter-secret
   readiness:
     path: "/isReady"
     port: 8080
