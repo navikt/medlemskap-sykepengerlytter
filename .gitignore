@@ -1,1 +1,7 @@
-/.idea/
+.gradle
+.idea
+build
+bin
+out
+.DS_Store
+

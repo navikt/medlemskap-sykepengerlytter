@@ -3,9 +3,9 @@ komponent for lytting på sykepenger-søknad-kafkaTopic
 
 
 ## URL til tjeneste
-* preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/flexvurdering  -- POST
-* preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/speilvurdering  -- POST
-* preprod: https://medlemskap-vurdering-sykepenger.dev.intern.nav.no/brukersporsmal?fom=<dato>&tom=<dato> -- GET
+* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/flexvurdering  -- POST
+* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/speilvurdering  -- POST
+* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/brukersporsmal?fom=<dato>&tom=<dato> -- GET
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/flexvurdering  -- POST
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/speilvurdering  -- POST
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/brukersporsmal?fom=<>&tom=<>  -- GET

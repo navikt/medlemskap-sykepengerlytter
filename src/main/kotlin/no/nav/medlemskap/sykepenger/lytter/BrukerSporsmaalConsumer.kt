@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
@@ -29,7 +28,7 @@ class BrukerSporsmaalConsumer(
         PostgresBrukersporsmaalRepository(DataSourceBuilder(environment).getDataSource())
     ),
     private val config: KafkaConfig = KafkaConfig(environment),
-    private val service: FlexMessageHandler = FlexMessageHandler(Configuration(), persistenceService),
+    private val service: FlexMessageHandler = FlexMessageHandler(persistenceService),
     private val consumer: KafkaConsumer<String, String> = config.createFlexConsumer(),
 
     ) {
