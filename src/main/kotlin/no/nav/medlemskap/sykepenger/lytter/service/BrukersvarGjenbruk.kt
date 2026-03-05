@@ -21,14 +21,14 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
 
         return when {
             søknadInneholderNyeBrukerspørsmål(utførtArbeidUtenforNorge) -> {
-                log.info(teamLogs, "Søknad med callId: ${søknadsParametere.callId} inneholder nye brukerspørsmål")
+                log.info(teamLogs, "Søknad med callId: ${søknadsParametere.callId} for person: ${søknadsParametere.fnr} inneholder nye brukerspørsmål")
                 mapTilBrukerinput(brukersvarPåSøknad, utførtArbeidUtenforNorge)
             }
 
             søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåSøknad) -> {
                 log.info(
                     teamLogs,
-                    "Søknad med callId: ${søknadsParametere.callId} inneholder gammelt brukerspørsmål med svar JA"
+                    "Søknad med callId: ${søknadsParametere.callId} for person ${søknadsParametere.fnr} inneholder gammelt brukerspørsmål med svar JA"
                 )
                 mapTilBrukerinput(arbeidUtenforNorge = true)
             }
