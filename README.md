@@ -3,12 +3,20 @@ komponent for lytting på sykepenger-søknad-kafkaTopic
 
 
 ## URL til tjeneste
-* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/flexvurdering  -- POST
-* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/speilvurdering  -- POST
-* preprod: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/brukersporsmal?fom=<dato>&tom=<dato> -- GET
+* dev: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/flexvurdering  -- POST
+* dev: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/speilvurdering  -- POST
+* dev: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/brukersporsmal?fom=<dato>&tom=<dato> -- GET
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/flexvurdering  -- POST
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/speilvurdering  -- POST
 * prod: https://medlemskap-vurdering-sykepenger.intern.nav.no/brukersporsmal?fom=<>&tom=<>  -- GET
+
+
+## URL til test-tjeneste
+Denne tjenesten er kun tilgjengelig i dev. Hensikten er å kunne teste å sende søknader til LovMe uten Kafka.
+
+* dev: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/test/publiser-sykepengesoknad  -- POST
+
+Se [egen dokumentasjon](flex-melding-felter.md) som beskriver eksempler på meldinger som kan sendes til LovMe.
 
 ## Autentisering
 Forventer et AzureAD-token utstedt til servicebruker, satt Authorization-header (Bearer)

@@ -23,7 +23,7 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
     if (cluster == "dev-gcp") {
         route("test") {
             authenticate("azureAuth") {
-                post("publiserSykepengesoeknad") {
+                post("publiser-sykepengesoknad") {
                     val callId = call.callId ?: UUID.randomUUID().toString()
                     val body = call.receiveText()
 
