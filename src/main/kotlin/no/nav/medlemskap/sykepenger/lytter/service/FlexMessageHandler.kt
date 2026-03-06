@@ -13,7 +13,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 open class FlexMessageHandler (
-    private val configuration: Configuration,
     private val persistenceService: PersistenceService,
     private val soknadRecordHandler: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
 ) {

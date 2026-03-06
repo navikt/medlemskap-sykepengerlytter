@@ -79,12 +79,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
         val søknadsParametere = request.tilSøknadsParametere(callId)
 
-        log.info(
-            teamLogs, "Sjekker om det finnes gjenbrukbare brukersvar for forespørsel fra Speil",
-            kv("fnr", søknadsParametere.fnr),
-            kv("førsteDagForYtelse", søknadsParametere.førsteDagForYtelse)
-        )
-        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(søknadsParametere)
+        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
+            søknadsParametere = søknadsParametere,
+            kilde = "speil")
 
         val medlemskapOppslagRequest = MedlOppslagRequest(
             fnr = søknadsParametere.fnr,

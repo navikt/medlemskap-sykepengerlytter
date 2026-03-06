@@ -10,10 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
-import no.nav.medlemskap.sykepenger.lytter.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.slf4j.MarkerFactory
-import java.time.LocalDate
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -111,17 +108,12 @@ class SoknadRecordHandler(
     private suspend fun mapBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
         val søknadsParametere = sykepengeSoknad.tilSøknadsParametere()
 
-        val brukersvarPåSøknad = persistenceService.hentbrukersporsmaalForSoknadID(søknadsParametere.callId)
-
-        log.info(
-            teamLogs, "Sjekker om det finnes gjenbrukbare brukersvar for søknad fra sykepengebackend",
-            kv("fnr", søknadsParametere.fnr),
-            kv("førsteDagForYtelse", søknadsParametere.førsteDagForYtelse)
-        )
+        val brukersvarPåInnkommendeSøknad = persistenceService.hentbrukersporsmaalForSoknadID(søknadsParametere.callId)
 
         val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
             søknadsParametere,
-            brukersvarPåSøknad
+            brukersvarPåInnkommendeSøknad,
+            "sykepengebackend"
         )
 
         val medlemskapOppslagRequest = MedlOppslagRequest(

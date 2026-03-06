@@ -88,7 +88,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val testperson = "15076500565"
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse: "2023-08-16"
@@ -145,7 +145,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -201,7 +201,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -257,7 +257,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -313,7 +313,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -372,7 +372,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -428,7 +428,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -485,7 +485,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(Configuration(),containerPersistenceService)
+        val fmh = FlexMessageHandler(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
