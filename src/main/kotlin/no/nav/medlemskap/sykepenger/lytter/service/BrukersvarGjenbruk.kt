@@ -19,11 +19,12 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
         brukersvarPåInnkommendeSøknad: Brukersporsmaal? = null,
         kilde: String
     ): Brukerinput {
+
         val utførtArbeidUtenforNorge =
             mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvarPåInnkommendeSøknad?.utfort_arbeid_utenfor_norge)
 
         return when {
-            søknadInneholderNyeBrukerspørsmål(utførtArbeidUtenforNorge) -> {
+            søknadInneholderNyeBrukerspørsmål(brukersvarPåInnkommendeSøknad) -> {
                 log.info(
                     teamLogs,
                     "Søknad med callId: ${søknadsParametere.callId} for person: ${søknadsParametere.fnr} inneholder nye brukerspørsmål")
@@ -78,8 +79,11 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
         }
     }
 
-    private fun søknadInneholderNyeBrukerspørsmål(utførtArbeidUtenforNorge: UtfortAarbeidUtenforNorge?): Boolean =
-        utførtArbeidUtenforNorge != null
+    private fun søknadInneholderNyeBrukerspørsmål(brukersvar: Brukersporsmaal?): Boolean =
+        brukersvar?.utfort_arbeid_utenfor_norge != null ||
+                brukersvar?.oppholdstilatelse != null ||
+                brukersvar?.oppholdUtenforEOS != null ||
+                brukersvar?.oppholdUtenforNorge != null
 
     private fun søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad: Brukersporsmaal?): Boolean =
         brukersvarPåInnkommendeSøknad?.sporsmaal?.arbeidUtland == true
