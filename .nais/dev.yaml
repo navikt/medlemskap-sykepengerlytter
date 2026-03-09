@@ -87,10 +87,6 @@ spec:
       value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
     - name: AZURE_AUTHORITY_ENDPOINT
       value: https://login.microsoftonline.com
-    - name: SECURITY_TOKEN_SERVICE_URL
-      value: https://api-gw-q1.oera.no/sts/SecurityTokenServiceProvider/
-    - name: SECURITY_TOKEN_SERVICE_REST_URL
-      value: https://api-gw-q1.oera.no/security-token-service
     - name: MEDL_OPPSLAG_BASE_URL
       value: http://medlemskap-oppslag.medlemskap.svc.cluster.local
     - name: MEDL_OPPSLAG_CLIENT_ID
