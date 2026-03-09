@@ -15,9 +15,6 @@ private val defaultProperties = ConfigurationMap(
         "AZURE_TENANT" to "966ac572-f5b7-4bbe-aa88-c76419c0f851",
         "AZURE_AUTHORITY_ENDPOINT" to "https://login.microsoftonline.com",
         "SERVICE_USER_USERNAME" to "test",
-        "SECURITY_TOKEN_SERVICE_URL" to "https://api-gw-q1.oera.no/sts/SecurityTokenServiceProvider/",
-        "SECURITY_TOKEN_SERVICE_REST_URL" to "https://api-gw-q1.oera.no/security-token-service",
-        "SECURITY_TOKEN_SERVICE_API_KEY" to "",
         "SERVICE_USER_PASSWORD" to "",
         "NAIS_APP_NAME" to "",
         "NAIS_CLUSTER_NAME" to "",
@@ -64,7 +61,6 @@ private fun hentCommitSha(image: String): String {
 
 data class Configuration(
     val register: Register = Register(),
-    val sts: Sts = Sts(),
     val azureAd: AzureAd = AzureAd(),
     val kafkaConfig: KafkaConfig = KafkaConfig(),
     val cluster: String = "NAIS_CLUSTER_NAME".configProperty(),
@@ -75,14 +71,6 @@ data class Configuration(
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
         val medlemskapSagaBaseUrl: String = "MEDL_SAGA_BASE_URL".configProperty(),
         val medlemskapSagaClientID: String = "MEDL_SAGA_CLIENT_ID".configProperty(),
-    )
-
-    data class Sts(
-        val endpointUrl: String = "SECURITY_TOKEN_SERVICE_URL".configProperty(),
-        val restUrl: String = "SECURITY_TOKEN_SERVICE_REST_URL".configProperty(),
-        val apiKey: String = "SECURITY_TOKEN_SERVICE_API_KEY".configProperty(),
-        val username: String = "SERVICE_USER_USERNAME".configProperty(),
-        val password: String = "SERVICE_USER_PASSWORD".configProperty()
     )
 
     data class AzureAd(
