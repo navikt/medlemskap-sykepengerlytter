@@ -3,7 +3,6 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import org.slf4j.MarkerFactory
 
@@ -19,15 +18,13 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
         brukersvarPåInnkommendeSøknad: Brukersporsmaal? = null,
         kilde: String
     ): Brukerinput {
-        val utførtArbeidUtenforNorge =
-            mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvarPåInnkommendeSøknad?.utfort_arbeid_utenfor_norge)
 
         return when {
-            søknadInneholderNyeBrukerspørsmål(utførtArbeidUtenforNorge) -> {
+            søknadInneholderNyeBrukerspørsmål(brukersvarPåInnkommendeSøknad) -> {
                 log.info(
                     teamLogs,
                     "Søknad med callId: ${søknadsParametere.callId} for person: ${søknadsParametere.fnr} inneholder nye brukerspørsmål")
-                mapTilBrukerinput(brukersvarPåInnkommendeSøknad, utførtArbeidUtenforNorge)
+                mapTilBrukerinput(brukersvarPåInnkommendeSøknad)
             }
 
             søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad) -> {
@@ -70,16 +67,16 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
                             " fra tidligere søknad med eventDate: ${forrigeBrukersvar.eventDate}"
                 )
 
-                val utførtArbeidUtenforNorge =
-                    mapBrukersvar.mapUtførtArbeidUtenforNorge(forrigeBrukersvar.utfort_arbeid_utenfor_norge)
-
-                return mapTilBrukerinput(forrigeBrukersvar, utførtArbeidUtenforNorge)
+                return mapTilBrukerinput(forrigeBrukersvar)
             }
         }
     }
 
-    private fun søknadInneholderNyeBrukerspørsmål(utførtArbeidUtenforNorge: UtfortAarbeidUtenforNorge?): Boolean =
-        utførtArbeidUtenforNorge != null
+    private fun søknadInneholderNyeBrukerspørsmål(brukersvar: Brukersporsmaal?): Boolean =
+        brukersvar?.utfort_arbeid_utenfor_norge != null ||
+                brukersvar?.oppholdstilatelse != null ||
+                brukersvar?.oppholdUtenforEOS != null ||
+                brukersvar?.oppholdUtenforNorge != null
 
     private fun søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad: Brukersporsmaal?): Boolean =
         brukersvarPåInnkommendeSøknad?.sporsmaal?.arbeidUtland == true
@@ -89,10 +86,9 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
         Brukerinput(arbeidUtenforNorge = arbeidUtenforNorge)
 
 
-    private fun mapTilBrukerinput(
-        brukersvar: Brukersporsmaal?,
-        utførtArbeidUtenforNorge: UtfortAarbeidUtenforNorge?
-    ): Brukerinput {
+    private fun mapTilBrukerinput(brukersvar: Brukersporsmaal?): Brukerinput {
+        val utførtArbeidUtenforNorge =
+            mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvar?.utfort_arbeid_utenfor_norge)
         return Brukerinput(
             arbeidUtenforNorge = mapBrukersvar.kopierFraUtførtArbeidUtenforNorge(
                 utførtArbeidUtenforNorge?.svar ?: false

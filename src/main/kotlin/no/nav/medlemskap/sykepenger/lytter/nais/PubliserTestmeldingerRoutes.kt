@@ -10,11 +10,14 @@ import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
+private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
 
@@ -34,10 +37,12 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
                         key = callId,
                         topic = "test.intern",
                         timestamp = LocalDateTime.now(),
-                        timestampType = "CREATE_TIME"
+                        timestampType = "CREATE_TIME",
+                        kilde = Kilde.LOVME_GCP
                     )
 
                     try {
+                        logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
                         flexMessageHandler.handle(flexMessageRecord)
                         call.respond(HttpStatusCode.OK)
                     } catch (t: Throwable) {
