@@ -15,6 +15,12 @@ class MedlemskapVurdertInMemmoryRepository: MedlemskapVurdertRepository {
         storage.add(vurderingDao)
     }
 
+    override fun slettVurderingsstatus(fnr: String): Int {
+        val count = storage.count { it.fnr == fnr }
+        storage.removeAll { it.fnr == fnr }
+        return count
+    }
+
 }
 class BrukersporsmaalInMemmoryRepository: BrukersporsmaalRepository {
     var storage = mutableListOf<Brukersporsmaal>()

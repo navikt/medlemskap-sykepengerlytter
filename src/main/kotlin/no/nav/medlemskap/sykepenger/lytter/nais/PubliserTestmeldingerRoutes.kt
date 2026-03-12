@@ -67,8 +67,9 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persis
                     }
                     try {
                         val antallSlettet = persistenceService.slettBrukersporsmaal(fnr)
-                        logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål for testperson")
-                        call.respond(HttpStatusCode.OK, "Slettet $antallSlettet innslag")
+                        val antallVurderingerSlettet = persistenceService.slettVurderingsstatus(fnr)
+                        logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål og $antallVurderingerSlettet vurderinger for testperson")
+                        call.respond(HttpStatusCode.OK, "Slettet $antallSlettet brukerspørsmål og $antallVurderingerSlettet vurderinger")
                     } catch (t: Throwable) {
                         logger.error("Feil ved sletting av brukerspørsmål", kv("cause", t.message))
                         call.respond(HttpStatusCode.InternalServerError, t.message ?: "Ukjent feil")
