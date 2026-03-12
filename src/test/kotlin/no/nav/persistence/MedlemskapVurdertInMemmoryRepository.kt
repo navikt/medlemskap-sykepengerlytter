@@ -30,5 +30,11 @@ class BrukersporsmaalInMemmoryRepository: BrukersporsmaalRepository {
         return storage.filter { it.soknadid == id }.firstOrNull()
     }
 
+    override fun slettBrukersporsmaal(fnr: String): Int {
+        val count = storage.count { it.fnr == fnr }
+        storage.removeAll { it.fnr == fnr }
+        return count
+    }
+
 
 }

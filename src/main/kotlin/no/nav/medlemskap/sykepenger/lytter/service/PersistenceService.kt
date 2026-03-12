@@ -66,6 +66,10 @@ class PersistenceService(
         brukersporsmaalRepository.lagreBrukersporsmaal(brukersporsmaal)
     }
 
+    fun slettBrukersporsmaal(fnr: String): Int {
+        return brukersporsmaalRepository.slettBrukersporsmaal(fnr)
+    }
+
     private fun MedlemskapVurdertRecord.logLagret() =
         log.info(
             "Vurdering lagret til database - sykmeldingId: ${key}, offsett: $offset, partiotion: $partition, topic: $topic",

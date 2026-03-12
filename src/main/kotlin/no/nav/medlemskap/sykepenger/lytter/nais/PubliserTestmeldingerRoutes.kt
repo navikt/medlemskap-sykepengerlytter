@@ -12,6 +12,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
 import no.nav.medlemskap.sykepenger.lytter.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
 import java.util.*
@@ -19,7 +20,7 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
+fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persistenceService: PersistenceService) {
 
     val cluster = System.getenv("NAIS_CLUSTER_NAME")
 
@@ -55,6 +56,22 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
                             HttpStatusCode.InternalServerError,
                             t.message ?: "Ukjent feil"
                         )
+                    }
+                }
+
+                post("slett-brukersvar") {
+                    val fnr = call.request.header("fnr")
+                    if (fnr.isNullOrBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Mangler fnr header")
+                        return@post
+                    }
+                    try {
+                        val antallSlettet = persistenceService.slettBrukersporsmaal(fnr)
+                        logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål for testperson")
+                        call.respond(HttpStatusCode.OK, "Slettet $antallSlettet innslag")
+                    } catch (t: Throwable) {
+                        logger.error("Feil ved sletting av brukerspørsmål", kv("cause", t.message))
+                        call.respond(HttpStatusCode.InternalServerError, t.message ?: "Ukjent feil")
                     }
                 }
             }
