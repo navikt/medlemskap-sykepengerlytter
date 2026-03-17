@@ -20,6 +20,8 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
+data class SlettBrukersvarRequest(val fnr: String)
+
 fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persistenceService: PersistenceService) {
 
     val cluster = System.getenv("NAIS_CLUSTER_NAME")
@@ -60,9 +62,10 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persis
                 }
 
                 post("slett-brukersvar") {
-                    val fnr = call.request.header("fnr")
-                    if (fnr.isNullOrBlank()) {
-                        call.respond(HttpStatusCode.BadRequest, "Mangler fnr header")
+                    val request = call.receive<SlettBrukersvarRequest>()
+                    val fnr = request.fnr
+                    if (fnr.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Mangler fnr i request body")
                         return@post
                     }
                     try {
