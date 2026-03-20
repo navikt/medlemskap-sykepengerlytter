@@ -11,11 +11,13 @@ import no.nav.medlemskap.sykepenger.lytter.security.sha256
 interface MedlemskapVurdertRepository {
     fun finnVurdering(fnr: String): List<VurderingDao>
     fun lagreVurdering(vurderingDao: VurderingDao)
+    fun slettVurderingsstatus(fnr: String): Int
 }
 
 class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : MedlemskapVurdertRepository {
     val INSERT_VURDERING = "INSERT INTO syk_vurdering(id,fnr, fom,tom,status) VALUES(?, ?, ?, ?, ?)"
     val FIND_BY_FNR = "select * from syk_vurdering where fnr = ?"
+    val DELETE_BY_FNR = "DELETE FROM syk_vurdering WHERE fnr = ?"
 
     override fun finnVurdering(fnr: String): List<VurderingDao> {
 
@@ -33,6 +35,14 @@ class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : Medlemsk
         }
     }
 
+
+    override fun slettVurderingsstatus(fnr: String): Int {
+        return using(sessionOf(dataSource)) { session ->
+            session.transaction {
+                it.run(queryOf(DELETE_BY_FNR, fnr.sha256()).asUpdate)
+            }
+        }
+    }
 
     fun using(datasource: DataSource): PostgresMedlemskapVurdertRepository {
         return PostgresMedlemskapVurdertRepository(datasource)

@@ -63,6 +63,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: medlemskap-analyse
         - application: medlemskap-sykepenger-listener
         - application: sparkel-medlemskap
           namespace: tbd

@@ -13,12 +13,14 @@ interface BrukersporsmaalRepository {
     fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal>
     fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal)
     fun finnBrukersporsmaalForSoknad(id: String) : Brukersporsmaal?
+    fun slettBrukersporsmaal(fnr: String): Int
 }
 
 class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : BrukersporsmaalRepository {
     val INSERT_BRUKER_SPORSMAAL = "INSERT INTO brukersporsmaal(fnr,soknadid, eventDate,ytelse,status,sporsmaal) VALUES(?, ?, ?, ?, ?, to_json(?::json))"
     val FIND_BY_FNR = "select * from brukersporsmaal where fnr = ?"
     val FIND_BY_ID = "select * from brukersporsmaal where soknadid = ?"
+    val DELETE_BY_FNR = "DELETE FROM brukersporsmaal WHERE fnr = ?"
 
     override fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal> {
 
@@ -65,6 +67,14 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             }
 
         }
+
+    override fun slettBrukersporsmaal(fnr: String): Int {
+        return using(sessionOf(dataSource)) { session ->
+            session.transaction {
+                it.run(queryOf(DELETE_BY_FNR, fnr.sha256()).asUpdate)
+            }
+        }
+    }
     }
 
 

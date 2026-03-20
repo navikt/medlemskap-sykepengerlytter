@@ -12,6 +12,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
 import no.nav.medlemskap.sykepenger.lytter.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
 import java.util.*
@@ -19,7 +20,9 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
+data class SlettBrukersvarRequest(val fnr: String)
+
+fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persistenceService: PersistenceService) {
 
     val cluster = System.getenv("NAIS_CLUSTER_NAME")
 
@@ -55,6 +58,31 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler) {
                             HttpStatusCode.InternalServerError,
                             t.message ?: "Ukjent feil"
                         )
+                    }
+                }
+
+                post("slett-brukersvar") {
+                    val request = call.receive<SlettBrukersvarRequest>()
+                    val fnr = request.fnr
+                    if (fnr.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Mangler fnr i request body")
+                        return@post
+                    }
+                    try {
+                        val antallSlettet = persistenceService.slettBrukersporsmaal(fnr)
+                        val antallVurderingerSlettet = persistenceService.slettVurderingsstatus(fnr)
+                        logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål og $antallVurderingerSlettet vurderinger for testperson")
+                        call.respond(
+                            HttpStatusCode.OK,
+                            mapOf(
+                                "fnr" to fnr,
+                                "slettetBrukersvar" to antallSlettet,
+                                "slettetVurderingsstatuser" to antallVurderingerSlettet
+                            )
+                        )
+                    } catch (t: Throwable) {
+                        logger.error("Feil ved sletting av brukerspørsmål", kv("cause", t.message))
+                        call.respond(HttpStatusCode.InternalServerError, t.message ?: "Ukjent feil")
                     }
                 }
             }

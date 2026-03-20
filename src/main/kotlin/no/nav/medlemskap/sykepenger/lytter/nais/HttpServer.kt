@@ -84,7 +84,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
-            publiserTestmeldinger(flexMessageHandler)
+            publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }
 })
