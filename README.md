@@ -112,12 +112,12 @@ Brukes kun når det er nødvendig å endre data:
 nais postgres prepare --team medlemskap --environment dev-gcp medlemskap-sykepenger-listener --all-privileges
 ```
 
-## Steg 3: Koble til databasen
+## Steg 2: Koble til databasen
 ```bash
 nais postgres proxy --team medlemskap --environment dev-gcp --reason "debugging issues" medlemskap-sykepenger-listener
 ```
 
-## Steg 4: Rydd opp etter deg ⚠️
+## Steg 3: Rydd opp etter deg ⚠️
 Når du er ferdig skal du fjerne tilgangsnivået du fikk tildelt i Steg 1.
 ```bash
 nais postgres revoke --team medlemskap --environment dev-gcp medlemskap-sykepenger-listener
