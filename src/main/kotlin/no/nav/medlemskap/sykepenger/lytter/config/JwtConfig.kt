@@ -5,7 +5,7 @@ import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import mu.KotlinLogging
-import java.net.URI
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 private val logger = KotlinLogging.logger { }
@@ -16,7 +16,7 @@ class JwtConfig(val configuration: Configuration, azureAdOpenIdConfiguration: Az
         const val REALM = "udi-proxy"
     }
 
-    val jwkProvider: JwkProvider = JwkProviderBuilder(URI(azureAdOpenIdConfiguration.jwksUri).toURL())
+    val jwkProvider: JwkProvider = JwkProviderBuilder(URL(azureAdOpenIdConfiguration.jwksUri))
         .cached(10, 24, TimeUnit.HOURS)
         .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
