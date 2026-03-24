@@ -141,4 +141,6 @@ I teamet skal du ikke ha behov for å gi deg selv skrivetilgang til _prod-gcp_. 
 teamet informeres og tilgangen skal loggføres i [adgangsoversikten](http://confluence.adeo.no/spaces/TLM/pages/800081767/Loggf%C3%B8ring+av+skrivetilgang+til+databaser+i+produksjon) med dato og tjenestelig formål.
 
 
-
+# Revisjonslogging
+Revisjonslogging for databasen `sykmedlemskap` er aktivert.
+Loggene er tilgjengelig inne på instancen i [Nais Console](https://console.nav.cloud.nais.io/team/medlemskap/postgres)
