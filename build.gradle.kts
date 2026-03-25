@@ -16,7 +16,7 @@ val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 plugins {
     kotlin("jvm") version "1.9.20"
     application
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "no.nav.medlemskap"
@@ -69,6 +69,7 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("org.testcontainers:kafka:$testcontainerVersion")
@@ -86,7 +87,7 @@ dependencies {
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "20"
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     shadowJar {
         archiveBaseName.set("app")
