@@ -1,8 +1,9 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import mu.KotlinLogging
 
@@ -16,15 +17,21 @@ import java.time.LocalDateTime
 
 class JacksonParser {
     private val log = KotlinLogging.logger { }
+
+    companion object {
+        @PublishedApi
+        internal val mapper: ObjectMapper = JsonMapper.builder()
+            .addModule(KotlinModule.Builder().build())
+            .findAndAddModules()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .build()
+    }
+
     fun parse(jsonString: String): LovmeSoknadDTO {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -43,13 +50,6 @@ class JacksonParser {
 
     fun parseFlexVurdering(jsonString: String): FlexVurderingRespons {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -58,13 +58,6 @@ class JacksonParser {
     }
     fun parseFlexBrukerSporsmaal(jsonString: String): FlexBrukerSporsmaal {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -73,13 +66,6 @@ class JacksonParser {
     }
     fun parseFlexBrukerSporsmaalV2(jsonString: String): FlexMedlemskapsBrukerSporsmaal {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -89,13 +75,6 @@ class JacksonParser {
 
     fun parseMedlemskap(jsonString: String): Medlemskap {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -105,13 +84,6 @@ class JacksonParser {
 
     fun parseMedlemskap(medlemskap: Medlemskap): String {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.writeValueAsString(medlemskap)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -120,13 +92,6 @@ class JacksonParser {
     }
     fun parseFlexBrukerSporsmaal(flexBrukerSporsmaal: FlexBrukerSporsmaal): String {
             try {
-                val mapper: ObjectMapper = ObjectMapper()
-                    .registerKotlinModule()
-                    .findAndRegisterModules()
-                    .configure(SerializationFeature.INDENT_OUTPUT, true)
-                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
                 return mapper.writeValueAsString(flexBrukerSporsmaal)
             } catch (t: Throwable) {
                 log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -135,13 +100,6 @@ class JacksonParser {
         }
     fun parse(obj: Any): String {
         try {
-            val mapper: ObjectMapper = ObjectMapper()
-                .registerKotlinModule()
-                .findAndRegisterModules()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             return mapper.writeValueAsString(obj)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
@@ -149,48 +107,16 @@ class JacksonParser {
         }
     }
     fun ToJson(obj: Any): JsonNode {
-        val mapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .findAndRegisterModules()
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-        return  mapper.valueToTree(obj);
-
+        return mapper.valueToTree(obj);
     }
     fun ToJson(string: String): JsonNode {
-        val mapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .findAndRegisterModules()
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-        return  mapper.readTree(string);
-
+        return mapper.readTree(string);
     }
 
     inline fun <reified T> toDomainObject(jsonNode: JsonNode): T {
-        val mapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .findAndRegisterModules()
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
         return mapper.treeToValue(jsonNode)
-
     }
     inline fun <reified T> toDomainObject(jsonString: String): T {
-        val mapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .findAndRegisterModules()
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
         return mapper.readValue<T>(jsonString)
-
     }
 }
