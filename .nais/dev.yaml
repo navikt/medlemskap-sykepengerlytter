@@ -38,6 +38,11 @@ spec:
   azure:
     application:
       enabled: true
+      allowAllUsers: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
   image: {{image}}
   liveness:
     path: "/isAlive"
