@@ -1,13 +1,13 @@
-val ktorVersion = "2.1.3"
-val kafkaVersion = "3.3.1"
-val jacksonVersion = "2.14.0"
+val ktorVersion = "2.3.12"
+val kafkaVersion = "3.7.1"
+val jacksonVersion = "2.17.2"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
 val resilience4jVersion = "1.5.0"
-val logstashVersion = "7.2"
+val logstashVersion = "8.1"
 val logbackVersion = "1.3.14"
 val flywayVersion = "9.5.1"
-val hikariVersion = "3.4.5"
+val hikariVersion = "5.1.0"
 val kotliqueryVersion = "1.3.1"
 val httpClientVersion = "4.5.13"
 val testcontainerVersion = "1.21.4"
@@ -16,7 +16,7 @@ val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 plugins {
     kotlin("jvm") version "1.9.20"
     application
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "no.nav.medlemskap"
@@ -57,26 +57,25 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("org.apache.httpcomponents:httpclient:$httpClientVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:1.7.0")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
-    implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    testImplementation(platform("org.junit:junit-bom:5.7.1"))
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("io.mockk:mockk:1.11.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.mockk:mockk:1.13.12")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("org.testcontainers:kafka:$testcontainerVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainerVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainerVersion")
     testImplementation("org.assertj:assertj-core:3.27.3")
     //Database
-    implementation("org.postgresql:postgresql:42.5.1")
+    implementation("org.postgresql:postgresql:42.7.4")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
@@ -86,7 +85,7 @@ dependencies {
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "20"
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     shadowJar {
         archiveBaseName.set("app")
