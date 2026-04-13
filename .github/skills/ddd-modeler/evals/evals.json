@@ -1,0 +1,24 @@
+{
+  "skill_name": "ddd-modeler",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Vi har en tjeneste som mottar sykepengesøknader fra Flex via Kafka, vurderer medlemskap ved å kalle LovMe, og lagrer resultatet i PostgreSQL. Søknaden kan ha brukerspørsmål som må persisteres. Kan du modellere opp domenet for denne tjenesten med DDD?",
+      "expected_output": "Et komplett kontekstkart med minst to Bounded Contexts (f.eks. Søknadsmottak og Medlemsvurdering), aggregater med Value Objects, domenehendelser, og Kotlin-kode for domenelag med Hexagonal Architecture-pakkestruktur.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Jeg vil splitte en monolittisk NAV-tjeneste i mikrotjenester. Tjenesten håndterer: mottak av søknader, regelkjøring for medlemskap, lagring av vurderinger, og eksponering av resultater til Flex og Speil. Hvor bør grensene gå?",
+      "expected_output": "En subdomain-analyse (core/supporting/generic), forslag til Bounded Contexts med tydelige grenser, integrasjonsmønstre mellom dem (ACL, OHS, etc.), og konkrete anbefalinger for hva som bør være egne mikrotjenester vs. hva som kan leve sammen.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Vi har et aggregat for MedlemskapVurdering som har blitt veldig stort — det inneholder søknadsdata, brukerspørsmål, regelresultater, og historikk. Hvordan bør vi refaktorere dette etter DDD-prinsipper?",
+      "expected_output": "Analyse av det for store aggregatet, forslag til oppdeling i mindre aggregater med referanse via ID, identifisering av Value Objects som kan trekkes ut, og Kotlin-kode som viser før/etter-refaktoreringen med domenehendelser for kommunikasjon mellom de nye aggregatene.",
+      "files": []
+    }
+  ]
+}
+
