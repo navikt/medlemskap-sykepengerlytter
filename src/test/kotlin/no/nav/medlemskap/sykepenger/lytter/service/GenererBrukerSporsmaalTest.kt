@@ -29,7 +29,13 @@ class GenererBrukerSporsmaalTest {
             "REGEL_1_3_1",
             "REGEL_1_3_3",
             "REGEL_1_3_4",
-            "REGEL_1_3_5"
+            "REGEL_1_3_5",
+            "REGEL_51",
+            "REGEL_55",
+            "REGEL_58",
+            "REGEL_62",
+            "REGEL_64",
+            "REGEL_66",
         )
         assertThat(gyldigeRegler).allSatisfy { regelbrudd ->
             assertThat(genererBrukerspørsmål.skalGenerereBrukerSpørsmål(listOf(regelbrudd))).isEqualTo(true)
