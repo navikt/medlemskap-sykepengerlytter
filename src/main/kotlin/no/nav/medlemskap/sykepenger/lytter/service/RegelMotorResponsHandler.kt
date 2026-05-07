@@ -21,8 +21,8 @@ class RegelMotorResponsHandler {
         }
     }
 
-    fun hentOppholdstillatelsePeriode(lovmeresponse: String): Periode? {
-        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(lovmeresponse)
+    fun hentOppholdstillatelsePeriode(medlemskapOppslagRespons: String): Periode? {
+        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapOppslagRespons)
 
         return medlemskapVurdering
             .datagrunnlag

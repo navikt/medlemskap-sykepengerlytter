@@ -2,18 +2,19 @@ package no.nav.medlemskap.sykepenger.lytter.nais
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
+import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Respons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.*
+import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
@@ -23,6 +24,7 @@ private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
+    val authorizationHandler = AuthorizationHandler()
     authenticate("azureAuth") {
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -115,10 +117,8 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
         }
         get("/brukersporsmal") {
             val start = System.currentTimeMillis()
-            val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
-            val azp = callerPrincipal.payload.getClaim("azp").asString()
-            logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
-            val callId = call.callId ?: UUID.randomUUID().toString()
+            val authContext = authorizationHandler.extractAuthContext(call)
+            val callId = authContext.callId
             logger.info(
                 "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
@@ -134,9 +134,9 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 kv("endpoint", "brukersporsmal")
             )
             try {
-                val lovmeRequest = medlemskapOppslagRequest(requiredVariables)
-                val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
-                if (lovmeresponse=="GradertAdresse"){
+                val medlemskapOppslagRequest = medlemskapOppslagRequest(requiredVariables)
+                val medlemskapOppslagRespons = bomloService.kallLovme(medlemskapOppslagRequest,callId)
+                if (medlemskapOppslagRespons=="GradertAdresse"){
                     logger.info(
                         teamLogs,
                         "Gradert adresse",
@@ -146,19 +146,19 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     )
                     call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
                 }
-                if (lovmeresponse=="TimeoutCancellationException"){
+                if (medlemskapOppslagRespons=="TimeoutCancellationException"){
                     logger.info(
                         teamLogs,
                         "Forespørsmål mot medlemskap-oppslag timet ut",
                         kv("callId", callId),
-                        kv("fnr", lovmeRequest.fnr),
+                        kv("fnr", medlemskapOppslagRequest.fnr),
                         kv("tidsbrukInMs",System.currentTimeMillis()-start),
                         kv("endpoint", "brukersporsmal")
                     )
                     call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
-                    val flexRespons = Respons().lagFlexRespons(lovmeresponse, lovmeRequest, bomloService, callId)
+                    val flexRespons = Respons().lagFlexRespons(medlemskapOppslagRespons, medlemskapOppslagRequest, bomloService, callId)
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")

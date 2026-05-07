@@ -20,9 +20,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
-import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import org.slf4j.MarkerFactory
-import java.time.LocalDate
 
 class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
     PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
@@ -196,8 +194,8 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     }
 
     //Brukt av brukersporsmal-endepunktet
-    fun finnForrigeBrukerspørsmål(lovmeRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(lovmeRequest.fnr, lovmeRequest.førsteDagForYtelse)
+    fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
+        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(medlemskapOppslagRequest.fnr, medlemskapOppslagRequest.førsteDagForYtelse)
     }
 
     private fun BomloRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =

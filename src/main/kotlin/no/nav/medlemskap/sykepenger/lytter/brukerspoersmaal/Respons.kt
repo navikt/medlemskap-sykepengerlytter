@@ -15,18 +15,18 @@ class Respons {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun lagFlexRespons(lovmeresponse: String, lovmeRequest: MedlOppslagRequest, bomloService: BomloService, callId: String): FlexRespons {
-        val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
+    fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, bomloService: BomloService, callId: String): FlexRespons {
+        val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)
+        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
         val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
         if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
-            flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
+            flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(medlemskapOppslagResponse)
         }
         logger.info(
             teamLogs,
             "Svarer brukerspørsmål",
             kv("callId", callId),
-            kv("fnr", lovmeRequest.fnr),
+            kv("fnr", medlemskapOppslagRequest.fnr),
             kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
             kv("endpoint", "brukersporsmal"),
             kv("eksiterende_sporsmaal",JacksonParser().ToJson(forrigeBrukerspørsmål).toPrettyString())
