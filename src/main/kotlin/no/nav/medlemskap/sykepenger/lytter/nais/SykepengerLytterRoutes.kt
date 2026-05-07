@@ -11,9 +11,8 @@ import io.ktor.http.*
 import io.ktor.server.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Respons
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
@@ -130,7 +129,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
            /*
            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
            * */
-            val  requiredVariables:Map<String,String> = getRequiredVariables(call.request)
+            val  requiredVariables = getRequiredVariables(call.request)
             logger.info(
                 teamLogs,
                 "Forespørsel til medlemskap-oppslag: ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
@@ -138,14 +137,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                 kv("endpoint", "brukersporsmal")
             )
             try {
-                val fnr = requiredVariables["fnr"]!!
-                val lovmeRequest = MedlOppslagRequest(
-                    fnr,
-                    førsteDagForYtelse = requiredVariables["fom"]!!,
-                    periode = Periode(
-                        fom=requiredVariables["fom"]!!,
-                        tom = requiredVariables["tom"]!!),
-                    brukerinput = Brukerinput(false))
+                val lovmeRequest = medlemskapOppslagRequest(requiredVariables)
                 val lovmeresponse = bomloService.kallLovme(lovmeRequest,callId)
                 if (lovmeresponse=="GradertAdresse"){
                     logger.info(
@@ -169,23 +161,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
-                    val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-                    val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
-                    val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
-                    if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
-                        flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(lovmeresponse)
-
-                    }
-                    logger.info(
-                        teamLogs,
-                        "Svarer brukerspørsmål",
-                        kv("callId", callId),
-                        kv("fnr", lovmeRequest.fnr),
-                        kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
-                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
-                        kv("endpoint", "brukersporsmal"),
-                        kv("eksiterende_sporsmaal",JacksonParser().ToJson(forrigeBrukerspørsmål).toPrettyString())
-                    )
+                    val flexRespons = Respons().lagRespons(lovmeresponse, lovmeRequest, bomloService, callId)
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
