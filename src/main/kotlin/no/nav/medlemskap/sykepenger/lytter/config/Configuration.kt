@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.config
 
 import com.natpryce.konfig.*
-import jdk.jfr.Enabled
 import mu.KotlinLogging
 import java.io.File
 import java.io.FileNotFoundException
@@ -35,6 +34,7 @@ private val defaultProperties = ConfigurationMap(
         "MEDL_SAGA_API_KEY" to "",
         "MEDL_SAGA_BASE_URL" to "",
         "MEDL_SAGA_CLIENT_ID" to "",
+        "NY_FUNKSJONALITET_ENABLED" to "Nei",
     )
 )
 
@@ -99,5 +99,11 @@ data class Configuration(
         val brukersporsmaal_enabled: String = "BRUKERSPORSMAAL_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
         val flextopic : String =  "flex.sykepengesoknad"
+    )
+
+    data class FeatureToggles(
+        val toggles: Map<FeatureToggle, String> = FeatureToggle.entries.associateWith { toggle ->
+            toggle.envKey.configProperty()
+        }
     )
 }

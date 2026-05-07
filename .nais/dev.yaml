@@ -105,3 +105,5 @@ spec:
       value: Nei
     - name: BRUKERSPORSMAAL_ENABLED
       value: Ja
+    - name: NY_FUNKSJONALITET_ENABLED
+      value: Nei
