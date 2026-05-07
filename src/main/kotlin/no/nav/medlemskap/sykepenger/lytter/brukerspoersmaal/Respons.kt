@@ -15,7 +15,7 @@ class Respons {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun lagRespons(lovmeresponse: String, lovmeRequest: MedlOppslagRequest, bomloService: BomloService, callId: String): FlexRespons {
+    fun lagFlexRespons(lovmeresponse: String, lovmeRequest: MedlOppslagRequest, bomloService: BomloService, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)

@@ -13,11 +13,8 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Respons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
-import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
@@ -161,7 +158,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
                     call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
                 }
                 else{
-                    val flexRespons = Respons().lagRespons(lovmeresponse, lovmeRequest, bomloService, callId)
+                    val flexRespons = Respons().lagFlexRespons(lovmeresponse, lovmeRequest, bomloService, callId)
                     call.respond(HttpStatusCode.OK,flexRespons)
                 }
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
