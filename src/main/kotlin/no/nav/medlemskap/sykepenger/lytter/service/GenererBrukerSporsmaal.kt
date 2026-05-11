@@ -21,7 +21,13 @@ class GenererBrukerSporsmaal {
         "REGEL_1_3_5",
         "REGEL_30",
         "REGEL_19_8",
-        "REGEL_19_6_1"
+        "REGEL_19_6_1",
+        "REGEL_51",
+        "REGEL_55",
+        "REGEL_58",
+        "REGEL_62",
+        "REGEL_64",
+        "REGEL_66"
     )
     val MULTIREGLER_FOR_REGEL11 = "REGEL_11"
 
