@@ -23,8 +23,7 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.sykepengerLytterRoutes(bomloService: BomloService) {
-    val authorizationHandler = AuthorizationHandler()
+fun Routing.sykepengerLytterRoutes(bomloService: BomloService, authorizationHandler: AuthorizationHandler) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!

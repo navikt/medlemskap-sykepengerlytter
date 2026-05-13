@@ -28,6 +28,7 @@ import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -37,6 +38,7 @@ import java.util.*
 
 fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
+    val authorizationHandler = AuthorizationHandler()
     val configuration = Configuration()
     val persistenceService = PersistenceService(
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
@@ -83,7 +85,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes(bomloService)
+            sykepengerLytterRoutes(bomloService, authorizationHandler)
             publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }
