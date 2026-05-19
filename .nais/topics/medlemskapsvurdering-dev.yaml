@@ -1,0 +1,20 @@
+apiVersion: kafka.nais.io/v1
+kind: Topic
+metadata:
+  name: medlemskapsvurdering
+  namespace: medlemskap
+  labels:
+    team: medlemskap
+spec:
+  pool: nav-dev
+  config:
+    cleanupPolicy: delete
+    minimumInSyncReplicas: 1
+    partitions: 2
+    replication: 3
+    retentionBytes: -1
+    retentionHours: 336
+  acl:
+    - team: tbd
+      application: sparkel-medlemskap
+      access: read
