@@ -7,6 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
@@ -15,9 +16,9 @@ class Respons {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, bomloService: BomloService, callId: String): FlexRespons {
+    fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, medlemskapOppslagService: MedlemskapOppslagService, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)
-        val forrigeBrukerspørsmål = bomloService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
+        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
         val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
         if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
             flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(medlemskapOppslagResponse)

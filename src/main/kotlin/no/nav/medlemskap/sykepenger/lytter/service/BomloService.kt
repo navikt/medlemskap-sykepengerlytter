@@ -179,21 +179,6 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     }
 
     //Brukt av brukersporsmal-endepunktet
-    suspend fun kallLovme(request: MedlOppslagRequest, callId: String): String {
-        runCatching { lovmeClient.brukerspørsmål(request, callId) }
-            .onFailure {
-                if (it.message?.contains("GradertAdresseException") == true) {
-                    return "GradertAdresse"
-                } else {
-                    throw Exception("Teknisk feil ved kall mot Lovme. Årsak : ${it.message}")
-                }
-            }
-            .onSuccess { return it }
-        return "" //umulig å komme hit?
-
-    }
-
-    //Brukt av brukersporsmal-endepunktet
     fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
         return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(medlemskapOppslagRequest.fnr, medlemskapOppslagRequest.førsteDagForYtelse)
     }

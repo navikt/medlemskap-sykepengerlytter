@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
@@ -18,6 +19,7 @@ fun main() {
 
 class Application(private val env: Environment = System.getenv(),
                   private val bomloService: BomloService =BomloService(Configuration()),
+                  private val medlemskapOppslagService: MedlemskapOppslagService = MedlemskapOppslagService(Configuration()),
                   private val brukerSpørsmaalConsumer: BrukerSporsmaalConsumer = BrukerSporsmaalConsumer(env)
 ) {
     companion object {
@@ -37,6 +39,6 @@ class Application(private val env: Environment = System.getenv(),
         //val consumeJob = consumer.flow().launchIn(GlobalScope)
         val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
 
-        createHttpServer(consumeJob2,bomloService).start(wait = true)
+        createHttpServer(consumeJob2,bomloService, medlemskapOppslagService).start(wait = true)
     }
 }

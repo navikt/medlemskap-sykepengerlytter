@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
@@ -36,7 +37,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import java.io.Writer
 import java.util.*
 
-fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
+fun createHttpServer(consumeJob: Job, bomloService: BomloService, medlemskapOppslagService: MedlemskapOppslagService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
     val authorizationHandler = AuthorizationHandler()
     val configuration = Configuration()
@@ -85,7 +86,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes(bomloService, authorizationHandler)
+            sykepengerLytterRoutes(bomloService, medlemskapOppslagService, authorizationHandler, persistenceService)
             publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }
