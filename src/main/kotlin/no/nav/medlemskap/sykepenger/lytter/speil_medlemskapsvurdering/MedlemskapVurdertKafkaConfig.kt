@@ -13,7 +13,7 @@ object MedlemskapVurdertKafkaConfig {
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
 
     fun isEnabled(): Boolean =
-        Configuration.KafkaConfig().medlemskapVurdertConsumerEnabled.equals("Ja", ignoreCase = true)
+        Configuration.MedlemskapVurdertConfig().enabled.equals("Ja", ignoreCase = true)
 
     fun createConsumer(): KafkaConsumer<String, String> =
         KafkaConsumer(consumerProperties())

@@ -98,8 +98,11 @@ data class Configuration(
         val keystorePassword: String = "KAFKA_CREDSTORE_PASSWORD".configProperty(),
         val enabled: String = "KAFKA_ENABLED".configProperty(),
         val brukersporsmaal_enabled: String = "BRUKERSPORSMAAL_ENABLED".configProperty(),
-        val medlemskapVurdertConsumerEnabled: String = "MEDLEMSKAP_VURDERT_CONSUMER_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
         val flextopic : String =  "flex.sykepengesoknad"
+    )
+
+    data class MedlemskapVurdertConfig(
+        val enabled: String = "MEDLEMSKAP_VURDERT_CONSUMER_ENABLED".configProperty()
     )
 }
