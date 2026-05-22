@@ -31,7 +31,6 @@ private val defaultProperties = ConfigurationMap(
         "KAFKA_CREDSTORE_PASSWORD" to "changeme",
         "KAFKA_ENABLED" to "false",
         "BRUKERSPORSMAAL_ENABLED" to "Ja",
-        "MEDLEMSKAP_VURDERT_CONSUMER_ENABLED" to "Nei",
         "AZURE_APP_TENANT_ID" to "966ac572-f5b7-4bbe-aa88-c76419c0f851",
         "MEDL_SAGA_API_KEY" to "",
         "MEDL_SAGA_BASE_URL" to "",
@@ -100,9 +99,5 @@ data class Configuration(
         val brukersporsmaal_enabled: String = "BRUKERSPORSMAAL_ENABLED".configProperty(),
         val topic : String =  "flex.sykepengesoknad-lovme-filter",
         val flextopic : String =  "flex.sykepengesoknad"
-    )
-
-    data class MedlemskapVurdertConfig(
-        val enabled: String = "MEDLEMSKAP_VURDERT_CONSUMER_ENABLED".configProperty()
     )
 }
