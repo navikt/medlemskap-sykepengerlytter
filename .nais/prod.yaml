@@ -60,6 +60,8 @@ spec:
     path: "/metrics"
   kafka:
     pool: nav-prod
+  unleash:
+    enabled: true
   accessPolicy:
     inbound:
       rules:

@@ -1,5 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
 
+import io.getunleash.DefaultUnleash
+import io.getunleash.Unleash
+import io.getunleash.util.UnleashConfig
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -11,8 +14,26 @@ object MedlemskapVurdertKafkaConfig {
 
     const val TOPIC = "medlemskap-vurdert"
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
-    private val consumerErAktivert: Boolean =
-        System.getenv("MEDLEMSKAP_VURDERT_CONSUMER_ENABLED").equals("Ja", ignoreCase = true)
+    const val TOGGLE_NAME = "medlemskap-sykepenger-listener.medlemskap-vurdert-consumer"
+
+    private val unleash: Unleash? = lagUnleashKlient()
+
+    val consumerErAktivert: Boolean
+        get() = unleash?.isEnabled(TOGGLE_NAME) ?: false
+
+    private fun lagUnleashKlient(): Unleash? {
+        val apiUrl = System.getenv("UNLEASH_SERVER_API_URL") ?: return null
+        val apiToken = System.getenv("UNLEASH_SERVER_API_TOKEN") ?: return null
+        val appName = System.getenv("NAIS_APP_NAME") ?: "medlemskap-sykepenger-listener"
+
+        val config = UnleashConfig.builder()
+            .appName(appName)
+            .unleashAPI(apiUrl)
+            .customHttpHeader("Authorization", apiToken)
+            .build()
+
+        return DefaultUnleash(config)
+    }
 
     fun isEnabled(): Boolean = consumerErAktivert
 
