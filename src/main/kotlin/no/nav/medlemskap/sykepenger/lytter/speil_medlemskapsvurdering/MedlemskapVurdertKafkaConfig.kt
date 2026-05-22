@@ -28,7 +28,7 @@ object MedlemskapVurdertKafkaConfig {
 
         val config = UnleashConfig.builder()
             .appName(appName)
-            .unleashAPI(apiUrl)
+            .unleashAPI("$apiUrl/api")
             .customHttpHeader("Authorization", apiToken)
             .build()
 

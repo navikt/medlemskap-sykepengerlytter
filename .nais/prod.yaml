@@ -20,6 +20,15 @@ spec:
     requests:
       cpu: 200m
       memory: 1Gi
+  unleashInstance:
+    apiVersion: unleash.nais.io/v1
+    kind: RemoteUnleash
+    name: medlemskap
+    secretName: medlemskap-sykepenger-listener-unleash-api-token
+
+    # Specify which environment the API token should be created for.
+    # Can be one of: development, or production.
+    environment: production
   gcp:
     sqlInstances:
       - type: POSTGRES_14
@@ -60,8 +69,6 @@ spec:
     path: "/metrics"
   kafka:
     pool: nav-prod
-  unleash:
-    enabled: true
   accessPolicy:
     inbound:
       rules:
@@ -81,6 +88,7 @@ spec:
       external:
         - host: api-gw.oera.no
         - host: login.microsoftonline.com
+        - host: medlemskap-unleash-api.nav.cloud.nais.io
   env:
     - name: AZURE_TENANT
       value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
