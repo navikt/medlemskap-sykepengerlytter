@@ -16,6 +16,7 @@ object MedlemskapVurdertKafkaConfig {
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
     const val TOGGLE_NAME = "medlemskap-sykepenger-listener.medlemskap-vurdert-consumer"
 
+
     private val unleash: Unleash? = lagUnleashKlient()
 
     val consumerErAktivert: Boolean
