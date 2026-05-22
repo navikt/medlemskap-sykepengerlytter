@@ -99,3 +99,4 @@ spec:
       value: Ja
   envFrom:
     - secret: medlemskap-sykepenger-listener-unleash-api-token
+      optional: true
