@@ -10,5 +10,5 @@ spec:
     apiVersion: unleash.nais.io/v1
     kind: RemoteUnleash
     name: medlemskap
-  secretName: medlemskap-sykepenger-listener-unleash-api-token
+  secretName: my-application-unleash-api-token
   environment: production
