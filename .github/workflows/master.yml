@@ -50,7 +50,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/dev.yaml
+          RESOURCE: .nais/dev.yaml,.nais/unleash-apitoken-dev.yaml
           IMAGE: ${{ needs.build_and_push.outputs.image }}
           TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
   prod:
@@ -65,6 +65,6 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           CLUSTER: prod-gcp
-          RESOURCE: .nais/prod.yaml
+          RESOURCE: .nais/prod.yaml,.nais/unleash-apitoken-prod.yaml
           IMAGE: ${{ needs.build_and_push.outputs.image }}
           TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
