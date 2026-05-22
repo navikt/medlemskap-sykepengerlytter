@@ -1,7 +1,7 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-  name: medlemskapsvurdering
+  name: medlemskapsvurderinger
   namespace: medlemskap
   labels:
     team: medlemskap
