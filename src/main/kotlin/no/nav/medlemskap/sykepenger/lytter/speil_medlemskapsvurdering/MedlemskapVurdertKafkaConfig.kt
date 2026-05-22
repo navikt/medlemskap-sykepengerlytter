@@ -12,7 +12,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 
 object MedlemskapVurdertKafkaConfig {
 
-    const val TOPIC = "medlemskap-vurdert"
+    const val TOPIC = "medlemskap.medlemskap-vurdert"
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
     const val TOGGLE_NAME = "medlemskap-sykepenger-listener.medlemskap-vurdert-consumer"
 
