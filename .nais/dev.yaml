@@ -107,6 +107,4 @@ spec:
     - name: BRUKERSPORSMAAL_ENABLED
       value: Ja
   envFrom:
-    - secretRef:
-        name: medlemskap-sykepenger-listener-unleash-api-token
-        optional: true
+    - secret: medlemskap-sykepenger-listener-unleash-api-token
