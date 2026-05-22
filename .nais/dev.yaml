@@ -20,15 +20,6 @@ spec:
     requests:
       cpu: 200m
       memory: 512Mi
-  unleashInstance:
-    apiVersion: unleash.nais.io/v1
-    kind: RemoteUnleash
-    name: medlemskap
-    secretName: medlemskap-sykepenger-listener-unleash-api-token
-
-    # Specify which environment the API token should be created for.
-    # Can be one of: development, or production.
-    environment: development
   gcp:
     sqlInstances:
       - type: POSTGRES_14
@@ -115,3 +106,5 @@ spec:
       value: Nei
     - name: BRUKERSPORSMAAL_ENABLED
       value: Ja
+  envFrom:
+    - secret: medlemskap-sykepenger-listener-unleash-api-token

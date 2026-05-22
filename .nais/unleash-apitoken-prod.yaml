@@ -1,0 +1,14 @@
+apiVersion: unleash.nais.io/v1
+kind: ApiToken
+metadata:
+  name: medlemskap-sykepenger-listener
+  namespace: medlemskap
+  labels:
+    team: medlemskap
+spec:
+  unleashInstance:
+    apiVersion: unleash.nais.io/v1
+    kind: RemoteUnleash
+    name: medlemskap
+  secretName: medlemskap-sykepenger-listener-unleash-api-token
+  environment: production
