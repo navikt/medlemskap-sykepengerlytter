@@ -45,10 +45,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
+      - name: Deploy Unleash ApiToken to Preprod
+        uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/dev.yaml,.nais/topics/medlemskapsvurderinger-dev.yaml,.nais/unleash-apitoken-dev.yaml
+          RESOURCE: .nais/unleash-apitoken-dev.yaml
+      - name: Deploy to Preprod
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/dev.yaml,.nais/topics/medlemskapsvurderinger-dev.yaml
           IMAGE: ${{ needs.build_and_push.outputs.image }}
           TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
