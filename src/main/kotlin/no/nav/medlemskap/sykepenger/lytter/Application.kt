@@ -20,7 +20,7 @@ fun main() {
 class Application(private val env: Environment = System.getenv(),
                   private val bomloService: BomloService =BomloService(Configuration()),
                   private val brukerSpørsmaalConsumer: BrukerSporsmaalConsumer = BrukerSporsmaalConsumer(env),
-                  private val medlemskapVurdertConsumer: MedlemskapVurdertConsumer = MedlemskapVurdertConsumer()
+                  //private val medlemskapVurdertConsumer: MedlemskapVurdertConsumer = MedlemskapVurdertConsumer()
 ) {
     companion object {
         val log: Logger = LoggerFactory.getLogger(Application::class.java)
@@ -39,7 +39,7 @@ class Application(private val env: Environment = System.getenv(),
         //val consumeJob = consumer.flow().launchIn(GlobalScope)
         val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
         @OptIn(DelicateCoroutinesApi::class)
-        medlemskapVurdertConsumer.flow().launchIn(GlobalScope)
+        //medlemskapVurdertConsumer.flow().launchIn(GlobalScope)
 
         createHttpServer(consumeJob2,bomloService).start(wait = true)
     }
