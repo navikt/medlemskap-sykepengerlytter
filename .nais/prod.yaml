@@ -79,6 +79,7 @@ spec:
       external:
         - host: api-gw.oera.no
         - host: login.microsoftonline.com
+        - host: medlemskap-unleash-api.nav.cloud.nais.io
   env:
     - name: AZURE_TENANT
       value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
