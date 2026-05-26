@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv

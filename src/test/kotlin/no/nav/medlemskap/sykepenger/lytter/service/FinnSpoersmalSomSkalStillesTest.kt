@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.finnSpørsmålSomSkalStilles
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige_tom = emptySet<Spørsmål>()
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått,forrige_tom)
+        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige_tom)
         Assertions.assertEquals(foreslått, faktisk)
     }
 
@@ -20,7 +21,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått,forrige)
+        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
         Assertions.assertEquals(foreslått, faktisk)
     }
 

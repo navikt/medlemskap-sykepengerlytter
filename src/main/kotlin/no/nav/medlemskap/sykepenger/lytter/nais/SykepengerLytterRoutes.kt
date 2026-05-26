@@ -19,6 +19,7 @@ import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.Request
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
 import java.util.*
@@ -117,6 +118,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
         }
+
         get("/brukersporsmal") {
             val start = System.currentTimeMillis()
             val authContext = authorizationHandler.extractAuthContext(call)
@@ -129,7 +131,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
            /*
            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
            * */
-            val  requiredVariables = getRequiredVariables(call.request)
+            val  requiredVariables = Request().getRequiredVariables(call.request)
             logger.info(
                 teamLogs,
                 "Forespørsel til medlemskap-oppslag: ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
@@ -158,31 +160,3 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
         }
     }
 }
-
-
-
-fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
-    var returnMap = mutableMapOf<String,String>()
-     val headers = setOf("fnr")
-     for (variabel in headers ){
-        try {
-            returnMap[variabel] = request.headers[variabel]!!
-        }
-        catch (e:NullPointerException){
-            throw BadRequestException("Header '$variabel' mangler")
-        }
-    }
-     val queryParams = setOf("fom","tom")
-     for (variabel in queryParams ){
-        try {
-            returnMap[variabel] = request.queryParameters[variabel]!!
-        }
-        catch (v:NullPointerException){
-            throw BadRequestException("QueryParameter '$variabel' mangler")
-        }
-    }
-    return returnMap
-}
-
-
-

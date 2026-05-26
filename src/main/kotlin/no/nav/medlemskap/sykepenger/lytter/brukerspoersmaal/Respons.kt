@@ -9,8 +9,6 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagReques
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
-import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
 
 class Respons {
