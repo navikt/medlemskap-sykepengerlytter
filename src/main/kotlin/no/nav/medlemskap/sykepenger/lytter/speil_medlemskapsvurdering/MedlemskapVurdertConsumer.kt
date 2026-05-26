@@ -22,9 +22,9 @@ class MedlemskapVurdertConsumer(
     init {
         if (kafkaEnabled) {
             consumer.subscribe(listOf(topic))
-            log.info("MedlemskapVurdertConsumer subscribed to topic $topic")
+            log.info("MedlemskapVurdertConsumer lytter på topicet: $topic")
         } else {
-            log.info("Kafka is disabled - MedlemskapVurdertConsumer will not subscribe to $topic")
+            log.info("Kafka er deaktivert - MedlemskapVurdertConsumer lytter ikke på topicet: $topic")
         }
     }
 
@@ -39,7 +39,7 @@ class MedlemskapVurdertConsumer(
                 val records = consumer.poll(Duration.ofSeconds(4)).toList()
                 emit(records)
             } catch (e: WakeupException) {
-                log.info("MedlemskapVurdertConsumer woken up - shutting down")
+                log.info("MedlemskapVurdertConsumer mottok wakeup-signal og avslutter")
                 break
             } catch (t: Throwable) {
                 log.error("Feil ved polling fra $topic: ${t.message}", t)
@@ -58,7 +58,7 @@ class MedlemskapVurdertConsumer(
 
     private fun handle(record: ConsumerRecord<String, String>) {
         log.info(
-            "Mottatt melding fra $topic",
+            "Mottatt melding om at medlemskap vurdert er utført",
             kv("callId", record.key()),
             kv("topic", record.topic()),
             kv("partition", record.partition()),
