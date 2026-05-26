@@ -2,15 +2,14 @@ name: "Deploy unleash api token"
 on:
   push:
     paths:
-      - .nais/unleash/**
-      - .github/workflows/unleash.yml
+      - .nais/unleash/unleash-apitoken-preprod.yaml
+      - .nais/unleash/unleash-apitoken-prod.yaml
 jobs:
   deploy-unleash-api-token-to-dev:
     name: Deploy unleash api-token to dev-gcp
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write
+      id-token: "write"
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -19,14 +18,14 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/unleash/unleash-apitoken-preprod.yaml
+          PRINT_PAYLOAD: true
 
   deploy-unleash-api-token-to-prod:
     if: github.ref == 'refs/heads/main'
     name: Deploy unleash api-token to prod-gcp
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write
+      id-token: "write"
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -35,3 +34,4 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/unleash/unleash-apitoken-prod.yaml
+          PRINT_PAYLOAD: true
