@@ -46,12 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy Unleash ApiToken to Preprod
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/unleash-apitoken-dev.yaml
       - name: Deploy to Preprod
         uses: nais/deploy/actions/deploy@v2
         env:
@@ -68,12 +62,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout code
-      - name: Deploy Unleash ApiToken to Prod
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: .nais/unleash-apitoken-prod.yaml
       - name: Deploy to Prod
         uses: nais/deploy/actions/deploy@v2
         env:
