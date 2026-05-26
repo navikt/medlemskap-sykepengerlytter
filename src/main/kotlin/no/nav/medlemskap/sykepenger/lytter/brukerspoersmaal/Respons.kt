@@ -1,13 +1,14 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.respond
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.service.opprettResponsTilFlex
 import org.slf4j.MarkerFactory
@@ -15,6 +16,11 @@ import org.slf4j.MarkerFactory
 class Respons {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+
+    suspend fun flexRespons(call: ApplicationCall,medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, medlemskapOppslagService: MedlemskapOppslagService, callId: String) {
+        val flexRespons = lagFlexRespons(medlemskapOppslagResponse, medlemskapOppslagRequest, medlemskapOppslagService, callId)
+        call.respond(HttpStatusCode.OK,flexRespons)
+    }
 
     fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, medlemskapOppslagService: MedlemskapOppslagService, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)

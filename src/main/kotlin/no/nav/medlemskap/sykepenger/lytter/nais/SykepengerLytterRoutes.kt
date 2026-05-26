@@ -17,6 +17,7 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagReq
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.lang.NullPointerException
@@ -120,6 +121,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
             val start = System.currentTimeMillis()
             val authContext = authorizationHandler.extractAuthContext(call)
             val callId = authContext.callId
+            val exceptionHandler = ExceptionHandler()
             logger.info(
                 "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
@@ -137,30 +139,16 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
             try {
                 val medlemskapOppslagRequest = medlemskapOppslagRequest(requiredVariables)
                 val medlemskapOppslagRespons = medlemskapOppslagService.kallMedlemskapOppslag(medlemskapOppslagRequest,callId)
-                if (medlemskapOppslagRespons=="GradertAdresse"){
-                    logger.info(
-                        teamLogs,
-                        "Gradert adresse",
-                        kv("callId", callId),
-                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
-                        kv("endpoint", "brukersporsmal")
-                    )
-                    call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
-                }
-                if (medlemskapOppslagRespons=="TimeoutCancellationException"){
-                    logger.info(
-                        teamLogs,
-                        "Forespørsmål mot medlemskap-oppslag timet ut",
-                        kv("callId", callId),
-                        kv("fnr", medlemskapOppslagRequest.fnr),
-                        kv("tidsbrukInMs",System.currentTimeMillis()-start),
-                        kv("endpoint", "brukersporsmal")
-                    )
-                    call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
-                }
-                else{
-                    val flexRespons = Respons().lagFlexRespons(medlemskapOppslagRespons, medlemskapOppslagRequest, medlemskapOppslagService, callId)
-                    call.respond(HttpStatusCode.OK,flexRespons)
+                when (medlemskapOppslagRespons) {
+                    "GradertAdresse" -> exceptionHandler.GradertAdresseException(call, callId, start)
+                    "TimeoutCancellationException" -> exceptionHandler.TimeoutCancellationException(call, callId, start, medlemskapOppslagRequest)
+                    else -> Respons().flexRespons(
+                            call,
+                            medlemskapOppslagRespons,
+                            medlemskapOppslagRequest,
+                            medlemskapOppslagService,
+                            callId
+                        )
                 }
                 call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
             }
