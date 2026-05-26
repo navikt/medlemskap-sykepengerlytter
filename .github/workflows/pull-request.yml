@@ -5,9 +5,6 @@ permissions:
   packages: "write"
 on:
   pull_request:
-    paths-ignore:
-      - ".nais/unleash/**"
-      - ".github/workflows/unleash.yml"
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}

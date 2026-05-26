@@ -88,7 +88,6 @@ spec:
         - host: api-gw-q2.oera.no
         - host: saf.dev-fss-pub.nais.io
         - host: login.microsoftonline.com
-        - host: medlemskap-unleash-api.nav.cloud.nais.io
   env:
     - name: AZURE_TENANT
       value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
@@ -105,4 +104,6 @@ spec:
     - name: KAFKA_ENABLED
       value: Nei
     - name: BRUKERSPORSMAAL_ENABLED
+      value: Ja
+    - name: MEDLEMSKAP_VURDERT_CONSUMER
       value: Ja

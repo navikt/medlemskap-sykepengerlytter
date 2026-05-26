@@ -11,7 +11,6 @@ val hikariVersion = "5.1.0"
 val kotliqueryVersion = "1.3.1"
 val httpClientVersion = "4.5.13"
 val testcontainerVersion = "1.21.4"
-val unleashVersion = "9.2.0"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
@@ -66,7 +65,6 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    implementation("io.getunleash:unleash-client-java:$unleashVersion")
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
