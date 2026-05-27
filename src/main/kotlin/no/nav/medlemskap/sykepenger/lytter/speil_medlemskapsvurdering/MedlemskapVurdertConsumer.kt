@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
@@ -14,7 +13,8 @@ import java.time.Duration
 class MedlemskapVurdertConsumer(
     private val topic: String = MedlemskapVurdertKafkaConfig.TOPIC,
     private val kafkaEnabled: Boolean = MedlemskapVurdertKafkaConfig.isEnabled(),
-    private val consumer: KafkaConsumer<String, String> = MedlemskapVurdertKafkaConfig.createConsumer()
+    private val consumer: KafkaConsumer<String, String> = MedlemskapVurdertKafkaConfig.createConsumer(),
+    private val recordHandler: MedlemskapVurdertMeldingsbehandler = MedlemskapVurdertMeldingsbehandler(),
 ) {
 
     private val log = KotlinLogging.logger { }
@@ -48,21 +48,11 @@ class MedlemskapVurdertConsumer(
             }
         }
     }.onEach { records ->
-        records.forEach { handle(it) }
+        records.forEach { recordHandler.behandle(it) }
     }.onEach {
         if (kafkaEnabled && it.isNotEmpty()) {
             runCatching { consumer.commitSync() }
                 .onFailure { e -> log.error("Commit feilet for $topic: ${e.message}") }
         }
-    }
-
-    private fun handle(record: ConsumerRecord<String, String>) {
-        log.info(
-            "Mottatt melding om at medlemskap vurdert er utført",
-            kv("callId", record.key()),
-            kv("topic", record.topic()),
-            kv("partition", record.partition()),
-            kv("offset", record.offset()),
-        )
     }
 }
