@@ -8,9 +8,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.plugins.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagHandler
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Respons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagRequest
@@ -21,13 +21,17 @@ import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.Request
 import org.slf4j.MarkerFactory
-import java.lang.NullPointerException
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslagService: MedlemskapOppslagService,  authorizationHandler: AuthorizationHandler, persistenceService: PersistenceService) {
+fun Routing.sykepengerLytterRoutes(
+    bomloService: BomloService,
+    medlemskapOppslagService: MedlemskapOppslagService,
+    authorizationHandler: AuthorizationHandler,
+    persistenceService: PersistenceService
+) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -44,7 +48,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
                 val speilRespons = response.lagSpeilRespons(callId)
-                val timeInMS = System.currentTimeMillis()-start
+                val timeInMS = System.currentTimeMillis() - start
                 logger.info(
                     teamLogs,
                     "{} svar funnet for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
@@ -60,7 +64,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
 
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (t: Throwable) {
-                val timeInMS = System.currentTimeMillis()-start
+                val timeInMS = System.currentTimeMillis() - start
                 logger.info(
                     teamLogs,
                     "Feil ved kall mot medlemskap-oppslag",
@@ -86,7 +90,7 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
             val request = call.receive<FlexRequest>()
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
-                if (response!=null){
+                if (response != null) {
                     logger.info(
                         teamLogs,
                         "{} svar funnet for bruker {}", response.status, response.fnr,
@@ -95,16 +99,15 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
                         kv("endpoint", "flexvurdering")
                     )
                     call.respond(HttpStatusCode.OK, response)
-                }
-                else{
+                } else {
                     logger.info(
                         teamLogs,
-                        "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom,request.tom,
+                        "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom, request.tom,
                         kv("fnr", request.fnr),
                         kv("endpoint", "flexvurdering"),
                         kv("callId", callId),
                     )
-                    call.respond(HttpStatusCode.NotFound,request)
+                    call.respond(HttpStatusCode.NotFound, request)
                 }
             } catch (t: Throwable) {
                 logger.info(
@@ -128,10 +131,10 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
                 "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
             )
-           /*
-           * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
-           * */
-            val  requiredVariables = Request().getRequiredVariables(call.request)
+            /*
+            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
+            * */
+            val requiredVariables = Request().hentFnrFomOgTomFraRequest(call.request)
             logger.info(
                 teamLogs,
                 "Forespørsel til medlemskap-oppslag: ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
@@ -139,23 +142,15 @@ fun Routing.sykepengerLytterRoutes(bomloService: BomloService, medlemskapOppslag
                 kv("endpoint", "brukersporsmal")
             )
             try {
-                val medlemskapOppslagRequest = medlemskapOppslagRequest(requiredVariables)
-                val medlemskapOppslagRespons = medlemskapOppslagService.kallMedlemskapOppslag(medlemskapOppslagRequest,callId)
-                when (medlemskapOppslagRespons) {
-                    "GradertAdresse" -> exceptionHandler.GradertAdresseException(call, callId, start)
-                    "TimeoutCancellationException" -> exceptionHandler.TimeoutCancellationException(call, callId, start, medlemskapOppslagRequest)
-                    else -> Respons().flexRespons(
-                            call,
-                            medlemskapOppslagRespons,
-                            medlemskapOppslagRequest,
-                            medlemskapOppslagService,
-                            callId
-                        )
-                }
-                call.respond(HttpStatusCode.InternalServerError,"ukjent tilstand i tjeneste. Kontakt utvikler!")
-            }
-            catch (t:Throwable){
-                call.respond(HttpStatusCode.InternalServerError,t.message!!)
+                MedlemskapOppslagHandler(requiredVariables).skalBrukerspørsmålStilles(
+                    medlemskapOppslagService,
+                    callId,
+                    exceptionHandler,
+                    call,
+                    start
+                )
+            } catch (t: Throwable) {
+                call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
         }
     }

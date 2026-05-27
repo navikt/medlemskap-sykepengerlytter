@@ -5,7 +5,7 @@ import io.ktor.server.request.ApplicationRequest
 import java.lang.NullPointerException
 
 class Request {
-    fun getRequiredVariables(request: ApplicationRequest): Map<String, String> {
+    fun hentFnrFomOgTomFraRequest(request: ApplicationRequest): Map<String, String> {
         var returnMap = mutableMapOf<String,String>()
         val headers = setOf("fnr")
         for (variabel in headers ){
