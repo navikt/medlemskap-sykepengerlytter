@@ -26,22 +26,21 @@ class SpeilResponsBehandler(
         val speilRespons = speilResponsMapper.tilSpeilRespons(medlemskapsvurdering)
             ?: run {
                 log.info(
-                    teamLogs,
-                    "Medlemskapsvurderingen gjelder for kilde: ${medlemskapsvurdering.kanal} og ytelsen: ${medlemskapsvurdering.ytelse}, og behandles ikke videre.",
-                    kv("callId", record.key()),
-                    kv("fnr", medlemskapsvurdering.fnr)
+                    teamLogs, "Medlemskapsvurderingen for person: ${medlemskapsvurdering.fnr} gjelder for kilde: ${medlemskapsvurdering.kanal}" +
+                            " og ytelsen: ${medlemskapsvurdering.ytelse} er ikke støttet. Støtter kilde 'kafka' og ytelsen 'SYKEPENGER'.",
+                    kv("callId", record.key())
                 )
                 return
             }
 
         log.info(
-            teamLogs,
-            "SpeilRespons opprettet for medlemskapsvurdering for person: ${medlemskapsvurdering.fnr}",
+            teamLogs, "SpeilRespons opprettet for person: ${medlemskapsvurdering.fnr}",
             kv("callId", record.key()),
-            kv("svar", medlemskapsvurdering.svar),
-            kv("status", medlemskapsvurdering.status),
-            kv("speilSvar", speilRespons.speilSvar),
-            kv("inneholder ny modell for brukerspørsmål", medlemskapsvurdering.brukerinput.inneholderNyModellForBrukerspørsmål())
+            kv("speilrespons", speilRespons),
+            kv(
+                "inneholder ny modell for brukerspørsmål",
+                medlemskapsvurdering.brukerinput.inneholderNyModellForBrukerspørsmål()
+            )
         )
         speilResponsPublisher.publiser(speilRespons)
     }
