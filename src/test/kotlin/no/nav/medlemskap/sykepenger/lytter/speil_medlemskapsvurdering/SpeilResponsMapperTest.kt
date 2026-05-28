@@ -11,42 +11,42 @@ class SpeilResponsMapperTest {
 
     @Test
     fun `lager JA speilrespons basert paa status naar konklusjon finnes`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "UAVKLART", status = "JA"))
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(vurdering(svar = "UAVKLART", status = "JA"))
 
         assertEquals(forventetSpeilRespons(Speilsvar.JA), speilRespons)
     }
 
     @Test
     fun `lager NEI speilrespons basert paa status naar konklusjon finnes`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "JA", status = "NEI"))
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(vurdering(svar = "JA", status = "NEI"))
 
         assertEquals(forventetSpeilRespons(Speilsvar.NEI), speilRespons)
     }
 
     @Test
     fun `lager UAVKLART speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "UAVKLART", status = ""))
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(vurdering(svar = "UAVKLART", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.UAVKLART), speilRespons)
     }
 
     @Test
     fun `lager JA speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "JA", status = ""))
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(vurdering(svar = "JA", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.JA), speilRespons)
     }
 
     @Test
     fun `lager NEI speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "NEI", status = ""))
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(vurdering(svar = "NEI", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.NEI), speilRespons)
     }
 
     @Test
     fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar svar er uavklart og utfort arbeid utenfor norge finnes`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(
             vurdering(
                 svar = "UAVKLART",
                 status = "",
@@ -59,7 +59,7 @@ class SpeilResponsMapperTest {
 
     @Test
     fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar status er uavklart og utfort arbeid utenfor norge finnes`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(
             vurdering(
                 svar = "JA",
                 status = "UAVKLART",
@@ -72,7 +72,7 @@ class SpeilResponsMapperTest {
 
     @Test
     fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar status er uavklart og opphold utenfor eos finnes`() {
-        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(
             vurdering(
                 svar = "JA",
                 status = "UAVKLART",
@@ -85,12 +85,21 @@ class SpeilResponsMapperTest {
 
     @Test
     fun `ignorerer medlemskapsvurdering som ikke kommer fra kafka kanal`() {
-        assertNull(SpeilResponsMapper().mapTilSpeilRespons(vurdering(kanal = "api", svar = "UAVKLART", status = "UAVKLART")))
+        assertNull(SpeilResponsMapper().tilSpeilRespons(vurdering(kanal = "api", svar = "UAVKLART", status = "UAVKLART")))
+    }
+
+    @Test
+    fun `lager speilrespons naar kanal og ytelse har ulik casing`() {
+        val speilRespons = SpeilResponsMapper().tilSpeilRespons(
+            vurdering(kanal = "KaFkA", ytelse = "sykepenger", svar = "JA", status = "")
+        )
+
+        assertEquals(forventetSpeilRespons(Speilsvar.JA), speilRespons)
     }
 
     @Test
     fun `ignorerer medlemskapsvurdering som ikke gjelder sykepenger`() {
-        assertNull(SpeilResponsMapper().mapTilSpeilRespons(vurdering(ytelse = "PLEIEPENGER", svar = "UAVKLART", status = "UAVKLART")))
+        assertNull(SpeilResponsMapper().tilSpeilRespons(vurdering(ytelse = "PLEIEPENGER", svar = "UAVKLART", status = "UAVKLART")))
     }
 
     private fun vurdering(

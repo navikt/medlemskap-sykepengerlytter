@@ -1,9 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
 
+import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka.SpeilResponsPublisher
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class MedlemskapVurdertMeldingsbehandlerTest {
+class MedlemskapsvurderingTilSpeilResponsTest {
 
     private val handler = MedlemskapsvurderingMapper()
 
@@ -41,6 +43,41 @@ class MedlemskapVurdertMeldingsbehandlerTest {
         assertEquals("a01b6a2c-8d9b-3d87-8a2e-5c888350f148", vurdering.vurderingsId)
         assertEquals("JA", vurdering.svar)
         assertEquals("", vurdering.status)
+    }
+
+    @Test
+    fun `publiserer SpeilRespons naar medlemskapsvurdering skal til Speil`() {
+        val publiserteSvar = mutableListOf<SpeilRespons>()
+        val meldingsbehandler = SpeilResponsBehandler(
+            speilResponsPublisher = SpeilResponsPublisher { publiserteSvar.add(it) }
+        )
+
+        meldingsbehandler.behandle(
+            ConsumerRecord("medlemskap.medlemskap-vurdert", 0, 0, "callId", jaMelding)
+        )
+
+        val forventetRespons = SpeilRespons("a01b6a2c-8d9b-3d87-8a2e-5c888350f148", "11897898049", Speilsvar.JA)
+        assertEquals(listOf(forventetRespons), publiserteSvar)
+    }
+
+    @Test
+    fun `publiserer ikke naar medlemskapsvurdering ikke skal til Speil`() {
+        val publiserteSvar = mutableListOf<SpeilRespons>()
+        val meldingsbehandler = SpeilResponsBehandler(
+            speilResponsPublisher = SpeilResponsPublisher { publiserteSvar.add(it) }
+        )
+
+        meldingsbehandler.behandle(
+            ConsumerRecord(
+                "medlemskap.medlemskap-vurdert",
+                0,
+                0,
+                "callId",
+                jaMelding.replace("\"ytelse\": \"SYKEPENGER\"", "\"ytelse\": \"PLEIEPENGER\"")
+            )
+        )
+
+        assertEquals(emptyList<SpeilRespons>(), publiserteSvar)
     }
 
     private val uavklartMelding = """

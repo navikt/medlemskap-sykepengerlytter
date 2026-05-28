@@ -1,10 +1,10 @@
-package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
+package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.SpeilResponsBehandler
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
@@ -14,7 +14,9 @@ class MedlemskapVurdertConsumer(
     private val topic: String = MedlemskapVurdertKafkaConfig.TOPIC,
     private val kafkaEnabled: Boolean = MedlemskapVurdertKafkaConfig.isEnabled(),
     private val consumer: KafkaConsumer<String, String> = MedlemskapVurdertKafkaConfig.createConsumer(),
-    private val recordHandler: MedlemskapVurdertMeldingsbehandler = MedlemskapVurdertMeldingsbehandler(),
+    private val recordHandler: SpeilResponsBehandler = SpeilResponsBehandler(
+        speilResponsPublisher = if (kafkaEnabled) MedlemskapsvurderingerProducer() else SpeilResponsPublisher { }
+    ),
 ) {
 
     private val log = KotlinLogging.logger { }
@@ -28,7 +30,7 @@ class MedlemskapVurdertConsumer(
         }
     }
 
-    fun flow(): Flow<List<ConsumerRecord<String, String>>> = flow {
+    fun flow(): Flow<List<ConsumerRecord<String, String>>> = kotlinx.coroutines.flow.flow {
         while (true) {
             if (!kafkaEnabled) {
                 delay(5_000)

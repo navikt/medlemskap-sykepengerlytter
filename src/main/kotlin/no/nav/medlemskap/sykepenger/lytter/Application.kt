@@ -8,7 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.nais.createHttpServer
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.MedlemskapVurdertConsumer
+import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka.MedlemskapVurdertConsumer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

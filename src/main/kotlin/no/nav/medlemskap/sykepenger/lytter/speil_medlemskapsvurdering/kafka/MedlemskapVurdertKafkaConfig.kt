@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
+package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka
 
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import org.apache.kafka.clients.CommonClientConfigs

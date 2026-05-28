@@ -9,13 +9,13 @@ class SpeilResponsMapper {
         private const val SYKEPENGER = "SYKEPENGER"
     }
 
-    fun mapTilSpeilRespons(medlemskapsVurdering: Medlemskapsvurdering): SpeilRespons? =
+    fun tilSpeilRespons(medlemskapsVurdering: Medlemskapsvurdering): SpeilRespons? =
         medlemskapsVurdering
             .takeIf { it.kanal.equals(KAFKA_KANAL, ignoreCase = true) }
-            ?.takeIf { it.ytelse == SYKEPENGER }
-            ?.tilSpeilRespons()
+            ?.takeIf { it.ytelse.equals(SYKEPENGER, ignoreCase = true) }
+            ?.speilRespons()
 
-    private fun Medlemskapsvurdering.tilSpeilRespons(): SpeilRespons =
+    private fun Medlemskapsvurdering.speilRespons(): SpeilRespons =
         SpeilRespons(
             soknadId = vurderingsId,
             fnr = fnr,
