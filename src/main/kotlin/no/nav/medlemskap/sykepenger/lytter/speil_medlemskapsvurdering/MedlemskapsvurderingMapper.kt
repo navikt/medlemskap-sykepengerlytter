@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.treeToValue
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.domain.Brukerinput
 
-data class MedlemskapVurdering(
+data class Medlemskapsvurdering(
     val vurderingsId: String,
     val kanal: String,
     val fnr: String,
@@ -15,13 +15,13 @@ data class MedlemskapVurdering(
     val status: String,
 )
 
-class MedlemskapVurdertMapper {
+class MedlemskapsvurderingMapper {
 
-    fun tilMedlemskapVurdering(value: String): MedlemskapVurdering {
+    fun tilMedlemskapsvurdering(value: String): Medlemskapsvurdering {
         val root = objectMapper.readTree(value)
         val datagrunnlag = root.requiredField("datagrunnlag")
 
-        return MedlemskapVurdering(
+        return Medlemskapsvurdering(
             vurderingsId = root.requiredText("vurderingsID"),
             kanal = root.requiredText("kanal"),
             fnr = datagrunnlag.requiredText("fnr"),

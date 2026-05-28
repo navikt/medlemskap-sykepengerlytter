@@ -11,6 +11,12 @@ data class Brukerinput(
     val oppholdUtenforNorge: OppholdUtenforNorge? = null,
 )
 
+fun Brukerinput.inneholderNyModellForBrukerspørsmål(): Boolean =
+    oppholdstilatelse != null ||
+        utfortAarbeidUtenforNorge != null ||
+        oppholdUtenforNorge != null ||
+        oppholdUtenforEos != null
+
 data class Oppholdstilatelse(
     val id: String,
     val sporsmalstekst: String?,

@@ -3,13 +3,13 @@ package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class MedlemskapVurdertMessageHandlerTest {
+class MedlemskapVurdertMeldingsbehandlerTest {
 
-    private val handler = MedlemskapVurdertMapper()
+    private val handler = MedlemskapsvurderingMapper()
 
     @Test
     fun `mapper uavklart medlemskapsvurdering til feltene vi trenger`() {
-        val vurdering = handler.tilMedlemskapVurdering(uavklartMelding)
+        val vurdering = handler.tilMedlemskapsvurdering(uavklartMelding)
 
         assertEquals("bf731267-2c77-3117-9579-3c195ef26602", vurdering.vurderingsId)
         assertEquals("kafka", vurdering.kanal)
@@ -23,7 +23,7 @@ class MedlemskapVurdertMessageHandlerTest {
 
     @Test
     fun `mapper ja medlemskapsvurdering til feltene vi trenger`() {
-        val vurdering = handler.tilMedlemskapVurdering(jaMelding)
+        val vurdering = handler.tilMedlemskapsvurdering(jaMelding)
 
         assertEquals("a01b6a2c-8d9b-3d87-8a2e-5c888350f148", vurdering.vurderingsId)
         assertEquals("kafka", vurdering.kanal)
@@ -36,7 +36,7 @@ class MedlemskapVurdertMessageHandlerTest {
 
     @Test
     fun `setter tom status naar konklusjon ikke finnes`() {
-        val vurdering = handler.tilMedlemskapVurdering(meldingUtenKonklusjon)
+        val vurdering = handler.tilMedlemskapsvurdering(meldingUtenKonklusjon)
 
         assertEquals("a01b6a2c-8d9b-3d87-8a2e-5c888350f148", vurdering.vurderingsId)
         assertEquals("JA", vurdering.svar)

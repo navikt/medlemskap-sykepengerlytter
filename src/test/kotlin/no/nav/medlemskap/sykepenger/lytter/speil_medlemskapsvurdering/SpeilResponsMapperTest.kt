@@ -1,51 +1,52 @@
 package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering
 
 import no.nav.medlemskap.sykepenger.lytter.domain.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.domain.OppholdUtenforEos
 import no.nav.medlemskap.sykepenger.lytter.domain.UtfortAarbeidUtenforNorge
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-class FinnMedlemskapsvurderingTest {
+class SpeilResponsMapperTest {
 
     @Test
     fun `lager JA speilrespons basert paa status naar konklusjon finnes`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(vurdering(svar = "UAVKLART", status = "JA"))
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "UAVKLART", status = "JA"))
 
         assertEquals(forventetSpeilRespons(Speilsvar.JA), speilRespons)
     }
 
     @Test
     fun `lager NEI speilrespons basert paa status naar konklusjon finnes`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(vurdering(svar = "JA", status = "NEI"))
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "JA", status = "NEI"))
 
         assertEquals(forventetSpeilRespons(Speilsvar.NEI), speilRespons)
     }
 
     @Test
     fun `lager UAVKLART speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(vurdering(svar = "UAVKLART", status = ""))
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "UAVKLART", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.UAVKLART), speilRespons)
     }
 
     @Test
     fun `lager JA speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(vurdering(svar = "JA", status = ""))
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "JA", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.JA), speilRespons)
     }
 
     @Test
     fun `lager NEI speilrespons basert paa svar naar konklusjon mangler`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(vurdering(svar = "NEI", status = ""))
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(vurdering(svar = "NEI", status = ""))
 
         assertEquals(forventetSpeilRespons(Speilsvar.NEI), speilRespons)
     }
 
     @Test
     fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar svar er uavklart og utfort arbeid utenfor norge finnes`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
             vurdering(
                 svar = "UAVKLART",
                 status = "",
@@ -58,7 +59,7 @@ class FinnMedlemskapsvurderingTest {
 
     @Test
     fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar status er uavklart og utfort arbeid utenfor norge finnes`() {
-        val speilRespons = FinnMedlemskapsvurdering().finn(
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
             vurdering(
                 svar = "JA",
                 status = "UAVKLART",
@@ -70,13 +71,26 @@ class FinnMedlemskapsvurderingTest {
     }
 
     @Test
+    fun `lager UAVKLART_MED_BRUKERSPORSMAAL naar status er uavklart og opphold utenfor eos finnes`() {
+        val speilRespons = SpeilResponsMapper().mapTilSpeilRespons(
+            vurdering(
+                svar = "JA",
+                status = "UAVKLART",
+                brukerinput = brukerinputMedOppholdUtenforEos(),
+            )
+        )
+
+        assertEquals(forventetSpeilRespons(Speilsvar.UAVKLART_MED_BRUKERSPORSMAAL), speilRespons)
+    }
+
+    @Test
     fun `ignorerer medlemskapsvurdering som ikke kommer fra kafka kanal`() {
-        assertNull(FinnMedlemskapsvurdering().finn(vurdering(kanal = "api", svar = "UAVKLART", status = "UAVKLART")))
+        assertNull(SpeilResponsMapper().mapTilSpeilRespons(vurdering(kanal = "api", svar = "UAVKLART", status = "UAVKLART")))
     }
 
     @Test
     fun `ignorerer medlemskapsvurdering som ikke gjelder sykepenger`() {
-        assertNull(FinnMedlemskapsvurdering().finn(vurdering(ytelse = "PLEIEPENGER", svar = "UAVKLART", status = "UAVKLART")))
+        assertNull(SpeilResponsMapper().mapTilSpeilRespons(vurdering(ytelse = "PLEIEPENGER", svar = "UAVKLART", status = "UAVKLART")))
     }
 
     private fun vurdering(
@@ -85,7 +99,7 @@ class FinnMedlemskapsvurderingTest {
         svar: String,
         status: String,
         brukerinput: Brukerinput = Brukerinput(arbeidUtenforNorge = true),
-    ) = MedlemskapVurdering(
+    ) = Medlemskapsvurdering(
         vurderingsId = "bf731267-2c77-3117-9579-3c195ef26602",
         kanal = kanal,
         fnr = "10507213737",
@@ -103,6 +117,17 @@ class FinnMedlemskapsvurderingTest {
                 sporsmalstekst = "Har du arbeidet utenfor Norge?",
                 svar = true,
                 arbeidUtenforNorge = emptyList(),
+            ),
+        )
+
+    private fun brukerinputMedOppholdUtenforEos() =
+        Brukerinput(
+            arbeidUtenforNorge = true,
+            oppholdUtenforEos = OppholdUtenforEos(
+                id = "1b5b87e2-7d83-350e-86dc-2e53b2e23099",
+                sporsmalstekst = "Har du oppholdt deg utenfor EU/EØS?",
+                svar = true,
+                oppholdUtenforEOS = emptyList(),
             ),
         )
 
