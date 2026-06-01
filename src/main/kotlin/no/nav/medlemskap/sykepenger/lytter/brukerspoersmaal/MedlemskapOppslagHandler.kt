@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
+
 import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
 
 class MedlemskapOppslagHandler(requiredVariables: Map<String, String>) {
@@ -19,24 +18,28 @@ class MedlemskapOppslagHandler(requiredVariables: Map<String, String>) {
         medlemskapOppslagService: MedlemskapOppslagService,
         callId: String,
         exceptionHandler: ExceptionHandler,
-        call: ApplicationCall,
         start: Long
-    ) {
+    ): String {
 
         val medlemskapOppslagResultat =
             hentResultatFraMedlemskapOppslag(medlemskapOppslagService, callId)
 
         when (medlemskapOppslagResultat) {
-            "GradertAdresse" -> exceptionHandler.GradertAdresseException(call, callId, start)
-            "TimeoutCancellationException" -> exceptionHandler.TimeoutCancellationException(
-                call,
-                callId,
-                start,
-                medlemskapOppslagRequest
-            )
+            "GradertAdresse" -> {
+                exceptionHandler.GradertAdresseException(callId, start)
+                return "GradertAdresse"
+            }
 
-            else -> Respons().flexRespons(
-                call,
+            "TimeoutCancellationException" -> {
+                exceptionHandler.TimeoutCancellationException(
+                    callId,
+                    start,
+                    medlemskapOppslagRequest
+                )
+                return "TimeoutCancellationException"
+            }
+
+            else -> return Respons().lagFlexRespons(
                 medlemskapOppslagResultat,
                 medlemskapOppslagRequest,
                 medlemskapOppslagService,

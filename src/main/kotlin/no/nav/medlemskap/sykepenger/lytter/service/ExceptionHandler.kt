@@ -15,26 +15,25 @@ class ExceptionHandler {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    suspend fun TimeoutCancellationException(call: ApplicationCall, callId: String, start: Long, medlemskapOppslagRequest: MedlOppslagRequest){
+    fun TimeoutCancellationException(callId: String, start: Long, medlemskapOppslagRequest: MedlOppslagRequest) {
         logger.info(
             teamLogs,
             "Forespørsmål mot medlemskap-oppslag timet ut",
             kv("callId", callId),
             kv("fnr", medlemskapOppslagRequest.fnr),
-            kv("tidsbrukInMs",System.currentTimeMillis()-start),
+            kv("tidsbrukInMs", System.currentTimeMillis() - start),
             kv("endpoint", "brukersporsmal")
         )
-        call.respond(HttpStatusCode.InternalServerError,"Forespørsmål mot medlemskap-oppslag timet ut")
+
     }
 
-    suspend fun GradertAdresseException(call: ApplicationCall, callId: String, start: Long) {
+    fun GradertAdresseException(callId: String, start: Long) {
         logger.info(
             teamLogs,
             "Gradert adresse",
             kv("callId", callId),
-            kv("tidsbrukInMs",System.currentTimeMillis()-start),
+            kv("tidsbrukInMs", System.currentTimeMillis() - start),
             kv("endpoint", "brukersporsmal")
         )
-        call.respond(HttpStatusCode.OK,FlexRespons(Svar.JA, emptySet()))
     }
 }

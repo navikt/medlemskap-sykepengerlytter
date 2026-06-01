@@ -15,10 +15,7 @@ class Respons {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    suspend fun flexRespons(call: ApplicationCall,medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, medlemskapOppslagService: MedlemskapOppslagService, callId: String) {
-        val flexRespons = lagFlexRespons(medlemskapOppslagResponse, medlemskapOppslagRequest, medlemskapOppslagService, callId)
-        call.respond(HttpStatusCode.OK,flexRespons)
-    }
+
 
     fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, medlemskapOppslagService: MedlemskapOppslagService, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)

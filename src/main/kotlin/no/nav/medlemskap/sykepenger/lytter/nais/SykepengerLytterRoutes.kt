@@ -142,13 +142,25 @@ fun Routing.sykepengerLytterRoutes(
                 kv("endpoint", "brukersporsmal")
             )
             try {
-                MedlemskapOppslagHandler(requiredVariables).skalBrukerspørsmålStilles(
+                val skalBrukerspørsmålStilles = MedlemskapOppslagHandler(requiredVariables).skalBrukerspørsmålStilles(
                     medlemskapOppslagService,
                     callId,
                     exceptionHandler,
-                    call,
                     start
                 )
+                when (skalBrukerspørsmålStilles) {
+                    "GradertAdresse" -> {
+                        call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
+                    }
+
+                    "TimeoutCancellationException" -> {
+                        call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
+                    }
+
+                    else -> {
+                        call.respond(HttpStatusCode.OK, skalBrukerspørsmålStilles)
+                    }
+                }
             } catch (t: Throwable) {
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
