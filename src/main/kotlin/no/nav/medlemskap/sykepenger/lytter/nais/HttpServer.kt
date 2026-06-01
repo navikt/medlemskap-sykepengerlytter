@@ -24,6 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
@@ -86,7 +87,8 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, medlemskapOpps
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes(bomloService, medlemskapOppslagService, authorizationHandler, persistenceService)
+            sykepengerLytterRoutes(bomloService)
+            brukerSporsmaalRoute(authorizationHandler)
             publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }

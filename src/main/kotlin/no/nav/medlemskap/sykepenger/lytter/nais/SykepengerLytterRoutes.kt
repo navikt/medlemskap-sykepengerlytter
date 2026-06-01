@@ -28,9 +28,6 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.sykepengerLytterRoutes(
     bomloService: BomloService,
-    medlemskapOppslagService: MedlemskapOppslagService,
-    authorizationHandler: AuthorizationHandler,
-    persistenceService: PersistenceService
 ) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
@@ -122,48 +119,5 @@ fun Routing.sykepengerLytterRoutes(
             }
         }
 
-        get("/brukersporsmal") {
-            val start = System.currentTimeMillis()
-            val authContext = authorizationHandler.extractAuthContext(call)
-            val callId = authContext.callId
-            val exceptionHandler = ExceptionHandler()
-            logger.info(
-                "kall autentisert, url : /brukersporsmal",
-                kv("callId", callId)
-            )
-            /*
-            * Henter ut nødvendige parameter. map<String,String> kan evnt endres senere ved behov
-            * */
-            val requiredVariables = Request().hentFnrFomOgTomFraRequest(call.request)
-            logger.info(
-                teamLogs,
-                "Forespørsel til medlemskap-oppslag: ${requiredVariables["fnr"]} , ${requiredVariables["fom"]} ,${requiredVariables["tom"]} ",
-                kv("callId", callId),
-                kv("endpoint", "brukersporsmal")
-            )
-            try {
-                val skalBrukerspørsmålStilles = MedlemskapOppslagHandler(requiredVariables).skalBrukerspørsmålStilles(
-                    medlemskapOppslagService,
-                    callId,
-                    exceptionHandler,
-                    start
-                )
-                when (skalBrukerspørsmålStilles) {
-                    "GradertAdresse" -> {
-                        call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
-                    }
-
-                    "TimeoutCancellationException" -> {
-                        call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
-                    }
-
-                    else -> {
-                        call.respond(HttpStatusCode.OK, skalBrukerspørsmålStilles)
-                    }
-                }
-            } catch (t: Throwable) {
-                call.respond(HttpStatusCode.InternalServerError, t.message!!)
-            }
-        }
     }
 }
