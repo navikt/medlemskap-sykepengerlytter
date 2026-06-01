@@ -8,13 +8,15 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.slf4j.MarkerFactory
 
-class Respons {
+class Respons(
+    private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService()
+) {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
     fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService().finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
+        val forrigeBrukerspørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
         val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
         if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
             flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(medlemskapOppslagResponse)

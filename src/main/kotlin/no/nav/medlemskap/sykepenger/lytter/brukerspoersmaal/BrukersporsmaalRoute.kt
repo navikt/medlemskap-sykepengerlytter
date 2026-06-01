@@ -17,7 +17,8 @@ private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.brukerSporsmaalRoute(
-    authorizationHandler: AuthorizationHandler
+    authorizationHandler: AuthorizationHandler,
+    brukersporsmaalService: BrukersporsmaalService
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
@@ -57,7 +58,7 @@ fun Routing.brukerSporsmaalRoute(
                     }
 
                     else -> {
-                        val respons = Respons().lagFlexRespons(
+                        val respons = Respons(brukersporsmaalService).lagFlexRespons(
                             medlemskapOppslagResultat,
                             medlemskapOppslagHandler.medlemskapOppslagRequest,
                             callId

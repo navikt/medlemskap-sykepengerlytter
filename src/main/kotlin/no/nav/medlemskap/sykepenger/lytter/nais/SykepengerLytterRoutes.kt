@@ -10,16 +10,8 @@ import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagHandler
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Respons
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.rest.*
-import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.Request
 import org.slf4j.MarkerFactory
 import java.util.*
 
