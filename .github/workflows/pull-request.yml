@@ -3,7 +3,8 @@ permissions:
   contents: "read"
   id-token: "write"
   packages: "write"
-on: [ pull_request ]
+on:
+  pull_request:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
@@ -45,7 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
+      - name: Deploy to Preprod
+        uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
