@@ -178,11 +178,6 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         }
     }
 
-    //Brukt av brukersporsmal-endepunktet
-    fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(medlemskapOppslagRequest.fnr, medlemskapOppslagRequest.førsteDagForYtelse)
-    }
-
     private fun BomloRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =
         SoeknadsParametere(
             callId = callId,

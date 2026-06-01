@@ -1,6 +1,7 @@
 package no.nav.functional
 
 import kotlinx.coroutines.runBlocking
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.RegelMotorResponsHandler
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.opprettResponsTilFlex
@@ -45,7 +46,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal anbefale nytt spørsmålssett - har ingen brukerspørsmål fra før`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -64,7 +65,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -79,7 +80,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
      fun `skal anbefale nytt spørsmålssett - for lang tid mellom nåværende og forrige søknad`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -122,7 +123,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -137,7 +138,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal anbefale nytt spørsmålssett - kort mellom og nytt spørsmålssett har flere spørsmål`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -178,7 +179,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.OPPHOLDSTILATELSE, Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
@@ -193,7 +194,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal anbefale nytt spørsmålssett - kort mellom og overlapper delvis med nytt spørsmålssett`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -234,7 +235,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
@@ -249,7 +250,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal anbefale nytt spørsmålssett - kort mellom inneholder JA svar og overlapper delvis med nytt spørsmålssett`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -291,7 +292,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -306,7 +307,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal anbefale nytt spørsmålssett - kort mellom med kun JA svar i forrige brukersvar`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -347,7 +348,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
 
@@ -365,7 +366,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal ikke bruke nytt spørsmålssett - kort mellom hvor nytt spørsmålssett er et subset av forrige brukersvar`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -405,7 +406,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -421,7 +422,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal ikke bruke nytt spørsmålssett - kort mellom hvor nytt spørsmålssett identisk med forrige brukersvar`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -461,7 +462,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
 
@@ -478,7 +479,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     @Test
     fun `skal ikke bruke nytt spørsmålssett - kort mellom med ingen nye spørsmålsett fordi bruker har gått til JA`() = runBlocking {
         val containerPersistenceService = settOppKonfig()
-        val medlemskapOppslagService = MedlemskapOppslagService(Configuration(), containerPersistenceService)
+        val medlemskapOppslagService = MedlemskapOppslagService(Configuration())
 
         medlemskapOppslagService.medlemskapOppslagClient = LovMeApiMock(
             mapOf(
@@ -518,7 +519,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = medlemskapOppslagService.finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = emptySet<Spørsmål>()

@@ -38,7 +38,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import java.io.Writer
 import java.util.*
 
-fun createHttpServer(consumeJob: Job, bomloService: BomloService, medlemskapOppslagService: MedlemskapOppslagService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
+fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
     val authorizationHandler = AuthorizationHandler()
     val configuration = Configuration()

@@ -15,22 +15,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 
-class MedlemskapOppslagService(private val configuration: Configuration,
-                               var persistenceService: PersistenceService=PersistenceService(
-                                   medlemskapVurdertRepository = PostgresMedlemskapVurdertRepository(
-                                       DataSourceBuilder(System.getenv()).getDataSource()
-                                   ) ,
-                                   brukersporsmaalRepository = PostgresBrukersporsmaalRepository(
-                                       DataSourceBuilder(System.getenv()).getDataSource()
-                                   )
-                               )
-) {
-
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
-    }
-
+class MedlemskapOppslagService(private val configuration: Configuration) {
     var medlemskapOppslagClient: LovmeAPI
 
     init {
@@ -42,13 +27,6 @@ class MedlemskapOppslagService(private val configuration: Configuration,
 
         medlemskapOppslagClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     }
-
-    private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
-
-    fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(medlemskapOppslagRequest.fnr, medlemskapOppslagRequest.førsteDagForYtelse)
-    }
-
 
     suspend fun kallMedlemskapOppslag(request: MedlOppslagRequest, callId: String): String {
         runCatching { medlemskapOppslagClient.brukerspørsmål(request, callId) }
