@@ -58,12 +58,12 @@ fun Routing.brukerSporsmaalRoute(
                     }
 
                     else -> {
-                        Respons().lagFlexRespons(
+                        val respons = Respons().lagFlexRespons(
                             medlemskapOppslagResultat,
                             medlemskapOppslagHandler.medlemskapOppslagRequest,
                             callId
                         )
-                        call.respond(HttpStatusCode.OK, medlemskapOppslagResultat)
+                        call.respond(HttpStatusCode.OK, respons)
                     }
                 }
             } catch (t: Throwable) {
