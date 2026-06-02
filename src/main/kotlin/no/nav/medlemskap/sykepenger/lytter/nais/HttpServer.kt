@@ -49,6 +49,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     )
     val flexMessageHandler = FlexMessageHandler(persistenceService)
     val brukersporsmaalService = BrukersporsmaalService(persistenceService)
+    val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
 
     connector { port = 8080 }
@@ -90,7 +91,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
-            brukerSporsmaalRoute(authorizationHandler, brukersporsmaalService)
+            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
             publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }

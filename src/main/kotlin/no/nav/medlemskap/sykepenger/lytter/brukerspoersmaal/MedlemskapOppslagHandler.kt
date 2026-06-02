@@ -7,8 +7,9 @@ class MedlemskapOppslagHandler(requiredVariables: Map<String, String>) {
     val medlemskapOppslagRequest = medlemskapOppslagRequest(requiredVariables)
 
     suspend fun hentResultatFraMedlemskapOppslag(
-        callId: String
+        callId: String,
+        medlemskapOppslagService: MedlemskapOppslagService
     ): String {
-        return MedlemskapOppslagService(Configuration()).kallMedlemskapOppslag(medlemskapOppslagRequest, callId)
+        return medlemskapOppslagService.kallMedlemskapOppslag(medlemskapOppslagRequest, callId)
     }
 }

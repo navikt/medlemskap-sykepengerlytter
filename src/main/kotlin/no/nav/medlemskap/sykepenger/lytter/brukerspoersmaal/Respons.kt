@@ -17,7 +17,7 @@ class Respons(
     fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, callId: String): FlexRespons {
         val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)
         val forrigeBrukerspørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
-        val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, callId)
+        val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, medlemskapOppslagRequest.fnr)
         if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
             flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(medlemskapOppslagResponse)
         }

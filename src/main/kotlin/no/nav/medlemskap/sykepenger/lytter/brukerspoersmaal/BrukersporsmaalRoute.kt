@@ -18,6 +18,7 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
+    medlemskapOppslagService: MedlemskapOppslagService,
     brukersporsmaalService: BrukersporsmaalService
 ) {
     authenticate("azureAuth") {
@@ -43,7 +44,8 @@ fun Routing.brukerSporsmaalRoute(
             try {
                 val medlemskapOppslagHandler = MedlemskapOppslagHandler(requiredVariables)
                 val medlemskapOppslagResultat = medlemskapOppslagHandler.hentResultatFraMedlemskapOppslag(
-                    callId
+                    callId,
+                    medlemskapOppslagService
                 )
 
                 when (medlemskapOppslagResultat) {
