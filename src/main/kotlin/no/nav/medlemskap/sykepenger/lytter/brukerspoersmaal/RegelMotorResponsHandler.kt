@@ -1,22 +1,24 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.domain.*
+import no.nav.medlemskap.sykepenger.lytter.domain.Delresultat
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdering
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.rest.Svar
+import no.nav.medlemskap.sykepenger.lytter.service.GenererBrukerSporsmaal
 
 class RegelMotorResponsHandler {
 
     fun utledResultat(medlemskapsVurdering: String): FlexRespons {
         val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapsVurdering)
 
-        when (medlemskapVurdering.resultat.svar) {
-            "UAVKLART" -> return håndterBrukerspørsmål(medlemskapVurdering)
-            "JA" -> return FlexRespons(svar = Svar.JA, emptySet())
-            "NEI" -> return FlexRespons(svar = Svar.NEI, emptySet())
+        return when (medlemskapVurdering.resultat.svar) {
+            "UAVKLART" -> håndterBrukerspørsmål(medlemskapVurdering)
+            "JA" -> FlexRespons(svar = Svar.JA, emptySet())
+            "NEI" -> FlexRespons(svar = Svar.NEI, emptySet())
             else -> throw IllegalStateException()
         }
     }

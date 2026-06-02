@@ -23,6 +23,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
@@ -45,6 +48,8 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
     val flexMessageHandler = FlexMessageHandler(persistenceService)
+    val brukersporsmaalService = BrukersporsmaalService(persistenceService)
+    val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
 
     connector { port = 8080 }
@@ -85,7 +90,8 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes(bomloService, authorizationHandler)
+            sykepengerLytterRoutes(bomloService)
+            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
             publiserTestmeldinger(flexMessageHandler, persistenceService)
         }
     }
