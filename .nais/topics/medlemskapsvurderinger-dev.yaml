@@ -17,7 +17,7 @@ spec:
   acl:
     - team: medlemskap
       application: medlemskap-sykepenger-listener
-      access: write
+      access: readwrite
     - team: tbd
       application: sparkel-medlemskap
       access: read
