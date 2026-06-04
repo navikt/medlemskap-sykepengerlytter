@@ -11,6 +11,7 @@ val hikariVersion = "5.1.0"
 val kotliqueryVersion = "1.3.1"
 val httpClientVersion = "4.5.13"
 val testcontainerVersion = "1.21.4"
+val unleashVersion = "9.2.4"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
@@ -79,6 +80,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
+    implementation("io.getunleash:unleash-client-java:$unleashVersion")
 }
 
 

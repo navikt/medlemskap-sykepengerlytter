@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka
 
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.config.FeatureToggleService
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -11,11 +12,10 @@ object MedlemskapVurdertKafkaConfig {
 
     const val TOPIC = "medlemskap.medlemskap-vurdert"
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
-    private const val MEDLEMSKAP_VURDERT_CONSUMER = "MEDLEMSKAP_VURDERT_CONSUMER"
-    private const val DEFAULT_MEDLEMSKAP_VURDERT_CONSUMER = "Nei"
+    const val TOGGLE_KAFKACONSUMER_AKTIV = "medlemskap.sykepengelytter-kafkaconsumer-aktiv"
 
-    fun isEnabled(): Boolean =
-        (System.getenv(MEDLEMSKAP_VURDERT_CONSUMER) ?: DEFAULT_MEDLEMSKAP_VURDERT_CONSUMER) == "Ja"
+    fun isEnabled(featureToggleService: FeatureToggleService): Boolean =
+        featureToggleService.isEnabled(TOGGLE_KAFKACONSUMER_AKTIV)
 
     fun createConsumer(): KafkaConsumer<String, String> =
         KafkaConsumer(consumerProperties())

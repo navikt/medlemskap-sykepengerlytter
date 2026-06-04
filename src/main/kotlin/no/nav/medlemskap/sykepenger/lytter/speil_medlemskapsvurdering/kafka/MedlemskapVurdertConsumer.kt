@@ -4,6 +4,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.config.FeatureToggleService
+import no.nav.medlemskap.sykepenger.lytter.config.UnleashFeatureToggleService
 import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.SpeilResponsBehandler
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -12,7 +14,7 @@ import java.time.Duration
 
 class MedlemskapVurdertConsumer(
     private val topic: String = MedlemskapVurdertKafkaConfig.TOPIC,
-    private val kafkaEnabled: Boolean = MedlemskapVurdertKafkaConfig.isEnabled(),
+    private val kafkaEnabled: Boolean = MedlemskapVurdertKafkaConfig.isEnabled(UnleashFeatureToggleService()),
     private val consumer: KafkaConsumer<String, String> = MedlemskapVurdertKafkaConfig.createConsumer(),
     private val recordHandler: SpeilResponsBehandler = SpeilResponsBehandler(
         speilResponsPublisher = if (kafkaEnabled) MedlemskapsvurderingerProducer() else SpeilResponsPublisher { }
