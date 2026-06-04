@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka
 
+import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.FeatureToggleService
 import org.apache.kafka.clients.CommonClientConfigs
@@ -8,14 +9,23 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.serialization.StringDeserializer
 
+private val log = KotlinLogging.logger { }
+
 object MedlemskapVurdertKafkaConfig {
 
     const val TOPIC = "medlemskap.medlemskap-vurdert"
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
     const val TOGGLE_KAFKACONSUMER_AKTIV = "medlemskap.sykepengelytter-kafkaconsumer-aktiv"
 
-    fun isEnabled(featureToggleService: FeatureToggleService): Boolean =
-        featureToggleService.isEnabled(TOGGLE_KAFKACONSUMER_AKTIV)
+    fun isEnabled(featureToggleService: FeatureToggleService): Boolean {
+        val enabled = featureToggleService.isEnabled(TOGGLE_KAFKACONSUMER_AKTIV)
+        if (enabled) {
+            log.info("Feature toggle '$TOGGLE_KAFKACONSUMER_AKTIV' er aktivert - MedlemskapVurdertConsumer vil starte")
+        } else {
+            log.info("Feature toggle '$TOGGLE_KAFKACONSUMER_AKTIV' er ikke aktivert - MedlemskapVurdertConsumer vil ikke starte")
+        }
+        return enabled
+    }
 
     fun createConsumer(): KafkaConsumer<String, String> =
         KafkaConsumer(consumerProperties())
