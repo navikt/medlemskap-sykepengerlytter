@@ -7,29 +7,38 @@ import mu.KotlinLogging
 
 private val log = KotlinLogging.logger { }
 
-class UnleashFeatureToggleService : FeatureToggleService {
+class UnleashFeatureToggleService(
+    private val env: Map<String, String> = System.getenv()
+) : FeatureToggleService {
 
-    private val unleash: Unleash = run {
-        val apiUrl = System.getenv("UNLEASH_SERVER_API_URL")
+    private val unleash: Unleash? = runCatching {
+        val apiUrl = env["UNLEASH_SERVER_API_URL"]
+            ?.takeIf { it.isNotBlank() }
             ?.trimEnd('/')
             ?.let { if (it.endsWith("/api")) it else "$it/api" }
-            ?: throw IllegalStateException("UNLEASH_SERVER_API_URL er ikke satt")
-        val apiToken = System.getenv("UNLEASH_SERVER_API_TOKEN")
-            ?: throw IllegalStateException("UNLEASH_SERVER_API_TOKEN er ikke satt")
-        val appName = System.getenv("NAIS_APP_NAME") ?: "medlemskap-sykepenger-listener"
+        val apiToken = env["UNLEASH_SERVER_API_TOKEN"]
+            ?.takeIf { it.isNotBlank() }
+        val appName = env["NAIS_APP_NAME"] ?: "medlemskap-sykepenger-listener"
+
+        if (apiUrl == null || apiToken == null) {
+            log.warn("Unleash-konfigurasjon mangler. Bruker defaultverdi for feature toggles.")
+            return@runCatching null
+        }
 
         log.info("Initialiserer Unleash mot $apiUrl for app $appName")
 
-        val config = UnleashConfig.builder()
+        UnleashConfig.builder()
             .appName(appName)
             .instanceId(appName)
             .unleashAPI(apiUrl)
             .customHttpHeader("Authorization", apiToken)
             .build()
-
-        DefaultUnleash(config)
+            .let { DefaultUnleash(it) }
+    }.getOrElse {
+        log.error("Kunne ikke initialisere Unleash. Bruker defaultverdi for feature toggles.", it)
+        null
     }
 
     override fun isEnabled(toggleName: String, defaultValue: Boolean): Boolean =
-        unleash.isEnabled(toggleName, defaultValue)
+        unleash?.isEnabled(toggleName, defaultValue) ?: defaultValue
 }
