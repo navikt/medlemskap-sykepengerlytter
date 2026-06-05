@@ -6,6 +6,8 @@ metadata:
   labels:
     team: medlemskap
 spec:
+  unleash:
+    enabled: true
   observability:
     logging:
       destinations:
