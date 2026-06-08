@@ -91,6 +91,7 @@ class MedlemskapVurdertConsumer(
     private fun closeConsumer() {
         consumer?.let { activeConsumer ->
             runCatching { activeConsumer.close() }
+                .onSuccess { log.info("MedlemskapVurdertConsumer lytter ikke lenger på topicet: $topic") }
                 .onFailure { e -> log.error("Klarte ikke å lukke MedlemskapVurdertConsumer for $topic: ${e.message}", e) }
             consumer = null
             recordHandler = null
