@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
@@ -27,21 +28,17 @@ class MedlemskapVurdertConsumer(
     private val log = KotlinLogging.logger { }
     private var consumer: KafkaConsumer<String, String>? = null
     private var recordHandler: SpeilResponsBehandler? = null
-    private var lastKafkaEnabled: Boolean? = null
+    private var sistLoggetConsumerStatus: Boolean? = null
 
-    fun flow(): Flow<List<ConsumerRecord<String, String>>> = kotlinx.coroutines.flow.flow {
+    fun flow(): Flow<List<ConsumerRecord<String, String>>> = flow {
         while (true) {
-            val kafkaEnabled = isKafkaEnabled()
-            logKafkaState(kafkaEnabled)
-            if (!kafkaEnabled) {
-                closeConsumer()
-                delay(disabledDelayMillis)
+            if (!erConsumerAktiv()) {
+                ventMensConsumerErDeaktivert()
                 emit(emptyList())
                 continue
             }
             try {
-                val records = getOrCreateConsumer().poll(Duration.ofSeconds(4)).toList()
-                emit(records)
+                emit(hentMeldingerFraConsumer())
             } catch (e: WakeupException) {
                 log.info("MedlemskapVurdertConsumer mottok wakeup-signal og avslutter")
                 break
@@ -53,34 +50,53 @@ class MedlemskapVurdertConsumer(
                 emit(emptyList())
             }
         }
-    }.onEach { records ->
-        records.forEach { getOrCreateRecordHandler().behandle(it) }
-    }.onEach {
-        val activeConsumer = consumer
-        if (activeConsumer != null && it.isNotEmpty()) {
-            runCatching { activeConsumer.commitSync() }
-                .onFailure { e -> log.error("Commit feilet for $topic: ${e.message}") }
-        }
+    }.onEach { meldinger ->
+        behandleMeldinger(meldinger)
+    }.onEach { meldinger ->
+        commitHvisMeldingerBleBehandlet(meldinger)
     }.onCompletion {
-        closeConsumer()
+        lukkConsumerOgRecordHandler()
     }
 
-    private fun isKafkaEnabled(): Boolean =
+    private fun erConsumerAktiv(): Boolean =
+        erConsumerToggleAktiv().also { loggConsumerStatusHvisEndret(it) }
+
+    private fun erConsumerToggleAktiv(): Boolean =
         featureToggleService.isEnabled(MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV)
 
-    private fun logKafkaState(kafkaEnabled: Boolean) {
-        if (lastKafkaEnabled == kafkaEnabled) {
+    private suspend fun ventMensConsumerErDeaktivert() {
+        lukkConsumerOgRecordHandler()
+        delay(disabledDelayMillis)
+    }
+
+    private fun hentMeldingerFraConsumer(): List<ConsumerRecord<String, String>> =
+        hentEllerOpprettConsumer().poll(Duration.ofSeconds(4)).toList()
+
+    private fun behandleMeldinger(meldinger: List<ConsumerRecord<String, String>>) {
+        meldinger.forEach { hentEllerOpprettRecordHandler().behandle(it) }
+    }
+
+    private fun commitHvisMeldingerBleBehandlet(meldinger: List<ConsumerRecord<String, String>>) {
+        val aktivConsumer = consumer
+        if (aktivConsumer != null && meldinger.isNotEmpty()) {
+            runCatching { aktivConsumer.commitSync() }
+                .onFailure { e -> log.error("Commit feilet for $topic: ${e.message}") }
+        }
+    }
+
+    private fun loggConsumerStatusHvisEndret(consumerAktiv: Boolean) {
+        if (sistLoggetConsumerStatus == consumerAktiv) {
             return
         }
-        lastKafkaEnabled = kafkaEnabled
-        if (kafkaEnabled) {
+        sistLoggetConsumerStatus = consumerAktiv
+        if (consumerAktiv) {
             log.info("Feature toggle '${MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV}' er aktivert - MedlemskapVurdertConsumer vil starte")
         } else {
             log.info("Feature toggle '${MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV}' er ikke aktivert - MedlemskapVurdertConsumer vil ikke starte")
         }
     }
 
-    private fun getOrCreateConsumer(): KafkaConsumer<String, String> =
+    private fun hentEllerOpprettConsumer(): KafkaConsumer<String, String> =
         consumer ?: consumerFactory()
             .also {
                 it.subscribe(listOf(topic))
@@ -88,9 +104,9 @@ class MedlemskapVurdertConsumer(
                 log.info("MedlemskapVurdertConsumer lytter på topicet: $topic")
             }
 
-    private fun closeConsumer() {
-        consumer?.let { activeConsumer ->
-            runCatching { activeConsumer.close() }
+    private fun lukkConsumerOgRecordHandler() {
+        consumer?.let { aktivConsumer ->
+            runCatching { aktivConsumer.close() }
                 .onSuccess { log.info("MedlemskapVurdertConsumer lytter ikke lenger på topicet: $topic") }
                 .onFailure { e -> log.error("Klarte ikke å lukke MedlemskapVurdertConsumer for $topic: ${e.message}", e) }
             consumer = null
@@ -98,7 +114,7 @@ class MedlemskapVurdertConsumer(
         }
     }
 
-    private fun getOrCreateRecordHandler(): SpeilResponsBehandler =
+    private fun hentEllerOpprettRecordHandler(): SpeilResponsBehandler =
         recordHandler ?: recordHandlerFactory()
             .also { recordHandler = it }
 }
