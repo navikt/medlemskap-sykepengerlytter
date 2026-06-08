@@ -1,9 +1,10 @@
-package no.nav.medlemskap.sykepenger.lytter.config
+package no.nav.medlemskap.sykepenger.lytter.feature_toggles
 
 import io.getunleash.DefaultUnleash
 import io.getunleash.Unleash
 import io.getunleash.util.UnleashConfig
 import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.config.FeatureToggleService
 
 private val log = KotlinLogging.logger { }
 

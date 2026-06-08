@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.config
 
+import no.nav.medlemskap.sykepenger.lytter.feature_toggles.UnleashFeatureToggleService
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

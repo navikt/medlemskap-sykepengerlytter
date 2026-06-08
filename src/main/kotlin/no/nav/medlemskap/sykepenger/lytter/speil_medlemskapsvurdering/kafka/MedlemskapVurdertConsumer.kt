@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.config.FeatureToggleService
-import no.nav.medlemskap.sykepenger.lytter.config.UnleashFeatureToggleService
+import no.nav.medlemskap.sykepenger.lytter.feature_toggles.FeatureToggles
+import no.nav.medlemskap.sykepenger.lytter.feature_toggles.UnleashFeatureToggleService
 import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.SpeilResponsBehandler
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -16,9 +17,9 @@ import org.apache.kafka.common.errors.WakeupException
 import java.time.Duration
 
 class MedlemskapVurdertConsumer(
-    private val topic: String = MedlemskapVurdertKafkaConfig.TOPIC,
+    private val topic: String = MedlemskapVurdertConsumerConfig.TOPIC,
     private val featureToggleService: FeatureToggleService = UnleashFeatureToggleService(),
-    private val consumerFactory: () -> KafkaConsumer<String, String> = { MedlemskapVurdertKafkaConfig.createConsumer() },
+    private val consumerFactory: () -> KafkaConsumer<String, String> = { MedlemskapVurdertConsumerConfig.createConsumer() },
     private val recordHandlerFactory: () -> SpeilResponsBehandler = {
         SpeilResponsBehandler(speilResponsPublisher = MedlemskapsvurderingerProducer())
     },
@@ -62,7 +63,7 @@ class MedlemskapVurdertConsumer(
         erConsumerToggleAktiv().also { loggConsumerStatusHvisEndret(it) }
 
     private fun erConsumerToggleAktiv(): Boolean =
-        featureToggleService.isEnabled(MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV)
+        featureToggleService.isEnabled(FeatureToggles.MEDLEMSKAP_VURDERT_CONSUMER_AKTIV)
 
     private suspend fun ventMensConsumerErDeaktivert() {
         lukkConsumerOgRecordHandler()
@@ -90,9 +91,9 @@ class MedlemskapVurdertConsumer(
         }
         sistLoggetConsumerStatus = consumerAktiv
         if (consumerAktiv) {
-            log.info("Feature toggle '${MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV}' er aktivert - MedlemskapVurdertConsumer vil starte")
+            log.info("Feature toggle '${FeatureToggles.MEDLEMSKAP_VURDERT_CONSUMER_AKTIV}' er aktivert - MedlemskapVurdertConsumer vil starte")
         } else {
-            log.info("Feature toggle '${MedlemskapVurdertKafkaConfig.TOGGLE_KAFKACONSUMER_AKTIV}' er ikke aktivert - MedlemskapVurdertConsumer vil ikke starte")
+            log.info("Feature toggle '${FeatureToggles.MEDLEMSKAP_VURDERT_CONSUMER_AKTIV}' er ikke aktivert - MedlemskapVurdertConsumer vil ikke starte")
         }
     }
 
