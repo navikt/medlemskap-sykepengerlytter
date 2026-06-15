@@ -1,20 +1,17 @@
-package no.nav.medlemskap.sykepenger.lytter
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
-import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
 import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
 import org.apache.kafka.clients.consumer.CommitFailedException
-
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 import java.time.Instant
@@ -24,10 +21,10 @@ import java.time.ZoneId
 class BrukerSporsmaalConsumer(
     environment: Environment,
     private val persistenceService: PersistenceService = PersistenceService(
-        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource()) ,
+        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(environment).getDataSource())
     ),
-    private val config: KafkaConfig = KafkaConfig(environment),
+    private val config: SykepengeSoeknadKafkaConfig = SykepengeSoeknadKafkaConfig(environment),
     private val service: FlexMessageHandler = FlexMessageHandler(persistenceService),
     private val consumer: KafkaConsumer<String, String> = config.createFlexConsumer(),
 
@@ -50,7 +47,8 @@ class BrukerSporsmaalConsumer(
                     key = it.key(),
                     topic = it.topic(),
                     timestamp = LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(it!!.timestamp()), ZoneId.systemDefault()),
+                        Instant.ofEpochMilli(it!!.timestamp()), ZoneId.systemDefault()
+                    ),
                     timestampType = it.timestampType().name
                 )
             }
@@ -59,7 +57,7 @@ class BrukerSporsmaalConsumer(
             }
 
     fun flow(): Flow<List<FlexMessageRecord>> =
-        flow {
+        kotlinx.coroutines.flow.flow {
             while (true) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {

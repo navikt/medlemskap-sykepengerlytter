@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.domain
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
 import java.time.LocalDateTime
 

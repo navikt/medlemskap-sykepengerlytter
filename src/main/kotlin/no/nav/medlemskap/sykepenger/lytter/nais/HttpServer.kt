@@ -33,7 +33,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 import java.io.Writer

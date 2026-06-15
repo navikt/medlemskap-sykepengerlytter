@@ -3,9 +3,8 @@ package no.nav.kafkaproduser
 
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
-import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengeSoeknadKafkaConfig
 import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -13,19 +12,17 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import java.io.File
 import java.util.*
 
 import java.util.logging.Level
 import java.util.logging.Logger
 
 fun main(args: Array<String>) {
-    SimpleProducer(KafkaConfig(System.getenv())).produce(2)
+    SimpleProducer(SykepengeSoeknadKafkaConfig(System.getenv())).produce(2)
 }
 
-class SimpleProducer(brokers: KafkaConfig) {
+class SimpleProducer(brokers: SykepengeSoeknadKafkaConfig) {
     private val env: Environment = System.getenv()
     private val logger = Logger.getLogger("SimpleProducer")
 

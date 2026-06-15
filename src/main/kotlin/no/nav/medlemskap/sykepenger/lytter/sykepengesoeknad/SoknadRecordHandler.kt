@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
@@ -10,6 +10,10 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
+import no.nav.medlemskap.sykepenger.lytter.service.BrukersvarGjenbruk
+import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.SoeknadsParametere
 import org.slf4j.MarkerFactory
 
 class SoknadRecordHandler(

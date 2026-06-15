@@ -1,12 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -18,7 +17,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_JA_SVAR.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -34,7 +38,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -50,7 +59,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -65,7 +79,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageUTEN_SPORSMAAL.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -80,7 +99,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageNULL_I_SENDT_ARB_GIVER.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -143,7 +167,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("feilsoek.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -160,7 +189,12 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("feilsoek2.json").readText(Charsets.UTF_8)
         val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val service = FlexMessageHandler(
+            PersistenceService(
+                MedlemskapVurdertInMemmoryRepository(),
+                BrukersporsmaalInMemmoryRepository()
+            )
+        )
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)

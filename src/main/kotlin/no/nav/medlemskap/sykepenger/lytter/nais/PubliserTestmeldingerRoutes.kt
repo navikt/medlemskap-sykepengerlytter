@@ -9,9 +9,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.Kilde
-import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Kilde
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
