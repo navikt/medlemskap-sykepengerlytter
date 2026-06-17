@@ -13,11 +13,11 @@ spec:
     partitions: 2
     replication: 3
     retentionBytes: -1
-    retentionHours: 3
+    retentionHours: 72
   acl:
     - team: medlemskap
       application: medlemskap-sykepenger-listener
-      access: write
+      access: readwrite
     - team: tbd
       application: sparkel-medlemskap
       access: read
