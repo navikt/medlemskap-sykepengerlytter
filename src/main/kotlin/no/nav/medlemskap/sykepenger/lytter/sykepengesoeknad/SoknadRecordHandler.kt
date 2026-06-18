@@ -6,14 +6,12 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
-import no.nav.medlemskap.sykepenger.lytter.service.BrukersvarGjenbruk
-import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.SoeknadsParametere
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.MedlemskapOppslagRequestMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
 import org.slf4j.MarkerFactory
 
 class SoknadRecordHandler(
@@ -32,9 +30,7 @@ class SoknadRecordHandler(
         configuration = configuration
     )
     var medlOppslagClient: LovmeAPI
-
-    private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
-    private val brukersvarGjenbruk = BrukersvarGjenbruk(finnForrigeBrukersvar)
+    private val utledBrukerinput = UtledBrukerinput(persistenceService)
 
     init {
         medlOppslagClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
@@ -86,7 +82,7 @@ class SoknadRecordHandler(
         soknadRecord: SoknadRecord
     ): String {
         try {
-            val vurdering = mapBrukersvarOgKjørRegelmotor(soknadRecord.sykepengeSoknad)
+            val vurdering = utledBrukersvarOgKjørRegelmotor(soknadRecord.sykepengeSoknad)
             soknadRecord.logSendt()
             return vurdering
         } catch (t: Throwable) {
@@ -109,24 +105,10 @@ class SoknadRecordHandler(
         return sykepengeSoknad.arbeidUtenforNorge == false || sykepengeSoknad.arbeidUtenforNorge ==null
     }
 
-    private suspend fun mapBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
-        val søknadsParametere = sykepengeSoknad.tilSøknadsParametere()
-
-        val brukersvarPåInnkommendeSøknad = persistenceService.hentbrukersporsmaalForSoknadID(søknadsParametere.callId)
-
-        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere,
-            brukersvarPåInnkommendeSøknad,
-            "sykepengebackend"
-        )
-
-        val medlemskapOppslagRequest = MedlOppslagRequest(
-            fnr = søknadsParametere.fnr,
-            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
-            periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
-            brukerinput = brukerinput
-        )
-        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, søknadsParametere.callId)
+    private suspend fun utledBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
+        val brukerinput = utledBrukerinput.utledBrukerinput(sykepengeSoknad)
+        val medlemskapOppslagRequest = MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
+        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, brukerinput.søknadsParametere.callId)
     }
 
     fun isDuplikat(medlemRequest: Medlemskap): Medlemskap? {
@@ -178,10 +160,3 @@ class SoknadRecordHandler(
 
     }
 }
-
-fun LovmeSoknadDTO.tilSøknadsParametere(): SoeknadsParametere =
-    SoeknadsParametere(
-        callId = id,
-        fnr = fnr,
-        førsteDagForYtelse = fom.toString()
-    )
