@@ -8,6 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknadHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SoknadRecordHandler
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BrukersvarHandler
 import org.slf4j.MarkerFactory
 

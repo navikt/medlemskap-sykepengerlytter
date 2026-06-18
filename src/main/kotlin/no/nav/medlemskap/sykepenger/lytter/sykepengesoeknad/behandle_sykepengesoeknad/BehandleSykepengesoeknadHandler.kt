@@ -8,7 +8,6 @@ import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SoknadRecordHandler
 import org.slf4j.MarkerFactory
 
 open class BehandleSykepengesoeknadHandler(

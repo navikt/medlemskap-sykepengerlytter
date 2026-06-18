@@ -8,7 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SoknadRecordHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SoknadRecordHandler
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository

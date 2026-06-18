@@ -16,10 +16,10 @@ class SykepengesoeknadFiltrering(
         private val log = KotlinLogging.logger { }
     }
 
-    fun finnDuplikatSomSkalFiltreres(sykepengeSoknad: LovmeSoknadDTO): Medlemskap? {
+    fun finnDuplikatSomSkalFiltreres(sykepengeSoknad: LovmeSoknadDTO): Boolean {
         val medlemRequest = mapToMedlemskap(sykepengeSoknad)
         val duplikat = erDuplikat(medlemRequest)
-        return if (duplikat != null && arbeidUtenForNorgeFalse(sykepengeSoknad)) duplikat else null
+        return duplikat != null && arbeidUtenForNorgeFalse(sykepengeSoknad)
     }
 
     fun erDuplikat(medlemRequest: Medlemskap): Medlemskap? {

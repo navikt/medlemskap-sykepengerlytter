@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
@@ -10,9 +10,6 @@ import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.MedlemskapOppslagRequestMapper
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
 
 class SoknadRecordHandler(
     private val configuration: Configuration,
@@ -40,18 +37,12 @@ class SoknadRecordHandler(
 
     suspend fun handle(soknadRecord: SoknadRecord) {
         val sykepengeSoknad = soknadRecord.sykepengeSoknad
-        val gyldigSoknad = validerSoknad(sykepengeSoknad)
-        val duplikat = if (gyldigSoknad) {
-            sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad)
-        } else {
-            null
-        }
 
         when {
-            !gyldigSoknad -> soknadRecord.logIkkeSendt()
+            !validerSoknad(sykepengeSoknad) -> soknadRecord.logIkkeSendt()
 
-            duplikat != null -> log.info(
-                "soknad med id ${sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${duplikat.fnr} ",
+            sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad) -> log.info(
+                "soknad med id ${sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${sykepengeSoknad.fnr} ",
                 kv("callId", sykepengeSoknad.id)
             )
 
@@ -68,6 +59,7 @@ class SoknadRecordHandler(
             }
         }
     }
+
     private suspend fun getVurdering(
         soknadRecord: SoknadRecord
     ): VurderingResultat {
