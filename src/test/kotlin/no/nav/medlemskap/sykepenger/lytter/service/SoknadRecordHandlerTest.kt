@@ -9,6 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SoknadRecordHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions
@@ -48,8 +49,8 @@ class SoknadRecordHandlerTest {
                 ErMedlem.JA.toString()
             )
         )
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
-        val duplikat = service.isDuplikat(
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
+        val duplikat = sykepengesoeknadFiltrering.erDuplikat(
             Medlemskap(
                 "123",
                 LocalDate.of(2022, 1, 1),
@@ -88,8 +89,8 @@ class SoknadRecordHandlerTest {
                 ErMedlem.JA.toString()
             )
         )
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
-        val duplikat = service.isDuplikat(
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
+        val duplikat = sykepengesoeknadFiltrering.erDuplikat(
             Medlemskap(
                 "123",
                 LocalDate.of(2022, 1, 21),
@@ -115,10 +116,10 @@ class SoknadRecordHandlerTest {
             )
         )
 
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        val paafolgende = sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad)
         Assertions.assertTrue(paafolgende)
         val dbResult = repo.finnVurdering("01010112345")
         val paafolgendeMedlemskap = dbResult.find { it.status == "PAFOLGENDE" }
@@ -209,7 +210,7 @@ class SoknadRecordHandlerTest {
         )
 
 
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type = SoknadstypeDTO.ARBEIDSTAKERE,
@@ -222,7 +223,7 @@ class SoknadRecordHandlerTest {
             tom = LocalDate.of(2022, 4, 8),
             arbeidUtenforNorge = false
         )
-        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        val paafolgende = sykepengesoeknadFiltrering.erPåfølgendeSøknad(sykepengeSoknad)
         Assertions.assertTrue(paafolgende)
     }
 
@@ -251,7 +252,7 @@ class SoknadRecordHandlerTest {
         )
 
 
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type = SoknadstypeDTO.ARBEIDSTAKERE,
@@ -264,7 +265,7 @@ class SoknadRecordHandlerTest {
             tom = LocalDate.of(2022, 5, 13),
             arbeidUtenforNorge = null
         )
-        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        val paafolgende = sykepengesoeknadFiltrering.erPåfølgendeSøknad(sykepengeSoknad)
         Assertions.assertTrue(paafolgende)
     }
 
@@ -292,7 +293,7 @@ class SoknadRecordHandlerTest {
         )
 
 
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val sykepengeSoknad = LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type = SoknadstypeDTO.ARBEIDSTAKERE,
@@ -306,7 +307,7 @@ class SoknadRecordHandlerTest {
             arbeidUtenforNorge = null,
             forstegangssoknad = true
         )
-        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        val paafolgende = sykepengesoeknadFiltrering.erPåfølgendeSøknad(sykepengeSoknad)
         Assertions.assertFalse(paafolgende)
     }
 
@@ -391,7 +392,7 @@ class SoknadRecordHandlerTest {
         )
 
 
-        val service = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = LovmeSoknadDTO(
             UUID.randomUUID().toString(),
@@ -405,7 +406,7 @@ class SoknadRecordHandlerTest {
             true,
             arbeidUtenforNorge = true
         )
-        val paafolgende = service.isPaafolgendeSoknad(sykepengeSoknad)
+        val paafolgende = sykepengesoeknadFiltrering.erPåfølgendeSøknad(sykepengeSoknad)
         Assertions.assertFalse(paafolgende)
     }
 
@@ -457,11 +458,11 @@ class SoknadRecordHandlerTest {
             )
         )
 
-        val service: SoknadRecordHandler = SoknadRecordHandler(Configuration(), persistenceService)
+        val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
         val fileContent =
             this::class.java.classLoader.getResource("sampleRequestUtlandTrue.json").readText(Charsets.UTF_8)
         var sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.isPaafolgendeSoknad(sykepengeSoknad)
+        sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad)
         val dbResult = repo.finnVurdering("01010112345")
         val paafolgendeMedlemskap = dbResult.find { it.status == "PAFOLGENDE" }
 
