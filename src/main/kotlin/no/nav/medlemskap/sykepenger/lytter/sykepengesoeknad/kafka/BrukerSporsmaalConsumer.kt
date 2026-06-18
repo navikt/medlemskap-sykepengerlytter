@@ -9,8 +9,8 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
@@ -25,7 +25,7 @@ class BrukerSporsmaalConsumer(
         PostgresBrukersporsmaalRepository(DataSourceBuilder(environment).getDataSource())
     ),
     private val config: SykepengeSoeknadKafkaConfig = SykepengeSoeknadKafkaConfig(environment),
-    private val service: FlexMessageHandler = FlexMessageHandler(persistenceService),
+    private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(persistenceService),
     private val consumer: KafkaConsumer<String, String> = config.createFlexConsumer(),
 
     ) {
@@ -36,11 +36,11 @@ class BrukerSporsmaalConsumer(
         consumer.subscribe(listOf(config.flexTopic))
     }
 
-    fun pollMessages(): List<FlexMessageRecord> =
+    fun pollMessages(): List<SykepengesoeknadRecord> =
 
         consumer.poll(Duration.ofSeconds(4))
             .map {
-                FlexMessageRecord(
+                SykepengesoeknadRecord(
                     partition = it.partition(),
                     offset = it.offset(),
                     value = it.value(),
@@ -56,13 +56,13 @@ class BrukerSporsmaalConsumer(
                 Metrics.incReceivedvurderingTotal(it.count())
             }
 
-    fun flow(): Flow<List<FlexMessageRecord>> =
+    fun flow(): Flow<List<SykepengesoeknadRecord>> =
         kotlinx.coroutines.flow.flow {
             while (true) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
-                    emit(emptyList<FlexMessageRecord>())
+                    emit(emptyList<SykepengesoeknadRecord>())
                 } else {
                     emit(pollMessages())
                 }

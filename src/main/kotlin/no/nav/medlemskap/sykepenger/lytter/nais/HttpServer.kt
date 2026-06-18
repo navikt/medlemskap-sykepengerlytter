@@ -33,7 +33,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 import java.io.Writer
@@ -47,7 +47,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val flexMessageHandler = FlexMessageHandler(persistenceService)
+    val sykepengesoeknadMottak = SykepengesoeknadMottak(persistenceService)
     val brukersporsmaalService = BrukersporsmaalService(persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
@@ -92,7 +92,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
-            publiserTestmeldinger(flexMessageHandler, persistenceService)
+            publiserTestmeldinger(sykepengesoeknadMottak, persistenceService)
         }
     }
 })

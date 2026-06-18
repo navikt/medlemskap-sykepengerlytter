@@ -8,7 +8,7 @@ enum class Kilde {
     LOVME_GCP
 }
 
-data class FlexMessageRecord(val partition:Int, val offset:Long, val value : String, val key:String?, val topic:String, val timestamp: LocalDateTime, val timestampType:String, val kilde: Kilde = Kilde.KAFKA)
+data class SykepengesoeknadRecord(val partition:Int, val offset:Long, val value : String, val key:String?, val topic:String, val timestamp: LocalDateTime, val timestampType:String, val kilde: Kilde = Kilde.KAFKA)
 
 enum class Soknadstatus {
     NY,

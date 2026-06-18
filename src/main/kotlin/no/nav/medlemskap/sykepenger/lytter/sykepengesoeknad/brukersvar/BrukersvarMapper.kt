@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
@@ -16,9 +16,9 @@ open class BrukersvarMapper {
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    open fun mapMessage(flexMessageRecord: FlexMessageRecord): Brukersporsmaal {
+    open fun mapMessage(sykepengesoeknadRecord: SykepengesoeknadRecord): Brukersporsmaal {
         try {
-            val json = flexMessageRecord.value
+            val json = sykepengesoeknadRecord.value
             val JsonNode = ObjectMapper().readTree(json)
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
@@ -73,7 +73,7 @@ open class BrukersvarMapper {
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
-            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",flexMessageRecord.value))
+            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadRecord.value))
             throw t
         }
     }

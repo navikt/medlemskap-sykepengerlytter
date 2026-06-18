@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
 
 open class BrukersvarHandler(
@@ -18,20 +18,20 @@ open class BrukersvarHandler(
     /*
      * SP1220
      * */
-    fun handleBrukerSporsmaal(flexMessageRecord: FlexMessageRecord) {
-        val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(flexMessageRecord)
+    fun handleBrukerSporsmaal(sykepengesoeknadRecord: SykepengesoeknadRecord) {
+        val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesoeknadRecord)
 
         if (!brukersporsmaal.erSendt()) {
-            loggFiltrertFeilStatus(flexMessageRecord, brukersporsmaal)
+            loggFiltrertFeilStatus(sykepengesoeknadRecord, brukersporsmaal)
             return
         }
 
         if (brukersporsmaalErLagretFraFør(brukersporsmaal)) {
-            loggFiltrertDuplikat(flexMessageRecord, brukersporsmaal)
+            loggFiltrertDuplikat(sykepengesoeknadRecord, brukersporsmaal)
             return
         }
 
-        lagreBrukersporsmaal(flexMessageRecord, brukersporsmaal)
+        lagreBrukersporsmaal(sykepengesoeknadRecord, brukersporsmaal)
     }
 
     private fun Brukersporsmaal.erSendt(): Boolean =
@@ -41,38 +41,38 @@ open class BrukersvarHandler(
         persistenceService.hentbrukersporsmaalForSoknadID(brukersporsmaal.soknadid) != null
 
     private fun lagreBrukersporsmaal(
-        flexMessageRecord: FlexMessageRecord,
+        sykepengesoeknadRecord: SykepengesoeknadRecord,
         brukersporsmaal: Brukersporsmaal
     ) {
         persistenceService.lagreBrukersporsmaal(brukersporsmaal)
         log.info(
-            "Brukerspørsmål for søknad ${flexMessageRecord.key} lagret til databasen",
-            kv("callId", flexMessageRecord.key),
+            "Brukerspørsmål for søknad ${sykepengesoeknadRecord.key} lagret til databasen",
+            kv("callId", sykepengesoeknadRecord.key),
             kv("dato", brukersporsmaal.eventDate),
-            kv("partition", flexMessageRecord.partition),
+            kv("partition", sykepengesoeknadRecord.partition),
         )
     }
 
     private fun loggFiltrertDuplikat(
-        flexMessageRecord: FlexMessageRecord,
+        sykepengesoeknadRecord: SykepengesoeknadRecord,
         brukersporsmaal: Brukersporsmaal
     ) {
         log.info(
-            "Flex melding for søknad ${flexMessageRecord.key}, " +
-                    "offset : ${flexMessageRecord.offset}, " +
-                    "partition : ${flexMessageRecord.partition}," +
+            "Flex melding for søknad ${sykepengesoeknadRecord.key}, " +
+                    "offset : ${sykepengesoeknadRecord.offset}, " +
+                    "partition : ${sykepengesoeknadRecord.partition}," +
                     "filtrert ut. duplikat melding: ${brukersporsmaal.soknadid}"
         )
     }
 
     private fun loggFiltrertFeilStatus(
-        flexMessageRecord: FlexMessageRecord,
+        sykepengesoeknadRecord: SykepengesoeknadRecord,
         brukersporsmaal: Brukersporsmaal
     ) {
         log.info(
-            "Flex melding for søknad ${flexMessageRecord.key}, " +
-                    "offset : ${flexMessageRecord.offset}, " +
-                    "partition : ${flexMessageRecord.partition}," +
+            "Flex melding for søknad ${sykepengesoeknadRecord.key}, " +
+                    "offset : ${sykepengesoeknadRecord.offset}, " +
+                    "partition : ${sykepengesoeknadRecord.partition}," +
                     "filtrert ut. Feil status : ${brukersporsmaal.status}"
         )
     }

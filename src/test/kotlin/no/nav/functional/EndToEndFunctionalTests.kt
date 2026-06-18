@@ -9,7 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
@@ -17,7 +17,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.service.*
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
@@ -93,7 +93,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val testperson = "15076500565"
 
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse: "2023-08-16"
@@ -101,7 +101,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -150,14 +150,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -206,14 +206,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -262,7 +262,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -270,7 +270,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSArbeidUtenforNorgeJa.json").readText(Charsets.UTF_8),
@@ -318,7 +318,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -326,7 +326,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSArbeidUtenforNorgeJaUtenforEOSJa.json").readText(Charsets.UTF_8),
@@ -377,14 +377,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
@@ -433,14 +433,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
@@ -490,14 +490,14 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = FlexMessageHandler(containerPersistenceService)
+        val fmh = SykepengesoeknadMottak(containerPersistenceService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = FlexMessageRecord(
+        val message = SykepengesoeknadRecord(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
