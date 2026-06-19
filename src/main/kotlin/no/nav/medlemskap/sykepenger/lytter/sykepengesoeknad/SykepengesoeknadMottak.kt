@@ -29,7 +29,7 @@ open class SykepengesoeknadMottak (
         logMottattFraFlex(sykepengesøknadRecord, sykepengesøknad)
         logFnrTilMeldingId(sykepengesøknadRecord, sykepengesøknad)
 
-        if (!skalBehandleSykepengesøknad(sykepengesøknad)) {
+        if (!Mottakskriterier.erOppfylt(sykepengesøknad)) {
             logFiltrertUtPåSøknadstype(sykepengesøknadRecord, sykepengesøknad)
             return
         }
@@ -38,10 +38,6 @@ open class SykepengesoeknadMottak (
         brukersvarHandler.handleBrukerSporsmaal(sykepengesøknadRecord)
         behandleSykepengesoeknad.behandle(sykepengesøknadRecord)
     }
-
-    private fun skalBehandleSykepengesøknad(sykepengeSoknad: LovmeSoknadDTO): Boolean =
-        sykepengeSoknad.type == SoknadstypeDTO.ARBEIDSTAKERE ||
-                sykepengeSoknad.type == SoknadstypeDTO.GRADERT_REISETILSKUDD
 
     private fun logMottattFraFlex(
         sykepengesøknadRecord: SykepengesoeknadRecord,
