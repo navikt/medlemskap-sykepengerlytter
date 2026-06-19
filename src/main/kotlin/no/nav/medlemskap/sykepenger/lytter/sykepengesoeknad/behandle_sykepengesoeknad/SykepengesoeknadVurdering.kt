@@ -31,21 +31,17 @@ class SykepengesoeknadVurdering(
     }
 
 
-    suspend fun handle(soknadRecord: SoknadRecord) {
+    suspend fun vurder(soknadRecord: SoknadRecord) {
         val sykepengeSoknad = soknadRecord.sykepengeSoknad
 
         when {
             !validerSoknad(sykepengeSoknad) -> soknadRecord.logIkkeSendt()
 
-            sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad) -> log.info(
-                "soknad med id ${sykepengeSoknad.id} er funksjonelt lik en annen soknad : kryptertFnr : ${sykepengeSoknad.fnr} ",
-                kv("callId", sykepengeSoknad.id)
-            )
+            sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad) ->
+                sykepengeSoknad.logFunksjoneltLikAnnenSøknad()
 
-            sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad) -> log.info(
-                "soknad med id ${sykepengeSoknad.id} er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
-                kv("callId", sykepengeSoknad.id)
-            )
+            sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad) ->
+                sykepengeSoknad.logPåfølgendeSøknad()
 
             else -> when (val resultat = getVurdering(soknadRecord)) {
                 is VurderingResultat.Ok -> lagreVurdering.lagreVurdering(soknadRecord, resultat.vurdering)
@@ -89,6 +85,18 @@ class SykepengesoeknadVurdering(
         log.info(
             "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
             kv("callId", sykepengeSoknad.id),
+        )
+
+    private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
+        log.info(
+            "soknad med id $id er funksjonelt lik en annen soknad : kryptertFnr : $fnr ",
+            kv("callId", id)
+        )
+
+    private fun LovmeSoknadDTO.logPåfølgendeSøknad() =
+        log.info(
+            "soknad med id $id er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
+            kv("callId", id)
         )
 
     private fun SoknadRecord.logSendt() =

@@ -15,7 +15,7 @@ open class BehandleSykepengesoeknad(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun handleLovmeRequest(sykepengesøknadRecord: SykepengesoeknadRecord) {
+    suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
         val sykepengesøknad = JacksonParser().parse(sykepengesøknadRecord.value)
 
         if (!RegelmotorInngangskriterier.erOppfylt(sykepengesøknad)) {
@@ -27,6 +27,6 @@ open class BehandleSykepengesoeknad(
         }
 
         val soknadRecord = SoknadRecord(sykepengesøknadRecord.partition, sykepengesøknadRecord.offset, sykepengesøknadRecord.value, sykepengesøknadRecord.key, sykepengesøknadRecord.topic, sykepengesøknad)
-        sykepengesoeknadVurdering.handle(soknadRecord)
+        sykepengesoeknadVurdering.vurder(soknadRecord)
     }
 }

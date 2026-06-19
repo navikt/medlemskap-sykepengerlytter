@@ -8,8 +8,8 @@ import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadVurdering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadVurdering
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions
@@ -430,7 +430,7 @@ class SykepengesoeknadVurderingTest {
         val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         val paafolgendeMedlemskap = dbResult.find { it.status == "PAFOLGENDE" }
         Assertions.assertNotNull(paafolgendeMedlemskap)
@@ -487,7 +487,7 @@ class SykepengesoeknadVurderingTest {
         val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         Assertions.assertEquals(1, dbResult.size)
 
@@ -503,8 +503,8 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
 
@@ -558,7 +558,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -617,7 +617,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -680,7 +680,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -726,7 +726,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -768,7 +768,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -858,7 +858,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -954,7 +954,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -1042,7 +1042,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -1113,7 +1113,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -1192,7 +1192,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.handle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)

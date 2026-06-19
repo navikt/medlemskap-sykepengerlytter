@@ -36,7 +36,7 @@ open class SykepengesoeknadMottak (
 
         logSkalBehandles(sykepengesøknadRecord, sykepengesøknad)
         brukersvarHandler.handleBrukerSporsmaal(sykepengesøknadRecord)
-        behandleSykepengesoeknad.handleLovmeRequest(sykepengesøknadRecord)
+        behandleSykepengesoeknad.behandle(sykepengesøknadRecord)
     }
 
     private fun skalBehandleSykepengesøknad(sykepengeSoknad: LovmeSoknadDTO): Boolean =
