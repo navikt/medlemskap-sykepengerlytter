@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 
 class MedlemskapOppslagHandler(requiredVariables: Map<String, String>) {
 

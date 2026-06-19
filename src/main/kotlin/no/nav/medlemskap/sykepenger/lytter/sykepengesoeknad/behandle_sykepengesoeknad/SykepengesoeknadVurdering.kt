@@ -2,34 +2,24 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
-import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
+import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 class SykepengesoeknadVurdering(
-    private val configuration: Configuration,
-    persistenceService: PersistenceService
+    configuration: Configuration,
+    persistenceService: PersistenceService,
+    private val medlemskapOppslagService: MedlemskapOppslagService = MedlemskapOppslagService(configuration)
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
     }
 
-    val azureAdClient = AzureAdClient(configuration)
-    val restClients = RestClients(azureAdClient = azureAdClient, configuration = configuration)
-    var medlOppslagClient: LovmeAPI
-
     private val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
     private val utledBrukerinput = UtledBrukerinput(persistenceService)
     private val lagreVurdering = LagreVurdering(persistenceService)
-
-    init {
-        medlOppslagClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
-    }
-
 
     suspend fun vurder(soknadRecord: SoknadRecord) {
         val sykepengeSoknad = soknadRecord.sykepengeSoknad
@@ -72,7 +62,7 @@ class SykepengesoeknadVurdering(
     private suspend fun utledBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
         val brukerinput = utledBrukerinput.utledBrukerinput(sykepengeSoknad)
         val medlemskapOppslagRequest = MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
-        return medlOppslagClient.vurderMedlemskap(medlemskapOppslagRequest, brukerinput.søknadsParametere.callId)
+        return medlemskapOppslagService.vurderMedlemskap(medlemskapOppslagRequest, brukerinput.søknadsParametere.callId)
     }
 
     fun validerSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {

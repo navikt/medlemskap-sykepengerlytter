@@ -20,6 +20,16 @@ import java.util.*
 
 class SykepengesoeknadVurderingTest {
 
+    private fun sykepengesoeknadVurdering(
+        persistenceService: PersistenceService,
+        lovmeAPI: LovmeAPI
+    ): SykepengesoeknadVurdering =
+        SykepengesoeknadVurdering(
+            Configuration(),
+            persistenceService,
+            MedlemskapOppslagService(lovmeAPI)
+        )
+
     @Test
     fun `test Duplikat på forespørsel`() = runBlocking {
         val repo = MedlemskapVurdertInMemmoryRepository()
@@ -498,8 +508,7 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
-        service.medlOppslagClient = LovMeMock()
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, LovMeMock())
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
@@ -515,9 +524,8 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val mock = LovMeMock()
-        service.medlOppslagClient = mock
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
                 fnr = "12345678901",
@@ -574,9 +582,8 @@ class SykepengesoeknadVurderingTest {
             val repo = MedlemskapVurdertInMemmoryRepository()
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
-            val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
             val mock = LovMeMock()
-            service.medlOppslagClient = mock
+            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
             repo2.lagreBrukersporsmaal(
                 Brukersporsmaal(
                     fnr = "12345678901",
@@ -633,9 +640,8 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val mock = LovMeMock()
-        service.medlOppslagClient = mock
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         val brukersvarISøknaden = Brukersporsmaal(
             fnr = "12345678901",
@@ -704,9 +710,8 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val mock = LovMeMock()
-        service.medlOppslagClient = mock
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
@@ -746,9 +751,8 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val mock = LovMeMock()
-        service.medlOppslagClient = mock
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
@@ -789,9 +793,8 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
         val mock = LovMeMock()
-        service.medlOppslagClient = mock
+        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
 
 
         //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -887,9 +890,8 @@ class SykepengesoeknadVurderingTest {
             val repo = MedlemskapVurdertInMemmoryRepository()
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
-            val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
             val mock = LovMeMock()
-            service.medlOppslagClient = mock
+            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -975,9 +977,8 @@ class SykepengesoeknadVurderingTest {
             val repo = MedlemskapVurdertInMemmoryRepository()
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
-            val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
             val mock = LovMeMock()
-            service.medlOppslagClient = mock
+            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -1064,9 +1065,8 @@ class SykepengesoeknadVurderingTest {
             val repo = MedlemskapVurdertInMemmoryRepository()
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
-            val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
             val mock = LovMeMock()
-            service.medlOppslagClient = mock
+            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -1143,9 +1143,8 @@ class SykepengesoeknadVurderingTest {
             val repo = MedlemskapVurdertInMemmoryRepository()
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
-            val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
             val mock = LovMeMock()
-            service.medlOppslagClient = mock
+            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
