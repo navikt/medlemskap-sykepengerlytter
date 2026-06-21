@@ -7,15 +7,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.serialization.StringDeserializer
 
-object MedlemskapVurdertKafkaConfig {
-
+object MedlemskapVurdertConsumerConfig {
     const val TOPIC = "medlemskap.medlemskap-vurdert"
     const val CONSUMER_GROUP = "medlemskap-sykepengelytter-medlemskapsvurderinger"
-    private const val MEDLEMSKAP_VURDERT_CONSUMER = "MEDLEMSKAP_VURDERT_CONSUMER"
-    private const val DEFAULT_MEDLEMSKAP_VURDERT_CONSUMER = "Nei"
-
-    fun isEnabled(): Boolean =
-        (System.getenv(MEDLEMSKAP_VURDERT_CONSUMER) ?: DEFAULT_MEDLEMSKAP_VURDERT_CONSUMER) == "Ja"
 
     fun createConsumer(): KafkaConsumer<String, String> =
         KafkaConsumer(consumerProperties())
