@@ -100,7 +100,7 @@ class SykepengesoeknadMottakTest {
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
         val service = SykepengesoeknadMottak(persistenceService)
-        service.handle(record)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
     @Test
@@ -111,8 +111,8 @@ class SykepengesoeknadMottakTest {
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
         val service = SykepengesoeknadMottak(persistenceService)
-        service.handle(record)
-        service.handle(record)
+        service.behandle(record)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
     @Test
@@ -123,7 +123,7 @@ class SykepengesoeknadMottakTest {
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
         val service = SykepengesoeknadMottak(persistenceService)
-        service.handle(record)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
     @Test
@@ -135,7 +135,7 @@ class SykepengesoeknadMottakTest {
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
         val service = SykepengesoeknadMottak(persistenceService)
-        service.handle(record)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
     @Test

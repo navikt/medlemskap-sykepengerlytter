@@ -10,13 +10,13 @@ import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-open class BrukersvarMapper {
+class BrukersvarMapper {
     companion object {
         private val log = KotlinLogging.logger { }
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    open fun mapMessage(sykepengesoeknadRecord: SykepengesoeknadRecord): Brukersporsmaal {
+    fun mapMessage(sykepengesoeknadRecord: SykepengesoeknadRecord): Brukersporsmaal {
         try {
             val json = sykepengesoeknadRecord.value
             val JsonNode = ObjectMapper().readTree(json)

@@ -46,7 +46,7 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
 
                     try {
                         logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
-                        sykepengesoeknadMottak.handle(sykepengesoeknadRecord)
+                        sykepengesoeknadMottak.behandle(sykepengesoeknadRecord)
                         call.respond(HttpStatusCode.OK)
                     } catch (t: Throwable) {
                         logger.error(

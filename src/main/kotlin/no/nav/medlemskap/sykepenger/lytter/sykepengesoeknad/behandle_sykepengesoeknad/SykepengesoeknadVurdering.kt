@@ -19,7 +19,7 @@ class SykepengesoeknadVurdering(
 
     private val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
     private val utledBrukerinput = UtledBrukerinput(persistenceService)
-    private val lagreVurdering = LagreVurdering(persistenceService)
+    private val lagreVurderingsstatus = LagreVurderingsstatus(persistenceService)
 
     suspend fun vurder(soknadRecord: SoknadRecord) {
         val sykepengeSoknad = soknadRecord.sykepengeSoknad
@@ -34,7 +34,7 @@ class SykepengesoeknadVurdering(
                 sykepengeSoknad.logPåfølgendeSøknad()
 
             else -> when (val resultat = getVurdering(soknadRecord)) {
-                is VurderingResultat.Ok -> lagreVurdering.lagreVurdering(soknadRecord, resultat.vurdering)
+                is VurderingResultat.Ok -> lagreVurderingsstatus.lagreVurderingsstaus(soknadRecord, resultat.vurdering)
                 VurderingResultat.SkalIkkeLagres -> {
                     // Gradert adresse eller teknisk feil – allerede logget i getVurdering
                 }

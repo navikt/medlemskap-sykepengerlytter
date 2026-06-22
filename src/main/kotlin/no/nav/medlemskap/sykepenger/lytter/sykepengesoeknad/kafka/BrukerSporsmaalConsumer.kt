@@ -69,7 +69,7 @@ class BrukerSporsmaalConsumer(
             }
         }.onEach { it ->
             logger.debug { "flex messages received :" + it.size + "on topic " + config.flexTopic }
-            it.forEach {  record ->service.handle(record) }
+            it.forEach {  record ->service.behandle(record) }
         }.onEach {
             try {
                 consumer.commitSync()

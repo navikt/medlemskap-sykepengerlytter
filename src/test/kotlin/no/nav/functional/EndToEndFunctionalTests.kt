@@ -8,7 +8,6 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.opprettResponsTilFle
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
@@ -110,7 +109,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -166,7 +165,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -222,7 +221,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -279,7 +278,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -335,7 +334,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -393,7 +392,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -449,7 +448,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -506,7 +505,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.handle(message)
+        fmh.behandle(message)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker

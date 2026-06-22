@@ -6,14 +6,14 @@ import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
-class LagreVurdering(
+class LagreVurderingsstatus(
     private val persistenceService: PersistenceService
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
     }
 
-    fun lagreVurdering(soknadRecord: SoknadRecord, vurdering: String) {
+    fun lagreVurderingsstaus(soknadRecord: SoknadRecord, vurdering: String) {
         try {
             persistenceService.lagreLovmeResponse(soknadRecord.key!!, MedlemskapVurdertParser().parse(vurdering))
         } catch (t: Exception) {

@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
 
-open class BrukersvarHandler(
+class BehandleBrukersvar(
     private val persistenceService: PersistenceService,
     private val brukersvarMapper: BrukersvarMapper = BrukersvarMapper()
 ) {
@@ -18,7 +18,7 @@ open class BrukersvarHandler(
     /*
      * SP1220
      * */
-    fun handleBrukerSporsmaal(sykepengesoeknadRecord: SykepengesoeknadRecord) {
+    fun behandleBrukerspørsmål(sykepengesoeknadRecord: SykepengesoeknadRecord) {
         val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesoeknadRecord)
 
         if (!brukersporsmaal.erSendt()) {

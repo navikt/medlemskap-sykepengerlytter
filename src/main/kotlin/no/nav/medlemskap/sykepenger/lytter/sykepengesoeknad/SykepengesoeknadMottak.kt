@@ -9,13 +9,13 @@ import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadVurdering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BrukersvarHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 import org.slf4j.MarkerFactory
 
-open class SykepengesoeknadMottak (
+class SykepengesoeknadMottak (
     persistenceService: PersistenceService,
     sykepengesoeknadVurdering: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService),
-    private val brukersvarHandler: BrukersvarHandler = BrukersvarHandler(persistenceService),
+    private val behandleBrukersvar: BehandleBrukersvar = BehandleBrukersvar(persistenceService),
     private val behandleSykepengesoeknad: BehandleSykepengesoeknad = BehandleSykepengesoeknad(sykepengesoeknadVurdering)
 ) {
     companion object {
@@ -23,7 +23,7 @@ open class SykepengesoeknadMottak (
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun handle(sykepengesøknadRecord: SykepengesoeknadRecord) {
+    suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
         val sykepengesøknad = JacksonParser().parse(sykepengesøknadRecord.value)
 
         logMottattFraFlex(sykepengesøknadRecord, sykepengesøknad)
@@ -35,8 +35,8 @@ open class SykepengesoeknadMottak (
         }
 
         logSkalBehandles(sykepengesøknadRecord, sykepengesøknad)
-        brukersvarHandler.handleBrukerSporsmaal(sykepengesøknadRecord)
-        behandleSykepengesoeknad.behandle(sykepengesøknadRecord)
+        behandleBrukersvar.behandleBrukerspørsmål(sykepengesøknadRecord)
+        behandleSykepengesoeknad.behandleSykepengesøknad(sykepengesøknadRecord)
     }
 
     private fun logMottattFraFlex(
