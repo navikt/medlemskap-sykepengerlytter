@@ -1,11 +1,13 @@
-package no.nav.medlemskap.sykepenger.lytter.config
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka
 
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 
-open class KafkaConfig(
+open class SykepengeSoeknadKafkaConfig(
     environment: Environment,
     private val securityStrategy: SecurityStrategy = PlainStrategy(environment = environment)
 ) {

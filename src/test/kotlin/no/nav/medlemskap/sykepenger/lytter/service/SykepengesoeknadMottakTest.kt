@@ -1,24 +1,24 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BrukersvarMapper
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-class FlexMessageHandlerTest {
+class SykepengesoeknadMottakTest {
     @Test
     fun `test mapping av request Med Ja Svar i arbeidUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_JA_SVAR.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -33,8 +33,8 @@ class FlexMessageHandlerTest {
     fun `test mapping av request Med Nei i ArbeidUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -49,8 +49,8 @@ class FlexMessageHandlerTest {
     fun `test mapping av flere brukersporsmaal`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -64,8 +64,8 @@ class FlexMessageHandlerTest {
     fun `test mapping av request UTEN ArbeidUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageUTEN_SPORSMAAL.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -79,8 +79,8 @@ class FlexMessageHandlerTest {
     fun `test mapping av request med null i sendtArbeidsGiver`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageNULL_I_SENDT_ARB_GIVER.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -97,10 +97,10 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = FlexMessageHandler(persistenceService)
-        service.handle(record)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
     @Test
@@ -108,11 +108,11 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = FlexMessageHandler(persistenceService)
-        service.handle(record)
-        service.handle(record)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
     @Test
@@ -120,10 +120,10 @@ class FlexMessageHandlerTest {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageNY.json").readText(Charsets.UTF_8)
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = FlexMessageHandler(persistenceService)
-        service.handle(record)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
     @Test
@@ -132,18 +132,18 @@ class FlexMessageHandlerTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageUTLAND.json").readText(Charsets.UTF_8)
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         brukersporsmaalRepository.storage.clear()
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = FlexMessageHandler(persistenceService)
-        service.handle(record)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
     @Test
     fun `brukerharOppgittFalsePaaArbeidUtlandOgOppholdUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("feilsoek.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
@@ -159,8 +159,8 @@ class FlexMessageHandlerTest {
     fun `feilsoek`() = runBlocking {
         val key = UUID.randomUUID().toString()
         val fileContent = this::class.java.classLoader.getResource("feilsoek2.json").readText(Charsets.UTF_8)
-        val record=FlexMessageRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
-        val service = FlexMessageHandler(PersistenceService(MedlemskapVurdertInMemmoryRepository(),BrukersporsmaalInMemmoryRepository()))
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val service = BrukersvarMapper()
         val brukersporsmaal = service.mapMessage(record)
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)

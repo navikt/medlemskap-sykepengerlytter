@@ -1,12 +1,15 @@
-package no.nav.medlemskap.sykepenger.lytter.config
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka
 
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.config.Environment
+import no.nav.medlemskap.sykepenger.lytter.config.EnvironmentKey
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 
 internal class PlainStrategy(private val environment: Environment) :
-    KafkaConfig.SecurityStrategy {
+    SykepengeSoeknadKafkaConfig.SecurityStrategy {
     private val isLocal = EnvironmentKey.IS_LOCAL.equals("true")
 
     override fun securityConfig() = mapOf(

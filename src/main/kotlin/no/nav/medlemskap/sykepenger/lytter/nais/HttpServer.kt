@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapOppslagService
+import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
@@ -33,7 +33,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 import java.io.Writer
@@ -47,7 +47,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val flexMessageHandler = FlexMessageHandler(persistenceService)
+    val sykepengesoeknadMottak = SykepengesoeknadMottak(persistenceService)
     val brukersporsmaalService = BrukersporsmaalService(persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
@@ -92,7 +92,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
-            publiserTestmeldinger(flexMessageHandler, persistenceService)
+            publiserTestmeldinger(sykepengesoeknadMottak, persistenceService)
         }
     }
 })

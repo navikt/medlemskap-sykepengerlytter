@@ -3,8 +3,8 @@ package no.nav.sandkasse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
-import no.nav.medlemskap.sykepenger.lytter.config.KafkaConfig
-import no.nav.medlemskap.sykepenger.lytter.config.PlainStrategy
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengeSoeknadKafkaConfig
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.PlainStrategy
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 fun main(args: Array<String>) {
-    val securityStrategy: KafkaConfig.SecurityStrategy = PlainStrategy(environment = System.getenv())
+    val securityStrategy: SykepengeSoeknadKafkaConfig.SecurityStrategy = PlainStrategy(environment = System.getenv())
     val value = 1652174197864
     val date = LocalDateTime.ofInstant(
         Instant.ofEpochMilli(value), ZoneId.systemDefault())

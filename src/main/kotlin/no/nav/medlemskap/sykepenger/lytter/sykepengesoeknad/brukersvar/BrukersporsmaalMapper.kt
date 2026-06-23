@@ -1,11 +1,19 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar
 
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
@@ -43,7 +51,7 @@ class BrukersporsmaalMapper(rootNode: JsonNode) {
                 mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
                     ?: emptyList())
         }
-        return Medlemskap_opphold_utenfor_eos(id,sporsmalstekst,svar,utlandsopphold);
+        return Medlemskap_opphold_utenfor_eos(id, sporsmalstekst, svar, utlandsopphold);
     }
 
 
@@ -54,12 +62,12 @@ class BrukersporsmaalMapper(rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }?.svar!!.first()!!.verdi))
-            OppholdUtenforEOS(it.id,hvor,grunn!!,periode)
+            OppholdUtenforEOS(it.id, hvor, grunn!!, periode)
         }
 
     }
 
-    private fun getOppholdUtenforNorgeBrukerSporsmaal(): Medlemskap_opphold_utenfor_norge ?{
+    private fun getOppholdUtenforNorgeBrukerSporsmaal(): Medlemskap_opphold_utenfor_norge?{
         if (oppholdUtenforNorge_brukersporsmaal != null){
             return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge_brukersporsmaal)
 
@@ -78,7 +86,7 @@ class BrukersporsmaalMapper(rootNode: JsonNode) {
                     ?: emptyList())
 
         }
-        return Medlemskap_opphold_utenfor_norge(id,sporsmalstekst,svar,utlandsopphold);
+        return Medlemskap_opphold_utenfor_norge(id, sporsmalstekst, svar, utlandsopphold);
     }
 
 
@@ -148,7 +156,7 @@ class BrukersporsmaalMapper(rootNode: JsonNode) {
             val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
             val grunn = v2?.first()!!.sporsmalstekst
             val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }?.svar!!.first()!!.verdi))
-            OppholdUtenforNorge(it.id,hvor,grunn!!,periode)
+            OppholdUtenforNorge(it.id, hvor, grunn!!, periode)
         }
 
     }
@@ -233,13 +241,14 @@ class BrukersporsmaalMapper(rootNode: JsonNode) {
             //Bruker har svart NEI på oppholdstilatelse
             if (!svar)
             {
-               return  Medlemskap_oppholdstilatelse_brukersporsmaal(
+               return Medlemskap_oppholdstilatelse_brukersporsmaal(
                    id = id,
                    sporsmalstekst = sporsmalstekst,
                    svar = svar,
                    vedtaksdato = LocalDate.now(),
                    vedtaksTypePermanent = false,
-                   perioder = emptyList())
+                   perioder = emptyList()
+               )
             }
             val vedtaksdato = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }
                 ?.first()?.svar?.first()?.verdi

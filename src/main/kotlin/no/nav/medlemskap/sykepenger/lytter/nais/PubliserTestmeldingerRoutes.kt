@@ -9,9 +9,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.domain.FlexMessageRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.Kilde
-import no.nav.medlemskap.sykepenger.lytter.service.FlexMessageHandler
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Kilde
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
@@ -22,7 +22,7 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 data class SlettBrukersvarRequest(val fnr: String)
 
-fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persistenceService: PersistenceService) {
+fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak, persistenceService: PersistenceService) {
 
     val cluster = System.getenv("NAIS_CLUSTER_NAME")
 
@@ -33,7 +33,7 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persis
                     val callId = call.callId ?: UUID.randomUUID().toString()
                     val body = call.receiveText()
 
-                    val flexMessageRecord = FlexMessageRecord(
+                    val sykepengesoeknadRecord = SykepengesoeknadRecord(
                         partition = 0,
                         offset = 0,
                         value = body,
@@ -46,7 +46,7 @@ fun Routing.publiserTestmeldinger(flexMessageHandler: FlexMessageHandler, persis
 
                     try {
                         logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
-                        flexMessageHandler.handle(flexMessageRecord)
+                        sykepengesoeknadMottak.behandle(sykepengesoeknadRecord)
                         call.respond(HttpStatusCode.OK)
                     } catch (t: Throwable) {
                         logger.error(
