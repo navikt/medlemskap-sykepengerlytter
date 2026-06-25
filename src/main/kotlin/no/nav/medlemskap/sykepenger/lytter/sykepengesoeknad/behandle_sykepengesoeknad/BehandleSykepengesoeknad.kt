@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
@@ -26,7 +27,7 @@ class BehandleSykepengesoeknad(
             sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad) ->
                 sykepengeSoknad.logPåfølgendeSøknad()
 
-            else -> when (val resultat = getVurdering(soknadRecord)) {
+            else -> when (val resultat = sendTilRegelmotorForVurdering(soknadRecord)) {
                 is VurderingResultat.Ok -> lagreVurderingsstatus.lagreVurderingsstaus(soknadRecord, resultat.vurdering)
                 VurderingResultat.SkalIkkeLagres -> {
                     // Gradert adresse eller teknisk feil – allerede logget i getVurdering
@@ -35,11 +36,12 @@ class BehandleSykepengesoeknad(
         }
     }
 
-    private suspend fun getVurdering(
+    private suspend fun sendTilRegelmotorForVurdering(
         soknadRecord: SoknadRecord
     ): VurderingResultat {
         return try {
-            val vurdering = utledBrukersvarOgKjørRegelmotor(soknadRecord.sykepengeSoknad)
+            val request = utledBrukerinput(soknadRecord.sykepengeSoknad)
+            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, soknadRecord.sykepengeSoknad.id)
             soknadRecord.logSendt()
             VurderingResultat.Ok(vurdering)
         } catch (t: Throwable) {
@@ -52,10 +54,9 @@ class BehandleSykepengesoeknad(
         }
     }
 
-    private suspend fun utledBrukersvarOgKjørRegelmotor(sykepengeSoknad: LovmeSoknadDTO): String {
+    private fun utledBrukerinput(sykepengeSoknad: LovmeSoknadDTO): MedlOppslagRequest {
         val brukerinput = utledBrukerinput.utledBrukerinput(sykepengeSoknad)
-        val medlemskapOppslagRequest = MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
-        return medlemskapOppslagService.vurderMedlemskap(medlemskapOppslagRequest, brukerinput.søknadsParametere.callId)
+        return MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
     }
 
     private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
