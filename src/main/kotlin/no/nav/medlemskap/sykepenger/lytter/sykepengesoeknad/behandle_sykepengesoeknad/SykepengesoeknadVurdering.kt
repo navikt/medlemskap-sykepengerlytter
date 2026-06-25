@@ -25,8 +25,6 @@ class SykepengesoeknadVurdering(
         val sykepengeSoknad = soknadRecord.sykepengeSoknad
 
         when {
-            !validerSoknad(sykepengeSoknad) -> soknadRecord.logIkkeSendt()
-
             sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad) ->
                 sykepengeSoknad.logFunksjoneltLikAnnenSøknad()
 
@@ -64,18 +62,6 @@ class SykepengesoeknadVurdering(
         val medlemskapOppslagRequest = MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
         return medlemskapOppslagService.vurderMedlemskap(medlemskapOppslagRequest, brukerinput.søknadsParametere.callId)
     }
-
-    fun validerSoknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        return sykepengeSoknad.fnr.isNotBlank() &&
-                sykepengeSoknad.id.isNotBlank()
-
-    }
-
-    private fun SoknadRecord.logIkkeSendt() =
-        log.info(
-            "Søknad ikke  sendt til lovme basert på validering - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
-            kv("callId", sykepengeSoknad.id),
-        )
 
     private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
         log.info(

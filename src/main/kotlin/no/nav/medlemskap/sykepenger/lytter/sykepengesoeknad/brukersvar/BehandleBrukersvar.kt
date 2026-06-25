@@ -21,12 +21,7 @@ class BehandleBrukersvar(
     fun behandleBrukerspørsmål(sykepengesoeknadRecord: SykepengesoeknadRecord) {
         val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesoeknadRecord)
 
-        if (!brukersporsmaal.erSendt()) {
-            loggFiltrertFeilStatus(sykepengesoeknadRecord, brukersporsmaal)
-            return
-        }
-
-        if (brukersporsmaalErLagretFraFør(brukersporsmaal)) {
+        if (brukerspørsmålErLagretFraFør(brukersporsmaal)) {
             loggFiltrertDuplikat(sykepengesoeknadRecord, brukersporsmaal)
             return
         }
@@ -34,10 +29,7 @@ class BehandleBrukersvar(
         lagreBrukersporsmaal(sykepengesoeknadRecord, brukersporsmaal)
     }
 
-    private fun Brukersporsmaal.erSendt(): Boolean =
-        status == Soknadstatus.SENDT.toString()
-
-    private fun brukersporsmaalErLagretFraFør(brukersporsmaal: Brukersporsmaal): Boolean =
+    private fun brukerspørsmålErLagretFraFør(brukersporsmaal: Brukersporsmaal): Boolean =
         persistenceService.hentbrukersporsmaalForSoknadID(brukersporsmaal.soknadid) != null
 
     private fun lagreBrukersporsmaal(
@@ -62,18 +54,6 @@ class BehandleBrukersvar(
                     "offset : ${sykepengesoeknadRecord.offset}, " +
                     "partition : ${sykepengesoeknadRecord.partition}," +
                     "filtrert ut. duplikat melding: ${brukersporsmaal.soknadid}"
-        )
-    }
-
-    private fun loggFiltrertFeilStatus(
-        sykepengesoeknadRecord: SykepengesoeknadRecord,
-        brukersporsmaal: Brukersporsmaal
-    ) {
-        log.info(
-            "Flex melding for søknad ${sykepengesoeknadRecord.key}, " +
-                    "offset : ${sykepengesoeknadRecord.offset}, " +
-                    "partition : ${sykepengesoeknadRecord.partition}," +
-                    "filtrert ut. Feil status : ${brukersporsmaal.status}"
         )
     }
 }

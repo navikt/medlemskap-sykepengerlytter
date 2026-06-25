@@ -103,6 +103,35 @@ class SykepengesoeknadMottakTest {
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
+
+    @Test
+    fun `melding uten fnr skal ikke lagres til database`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json")
+            .readText(Charsets.UTF_8)
+            .replaceFirst(Regex("\"fnr\"\\s*:\\s*\"[^\"]+\""), "\"fnr\": \"\"")
+        val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
+        assertTrue(brukersporsmaalRepository.storage.size==0)
+    }
+
+    @Test
+    fun `melding uten id skal ikke lagres til database`() = runBlocking {
+        val key = UUID.randomUUID().toString()
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json")
+            .readText(Charsets.UTF_8)
+            .replaceFirst(Regex("\"id\"\\s*:\\s*\"[^\"]+\""), "\"id\": \"\"")
+        val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
+        val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
+        val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
+        val service = SykepengesoeknadMottak(persistenceService)
+        service.behandle(record)
+        assertTrue(brukersporsmaalRepository.storage.size==0)
+    }
+
     @Test
     fun `duplikat melding skal ikke lagres to ganger`() = runBlocking {
         val key = UUID.randomUUID().toString()
