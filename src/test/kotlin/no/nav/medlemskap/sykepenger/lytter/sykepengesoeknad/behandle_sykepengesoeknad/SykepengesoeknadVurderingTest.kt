@@ -9,7 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadVurdering
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions
@@ -23,8 +23,8 @@ class SykepengesoeknadVurderingTest {
     private fun sykepengesoeknadVurdering(
         persistenceService: PersistenceService,
         lovmeAPI: LovmeAPI
-    ): SykepengesoeknadVurdering =
-        SykepengesoeknadVurdering(
+    ): BehandleSykepengesoeknad =
+        BehandleSykepengesoeknad(
             Configuration(),
             persistenceService,
             MedlemskapOppslagService(lovmeAPI)
@@ -437,10 +437,10 @@ class SykepengesoeknadVurderingTest {
             )
         )
 
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
+        val service: BehandleSykepengesoeknad = BehandleSykepengesoeknad(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         val paafolgendeMedlemskap = dbResult.find { it.status == "PAFOLGENDE" }
         Assertions.assertNotNull(paafolgendeMedlemskap)
@@ -494,10 +494,10 @@ class SykepengesoeknadVurderingTest {
             )
         )
 
-        val service: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService)
+        val service: BehandleSykepengesoeknad = BehandleSykepengesoeknad(Configuration(), persistenceService)
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("01010112345")
         Assertions.assertEquals(1, dbResult.size)
 
@@ -508,12 +508,12 @@ class SykepengesoeknadVurderingTest {
         val repo = MedlemskapVurdertInMemmoryRepository()
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, LovMeMock())
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, LovMeMock())
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
 
@@ -525,7 +525,7 @@ class SykepengesoeknadVurderingTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
         val mock = LovMeMock()
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
                 fnr = "12345678901",
@@ -566,7 +566,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -583,7 +583,7 @@ class SykepengesoeknadVurderingTest {
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
             val mock = LovMeMock()
-            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+            val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
             repo2.lagreBrukersporsmaal(
                 Brukersporsmaal(
                     fnr = "12345678901",
@@ -624,7 +624,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -641,7 +641,7 @@ class SykepengesoeknadVurderingTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
         val mock = LovMeMock()
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         val brukersvarISøknaden = Brukersporsmaal(
             fnr = "12345678901",
@@ -686,7 +686,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -711,7 +711,7 @@ class SykepengesoeknadVurderingTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
         val mock = LovMeMock()
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
@@ -731,7 +731,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -752,7 +752,7 @@ class SykepengesoeknadVurderingTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
         val mock = LovMeMock()
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
         val dato = LocalDate.of(2025, 1, 1)
         repo2.lagreBrukersporsmaal(
             Brukersporsmaal(
@@ -772,7 +772,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT_AND_SENDT_'NAV.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -794,7 +794,7 @@ class SykepengesoeknadVurderingTest {
         val repo2 = BrukersporsmaalInMemmoryRepository()
         val persistenceService = PersistenceService(repo, repo2)
         val mock = LovMeMock()
-        val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+        val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
 
 
         //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -861,7 +861,7 @@ class SykepengesoeknadVurderingTest {
         val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
             .readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+        service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
         val dbResult = repo.finnVurdering("12345678901")
         Assertions.assertEquals(1, dbResult.size)
         Assertions.assertNotNull(mock.request)
@@ -891,7 +891,7 @@ class SykepengesoeknadVurderingTest {
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
             val mock = LovMeMock()
-            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+            val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -956,7 +956,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -978,7 +978,7 @@ class SykepengesoeknadVurderingTest {
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
             val mock = LovMeMock()
-            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+            val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -1043,7 +1043,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -1066,7 +1066,7 @@ class SykepengesoeknadVurderingTest {
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
             val mock = LovMeMock()
-            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+            val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -1113,7 +1113,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
@@ -1144,7 +1144,7 @@ class SykepengesoeknadVurderingTest {
             val repo2 = BrukersporsmaalInMemmoryRepository()
             val persistenceService = PersistenceService(repo, repo2)
             val mock = LovMeMock()
-            val service: SykepengesoeknadVurdering = sykepengesoeknadVurdering(persistenceService, mock)
+            val service: BehandleSykepengesoeknad = sykepengesoeknadVurdering(persistenceService, mock)
 
 
             //Simulerer at en tidligere søknad har kommet inn med nye brukerspørsmål som skal gjenbrukes
@@ -1191,7 +1191,7 @@ class SykepengesoeknadVurderingTest {
             val fileContent = this::class.java.classLoader.getResource("EndeTilEndeGammelModellBrukersporsmaal.json")
                 .readText(Charsets.UTF_8)
             val sykepengeSoknad = JacksonParser().parse(fileContent)
-            service.vurder(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
+            service.behandle(SoknadRecord(1, 1, "", "", "", sykepengeSoknad))
             val dbResult = repo.finnVurdering("12345678901")
             Assertions.assertEquals(1, dbResult.size)
             Assertions.assertNotNull(mock.request)
