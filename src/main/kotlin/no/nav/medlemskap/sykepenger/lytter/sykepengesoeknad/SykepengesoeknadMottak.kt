@@ -3,21 +3,15 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 import org.slf4j.MarkerFactory
 
 class SykepengesoeknadMottak(
-    persistenceService: PersistenceService,
-    private val behandleSykepengesoeknad: BehandleSykepengesoeknad = BehandleSykepengesoeknad(
-        Configuration(),
-        persistenceService
-    ),
-    private val behandleBrukersvar: BehandleBrukersvar = BehandleBrukersvar(persistenceService)
+    private val behandleSykepengesøknad: BehandleSykepengesoeknad,
+    private val behandleBrukersvar: BehandleBrukersvar
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -42,7 +36,7 @@ class SykepengesoeknadMottak(
 
         logOppfyllerInngangskriterier(sykepengesøknadRecord, sykepengesøknad)
         behandleBrukersvar.behandleBrukerspørsmål(sykepengesøknadRecord)
-        behandleSykepengesoeknad.behandle(SoknadRecordMapper.map(sykepengesøknadRecord, sykepengesøknad))
+        behandleSykepengesøknad.behandle(SoknadRecordMapper.map(sykepengesøknadRecord, sykepengesøknad))
     }
 
     private fun harPåkrevdeFelter(sykepengesøknad: LovmeSoknadDTO): Boolean =

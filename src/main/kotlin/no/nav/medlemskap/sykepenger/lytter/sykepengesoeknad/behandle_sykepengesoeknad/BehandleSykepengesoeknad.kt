@@ -2,24 +2,19 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 class BehandleSykepengesoeknad(
-    configuration: Configuration,
-    persistenceService: PersistenceService,
-    private val medlemskapOppslagService: MedlemskapOppslagService = MedlemskapOppslagService(configuration)
+    private val sykepengesoeknadFiltrering: SykepengesoeknadFiltrering,
+    private val utledBrukerinput: UtledBrukerinput,
+    private val lagreVurderingsstatus: LagreVurderingsstatus,
+    private val medlemskapOppslagService: MedlemskapOppslagService
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
     }
-
-    private val sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService)
-    private val utledBrukerinput = UtledBrukerinput(persistenceService)
-    private val lagreVurderingsstatus = LagreVurderingsstatus(persistenceService)
 
     suspend fun behandle(soknadRecord: SoknadRecord) {
         val sykepengeSoknad = soknadRecord.sykepengeSoknad

@@ -1,10 +1,16 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import kotlinx.coroutines.runBlocking
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BrukersvarMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.*
@@ -12,7 +18,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-class SykepengesoeknadMottakTest {
+class FlexMessageHandlerTest {
     @Test
     fun `test mapping av request Med Ja Svar i arbeidUtland`() = runBlocking {
         val key = UUID.randomUUID().toString()
@@ -99,7 +105,7 @@ class SykepengesoeknadMottakTest {
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
     }
@@ -113,7 +119,7 @@ class SykepengesoeknadMottakTest {
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
@@ -127,7 +133,7 @@ class SykepengesoeknadMottakTest {
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
@@ -139,7 +145,7 @@ class SykepengesoeknadMottakTest {
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==1)
@@ -151,7 +157,7 @@ class SykepengesoeknadMottakTest {
         val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
@@ -163,7 +169,7 @@ class SykepengesoeknadMottakTest {
         brukersporsmaalRepository.storage.clear()
         val record=SykepengesoeknadRecord(1,1,fileContent,key,"test", LocalDateTime.now(),"timestampType")
         val persistenceService = PersistenceService(MedlemskapVurdertInMemmoryRepository(),brukersporsmaalRepository)
-        val service = SykepengesoeknadMottak(persistenceService)
+        val service = opprettSykepengesoeknadMottak(Configuration(), persistenceService)
         service.behandle(record)
         assertTrue(brukersporsmaalRepository.storage.size==0)
     }
@@ -201,4 +207,18 @@ class SykepengesoeknadMottakTest {
         assertTrue(brukersporsmaal.oppholdUtenforNorge!!.oppholdUtenforNorge.isEmpty())
         assertTrue(brukersporsmaal.oppholdUtenforNorge!!.oppholdUtenforNorge.isEmpty())
     }
+
+    private fun opprettSykepengesoeknadMottak(
+        configuration: Configuration,
+        persistenceService: PersistenceService
+    ): SykepengesoeknadMottak =
+        SykepengesoeknadMottak(
+            behandleSykepengesøknad = BehandleSykepengesoeknad(
+                sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+                utledBrukerinput = UtledBrukerinput(persistenceService),
+                lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
+                medlemskapOppslagService = MedlemskapOppslagService(configuration)
+            ),
+            behandleBrukersvar = BehandleBrukersvar(persistenceService)
+        )
 }

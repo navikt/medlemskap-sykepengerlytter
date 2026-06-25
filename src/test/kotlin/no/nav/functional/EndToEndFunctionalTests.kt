@@ -17,6 +17,11 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.service.*
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
@@ -92,7 +97,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val testperson = "15076500565"
 
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse: "2023-08-16"
@@ -149,7 +154,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -205,7 +210,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -261,7 +266,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val testperson = "15076500565"
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -317,7 +322,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -376,7 +381,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -432,7 +437,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -489,7 +494,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             )
         )
 
-        val fmh = SykepengesoeknadMottak(containerPersistenceService)
+        val fmh = opprettSykepengesoeknadMottak(containerPersistenceService, medlemskapOppslagService)
 
         //Steg 1: Forrige søknad om sykmelding med brukersvar fra mock data i json fil
         //førsteDagForYtelse "fom": "2023-08-16", eventDate="2023-08-23"
@@ -551,5 +556,19 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         return PersistenceService(medlemskapVurdertRepo,brukerspormsalRepo)
 
     }
+
+    private fun opprettSykepengesoeknadMottak(
+        persistenceService: PersistenceService,
+        medlemskapOppslagService: MedlemskapOppslagService
+    ): SykepengesoeknadMottak =
+        SykepengesoeknadMottak(
+            behandleSykepengesøknad = BehandleSykepengesoeknad(
+                sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+                utledBrukerinput = UtledBrukerinput(persistenceService),
+                lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
+                medlemskapOppslagService = medlemskapOppslagService
+            ),
+            behandleBrukersvar = BehandleBrukersvar(persistenceService)
+        )
 
 }

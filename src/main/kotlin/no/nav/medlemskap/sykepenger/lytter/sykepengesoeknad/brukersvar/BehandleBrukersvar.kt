@@ -5,7 +5,6 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
 
 class BehandleBrukersvar(
     private val persistenceService: PersistenceService,
