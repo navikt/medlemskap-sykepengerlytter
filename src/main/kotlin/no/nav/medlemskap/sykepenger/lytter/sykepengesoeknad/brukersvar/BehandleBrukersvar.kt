@@ -5,6 +5,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import org.slf4j.MarkerFactory
 
 class BehandleBrukersvar(
     private val persistenceService: PersistenceService,
@@ -12,12 +13,13 @@ class BehandleBrukersvar(
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
     /*
      * SP1220
      * */
-    fun behandleBrukerspørsmål(sykepengesoeknadRecord: SykepengesoeknadRecord) {
+    fun behandle(sykepengesoeknadRecord: SykepengesoeknadRecord) {
         val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesoeknadRecord)
 
         if (brukerspørsmålErLagretFraFør(brukersporsmaal)) {
@@ -37,6 +39,7 @@ class BehandleBrukersvar(
     ) {
         persistenceService.lagreBrukersporsmaal(brukersporsmaal)
         log.info(
+            teamLogs,
             "Brukerspørsmål for søknad ${sykepengesoeknadRecord.key} lagret til databasen",
             kv("callId", sykepengesoeknadRecord.key),
             kv("dato", brukersporsmaal.eventDate),
@@ -49,6 +52,7 @@ class BehandleBrukersvar(
         brukersporsmaal: Brukersporsmaal
     ) {
         log.info(
+            teamLogs,
             "Flex melding for søknad ${sykepengesoeknadRecord.key}, " +
                     "offset : ${sykepengesoeknadRecord.offset}, " +
                     "partition : ${sykepengesoeknadRecord.partition}," +

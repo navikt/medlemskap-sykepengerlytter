@@ -6,6 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagReques
 import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
+import org.slf4j.MarkerFactory
 
 class BehandleSykepengesoeknad(
     private val sykepengesoeknadFiltrering: SykepengesoeknadFiltrering,
@@ -15,6 +16,7 @@ class BehandleSykepengesoeknad(
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
     suspend fun behandle(soknadRecord: SoknadRecord) {
@@ -40,6 +42,7 @@ class BehandleSykepengesoeknad(
         soknadRecord: SoknadRecord
     ): VurderingResultat {
         return try {
+            soknadRecord.logPassertAlleKriterier()
             val request = utledBrukerinput(soknadRecord.sykepengeSoknad)
             val vurdering = medlemskapOppslagService.vurderMedlemskap(request, soknadRecord.sykepengeSoknad.id)
             soknadRecord.logSendt()
@@ -59,26 +62,36 @@ class BehandleSykepengesoeknad(
         return MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
     }
 
+    private fun SoknadRecord.logPassertAlleKriterier() =
+        log.info(
+            teamLogs,
+            "Søknad med id ${sykepengeSoknad.id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledInput",
+        )
+
     private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
         log.info(
+            teamLogs,
             "soknad med id $id er funksjonelt lik en annen soknad : kryptertFnr : $fnr ",
             kv("callId", id)
         )
 
     private fun LovmeSoknadDTO.logPåfølgendeSøknad() =
         log.info(
+            teamLogs,
             "soknad med id $id er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
             kv("callId", id)
         )
 
     private fun SoknadRecord.logSendt() =
         log.info(
+            teamLogs,
             "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
             kv("callId", sykepengeSoknad.id),
         )
 
     private fun SoknadRecord.logTekniskFeil(t: Throwable) =
         log.info(
+            teamLogs,
             "Teknisk feil ved kall mot LovMe - sykmeldingId: ${sykepengeSoknad.id}, melding:" + t.message,
             kv("callId", sykepengeSoknad.id),
         )

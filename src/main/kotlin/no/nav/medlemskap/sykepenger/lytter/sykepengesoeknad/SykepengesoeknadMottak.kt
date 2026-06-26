@@ -35,7 +35,7 @@ class SykepengesoeknadMottak(
         }
 
         logOppfyllerInngangskriterier(sykepengesøknadRecord, sykepengesøknad)
-        behandleBrukersvar.behandleBrukerspørsmål(sykepengesøknadRecord)
+        behandleBrukersvar.behandle(sykepengesøknadRecord)
         behandleSykepengesøknad.behandle(SoknadRecordMapper.map(sykepengesøknadRecord, sykepengesøknad))
     }
 
