@@ -8,12 +8,14 @@ import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.domain.erFunkskjoneltLik
 import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import org.slf4j.MarkerFactory
 
 class SykepengesoeknadFiltrering(
     private val persistenceService: PersistenceService
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
     fun finnDuplikatSomSkalFiltreres(sykepengeSoknad: LovmeSoknadDTO): Boolean {
@@ -49,6 +51,7 @@ class SykepengesoeknadFiltrering(
     private fun arbeidUtenForNorgeFalse(sykepengeSoknad: LovmeSoknadDTO): Boolean {
         if (sykepengeSoknad.arbeidUtenforNorge == true) {
             log.info(
+                teamLogs,
                 "Søknad inneholder arbeidUtenforNorge=true og skal ikke filtreres - sykmeldingId: ${sykepengeSoknad.id}",
                 kv("callId", sykepengeSoknad.id),
             )

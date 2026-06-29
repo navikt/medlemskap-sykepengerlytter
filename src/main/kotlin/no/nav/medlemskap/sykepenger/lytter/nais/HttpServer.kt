@@ -33,8 +33,13 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 
 import java.io.Writer
 import java.util.*
@@ -47,9 +52,19 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val sykepengesoeknadMottak = SykepengesoeknadMottak(persistenceService)
     val brukersporsmaalService = BrukersporsmaalService(persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
+
+    //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
+    val sykepengesøknadMottak = SykepengesoeknadMottak(
+        behandleSykepengesøknad = BehandleSykepengesoeknad(
+            sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+            utledBrukerinput = UtledBrukerinput(persistenceService),
+            lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
+            medlemskapOppslagService = medlemskapOppslagService
+        ),
+        behandleBrukersvar = BehandleBrukersvar(persistenceService)
+    )
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
 
     connector { port = 8080 }
@@ -92,7 +107,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
-            publiserTestmeldinger(sykepengesoeknadMottak, persistenceService)
+            publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }
     }
 })
@@ -104,4 +119,3 @@ suspend fun writeMetrics004(writer: Writer, registry: PrometheusMeterRegistry) {
         }
     }
 }
-

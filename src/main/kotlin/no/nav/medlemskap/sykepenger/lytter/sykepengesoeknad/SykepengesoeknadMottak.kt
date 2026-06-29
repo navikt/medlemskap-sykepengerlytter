@@ -3,20 +3,15 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadVurdering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
 import org.slf4j.MarkerFactory
 
-class SykepengesoeknadMottak (
-    persistenceService: PersistenceService,
-    sykepengesoeknadVurdering: SykepengesoeknadVurdering = SykepengesoeknadVurdering(Configuration(), persistenceService),
-    private val behandleBrukersvar: BehandleBrukersvar = BehandleBrukersvar(persistenceService),
-    private val behandleSykepengesoeknad: BehandleSykepengesoeknad = BehandleSykepengesoeknad(sykepengesoeknadVurdering)
+class SykepengesoeknadMottak(
+    private val behandleSykepengesøknad: BehandleSykepengesoeknad,
+    private val behandleBrukersvar: BehandleBrukersvar
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -26,18 +21,35 @@ class SykepengesoeknadMottak (
     suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
         val sykepengesøknad = JacksonParser().parse(sykepengesøknadRecord.value)
 
-        logMottattFraFlex(sykepengesøknadRecord, sykepengesøknad)
-        logFnrTilMeldingId(sykepengesøknadRecord, sykepengesøknad)
-
-        if (!Mottakskriterier.erOppfylt(sykepengesøknad)) {
-            logFiltrertUtPåSøknadstype(sykepengesøknadRecord, sykepengesøknad)
+        if (!harPåkrevdeFelter(sykepengesøknad)) {
+            logManglerPåkrevdeFelter(sykepengesøknadRecord)
             return
         }
 
-        logSkalBehandles(sykepengesøknadRecord, sykepengesøknad)
-        behandleBrukersvar.behandleBrukerspørsmål(sykepengesøknadRecord)
-        behandleSykepengesoeknad.behandleSykepengesøknad(sykepengesøknadRecord)
+        logMottattFraFlex(sykepengesøknadRecord, sykepengesøknad)
+
+        val inngangskriterierResultat = Inngangskriterier.vurder(sykepengesøknad)
+        if (!inngangskriterierResultat.erOppfylt) {
+            logOppfyllerIkkeInngangskriterier(sykepengesøknadRecord, sykepengesøknad, inngangskriterierResultat)
+            return
+        }
+
+        logOppfyllerInngangskriterier(sykepengesøknadRecord, sykepengesøknad)
+        behandleBrukersvar.behandle(sykepengesøknadRecord)
+        behandleSykepengesøknad.behandle(SoknadRecordMapper.map(sykepengesøknadRecord, sykepengesøknad))
     }
+
+    private fun harPåkrevdeFelter(sykepengesøknad: LovmeSoknadDTO): Boolean =
+        sykepengesøknad.fnr.isNotBlank() && sykepengesøknad.id.isNotBlank()
+
+    private fun logManglerPåkrevdeFelter(
+        sykepengesøknadRecord: SykepengesoeknadRecord
+    ) =
+        log.info(
+            teamLogs,
+            "Kafka melding med id ${sykepengesøknadRecord.key}, partisjon ${sykepengesøknadRecord.partition} " +
+                    "og offset ${sykepengesøknadRecord.offset} filtrert ut. Mangler påkrevde felter for fnr og id i meldingen."
+        )
 
     private fun logMottattFraFlex(
         sykepengesøknadRecord: SykepengesoeknadRecord,
@@ -53,29 +65,25 @@ class SykepengesoeknadMottak (
             kv("offset", sykepengesøknadRecord.offset)
         )
 
-    private fun logFnrTilMeldingId(
+    private fun logOppfyllerIkkeInngangskriterier(
+        sykepengesøknadRecord: SykepengesoeknadRecord,
+        sykepengesøknad: LovmeSoknadDTO,
+        inngangskriterierResultat: InngangskriterierResultat
+    ) =
+        log.info(
+            teamLogs,
+            "Kafka melding med id ${sykepengesøknadRecord.key}, partisjon ${sykepengesøknadRecord.partition} " +
+                    "og offset ${sykepengesøknadRecord.offset} filtrert ut. Inngangskriterier ikke oppfylt. " +
+                    "Brutte kriterier: ${inngangskriterierResultat.brutteKriterier}. " +
+                    "status: ${sykepengesøknad.status}, type: ${sykepengesøknad.type.name}, ettersending: ${sykepengesøknad.ettersending}"
+        )
+
+    private fun logOppfyllerInngangskriterier(
         sykepengesøknadRecord: SykepengesoeknadRecord,
         sykepengesøknad: LovmeSoknadDTO
     ) =
         log.info(
             teamLogs,
-            "mapping fnr to messageID. messageID ${sykepengesøknadRecord.key} is regarding ${sykepengesøknad.fnr}",
-        )
-
-    private fun logFiltrertUtPåSøknadstype(
-        sykepengesøknadRecord: SykepengesoeknadRecord,
-        sykepengesøknad: LovmeSoknadDTO
-    ) =
-        log.info(
-            "Melding med id ${sykepengesøknadRecord.key} filtrert ut. Ikke ønsket meldingstype : ${sykepengesøknad.type.name}"
-        )
-
-    private fun logSkalBehandles(
-        sykepengesøknadRecord: SykepengesoeknadRecord,
-        sykepengesøknad: LovmeSoknadDTO
-    ) =
-        log.info(
-            "behandler søknad av type ${sykepengesøknad.type} ",
-            kv("callId", sykepengesøknadRecord.key)
+            "Sykepengesøknaden oppfyller validering og inngangskriterier. Behandler søknad med id ${sykepengesøknadRecord.key} for person ${sykepengesøknad.fnr}."
         )
 }
