@@ -65,7 +65,7 @@ class BehandleSykepengesoeknad(
     private fun SoknadRecord.logPassertAlleKriterier() =
         log.info(
             teamLogs,
-            "Søknad med id ${sykepengeSoknad.id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledInput",
+            "Søknad med id ${sykepengeSoknad.id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledBrukerinput",
         )
 
     private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
