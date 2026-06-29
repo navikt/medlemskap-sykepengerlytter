@@ -1,0 +1,13 @@
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain
+
+enum class SoknadstypeDTO {
+    SELVSTENDIGE_OG_FRILANSERE,
+    OPPHOLD_UTLAND,
+    ARBEIDSTAKERE,
+    ANNET_ARBEIDSFORHOLD,
+    ARBEIDSLEDIG,
+    BEHANDLINGSDAGER,
+    REISETILSKUDD,
+    GRADERT_REISETILSKUDD,
+    FRISKMELDT_TIL_ARBEIDSFORMIDLING,
+}
