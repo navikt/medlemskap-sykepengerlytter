@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import org.slf4j.MarkerFactory
 
@@ -19,9 +18,7 @@ class BehandleSykepengesoeknad(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun behandle(soknadRecord: SoknadRecord) {
-        val sykepengeSoknad = soknadRecord.sykepengeSoknad
-
+    suspend fun behandle(sykepengeSoknad: LovmeSoknadDTO) {
         when {
             sykepengesoeknadFiltrering.finnDuplikatSomSkalFiltreres(sykepengeSoknad) ->
                 sykepengeSoknad.logFunksjoneltLikAnnenSøknad()
@@ -29,8 +26,8 @@ class BehandleSykepengesoeknad(
             sykepengesoeknadFiltrering.lagreHvisPåfølgendeSøknad(sykepengeSoknad) ->
                 sykepengeSoknad.logPåfølgendeSøknad()
 
-            else -> when (val resultat = sendTilRegelmotorForVurdering(soknadRecord)) {
-                is VurderingResultat.Ok -> lagreVurderingsstatus.lagreVurderingsstaus(soknadRecord, resultat.vurdering)
+            else -> when (val resultat = sendTilRegelmotorForVurdering(sykepengeSoknad)) {
+                is VurderingResultat.Ok -> lagreVurderingsstatus.lagreVurderingsstaus(sykepengeSoknad.id, resultat.vurdering)
                 VurderingResultat.SkalIkkeLagres -> {
                     // Gradert adresse eller teknisk feil – allerede logget i getVurdering
                 }
@@ -39,19 +36,19 @@ class BehandleSykepengesoeknad(
     }
 
     private suspend fun sendTilRegelmotorForVurdering(
-        soknadRecord: SoknadRecord
+        sykepengesøknad: LovmeSoknadDTO
     ): VurderingResultat {
         return try {
-            soknadRecord.logPassertAlleKriterier()
-            val request = utledBrukerinput(soknadRecord.sykepengeSoknad)
-            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, soknadRecord.sykepengeSoknad.id)
-            soknadRecord.logSendt()
+            sykepengesøknad.logPassertAlleKriterier()
+            val request = utledBrukerinput(sykepengesøknad)
+            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, sykepengesøknad.id)
+            sykepengesøknad.logSendt()
             VurderingResultat.Ok(vurdering)
         } catch (t: Throwable) {
             if (t.message.toString().contains("GradertAdresseException")) {
-                log.info("Gradert adresse : key:  ${soknadRecord.key}, offset: ${soknadRecord.offset}")
+                log.info("Gradert adresse : key:  ${sykepengesøknad.id}")
             } else {
-                soknadRecord.logTekniskFeil(t)
+                sykepengesøknad.logTekniskFeil(t)
             }
             VurderingResultat.SkalIkkeLagres
         }
@@ -62,10 +59,10 @@ class BehandleSykepengesoeknad(
         return MedlemskapOppslagRequestMapper.map(sykepengeSoknad, brukerinput)
     }
 
-    private fun SoknadRecord.logPassertAlleKriterier() =
+    private fun LovmeSoknadDTO.logPassertAlleKriterier() =
         log.info(
             teamLogs,
-            "Søknad med id ${sykepengeSoknad.id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledBrukerinput",
+            "Søknad med id ${id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledBrukerinput",
         )
 
     private fun LovmeSoknadDTO.logFunksjoneltLikAnnenSøknad() =
@@ -82,18 +79,18 @@ class BehandleSykepengesoeknad(
             kv("callId", id)
         )
 
-    private fun SoknadRecord.logSendt() =
+    private fun LovmeSoknadDTO.logSendt() =
         log.info(
             teamLogs,
-            "Søknad videresendt til Lovme - sykmeldingId: ${sykepengeSoknad.id}, offsett: $offset, partiotion: $partition, topic: $topic",
-            kv("callId", sykepengeSoknad.id),
+            "Søknad videresendt til Lovme - sykmeldingId: $id",
+            kv("callId", id)
         )
 
-    private fun SoknadRecord.logTekniskFeil(t: Throwable) =
+    private fun LovmeSoknadDTO.logTekniskFeil(t: Throwable) =
         log.info(
             teamLogs,
-            "Teknisk feil ved kall mot LovMe - sykmeldingId: ${sykepengeSoknad.id}, melding:" + t.message,
-            kv("callId", sykepengeSoknad.id),
+            "Teknisk feil ved kall mot LovMe - sykmeldingId: $id, melding:" + t.message,
+            kv("callId", id),
         )
 
 }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class LovmeSoknadDTO(
     val id: String,
-    val type: SoknadstypeDTO,
+    val type: Type,
     val status: String,
     val fnr: String,
     val korrigerer: String? = null,

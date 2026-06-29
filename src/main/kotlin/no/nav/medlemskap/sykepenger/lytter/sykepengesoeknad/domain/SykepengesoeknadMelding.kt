@@ -8,7 +8,7 @@ enum class Kilde {
     LOVME_GCP
 }
 
-data class SykepengesoeknadRecord(
+data class SykepengesoeknadMelding(
     val partition: Int,
     val offset: Long,
     val value: String,

@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 
 class BehandleBrukersvar(
@@ -20,7 +20,7 @@ class BehandleBrukersvar(
     /*
      * SP1220
      * */
-    fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
+    fun behandle(sykepengesøknadRecord: SykepengesoeknadMelding) {
         val brukersporsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadRecord)
 
         if (brukersvarDuplikatsjekk.erLagretFraFør(brukersporsmål)) {
@@ -32,29 +32,29 @@ class BehandleBrukersvar(
     }
 
     private fun lagreBrukersporsmaal(
-        sykepengesoeknadRecord: SykepengesoeknadRecord,
-        brukersporsmaal: Brukersporsmaal
+        sykepengesøknadMelding: SykepengesoeknadMelding,
+        brukerspørsmål: Brukersporsmaal
     ) {
-        persistenceService.lagreBrukersporsmaal(brukersporsmaal)
+        persistenceService.lagreBrukersporsmaal(brukerspørsmål)
         log.info(
             teamLogs,
-            "Brukerspørsmål for søknad ${sykepengesoeknadRecord.key} lagret til databasen",
-            kv("callId", sykepengesoeknadRecord.key),
-            kv("dato", brukersporsmaal.eventDate),
-            kv("partition", sykepengesoeknadRecord.partition),
+            "Brukerspørsmål for søknad ${sykepengesøknadMelding.key} lagret til databasen",
+            kv("callId", sykepengesøknadMelding.key),
+            kv("dato", brukerspørsmål.eventDate),
+            kv("partition", sykepengesøknadMelding.partition),
         )
     }
 
     private fun loggFiltrertDuplikat(
-        sykepengesoeknadRecord: SykepengesoeknadRecord,
-        brukersporsmaal: Brukersporsmaal
+        sykepengesøknadMelding: SykepengesoeknadMelding,
+        brukerspørsmål: Brukersporsmaal
     ) {
         log.info(
             teamLogs,
-            "Flex melding for søknad ${sykepengesoeknadRecord.key}, " +
-                    "offset : ${sykepengesoeknadRecord.offset}, " +
-                    "partition : ${sykepengesoeknadRecord.partition}," +
-                    "filtrert ut. duplikat melding: ${brukersporsmaal.soknadid}"
+            "Flex melding for søknad ${sykepengesøknadMelding.key}, " +
+                    "offset : ${sykepengesøknadMelding.offset}, " +
+                    "partition : ${sykepengesøknadMelding.partition}," +
+                    "filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
         )
     }
 }

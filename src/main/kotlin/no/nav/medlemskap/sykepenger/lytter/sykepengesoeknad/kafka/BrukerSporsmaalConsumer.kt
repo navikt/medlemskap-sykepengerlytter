@@ -12,7 +12,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdert
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
@@ -51,11 +51,11 @@ class BrukerSporsmaalConsumer(
         consumer.subscribe(listOf(config.flexTopic))
     }
 
-    fun pollMessages(): List<SykepengesoeknadRecord> =
+    fun pollMessages(): List<SykepengesoeknadMelding> =
 
         consumer.poll(Duration.ofSeconds(4))
             .map {
-                SykepengesoeknadRecord(
+                SykepengesoeknadMelding(
                     partition = it.partition(),
                     offset = it.offset(),
                     value = it.value(),
@@ -71,13 +71,13 @@ class BrukerSporsmaalConsumer(
                 Metrics.incReceivedvurderingTotal(it.count())
             }
 
-    fun flow(): Flow<List<SykepengesoeknadRecord>> =
+    fun flow(): Flow<List<SykepengesoeknadMelding>> =
         kotlinx.coroutines.flow.flow {
             while (true) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
-                    emit(emptyList<SykepengesoeknadRecord>())
+                    emit(emptyList<SykepengesoeknadMelding>())
                 } else {
                     emit(pollMessages())
                 }

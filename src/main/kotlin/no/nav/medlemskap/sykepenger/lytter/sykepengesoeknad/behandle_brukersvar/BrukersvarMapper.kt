@@ -5,7 +5,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,9 +16,9 @@ class BrukersvarMapper {
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    fun mapMessage(sykepengesoeknadRecord: SykepengesoeknadRecord): Brukersporsmaal {
+    fun mapMessage(sykepengesoeknadMelding: SykepengesoeknadMelding): Brukersporsmaal {
         try {
-            val json = sykepengesoeknadRecord.value
+            val json = sykepengesoeknadMelding.value
             val JsonNode = ObjectMapper().readTree(json)
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
@@ -73,7 +73,7 @@ class BrukersvarMapper {
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
-            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadRecord.value))
+            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadMelding.value))
             throw t
         }
     }

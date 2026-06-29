@@ -5,8 +5,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadRecord
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -39,7 +38,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2019, 4, 8)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
 
         assertEquals(1, lovmeApi.antallVurderMedlemskapKall)
         assertEquals("12345678901", lovmeApi.sisteRequest?.fnr)
@@ -55,7 +54,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 1, 31)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -69,7 +68,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 2, 28)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
 
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -91,16 +90,6 @@ class BehandleSykepengesoeknadTest {
         )
     }
 
-    private fun søknadRecord(søknad: LovmeSoknadDTO): SoknadRecord =
-        SoknadRecord(
-            partition = 0,
-            offset = 0,
-            value = "",
-            key = søknad.id,
-            topic = "test",
-            sykepengeSoknad = søknad
-        )
-
     private fun sykepengesøknad(
         fnr: String,
         fom: LocalDate,
@@ -108,7 +97,7 @@ class BehandleSykepengesoeknadTest {
     ): LovmeSoknadDTO =
         LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
-            type = SoknadstypeDTO.ARBEIDSTAKERE,
+            type = Type.ARBEIDSTAKERE,
             status = Status.SENDT.name,
             fnr = fnr,
             korrigerer = null,

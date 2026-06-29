@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -33,7 +33,7 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
                     val callId = call.callId ?: UUID.randomUUID().toString()
                     val body = call.receiveText()
 
-                    val sykepengesoeknadRecord = SykepengesoeknadRecord(
+                    val sykepengesøknadMelding = SykepengesoeknadMelding(
                         partition = 0,
                         offset = 0,
                         value = body,
@@ -46,7 +46,7 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
 
                     try {
                         logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
-                        sykepengesoeknadMottak.behandle(sykepengesoeknadRecord)
+                        sykepengesoeknadMottak.behandle(sykepengesøknadMelding)
                         call.respond(HttpStatusCode.OK)
                     } catch (t: Throwable) {
                         logger.error(

@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 
 class SykepengesoeknadMottak(
@@ -19,7 +19,7 @@ class SykepengesoeknadMottak(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
+    suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadMelding) {
         val sykepengesøknad = JacksonParser().parse(sykepengesøknadRecord.value)
 
         if (!harPåkrevdeFelter(sykepengesøknad)) {
@@ -37,14 +37,14 @@ class SykepengesoeknadMottak(
 
         logOppfyllerInngangskriterier(sykepengesøknadRecord, sykepengesøknad)
         behandleBrukersvar.behandle(sykepengesøknadRecord)
-        behandleSykepengesøknad.behandle(SoknadRecordMapper.map(sykepengesøknadRecord, sykepengesøknad))
+        behandleSykepengesøknad.behandle(sykepengesøknad)
     }
 
     private fun harPåkrevdeFelter(sykepengesøknad: LovmeSoknadDTO): Boolean =
         sykepengesøknad.fnr.isNotBlank() && sykepengesøknad.id.isNotBlank()
 
     private fun logManglerPåkrevdeFelter(
-        sykepengesøknadRecord: SykepengesoeknadRecord
+        sykepengesøknadRecord: SykepengesoeknadMelding
     ) =
         log.info(
             teamLogs,
@@ -53,7 +53,7 @@ class SykepengesoeknadMottak(
         )
 
     private fun logMottattFraFlex(
-        sykepengesøknadRecord: SykepengesoeknadRecord,
+        sykepengesøknadRecord: SykepengesoeknadMelding,
         sykepengesøknad: LovmeSoknadDTO
     ) =
         log.info(
@@ -67,7 +67,7 @@ class SykepengesoeknadMottak(
         )
 
     private fun logOppfyllerIkkeInngangskriterier(
-        sykepengesøknadRecord: SykepengesoeknadRecord,
+        sykepengesøknadRecord: SykepengesoeknadMelding,
         sykepengesøknad: LovmeSoknadDTO,
         inngangskriterierResultat: InngangskriterierResultat
     ) =
@@ -80,7 +80,7 @@ class SykepengesoeknadMottak(
         )
 
     private fun logOppfyllerInngangskriterier(
-        sykepengesøknadRecord: SykepengesoeknadRecord,
+        sykepengesøknadRecord: SykepengesoeknadMelding,
         sykepengesøknad: LovmeSoknadDTO
     ) =
         log.info(

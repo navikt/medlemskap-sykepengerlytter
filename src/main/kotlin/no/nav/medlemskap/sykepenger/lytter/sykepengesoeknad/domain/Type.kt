@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain
 
-enum class SoknadstypeDTO {
+enum class Type {
     SELVSTENDIGE_OG_FRILANSERE,
     OPPHOLD_UTLAND,
     ARBEIDSTAKERE,

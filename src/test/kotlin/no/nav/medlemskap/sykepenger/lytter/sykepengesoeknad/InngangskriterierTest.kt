@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -14,7 +14,7 @@ class InngangskriterierTest {
 
     @Test
     fun `er oppfylt for sendt arbeidstakersoknad som ikke er ettersending`() {
-        val søknad = søknad(type = SoknadstypeDTO.ARBEIDSTAKERE)
+        val søknad = søknad(type = Type.ARBEIDSTAKERE)
 
         assertTrue(Inngangskriterier.erOppfylt(søknad))
         assertEquals(
@@ -25,7 +25,7 @@ class InngangskriterierTest {
 
     @Test
     fun `er oppfylt for sendt gradert reisetilskudd som ikke er ettersending`() {
-        val søknad = søknad(type = SoknadstypeDTO.GRADERT_REISETILSKUDD)
+        val søknad = søknad(type = Type.GRADERT_REISETILSKUDD)
 
         assertTrue(Inngangskriterier.erOppfylt(søknad))
     }
@@ -43,8 +43,8 @@ class InngangskriterierTest {
 
     @Test
     fun `er ikke oppfylt for soknadstyper som ikke skal behandles`() {
-        val søknadstyperSomIkkeSkalBehandles = SoknadstypeDTO.entries
-            .filterNot { it in setOf(SoknadstypeDTO.ARBEIDSTAKERE, SoknadstypeDTO.GRADERT_REISETILSKUDD) }
+        val søknadstyperSomIkkeSkalBehandles = Type.entries
+            .filterNot { it in setOf(Type.ARBEIDSTAKERE, Type.GRADERT_REISETILSKUDD) }
 
         søknadstyperSomIkkeSkalBehandles.forEach { søknadstype ->
             assertFalse(
@@ -52,7 +52,7 @@ class InngangskriterierTest {
                 "$søknadstype skal ikke behandles"
             )
             assertEquals(
-                listOf(BruttInngangskriterium.IKKE_TILLATT_SOKNADSTYPE),
+                listOf(BruttInngangskriterium.IKKE_TILLATT_TYPE),
                 Inngangskriterier.vurder(søknad(type = søknadstype)).brutteKriterier,
                 "$søknadstype skal gi brutt kriterium"
             )
@@ -73,7 +73,7 @@ class InngangskriterierTest {
     @Test
     fun `vurder returnerer alle brutte kriterier`() {
         val søknad = søknad(
-            type = SoknadstypeDTO.SELVSTENDIGE_OG_FRILANSERE,
+            type = Type.SELVSTENDIGE_OG_FRILANSERE,
             status = Status.NY.name,
             ettersending = true
         )
@@ -83,7 +83,7 @@ class InngangskriterierTest {
                 erOppfylt = false,
                 brutteKriterier = listOf(
                     BruttInngangskriterium.FEIL_STATUS,
-                    BruttInngangskriterium.IKKE_TILLATT_SOKNADSTYPE,
+                    BruttInngangskriterium.IKKE_TILLATT_TYPE,
                     BruttInngangskriterium.ER_ETTERSENDING
                 )
             ),
@@ -92,7 +92,7 @@ class InngangskriterierTest {
     }
 
     private fun søknad(
-        type: SoknadstypeDTO = SoknadstypeDTO.ARBEIDSTAKERE,
+        type: Type = Type.ARBEIDSTAKERE,
         status: String = Status.SENDT.name,
         ettersending: Boolean = false,
     ) = LovmeSoknadDTO(

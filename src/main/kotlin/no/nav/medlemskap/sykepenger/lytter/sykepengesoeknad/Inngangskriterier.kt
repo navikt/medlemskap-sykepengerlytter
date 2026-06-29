@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 
 data class InngangskriterierResultat(
@@ -11,15 +11,15 @@ data class InngangskriterierResultat(
 
 enum class BruttInngangskriterium {
     FEIL_STATUS,
-    IKKE_TILLATT_SOKNADSTYPE,
+    IKKE_TILLATT_TYPE,
     ER_ETTERSENDING
 }
 
 object Inngangskriterier {
 
     private val tillatteSoknadstyper = setOf(
-        SoknadstypeDTO.ARBEIDSTAKERE,
-        SoknadstypeDTO.GRADERT_REISETILSKUDD
+        Type.ARBEIDSTAKERE,
+        Type.GRADERT_REISETILSKUDD
     )
 
     fun erOppfylt(soknad: LovmeSoknadDTO): Boolean =
@@ -31,7 +31,7 @@ object Inngangskriterier {
                 add(BruttInngangskriterium.FEIL_STATUS)
             }
             if (soknad.type !in tillatteSoknadstyper) {
-                add(BruttInngangskriterium.IKKE_TILLATT_SOKNADSTYPE)
+                add(BruttInngangskriterium.IKKE_TILLATT_TYPE)
             }
             if (soknad.ettersending!!) {
                 add(BruttInngangskriterium.ER_ETTERSENDING)

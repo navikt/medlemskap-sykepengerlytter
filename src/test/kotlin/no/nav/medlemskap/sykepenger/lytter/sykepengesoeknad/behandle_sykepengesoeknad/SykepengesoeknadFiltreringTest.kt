@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
@@ -181,7 +181,7 @@ class SykepengesoeknadFiltreringTest {
     ): LovmeSoknadDTO =
         LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
-            type = SoknadstypeDTO.ARBEIDSTAKERE,
+            type = Type.ARBEIDSTAKERE,
             status = Status.SENDT.name,
             fnr = fnr,
             korrigerer = null,
