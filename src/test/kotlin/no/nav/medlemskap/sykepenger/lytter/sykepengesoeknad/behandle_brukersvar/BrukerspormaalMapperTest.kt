@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import org.junit.jupiter.api.Assertions

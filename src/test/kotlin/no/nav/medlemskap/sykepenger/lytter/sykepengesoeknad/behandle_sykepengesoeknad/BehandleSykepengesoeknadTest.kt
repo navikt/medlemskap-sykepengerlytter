@@ -4,13 +4,13 @@ import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -109,7 +109,7 @@ class BehandleSykepengesoeknadTest {
         LovmeSoknadDTO(
             id = UUID.randomUUID().toString(),
             type = SoknadstypeDTO.ARBEIDSTAKERE,
-            status = SoknadsstatusDTO.SENDT.name,
+            status = Status.SENDT.name,
             fnr = fnr,
             korrigerer = null,
             startSyketilfelle = fom,

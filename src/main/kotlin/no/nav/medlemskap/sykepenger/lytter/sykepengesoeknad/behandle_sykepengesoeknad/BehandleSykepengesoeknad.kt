@@ -3,8 +3,8 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import org.slf4j.MarkerFactory
 

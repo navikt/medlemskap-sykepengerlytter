@@ -1,15 +1,16 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
 import org.slf4j.MarkerFactory
 
 class BehandleBrukersvar(
     private val persistenceService: PersistenceService,
-    private val brukersvarMapper: BrukersvarMapper = BrukersvarMapper()
+    private val brukersvarMapper: BrukersvarMapper = BrukersvarMapper(),
+    private val brukersvarDuplikatsjekk: BrukersvarDuplikatsjekk = BrukersvarDuplikatsjekk(persistenceService)
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -19,19 +20,16 @@ class BehandleBrukersvar(
     /*
      * SP1220
      * */
-    fun behandle(sykepengesoeknadRecord: SykepengesoeknadRecord) {
-        val brukersporsmaal: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesoeknadRecord)
+    fun behandle(sykepengesøknadRecord: SykepengesoeknadRecord) {
+        val brukersporsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadRecord)
 
-        if (brukerspørsmålErLagretFraFør(brukersporsmaal)) {
-            loggFiltrertDuplikat(sykepengesoeknadRecord, brukersporsmaal)
+        if (brukersvarDuplikatsjekk.erLagretFraFør(brukersporsmål)) {
+            loggFiltrertDuplikat(sykepengesøknadRecord, brukersporsmål)
             return
         }
 
-        lagreBrukersporsmaal(sykepengesoeknadRecord, brukersporsmaal)
+        lagreBrukersporsmaal(sykepengesøknadRecord, brukersporsmål)
     }
-
-    private fun brukerspørsmålErLagretFraFør(brukersporsmaal: Brukersporsmaal): Boolean =
-        persistenceService.hentbrukersporsmaalForSoknadID(brukersporsmaal.soknadid) != null
 
     private fun lagreBrukersporsmaal(
         sykepengesoeknadRecord: SykepengesoeknadRecord,

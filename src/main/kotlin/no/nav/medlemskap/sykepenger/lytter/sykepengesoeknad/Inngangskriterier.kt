@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 
 data class InngangskriterierResultat(
     val erOppfylt: Boolean,
@@ -27,7 +27,7 @@ object Inngangskriterier {
 
     fun vurder(soknad: LovmeSoknadDTO): InngangskriterierResultat {
         val brutteKriterier = buildList {
-            if (soknad.status != SoknadsstatusDTO.SENDT.name) {
+            if (soknad.status != Status.SENDT.name) {
                 add(BruttInngangskriterium.FEIL_STATUS)
             }
             if (soknad.type !in tillatteSoknadstyper) {

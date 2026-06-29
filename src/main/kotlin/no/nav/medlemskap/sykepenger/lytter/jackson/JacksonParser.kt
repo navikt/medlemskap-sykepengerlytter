@@ -11,6 +11,9 @@ import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -38,7 +41,7 @@ class JacksonParser {
             return LovmeSoknadDTO(
                 "",
                 SoknadstypeDTO.ARBEIDSTAKERE,
-                SoknadsstatusDTO.SENDT.name,
+                Status.SENDT.name,
                 "", null,
                 LocalDate.now(),
                 LocalDateTime.now(),

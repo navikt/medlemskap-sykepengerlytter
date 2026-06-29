@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -32,7 +32,7 @@ class InngangskriterierTest {
 
     @Test
     fun `er ikke oppfylt nar soknaden ikke er sendt`() {
-        val søknad = søknad(status = SoknadsstatusDTO.NY.name)
+        val søknad = søknad(status = Status.NY.name)
 
         assertFalse(Inngangskriterier.erOppfylt(søknad))
         assertEquals(
@@ -74,7 +74,7 @@ class InngangskriterierTest {
     fun `vurder returnerer alle brutte kriterier`() {
         val søknad = søknad(
             type = SoknadstypeDTO.SELVSTENDIGE_OG_FRILANSERE,
-            status = SoknadsstatusDTO.NY.name,
+            status = Status.NY.name,
             ettersending = true
         )
 
@@ -93,7 +93,7 @@ class InngangskriterierTest {
 
     private fun søknad(
         type: SoknadstypeDTO = SoknadstypeDTO.ARBEIDSTAKERE,
-        status: String = SoknadsstatusDTO.SENDT.name,
+        status: String = Status.SENDT.name,
         ettersending: Boolean = false,
     ) = LovmeSoknadDTO(
         id = "søknad-id",

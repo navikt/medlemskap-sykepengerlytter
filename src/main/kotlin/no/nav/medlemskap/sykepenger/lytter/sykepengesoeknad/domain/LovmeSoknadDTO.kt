@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.domain
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,23 +17,3 @@ data class LovmeSoknadDTO(
     val forstegangssoknad: Boolean? = null,
     // Kun True eller False hvis bruker har svar JA eller NEI.
     val arbeidUtenforNorge: Boolean? = null)
-
-enum class SoknadsstatusDTO {
-    NY,
-    SENDT,
-    FREMTIDIG,
-    KORRIGERT,
-    AVBRUTT,
-    SLETTET
-}
-enum class SoknadstypeDTO {
-    SELVSTENDIGE_OG_FRILANSERE,
-    OPPHOLD_UTLAND,
-    ARBEIDSTAKERE,
-    ANNET_ARBEIDSFORHOLD,
-    ARBEIDSLEDIG,
-    BEHANDLINGSDAGER,
-    REISETILSKUDD,
-    GRADERT_REISETILSKUDD,
-    FRISKMELDT_TIL_ARBEIDSFORMIDLING,
-}

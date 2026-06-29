@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SoknadRecord
 import no.nav.medlemskap.sykepenger.lytter.jackson.MedlemskapVurdertParser
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 

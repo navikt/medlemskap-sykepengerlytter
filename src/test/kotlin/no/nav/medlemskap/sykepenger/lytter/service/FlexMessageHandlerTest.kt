@@ -3,14 +3,14 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadRecord
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BrukersvarMapper
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BrukersvarMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.*
@@ -30,7 +30,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal.sporsmaal)
         assertTrue(brukersporsmaal.sporsmaal!!.arbeidUtland!!)
         assertEquals("12454578474",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertEquals(LocalDateTime.parse("2022-05-11T17:32:06.202609").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
         assertEquals("52041604-a94a-38ca-b7a6-3e913b5207fa",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertTrue(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
@@ -45,7 +45,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("12454578474",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertEquals(LocalDateTime.parse("2022-05-11T17:32:06.202609").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
         assertEquals("52041604-a94a-38ca-b7a6-3e913b5207fa",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertFalse(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
@@ -61,7 +61,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("51857200482",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertEquals(LocalDateTime.parse("2023-08-23T14:38:09.383084").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
         assertEquals("4d6d35de-dc50-35ef-8f36-5cf59b2df922",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertFalse(brukersporsmaal.sporsmaal!!.arbeidUtland!!,"arbeidUtland er ikke mappet korrekt")
@@ -76,7 +76,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("28049120771",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertEquals(LocalDateTime.parse("2021-08-18T08:04:18.99198").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
         assertEquals("6743728c-815f-45dd-8b28-ff0bd1dbcf52",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertNull(brukersporsmaal.sporsmaal!!.arbeidUtland,"Arbeid utland skal være null! ")
@@ -91,7 +91,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("28049120771",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertEquals(LocalDateTime.parse("2021-08-18T08:04:18.99198").toLocalDate(),brukersporsmaal.eventDate,"Korretkt dato er ikke valgt")
         assertEquals("6743728c-815f-45dd-8b28-ff0bd1dbcf52",brukersporsmaal.soknadid,"soknadID er ikke mappet korrekt")
         assertNull(brukersporsmaal.sporsmaal!!.arbeidUtland,"Arbeid utland skal være null! ")
@@ -183,7 +183,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("43877000266",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertNotNull(brukersporsmaal.utfort_arbeid_utenfor_norge)
         assertNotNull(brukersporsmaal.oppholdUtenforNorge)
         assertNotNull(brukersporsmaal.oppholdstilatelse)
@@ -200,7 +200,7 @@ class FlexMessageHandlerTest {
         assertNotNull(brukersporsmaal)
         assertNotNull(brukersporsmaal.sporsmaal)
         assertEquals("43877000266",brukersporsmaal.fnr,"fnr er ikke mappet korrekt")
-        assertEquals(Soknadstatus.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
+        assertEquals(Status.SENDT.toString(),brukersporsmaal.status,"status er ikke mappet korrekt")
         assertNotNull(brukersporsmaal.utfort_arbeid_utenfor_norge)
         assertNotNull(brukersporsmaal.oppholdUtenforNorge)
         assertNotNull(brukersporsmaal.oppholdstilatelse)
