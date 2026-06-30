@@ -106,4 +106,4 @@ spec:
     - name: BRUKERSPORSMAAL_ENABLED
       value: Ja
     - name: MEDLEMSKAP_VURDERT_CONSUMER
-      value: Ja
+      value: Nei
