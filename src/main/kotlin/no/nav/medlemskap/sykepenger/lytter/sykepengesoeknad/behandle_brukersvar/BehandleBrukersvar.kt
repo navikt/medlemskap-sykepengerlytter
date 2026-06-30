@@ -20,28 +20,24 @@ class BehandleBrukersvar(
     /*
      * SP1220
      * */
-    fun behandle(sykepengesøknadRecord: SykepengesoeknadMelding) {
-        val brukersporsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadRecord)
+    fun behandle(sykepengesøknadMelding: SykepengesoeknadMelding) {
+        val brukerspørsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadMelding)
 
-        if (brukersvarDuplikatsjekk.erLagretFraFør(brukersporsmål)) {
-            loggFiltrertDuplikat(sykepengesøknadRecord, brukersporsmål)
+        if (brukersvarDuplikatsjekk.erLagretFraFør(brukerspørsmål)) {
+            loggFiltrertDuplikat(sykepengesøknadMelding, brukerspørsmål)
             return
         }
 
-        lagreBrukersporsmaal(sykepengesøknadRecord, brukersporsmål)
+        lagreBrukerspørsmål(brukerspørsmål)
     }
 
-    private fun lagreBrukersporsmaal(
-        sykepengesøknadMelding: SykepengesoeknadMelding,
-        brukerspørsmål: Brukersporsmaal
-    ) {
+    private fun lagreBrukerspørsmål(brukerspørsmål: Brukersporsmaal) {
         persistenceService.lagreBrukersporsmaal(brukerspørsmål)
         log.info(
             teamLogs,
-            "Brukerspørsmål for søknad ${sykepengesøknadMelding.key} lagret til databasen",
-            kv("callId", sykepengesøknadMelding.key),
-            kv("dato", brukerspørsmål.eventDate),
-            kv("partition", sykepengesøknadMelding.partition),
+            "Brukerspørsmål for søknad ${brukerspørsmål.soknadid} lagret til databasen",
+            kv("callId", brukerspørsmål.soknadid),
+            kv("dato", brukerspørsmål.eventDate)
         )
     }
 

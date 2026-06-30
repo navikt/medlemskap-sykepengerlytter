@@ -29,6 +29,7 @@ class BrukersvarMapper {
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
             // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
+            // Vi vil aldri få søknader med andre statuser enn sendt hit pga. inngangskriterier.
             if (status != Status.SENDT.toString()){
 
                 return Brukersporsmaal(

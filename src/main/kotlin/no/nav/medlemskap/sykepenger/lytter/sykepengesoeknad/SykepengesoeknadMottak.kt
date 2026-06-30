@@ -20,7 +20,7 @@ class SykepengesoeknadMottak(
     }
 
     suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadMelding) {
-        val sykepengesøknad = JacksonParser().parse(sykepengesøknadRecord.value)
+        val sykepengesøknad = JacksonParser().lesSykepengesøknadGrunnlag(sykepengesøknadRecord.value)
 
         if (!harPåkrevdeFelter(sykepengesøknad)) {
             logManglerPåkrevdeFelter(sykepengesøknadRecord)
@@ -39,9 +39,6 @@ class SykepengesoeknadMottak(
         behandleBrukersvar.behandle(sykepengesøknadRecord)
         behandleSykepengesøknad.behandle(sykepengesøknad)
     }
-
-    private fun harPåkrevdeFelter(sykepengesøknad: LovmeSoknadDTO): Boolean =
-        sykepengesøknad.fnr.isNotBlank() && sykepengesøknad.id.isNotBlank()
 
     private fun logManglerPåkrevdeFelter(
         sykepengesøknadRecord: SykepengesoeknadMelding
