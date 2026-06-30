@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class LovmeSoknadDTO(
+data class SykepengesoeknadGrunnlag(
     val id: String,
     val type: Type,
     val status: String,

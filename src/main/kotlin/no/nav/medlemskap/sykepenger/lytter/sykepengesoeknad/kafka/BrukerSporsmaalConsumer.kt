@@ -34,7 +34,7 @@ class BrukerSporsmaalConsumer(
     private val config: SykepengeSoeknadKafkaConfig = SykepengeSoeknadKafkaConfig(environment),
     private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
-            sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+            filtrering = SykepengesoeknadFiltrering(persistenceService),
             utledBrukerinput = UtledBrukerinput(persistenceService),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = MedlemskapOppslagService(Configuration())

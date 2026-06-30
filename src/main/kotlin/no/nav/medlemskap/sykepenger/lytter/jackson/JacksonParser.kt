@@ -9,7 +9,7 @@ import mu.KotlinLogging
 
 import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import java.time.LocalDate
@@ -31,12 +31,12 @@ class JacksonParser {
             .build()
     }
 
-    fun parse(jsonString: String): LovmeSoknadDTO {
+    fun parse(jsonString: String): SykepengesoeknadGrunnlag {
         try {
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            return LovmeSoknadDTO(
+            return SykepengesoeknadGrunnlag(
                 "",
                 Type.ARBEIDSTAKERE,
                 Status.SENDT.name,
@@ -49,7 +49,7 @@ class JacksonParser {
         }
     }
 
-    fun lesSykepengesøknadGrunnlag(jsonString: String): LovmeSoknadDTO =
+    fun lesSykepengesøknadGrunnlag(jsonString: String): SykepengesoeknadGrunnlag =
         parse(jsonString)
 
 

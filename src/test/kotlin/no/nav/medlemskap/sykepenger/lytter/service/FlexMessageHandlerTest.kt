@@ -214,7 +214,7 @@ class FlexMessageHandlerTest {
     ): SykepengesoeknadMottak =
         SykepengesoeknadMottak(
             behandleSykepengesøknad = BehandleSykepengesoeknad(
-                sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+                filtrering = SykepengesoeknadFiltrering(persistenceService),
                 utledBrukerinput = UtledBrukerinput(persistenceService),
                 lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
                 medlemskapOppslagService = MedlemskapOppslagService(configuration)

@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
@@ -24,7 +24,7 @@ class BehandleSykepengesoeknadTest {
     private val persistenceService = PersistenceService(medlemskapRepository, BrukersporsmaalInMemmoryRepository())
     private val lovmeApi = LovMeApiTestMock()
     private val behandleSykepengesoeknad = BehandleSykepengesoeknad(
-        sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+        filtrering = SykepengesoeknadFiltrering(persistenceService),
         utledBrukerinput = UtledBrukerinput(persistenceService),
         lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
         medlemskapOppslagService = MedlemskapOppslagService(lovmeApi)
@@ -94,8 +94,8 @@ class BehandleSykepengesoeknadTest {
         fnr: String,
         fom: LocalDate,
         tom: LocalDate
-    ): LovmeSoknadDTO =
-        LovmeSoknadDTO(
+    ): SykepengesoeknadGrunnlag =
+        SykepengesoeknadGrunnlag(
             id = UUID.randomUUID().toString(),
             type = Type.ARBEIDSTAKERE,
             status = Status.SENDT.name,

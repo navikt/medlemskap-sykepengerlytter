@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
@@ -60,7 +60,7 @@ class SykepengesoeknadFiltreringTest {
     fun `finnDuplikatSomSkalFiltreres filtrerer duplikat når arbeidUtenforNorge ikke er true`() {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
-        val skalFiltreres = filtrering.finnDuplikatSomSkalFiltreres(
+        val skalFiltreres = filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(
             sykepengesøknad(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 1, 1),
@@ -76,7 +76,7 @@ class SykepengesoeknadFiltreringTest {
     fun `finnDuplikatSomSkalFiltreres filtrerer ikke duplikat når arbeidUtenforNorge er true`() {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
-        val skalFiltreres = filtrering.finnDuplikatSomSkalFiltreres(
+        val skalFiltreres = filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(
             sykepengesøknad(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 1, 1),
@@ -92,7 +92,7 @@ class SykepengesoeknadFiltreringTest {
     fun `erPåfølgendeSøknad returnerer true når søknaden starter dagen etter eksisterende vurdering`() {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
-        val påfølgende = filtrering.erPåfølgendeSøknad(
+        val påfølgende = filtrering.erPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(
             sykepengesøknad(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
@@ -107,7 +107,7 @@ class SykepengesoeknadFiltreringTest {
     fun `erPåfølgendeSøknad returnerer false for førstegangssøknad`() {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
-        val påfølgende = filtrering.erPåfølgendeSøknad(
+        val påfølgende = filtrering.erPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(
             sykepengesøknad(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
@@ -128,7 +128,7 @@ class SykepengesoeknadFiltreringTest {
             tom = LocalDate.of(2024, 2, 28)
         )
 
-        val lagret = filtrering.lagreHvisPåfølgendeSøknad(søknad)
+        val lagret = filtrering.lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(søknad)
 
         assertTrue(lagret)
         val lagretVurdering = medlemskapRepository.finnVurdering("12345678901")
@@ -142,7 +142,7 @@ class SykepengesoeknadFiltreringTest {
     fun `lagreHvisPåfølgendeSøknad lagrer ikke når arbeidUtenforNorge er true`() {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
-        val lagret = filtrering.lagreHvisPåfølgendeSøknad(
+        val lagret = filtrering.lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(
             sykepengesøknad(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
@@ -178,8 +178,8 @@ class SykepengesoeknadFiltreringTest {
         tom: LocalDate,
         arbeidUtenforNorge: Boolean? = null,
         førstegangssøknad: Boolean? = null
-    ): LovmeSoknadDTO =
-        LovmeSoknadDTO(
+    ): SykepengesoeknadGrunnlag =
+        SykepengesoeknadGrunnlag(
             id = UUID.randomUUID().toString(),
             type = Type.ARBEIDSTAKERE,
             status = Status.SENDT.name,

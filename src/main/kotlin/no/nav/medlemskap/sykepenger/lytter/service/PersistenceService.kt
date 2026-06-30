@@ -9,7 +9,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import java.time.LocalDate
 
 class PersistenceService(
@@ -54,7 +54,7 @@ class PersistenceService(
             .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
     }
 
-    fun lagrePaafolgendeSoknad(soknadDTO: LovmeSoknadDTO) {
+    fun lagrePaafolgendeSoknad(soknadDTO: SykepengesoeknadGrunnlag) {
         medlemskapVurdertRepository.lagreVurdering(
             VurderingDao(
                 soknadDTO.id,

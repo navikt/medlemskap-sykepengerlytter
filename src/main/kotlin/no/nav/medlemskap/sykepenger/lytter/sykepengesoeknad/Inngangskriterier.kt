@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 
@@ -22,10 +22,10 @@ object Inngangskriterier {
         Type.GRADERT_REISETILSKUDD
     )
 
-    fun erOppfylt(soknad: LovmeSoknadDTO): Boolean =
+    fun erOppfylt(soknad: SykepengesoeknadGrunnlag): Boolean =
         vurder(soknad).erOppfylt
 
-    fun vurder(soknad: LovmeSoknadDTO): InngangskriterierResultat {
+    fun vurder(soknad: SykepengesoeknadGrunnlag): InngangskriterierResultat {
         val brutteKriterier = buildList {
             if (soknad.status != Status.SENDT.name) {
                 add(BruttInngangskriterium.FEIL_STATUS)

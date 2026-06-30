@@ -58,7 +58,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
-            sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+            filtrering = SykepengesoeknadFiltrering(persistenceService),
             utledBrukerinput = UtledBrukerinput(persistenceService),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = medlemskapOppslagService

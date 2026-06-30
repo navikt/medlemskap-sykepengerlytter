@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -95,7 +95,7 @@ class InngangskriterierTest {
         type: Type = Type.ARBEIDSTAKERE,
         status: String = Status.SENDT.name,
         ettersending: Boolean = false,
-    ) = LovmeSoknadDTO(
+    ) = SykepengesoeknadGrunnlag(
         id = "søknad-id",
         type = type,
         status = status,

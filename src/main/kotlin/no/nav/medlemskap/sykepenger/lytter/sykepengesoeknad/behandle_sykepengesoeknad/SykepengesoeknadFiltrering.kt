@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.domain.erFunkskjoneltLik
 import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
@@ -18,10 +18,10 @@ class SykepengesoeknadFiltrering(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    fun finnDuplikatSomSkalFiltreres(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        val medlemRequest = mapToMedlemskap(sykepengeSoknad)
+    fun erDuplikatOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
+        val medlemRequest = mapToMedlemskap(sykepengesøknadGrunnlag)
         val duplikat = erDuplikat(medlemRequest)
-        return duplikat != null && arbeidUtenForNorgeFalse(sykepengeSoknad)
+        return duplikat != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
 
     fun erDuplikat(medlemRequest: Medlemskap): Medlemskap? {
@@ -29,36 +29,36 @@ class SykepengesoeknadFiltrering(
         return vurderinger.find { medlemRequest.erFunkskjoneltLik(it) }
     }
 
-    fun erPåfølgendeSøknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        if (true == sykepengeSoknad.forstegangssoknad) {
+    fun erPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
+        if (true == sykepengesøknadGrunnlag.forstegangssoknad) {
             return false
         }
-        val medlemRequest = mapToMedlemskap(sykepengeSoknad)
-        val vurderinger = persistenceService.hentMedlemskap(sykepengeSoknad.fnr)
+        val medlemRequest = mapToMedlemskap(sykepengesøknadGrunnlag)
+        val vurderinger = persistenceService.hentMedlemskap(sykepengesøknadGrunnlag.fnr)
         val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
-        return result != null && arbeidUtenForNorgeFalse(sykepengeSoknad)
+        return result != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
 
-    fun lagreHvisPåfølgendeSøknad(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        if (!erPåfølgendeSøknad(sykepengeSoknad)) {
+    fun lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
+        if (!erPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag)) {
             return false
         }
 
-        persistenceService.lagrePaafolgendeSoknad(sykepengeSoknad)
+        persistenceService.lagrePaafolgendeSoknad(sykepengesøknadGrunnlag)
         return true
     }
 
-    private fun arbeidUtenForNorgeFalse(sykepengeSoknad: LovmeSoknadDTO): Boolean {
-        if (sykepengeSoknad.arbeidUtenforNorge == true) {
+    private fun arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
+        if (sykepengesøknadGrunnlag.arbeidUtenforNorge == true) {
             log.info(
                 teamLogs,
-                "Søknad inneholder arbeidUtenforNorge=true og skal ikke filtreres - sykmeldingId: ${sykepengeSoknad.id}",
-                kv("callId", sykepengeSoknad.id),
+                "Søknad inneholder arbeidUtenforNorge=true og skal ikke filtreres - sykmeldingId: ${sykepengesøknadGrunnlag.id}",
+                kv("callId", sykepengesøknadGrunnlag.id),
             )
         }
-        return sykepengeSoknad.arbeidUtenforNorge == false || sykepengeSoknad.arbeidUtenforNorge == null
+        return sykepengesøknadGrunnlag.arbeidUtenforNorge == false || sykepengesøknadGrunnlag.arbeidUtenforNorge == null
     }
 
-    private fun mapToMedlemskap(sykepengeSoknad: LovmeSoknadDTO): Medlemskap =
+    private fun mapToMedlemskap(sykepengeSoknad: SykepengesoeknadGrunnlag): Medlemskap =
         Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, ErMedlem.UAVKLART)
 }
