@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
 
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging

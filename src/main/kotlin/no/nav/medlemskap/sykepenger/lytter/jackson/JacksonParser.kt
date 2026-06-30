@@ -8,9 +8,10 @@ import com.fasterxml.jackson.module.kotlin.treeToValue
 import mu.KotlinLogging
 
 import no.nav.medlemskap.sykepenger.lytter.domain.*
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -30,15 +31,15 @@ class JacksonParser {
             .build()
     }
 
-    fun parse(jsonString: String): LovmeSoknadDTO {
+    fun parse(jsonString: String): SykepengesoeknadGrunnlag {
         try {
             return mapper.readValue(jsonString)
         } catch (t: Throwable) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            return LovmeSoknadDTO(
+            return SykepengesoeknadGrunnlag(
                 "",
-                SoknadstypeDTO.ARBEIDSTAKERE,
-                SoknadsstatusDTO.SENDT.name,
+                Type.ARBEIDSTAKERE,
+                Status.SENDT.name,
                 "", null,
                 LocalDate.now(),
                 LocalDateTime.now(),
@@ -48,6 +49,10 @@ class JacksonParser {
         }
     }
 
+    fun lesSykepengesøknadGrunnlag(jsonString: String): SykepengesoeknadGrunnlag =
+        parse(jsonString)
+
+
     fun parseFlexVurdering(jsonString: String): FlexVurderingRespons {
         try {
             return mapper.readValue(jsonString)
@@ -56,31 +61,7 @@ class JacksonParser {
             return FlexVurderingRespons("","","",LocalDate.now(),LocalDate.now(),"UAVKLART")
         }
     }
-    fun parseFlexBrukerSporsmaal(jsonString: String): FlexBrukerSporsmaal {
-        try {
-            return mapper.readValue(jsonString)
-        } catch (t: Throwable) {
-            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            return FlexBrukerSporsmaal(null)
-        }
-    }
-    fun parseFlexBrukerSporsmaalV2(jsonString: String): FlexMedlemskapsBrukerSporsmaal {
-        try {
-            return mapper.readValue(jsonString)
-        } catch (t: Throwable) {
-            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            throw t;
-        }
-    }
 
-    fun parseMedlemskap(jsonString: String): Medlemskap {
-        try {
-            return mapper.readValue(jsonString)
-        } catch (t: Throwable) {
-            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            throw t;
-        }
-    }
 
     fun parseMedlemskap(medlemskap: Medlemskap): String {
         try {
@@ -90,14 +71,7 @@ class JacksonParser {
             throw t;
         }
     }
-    fun parseFlexBrukerSporsmaal(flexBrukerSporsmaal: FlexBrukerSporsmaal): String {
-            try {
-                return mapper.writeValueAsString(flexBrukerSporsmaal)
-            } catch (t: Throwable) {
-                log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-                throw t;
-            }
-        }
+
     fun parse(obj: Any): String {
         try {
             return mapper.writeValueAsString(obj)

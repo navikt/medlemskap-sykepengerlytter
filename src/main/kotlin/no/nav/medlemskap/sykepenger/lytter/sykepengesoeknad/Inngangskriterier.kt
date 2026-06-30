@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 
 data class InngangskriterierResultat(
     val erOppfylt: Boolean,
@@ -11,27 +11,27 @@ data class InngangskriterierResultat(
 
 enum class BruttInngangskriterium {
     FEIL_STATUS,
-    IKKE_TILLATT_SOKNADSTYPE,
+    IKKE_TILLATT_TYPE,
     ER_ETTERSENDING
 }
 
 object Inngangskriterier {
 
     private val tillatteSoknadstyper = setOf(
-        SoknadstypeDTO.ARBEIDSTAKERE,
-        SoknadstypeDTO.GRADERT_REISETILSKUDD
+        Type.ARBEIDSTAKERE,
+        Type.GRADERT_REISETILSKUDD
     )
 
-    fun erOppfylt(soknad: LovmeSoknadDTO): Boolean =
+    fun erOppfylt(soknad: SykepengesoeknadGrunnlag): Boolean =
         vurder(soknad).erOppfylt
 
-    fun vurder(soknad: LovmeSoknadDTO): InngangskriterierResultat {
+    fun vurder(soknad: SykepengesoeknadGrunnlag): InngangskriterierResultat {
         val brutteKriterier = buildList {
-            if (soknad.status != SoknadsstatusDTO.SENDT.name) {
+            if (soknad.status != Status.SENDT.name) {
                 add(BruttInngangskriterium.FEIL_STATUS)
             }
             if (soknad.type !in tillatteSoknadstyper) {
-                add(BruttInngangskriterium.IKKE_TILLATT_SOKNADSTYPE)
+                add(BruttInngangskriterium.IKKE_TILLATT_TYPE)
             }
             if (soknad.ettersending!!) {
                 add(BruttInngangskriterium.ER_ETTERSENDING)

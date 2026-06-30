@@ -35,7 +35,6 @@ class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : Medlemsk
         }
     }
 
-
     override fun slettVurderingsstatus(fnr: String): Int {
         return using(sessionOf(dataSource)) { session ->
             session.transaction {

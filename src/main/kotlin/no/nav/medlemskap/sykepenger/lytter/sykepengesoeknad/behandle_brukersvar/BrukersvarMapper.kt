@@ -1,11 +1,11 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.Soknadstatus
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,9 +16,9 @@ class BrukersvarMapper {
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    fun mapMessage(sykepengesoeknadRecord: SykepengesoeknadRecord): Brukersporsmaal {
+    fun mapMessage(sykepengesoeknadMelding: SykepengesoeknadMelding): Brukersporsmaal {
         try {
-            val json = sykepengesoeknadRecord.value
+            val json = sykepengesoeknadMelding.value
             val JsonNode = ObjectMapper().readTree(json)
             val fnr = JsonNode.get("fnr").asText()
             val status = JsonNode.get("status").asText()
@@ -29,7 +29,8 @@ class BrukersvarMapper {
             val sendtNavDato = parseDateString(sendtNav)
             val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
             // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
-            if (status != Soknadstatus.SENDT.toString()){
+            // Vi vil aldri få søknader med andre statuser enn sendt hit pga. inngangskriterier.
+            if (status != Status.SENDT.toString()){
 
                 return Brukersporsmaal(
                     fnr,
@@ -73,7 +74,7 @@ class BrukersvarMapper {
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
-            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadRecord.value))
+            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadMelding.value))
             throw t
         }
     }

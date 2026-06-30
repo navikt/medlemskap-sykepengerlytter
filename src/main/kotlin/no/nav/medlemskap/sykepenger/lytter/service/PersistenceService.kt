@@ -3,11 +3,14 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-
-import no.nav.medlemskap.sykepenger.lytter.domain.*
-import no.nav.medlemskap.sykepenger.lytter.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class PersistenceService(
     private val medlemskapVurdertRepository: MedlemskapVurdertRepository,
@@ -51,7 +54,7 @@ class PersistenceService(
             .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
     }
 
-    fun lagrePaafolgendeSoknad(soknadDTO: LovmeSoknadDTO) {
+    fun lagrePaafolgendeSoknad(soknadDTO: SykepengesoeknadGrunnlag) {
         medlemskapVurdertRepository.lagreVurdering(
             VurderingDao(
                 soknadDTO.id,
@@ -73,20 +76,6 @@ class PersistenceService(
     fun slettVurderingsstatus(fnr: String): Int {
         return medlemskapVurdertRepository.slettVurderingsstatus(fnr)
     }
-
-    private fun MedlemskapVurdertRecord.logLagret() =
-        log.info(
-            "Vurdering lagret til database - sykmeldingId: ${key}, offsett: $offset, partiotion: $partition, topic: $topic",
-            StructuredArguments.kv("callId", key),
-        )
-
-    private fun MedlemskapVurdertRecord.logLagringFeilet(t: Throwable) =
-        log.error(
-            "Vurdering ble ikke lagret til database - sykmeldingId: ${key}, offsett: $offset, partiotion: $partition, topic: $topic , reason : ${t.cause}",
-            StructuredArguments.kv("callId", key),
-        )
-
-
 }
 
 class VurderingDaoMapper {

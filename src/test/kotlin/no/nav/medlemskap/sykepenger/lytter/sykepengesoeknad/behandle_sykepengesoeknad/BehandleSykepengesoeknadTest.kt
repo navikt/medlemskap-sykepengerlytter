@@ -4,13 +4,12 @@ import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadRecord
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadsstatusDTO
-import no.nav.medlemskap.sykepenger.lytter.domain.SoknadstypeDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,7 +24,7 @@ class BehandleSykepengesoeknadTest {
     private val persistenceService = PersistenceService(medlemskapRepository, BrukersporsmaalInMemmoryRepository())
     private val lovmeApi = LovMeApiTestMock()
     private val behandleSykepengesoeknad = BehandleSykepengesoeknad(
-        sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+        filtrering = SykepengesoeknadFiltrering(persistenceService),
         utledBrukerinput = UtledBrukerinput(persistenceService),
         lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
         medlemskapOppslagService = MedlemskapOppslagService(lovmeApi)
@@ -39,7 +38,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2019, 4, 8)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
 
         assertEquals(1, lovmeApi.antallVurderMedlemskapKall)
         assertEquals("12345678901", lovmeApi.sisteRequest?.fnr)
@@ -55,7 +54,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 1, 31)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -69,7 +68,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 2, 28)
         )
 
-        behandleSykepengesoeknad.behandle(søknadRecord(søknad))
+        behandleSykepengesoeknad.behandle(søknad)
 
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -91,25 +90,15 @@ class BehandleSykepengesoeknadTest {
         )
     }
 
-    private fun søknadRecord(søknad: LovmeSoknadDTO): SoknadRecord =
-        SoknadRecord(
-            partition = 0,
-            offset = 0,
-            value = "",
-            key = søknad.id,
-            topic = "test",
-            sykepengeSoknad = søknad
-        )
-
     private fun sykepengesøknad(
         fnr: String,
         fom: LocalDate,
         tom: LocalDate
-    ): LovmeSoknadDTO =
-        LovmeSoknadDTO(
+    ): SykepengesoeknadGrunnlag =
+        SykepengesoeknadGrunnlag(
             id = UUID.randomUUID().toString(),
-            type = SoknadstypeDTO.ARBEIDSTAKERE,
-            status = SoknadsstatusDTO.SENDT.name,
+            type = Type.ARBEIDSTAKERE,
+            status = Status.SENDT.name,
             fnr = fnr,
             korrigerer = null,
             startSyketilfelle = fom,

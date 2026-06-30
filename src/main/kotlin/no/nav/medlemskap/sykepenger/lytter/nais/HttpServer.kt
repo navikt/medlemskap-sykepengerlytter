@@ -39,7 +39,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengeso
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
 
 import java.io.Writer
 import java.util.*
@@ -58,7 +58,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
-            sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+            filtrering = SykepengesoeknadFiltrering(persistenceService),
             utledBrukerinput = UtledBrukerinput(persistenceService),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = medlemskapOppslagService

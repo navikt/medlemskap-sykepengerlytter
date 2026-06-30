@@ -2,11 +2,11 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.domain.LovmeSoknadDTO
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 
 object MedlemskapOppslagRequestMapper {
     fun map(
-        sykepengeSoknad: LovmeSoknadDTO,
+        sykepengeSoknad: SykepengesoeknadGrunnlag,
         utledetBrukerinput: UtledetBrukerinput
     ): MedlOppslagRequest {
         val søknadsParametere = utledetBrukerinput.søknadsParametere

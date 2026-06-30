@@ -12,12 +12,12 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdert
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
@@ -34,7 +34,7 @@ class BrukerSporsmaalConsumer(
     private val config: SykepengeSoeknadKafkaConfig = SykepengeSoeknadKafkaConfig(environment),
     private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
-            sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+            filtrering = SykepengesoeknadFiltrering(persistenceService),
             utledBrukerinput = UtledBrukerinput(persistenceService),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = MedlemskapOppslagService(Configuration())
@@ -51,11 +51,11 @@ class BrukerSporsmaalConsumer(
         consumer.subscribe(listOf(config.flexTopic))
     }
 
-    fun pollMessages(): List<SykepengesoeknadRecord> =
+    fun pollMessages(): List<SykepengesoeknadMelding> =
 
         consumer.poll(Duration.ofSeconds(4))
             .map {
-                SykepengesoeknadRecord(
+                SykepengesoeknadMelding(
                     partition = it.partition(),
                     offset = it.offset(),
                     value = it.value(),
@@ -71,13 +71,13 @@ class BrukerSporsmaalConsumer(
                 Metrics.incReceivedvurderingTotal(it.count())
             }
 
-    fun flow(): Flow<List<SykepengesoeknadRecord>> =
+    fun flow(): Flow<List<SykepengesoeknadMelding>> =
         kotlinx.coroutines.flow.flow {
             while (true) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
-                    emit(emptyList<SykepengesoeknadRecord>())
+                    emit(emptyList<SykepengesoeknadMelding>())
                 } else {
                     emit(pollMessages())
                 }

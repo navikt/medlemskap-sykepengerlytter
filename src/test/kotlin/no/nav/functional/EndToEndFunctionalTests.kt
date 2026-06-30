@@ -8,7 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.opprettResponsTilFle
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadRecord
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
@@ -21,7 +21,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengeso
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
@@ -105,7 +105,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -114,7 +114,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -161,7 +161,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -170,7 +170,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -217,7 +217,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSBrukerSoknadFraFlex.json").readText(Charsets.UTF_8),
@@ -226,7 +226,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -274,7 +274,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSArbeidUtenforNorgeJa.json").readText(Charsets.UTF_8),
@@ -283,7 +283,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr(testperson).isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -330,7 +330,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestEOSArbeidUtenforNorgeJaUtenforEOSJa.json").readText(Charsets.UTF_8),
@@ -339,7 +339,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -388,7 +388,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
@@ -397,7 +397,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -444,7 +444,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
@@ -453,7 +453,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -501,7 +501,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         /*
         * Simuler at det kommer inn en melding på kafka med disse bruker spørsmålene
         * */
-        val message = SykepengesoeknadRecord(
+        val sykepengesøknadMelding = SykepengesoeknadMelding(
             partition = 0,
             offset = 1,
             value = this::class.java.classLoader.getResource("EndeTilEndeTestAndreBorgere.json").readText(Charsets.UTF_8),
@@ -510,7 +510,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             timestamp = LocalDateTime.now(),
             timestampType = ""
         )
-        fmh.behandle(message)
+        fmh.behandle(sykepengesøknadMelding)
         Assertions.assertTrue(containerPersistenceService.hentbrukersporsmaalForFnr("15076500565").isNotEmpty())
         /*
        * Simuler at det kommer inn et nytt kall til bruker spørsmål api på samme bruker
@@ -563,7 +563,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
     ): SykepengesoeknadMottak =
         SykepengesoeknadMottak(
             behandleSykepengesøknad = BehandleSykepengesoeknad(
-                sykepengesoeknadFiltrering = SykepengesoeknadFiltrering(persistenceService),
+                filtrering = SykepengesoeknadFiltrering(persistenceService),
                 utledBrukerinput = UtledBrukerinput(persistenceService),
                 lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
                 medlemskapOppslagService = medlemskapOppslagService

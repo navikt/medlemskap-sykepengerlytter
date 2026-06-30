@@ -21,7 +21,7 @@ gjennom hele behandlingskjeden.
 | `ettersending` | `Boolean?` | Søknaden filtreres ut og sendes ikke til LovMe dersom `true` |
 | `arbeidUtenforNorge` | `Boolean?` | Avgjør om en påfølgende/duplikat-søknad likevel skal sendes til LovMe |
 | `forstegangssoknad` | `Boolean?` | Dersom `true` hoppes påfølgende-sjekken over |
-| `korrigerer` | `String?` | Leses av Jackson (del av `LovmeSoknadDTO`), men brukes ikke aktivt i logikken |
+| `korrigerer` | `String?` | Leses av Jackson, men brukes ikke aktivt i logikken |
 | `startSyketilfelle` | `LocalDate?` | Leses av Jackson, men brukes ikke aktivt i logikken |
 
 ---
