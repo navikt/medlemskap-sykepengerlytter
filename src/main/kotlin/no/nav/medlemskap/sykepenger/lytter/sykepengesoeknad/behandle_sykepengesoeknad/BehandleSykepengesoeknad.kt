@@ -87,14 +87,14 @@ class BehandleSykepengesoeknad(
     private fun SykepengesoeknadGrunnlag.logDuplikat() =
         log.info(
             teamLogs,
-            "soknad med id $id er funksjonelt lik en annen soknad : kryptertFnr : $fnr ",
+            "Søknad med id $id er funksjonelt lik en annen soknad : kryptertFnr : $fnr. Sendes ikke videre for vurdering.",
             kv("callId", id)
         )
 
     private fun SykepengesoeknadGrunnlag.logPåfølgende() =
         log.info(
             teamLogs,
-            "soknad med id $id er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
+            "Søknad med id $id er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
             kv("callId", id)
         )
 
