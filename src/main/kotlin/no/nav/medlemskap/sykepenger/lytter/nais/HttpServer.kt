@@ -39,7 +39,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengeso
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
 
 import java.io.Writer
 import java.util.*
@@ -63,7 +63,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = medlemskapOppslagService
         ),
-        behandleBrukersvar = BehandleBrukersvar(persistenceService)
+        lagreBrukerspoersmaal = LagreBrukerspoersmaal(persistenceService)
     )
     val azureAdOpenIdConfiguration: AzureAdOpenIdConfiguration = getAadConfig(configuration.azureAd)
 

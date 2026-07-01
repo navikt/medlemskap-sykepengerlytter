@@ -3,6 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import org.slf4j.MarkerFactory
@@ -18,7 +19,9 @@ class BehandleSykepengesoeknad(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun behandle(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag) {
+    suspend fun behandle(sykepengesoeknad: Sykepengesoeknad) {
+        val sykepengesøknadGrunnlag = sykepengesoeknad.sykepengesoeknadGrunnlag
+
         when {
             filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag) ->
                 sykepengesøknadGrunnlag.logDuplikat()

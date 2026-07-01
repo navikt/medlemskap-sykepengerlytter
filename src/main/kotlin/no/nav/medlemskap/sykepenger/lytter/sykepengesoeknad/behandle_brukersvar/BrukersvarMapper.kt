@@ -1,55 +1,32 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
-import org.slf4j.MarkerFactory
 import java.time.LocalDate
-import java.time.LocalDateTime
 
-class BrukersvarMapper {
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
-    }
+object BrukersvarMapper {
+    private val log = KotlinLogging.logger { }
 
-    fun mapMessage(sykepengesoeknadMelding: SykepengesoeknadMelding): Brukersporsmaal {
+    fun mapMessage(sykepengesoeknadMelding: SykepengesoeknadMelding): Brukersporsmaal =
+        mapMessage(JacksonParser().lesSykepengesøknadGrunnlag(sykepengesoeknadMelding.value))
+
+    fun mapMessage(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
         try {
-            val json = sykepengesoeknadMelding.value
-            val JsonNode = ObjectMapper().readTree(json)
-            val fnr = JsonNode.get("fnr").asText()
-            val status = JsonNode.get("status").asText()
-            val id = JsonNode.get("id").asText()
-            val sendtArbeidsgiver = JsonNode.get("sendtArbeidsgiver").asText(null)
-            val dodsdato = JsonNode.get("dodsdato").asText(null)
-            val sendtNav = JsonNode.get("sendtNav").asText(null)
-            val sendtNavDato = parseDateString(sendtNav)
-            val sendArbeidsgiverDato = parseDateString(sendtArbeidsgiver)
-            // de som ikke har status SENDT skal ikke mappe bruker spørsmål da disse ikke er komplette
-            // Vi vil aldri få søknader med andre statuser enn sendt hit pga. inngangskriterier.
-            if (status != Status.SENDT.toString()){
-
-                return Brukersporsmaal(
-                    fnr,
-                    id,
-                    DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
-                    "SYKEPENGER",
-                    status,
-                    null,
-                    null,
-                    null
-                )
-            }
+            val fnr = sykepengesoeknadGrunnlag.fnr
+            val status = sykepengesoeknadGrunnlag.status
+            val id = sykepengesoeknadGrunnlag.id
+            val sendtNavDato = sykepengesoeknadGrunnlag.sendtNav?.toLocalDate()
+            val sendtArbeidsgiverDato = sykepengesoeknadGrunnlag.sendtArbeidsgiver?.toLocalDate()
             //dersom bruker er død er alle brukerspørsmål ikke oppgitt.
 
-            if (dodsdato!=null){
+            if (sykepengesoeknadGrunnlag.dodsdato != null){
                 return Brukersporsmaal(
                     fnr,
                     id,
-                    DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                    finnTidligsteDato(sendtArbeidsgiverDato, sendtNavDato),
                     "SYKEPENGER",
                     status,
                     null,
@@ -57,12 +34,12 @@ class BrukersvarMapper {
                     null
                 )
             }
-            val mapper = BrukersporsmaalMapper(JsonNode)
+            val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal)
 
             return Brukersporsmaal(
                 fnr,
                 id,
-                DatePicker().findEarliest(sendArbeidsgiverDato, sendtNavDato),
+                finnTidligsteDato(sendtArbeidsgiverDato, sendtNavDato),
                 "SYKEPENGER",
                 status,
                 mapper.brukersp_arb_utland_old_model,
@@ -74,37 +51,11 @@ class BrukersvarMapper {
         }
         catch (t:Throwable){
             log.error("not able to parse message ${t.message}, cause : ${t.cause}")
-            log.error(teamLogs, "not able to parse message ${t.message}", kv("body",sykepengesoeknadMelding.value))
             throw t
         }
     }
 
-    private fun parseDateString(dateString: String?): LocalDate? {
-        return try {
-            LocalDateTime.parse(dateString).toLocalDate()
-        } catch (t: Throwable) {
-            null
-        }
-    }
-}
-
-open class DatePicker(){
-    open fun findEarliest(sendArbeidsgiverDato: LocalDate?, sendtNavDato: LocalDate?): LocalDate {
-        if (sendArbeidsgiverDato == null  && sendtNavDato == null){
-            return LocalDate.now()
-        }
-        if (sendArbeidsgiverDato==null && sendtNavDato!=null){
-            return sendtNavDato
-        }
-        if (sendtNavDato==null && sendArbeidsgiverDato !=null){
-            return sendArbeidsgiverDato
-        }
-        if (sendtNavDato!!.isBefore(sendArbeidsgiverDato)){
-            return sendtNavDato
-        }
-        else{
-            return sendArbeidsgiverDato!!
-        }
-
+    private fun finnTidligsteDato(sendArbeidsgiverDato: LocalDate?, sendtNavDato: LocalDate?): LocalDate {
+        return listOfNotNull(sendArbeidsgiverDato, sendtNavDato).minOrNull() ?: LocalDate.now()
     }
 }

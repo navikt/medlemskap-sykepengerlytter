@@ -4,12 +4,10 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 
-class BehandleBrukersvar(
+class LagreBrukerspoersmaal(
     private val persistenceService: PersistenceService,
-    private val brukersvarMapper: BrukersvarMapper = BrukersvarMapper(),
     private val brukersvarDuplikatsjekk: BrukersvarDuplikatsjekk = BrukersvarDuplikatsjekk(persistenceService)
 ) {
     companion object {
@@ -17,14 +15,9 @@ class BehandleBrukersvar(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    /*
-     * SP1220
-     * */
-    fun behandle(sykepengesøknadMelding: SykepengesoeknadMelding) {
-        val brukerspørsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadMelding)
-
+    fun lagre(brukerspørsmål: Brukersporsmaal) {
         if (brukersvarDuplikatsjekk.erLagretFraFør(brukerspørsmål)) {
-            loggFiltrertDuplikat(sykepengesøknadMelding, brukerspørsmål)
+            loggFiltrertDuplikat(brukerspørsmål)
             return
         }
 
@@ -41,16 +34,10 @@ class BehandleBrukersvar(
         )
     }
 
-    private fun loggFiltrertDuplikat(
-        sykepengesøknadMelding: SykepengesoeknadMelding,
-        brukerspørsmål: Brukersporsmaal
-    ) {
+    private fun loggFiltrertDuplikat(brukerspørsmål: Brukersporsmaal) {
         log.info(
             teamLogs,
-            "Flex melding for søknad ${sykepengesøknadMelding.key}, " +
-                    "offset : ${sykepengesøknadMelding.offset}, " +
-                    "partition : ${sykepengesøknadMelding.partition}," +
-                    "filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
+            "Flex melding for søknad ${brukerspørsmål.soknadid}, filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
         )
     }
 }

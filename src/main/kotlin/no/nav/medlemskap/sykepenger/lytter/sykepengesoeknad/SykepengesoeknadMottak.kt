@@ -5,14 +5,16 @@ import net.logstash.logback.argument.StructuredArguments.kv
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BrukersvarMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 
 class SykepengesoeknadMottak(
     private val behandleSykepengesøknad: BehandleSykepengesoeknad,
-    private val behandleBrukersvar: BehandleBrukersvar
+    private val lagreBrukerspoersmaal: LagreBrukerspoersmaal
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -36,8 +38,12 @@ class SykepengesoeknadMottak(
         }
 
         logOppfyllerInngangskriterier(sykepengesøknadGrunnlag)
-        behandleBrukersvar.behandle(sykepengesøknadRecord)
-        behandleSykepengesøknad.behandle(sykepengesøknadGrunnlag)
+        val sykepengesoeknad = Sykepengesoeknad(
+            sykepengesoeknadGrunnlag = sykepengesøknadGrunnlag,
+            brukersporsmaal = BrukersvarMapper.mapMessage(sykepengesøknadGrunnlag)
+        )
+        lagreBrukerspoersmaal.lagre(sykepengesoeknad.brukersporsmaal)
+        behandleSykepengesøknad.behandle(sykepengesoeknad)
     }
 
     private fun logManglerPåkrevdeFelter(
