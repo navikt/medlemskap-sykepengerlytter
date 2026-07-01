@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain
 
+import com.fasterxml.jackson.databind.JsonNode
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -16,4 +17,8 @@ data class SykepengesoeknadGrunnlag(
     val ettersending:Boolean? = null,
     val forstegangssoknad: Boolean? = null,
     // Kun True eller False hvis bruker har svar JA eller NEI.
-    val arbeidUtenforNorge: Boolean? = null)
+    val arbeidUtenforNorge: Boolean? = null,
+    val sendtArbeidsgiver: LocalDateTime? = null,
+    val dodsdato: LocalDate? = null,
+    val sporsmal: JsonNode
+)

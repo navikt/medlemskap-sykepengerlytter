@@ -8,9 +8,7 @@ class BrukerspormaalMapperTest {
 
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
         val v = mapper.getOppholdstilatelse_brukerspørsmål()
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
@@ -23,9 +21,7 @@ class BrukerspormaalMapperTest {
 
     @Test
     fun `test mapping av flex_oppholdstilatelseV2 `(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
         val v = mapper.getOppholdstilatelse_brukerspørsmål()
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
@@ -37,9 +33,7 @@ class BrukerspormaalMapperTest {
     }
     @Test
     fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json"))
         val v = mapper.getOppholdstilatelse_brukerspørsmål()
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
@@ -49,9 +43,7 @@ class BrukerspormaalMapperTest {
     }
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json"))
         val v = mapper.getOppholdstilatelse_brukerspørsmål()
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
@@ -63,9 +55,7 @@ class BrukerspormaalMapperTest {
     }
     @Test
     fun `test mapping av flex_arbeidIUtenforNorge bruker sporsmaal arbeidUlandTrue`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
 
         val brukerspørsmaal = mapper.arbeidUtlandBrukerSporsmaal
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
@@ -76,9 +66,7 @@ class BrukerspormaalMapperTest {
     }
     @Test
     fun `test mapping av flex_OppholdUtenforNorge bruker sporsmaal True`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
         val brukerspørsmaal = mapper.oppholdUtenforNorge
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
@@ -88,9 +76,7 @@ class BrukerspormaalMapperTest {
     }
     @Test
     fun `test mapping av flex_OppholdUtenforEOS_bruker sporsmaal True`(){
-        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageFlereBrukerSporsmaal_EOS.json").readText(Charsets.UTF_8)
-        val jsonNode = JacksonParser().ToJson(fileContent)
-        val mapper = BrukersporsmaalMapper(jsonNode)
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_EOS.json"))
         val brukerspørsmaal = mapper.oppholdUtenforEOS
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
@@ -98,4 +84,9 @@ class BrukerspormaalMapperTest {
         brukerspørsmaal?.let { Assertions.assertNotNull(it.sporsmalstekst,"spørsmålstekst skal være satt") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.oppholdUtenforEOS.size==1,"det skal finnes et opphold utenfor norge") }
     }
+
+    private fun sporsmalFra(resourceName: String) =
+        JacksonParser()
+            .ToJson(this::class.java.classLoader.getResource(resourceName).readText(Charsets.UTF_8))
+            .get("sporsmal")
 }

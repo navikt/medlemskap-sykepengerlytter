@@ -17,11 +17,11 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
-class BrukersporsmaalMapper(rootNode: JsonNode) {
+class BrukersporsmaalMapper(sporsmal: JsonNode) {
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     private val log  = KotlinLogging.logger { }
 
-    val sporsmålArray = rootNode.get("sporsmal")
+    val sporsmålArray = sporsmal
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
     val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
     val arbeidutland_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }

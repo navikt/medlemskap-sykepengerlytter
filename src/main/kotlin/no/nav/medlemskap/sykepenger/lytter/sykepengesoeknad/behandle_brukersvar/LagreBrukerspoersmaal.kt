@@ -4,12 +4,10 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.slf4j.MarkerFactory
 
-class BehandleBrukersvar(
+class LagreBrukerspoersmaal(
     private val persistenceService: PersistenceService,
-    private val brukersvarMapper: BrukersvarMapper = BrukersvarMapper(),
     private val brukersvarDuplikatsjekk: BrukersvarDuplikatsjekk = BrukersvarDuplikatsjekk(persistenceService)
 ) {
     companion object {
@@ -17,18 +15,19 @@ class BehandleBrukersvar(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    /*
-     * SP1220
-     * */
-    fun behandle(sykepengesøknadMelding: SykepengesoeknadMelding) {
-        val brukerspørsmål: Brukersporsmaal = brukersvarMapper.mapMessage(sykepengesøknadMelding)
-
-        if (brukersvarDuplikatsjekk.erLagretFraFør(brukerspørsmål)) {
-            loggFiltrertDuplikat(sykepengesøknadMelding, brukerspørsmål)
-            return
+    fun lagre(brukerspørsmål: Brukersporsmaal) {
+        when (val resultat = brukerspørsmål.vurderLagring()) {
+            is LagringResultat.Duplikat -> loggFiltrertDuplikat(resultat.brukerspørsmål)
+            is LagringResultat.SkalLagres -> lagreBrukerspørsmål(resultat.brukerspørsmål)
         }
+    }
 
-        lagreBrukerspørsmål(brukerspørsmål)
+    private fun Brukersporsmaal.vurderLagring(): LagringResultat {
+        return if (brukersvarDuplikatsjekk.erLagretFraFør(this)) {
+            LagringResultat.Duplikat(this)
+        } else {
+            LagringResultat.SkalLagres(this)
+        }
     }
 
     private fun lagreBrukerspørsmål(brukerspørsmål: Brukersporsmaal) {
@@ -41,16 +40,15 @@ class BehandleBrukersvar(
         )
     }
 
-    private fun loggFiltrertDuplikat(
-        sykepengesøknadMelding: SykepengesoeknadMelding,
-        brukerspørsmål: Brukersporsmaal
-    ) {
+    private fun loggFiltrertDuplikat(brukerspørsmål: Brukersporsmaal) {
         log.info(
             teamLogs,
-            "Flex melding for søknad ${sykepengesøknadMelding.key}, " +
-                    "offset : ${sykepengesøknadMelding.offset}, " +
-                    "partition : ${sykepengesøknadMelding.partition}," +
-                    "filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
+            "Brukerspørsmål for søknad ${brukerspørsmål.soknadid} for person ${brukerspørsmål.fnr} er duplikat og vil ikke bli lagret"
         )
+    }
+
+    private sealed interface LagringResultat {
+        data class Duplikat(val brukerspørsmål: Brukersporsmaal) : LagringResultat
+        data class SkalLagres(val brukerspørsmål: Brukersporsmaal) : LagringResultat
     }
 }

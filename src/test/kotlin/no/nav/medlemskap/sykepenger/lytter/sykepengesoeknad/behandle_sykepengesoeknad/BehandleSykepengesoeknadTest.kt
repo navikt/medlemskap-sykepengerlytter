@@ -1,10 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
@@ -38,7 +41,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2019, 4, 8)
         )
 
-        behandleSykepengesoeknad.behandle(søknad)
+        behandleSykepengesoeknad.behandle(sykepengesoeknad(søknad))
 
         assertEquals(1, lovmeApi.antallVurderMedlemskapKall)
         assertEquals("12345678901", lovmeApi.sisteRequest?.fnr)
@@ -54,7 +57,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 1, 31)
         )
 
-        behandleSykepengesoeknad.behandle(søknad)
+        behandleSykepengesoeknad.behandle(sykepengesoeknad(søknad))
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -68,7 +71,7 @@ class BehandleSykepengesoeknadTest {
             tom = LocalDate.of(2024, 2, 28)
         )
 
-        behandleSykepengesoeknad.behandle(søknad)
+        behandleSykepengesoeknad.behandle(sykepengesoeknad(søknad))
 
         assertEquals(0, lovmeApi.antallVurderMedlemskapKall)
     }
@@ -104,7 +107,21 @@ class BehandleSykepengesoeknadTest {
             startSyketilfelle = fom,
             sendtNav = LocalDateTime.now(),
             fom = fom,
-            tom = tom
+            tom = tom,
+            sporsmal = JsonNodeFactory.instance.arrayNode()
+        )
+
+    private fun sykepengesoeknad(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Sykepengesoeknad =
+        Sykepengesoeknad(
+            sykepengesoeknadGrunnlag = sykepengesøknadGrunnlag,
+            brukersporsmaal = Brukersporsmaal(
+                fnr = sykepengesøknadGrunnlag.fnr,
+                soknadid = sykepengesøknadGrunnlag.id,
+                eventDate = sykepengesøknadGrunnlag.sendtNav!!.toLocalDate(),
+                ytelse = "SYKEPENGER",
+                status = sykepengesøknadGrunnlag.status,
+                sporsmaal = null
+            )
         )
 
     private class LovMeApiTestMock : LovmeAPI {

@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
@@ -104,6 +105,7 @@ class InngangskriterierTest {
         sendtNav = LocalDateTime.of(2024, 1, 2, 12, 0),
         fom = LocalDate.of(2024, 1, 1),
         tom = LocalDate.of(2024, 1, 31),
-        ettersending = ettersending
+        ettersending = ettersending,
+        sporsmal = JsonNodeFactory.instance.arrayNode()
     )
 }
