@@ -43,7 +43,7 @@ class LagreBrukerspoersmaal(
     private fun loggFiltrertDuplikat(brukerspørsmål: Brukersporsmaal) {
         log.info(
             teamLogs,
-            "Flex melding for søknad ${brukerspørsmål.soknadid}, filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
+            "Brukerspørsmål for søknad ${brukerspørsmål.soknadid} for person ${brukerspørsmål.fnr} er duplikat og vil ikke bli lagret"
         )
     }
 
