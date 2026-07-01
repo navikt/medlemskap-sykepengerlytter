@@ -16,12 +16,18 @@ class LagreBrukerspoersmaal(
     }
 
     fun lagre(brukerspørsmål: Brukersporsmaal) {
-        if (brukersvarDuplikatsjekk.erLagretFraFør(brukerspørsmål)) {
-            loggFiltrertDuplikat(brukerspørsmål)
-            return
+        when (val resultat = brukerspørsmål.vurderLagring()) {
+            is LagringResultat.Duplikat -> loggFiltrertDuplikat(resultat.brukerspørsmål)
+            is LagringResultat.SkalLagres -> lagreBrukerspørsmål(resultat.brukerspørsmål)
         }
+    }
 
-        lagreBrukerspørsmål(brukerspørsmål)
+    private fun Brukersporsmaal.vurderLagring(): LagringResultat {
+        return if (brukersvarDuplikatsjekk.erLagretFraFør(this)) {
+            LagringResultat.Duplikat(this)
+        } else {
+            LagringResultat.SkalLagres(this)
+        }
     }
 
     private fun lagreBrukerspørsmål(brukerspørsmål: Brukersporsmaal) {
@@ -39,5 +45,10 @@ class LagreBrukerspoersmaal(
             teamLogs,
             "Flex melding for søknad ${brukerspørsmål.soknadid}, filtrert ut. duplikat melding: ${brukerspørsmål.soknadid}"
         )
+    }
+
+    private sealed interface LagringResultat {
+        data class Duplikat(val brukerspørsmål: Brukersporsmaal) : LagringResultat
+        data class SkalLagres(val brukerspørsmål: Brukersporsmaal) : LagringResultat
     }
 }

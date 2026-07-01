@@ -21,29 +21,69 @@ class SykepengesoeknadMottak(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun behandle(sykepengesøknadRecord: SykepengesoeknadMelding) {
-        val sykepengesøknadGrunnlag = JacksonParser().lesSykepengesøknadGrunnlag(sykepengesøknadRecord.value)
+    suspend fun behandle(melding: SykepengesoeknadMelding) {
+        when (val resultat = melding.tilMottakResultat()) {
+            is MottakResultat.ManglerPåkrevdeFelter ->
+                logManglerPåkrevdeFelter(resultat.melding)
 
-        if (!harPåkrevdeFelter(sykepengesøknadGrunnlag)) {
-            logManglerPåkrevdeFelter(sykepengesøknadRecord)
-            return
+            is MottakResultat.OppfyllerIkkeInngangskriterier ->
+                logOppfyllerIkkeInngangskriterier(
+                    resultat.melding,
+                    resultat.grunnlag,
+                    resultat.inngangskriterierResultat
+                )
+
+            is MottakResultat.SkalBehandles ->
+                behandle(resultat.sykepengesøknad)
+        }
+    }
+
+    private suspend fun behandle(sykepengesøknad: Sykepengesoeknad) {
+        logOppfyllerInngangskriterier(sykepengesøknad.sykepengesoeknadGrunnlag)
+        lagreBrukerspoersmaal.lagre(sykepengesøknad.brukersporsmaal)
+        behandleSykepengesøknad.behandle(sykepengesøknad)
+    }
+
+    private fun SykepengesoeknadMelding.tilMottakResultat(): MottakResultat {
+        val grunnlag = tilSykepengesøknadGrunnlag()
+
+        if (!harPåkrevdeFelter(grunnlag)) {
+            return MottakResultat.ManglerPåkrevdeFelter(this)
         }
 
-        logMottattFraFlex(sykepengesøknadRecord, sykepengesøknadGrunnlag)
+        logMottattFraFlex(this, grunnlag)
 
-        val inngangskriterierResultat = Inngangskriterier.vurder(sykepengesøknadGrunnlag)
+        val inngangskriterierResultat = Inngangskriterier.vurder(grunnlag)
         if (!inngangskriterierResultat.erOppfylt) {
-            logOppfyllerIkkeInngangskriterier(sykepengesøknadRecord, sykepengesøknadGrunnlag, inngangskriterierResultat)
-            return
+            return MottakResultat.OppfyllerIkkeInngangskriterier(this, grunnlag, inngangskriterierResultat)
         }
 
-        logOppfyllerInngangskriterier(sykepengesøknadGrunnlag)
-        val sykepengesoeknad = Sykepengesoeknad(
-            sykepengesoeknadGrunnlag = sykepengesøknadGrunnlag,
-            brukersporsmaal = BrukersvarMapper.mapMessage(sykepengesøknadGrunnlag)
+        return MottakResultat.SkalBehandles(grunnlag.tilSykepengesøknad())
+    }
+
+    private fun SykepengesoeknadMelding.tilSykepengesøknadGrunnlag(): SykepengesoeknadGrunnlag =
+        JacksonParser().lesSykepengesøknadGrunnlag(value)
+
+    private fun SykepengesoeknadGrunnlag.tilSykepengesøknad(): Sykepengesoeknad =
+        Sykepengesoeknad(
+            sykepengesoeknadGrunnlag = this,
+            brukersporsmaal = BrukersvarMapper.mapBrukerspørsmål(this)
         )
-        lagreBrukerspoersmaal.lagre(sykepengesoeknad.brukersporsmaal)
-        behandleSykepengesøknad.behandle(sykepengesoeknad)
+
+    private sealed interface MottakResultat {
+        data class ManglerPåkrevdeFelter(
+            val melding: SykepengesoeknadMelding
+        ) : MottakResultat
+
+        data class OppfyllerIkkeInngangskriterier(
+            val melding: SykepengesoeknadMelding,
+            val grunnlag: SykepengesoeknadGrunnlag,
+            val inngangskriterierResultat: InngangskriterierResultat
+        ) : MottakResultat
+
+        data class SkalBehandles(
+            val sykepengesøknad: Sykepengesoeknad
+        ) : MottakResultat
     }
 
     private fun logManglerPåkrevdeFelter(

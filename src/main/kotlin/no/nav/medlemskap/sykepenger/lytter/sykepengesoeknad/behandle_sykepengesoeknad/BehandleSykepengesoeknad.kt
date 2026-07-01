@@ -20,40 +20,56 @@ class BehandleSykepengesoeknad(
     }
 
     suspend fun behandle(sykepengesoeknad: Sykepengesoeknad) {
-        val sykepengesøknadGrunnlag = sykepengesoeknad.sykepengesoeknadGrunnlag
+        when (val resultat = sykepengesoeknad.tilBehandlingsresultat()) {
+            is Behandlingsresultat.Duplikat ->
+                resultat.grunnlag.logDuplikat()
 
-        when {
-            filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag) ->
-                sykepengesøknadGrunnlag.logDuplikat()
+            is Behandlingsresultat.Påfølgende ->
+                resultat.grunnlag.logPåfølgende()
 
-            filtrering.lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag) ->
-                sykepengesøknadGrunnlag.logPåfølgende()
-
-            else -> when (val resultat = sendTilRegelmotorForVurdering(sykepengesøknadGrunnlag)) {
-                is VurderingResultat.Ok -> lagreVurderingsstatus.lagreVurderingsstaus(sykepengesøknadGrunnlag.id, resultat.vurdering)
-                VurderingResultat.SkalIkkeLagres -> {
-                    // Gradert adresse eller teknisk feil – allerede logget i getVurdering
-                }
-            }
+            is Behandlingsresultat.SkalVurderes ->
+                vurderOgLagre(resultat.grunnlag)
         }
     }
 
-    private suspend fun sendTilRegelmotorForVurdering(
-        sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag
-    ): VurderingResultat {
+    private fun Sykepengesoeknad.tilBehandlingsresultat(): Behandlingsresultat {
+        val grunnlag = sykepengesoeknadGrunnlag
+
+        return when {
+            filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(grunnlag) ->
+                Behandlingsresultat.Duplikat(grunnlag)
+
+            filtrering.lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(grunnlag) ->
+                Behandlingsresultat.Påfølgende(grunnlag)
+
+            else ->
+                Behandlingsresultat.SkalVurderes(grunnlag)
+        }
+    }
+
+    private suspend fun vurderOgLagre(grunnlag: SykepengesoeknadGrunnlag) {
+        when (val resultat = grunnlag.vurderMedlemskap()) {
+            is VurderingResultat.VurderingSkalLagres ->
+                lagreVurderingsstatus.lagreVurderingsstaus(grunnlag.id, resultat.vurdering)
+
+            VurderingResultat.VurderingSkalIkkeLagres -> Unit
+        }
+    }
+
+    private suspend fun SykepengesoeknadGrunnlag.vurderMedlemskap(): VurderingResultat {
         return try {
-            sykepengesøknadGrunnlag.logPassertAlleKriterier()
-            val request = utledBrukerinput(sykepengesøknadGrunnlag)
-            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, sykepengesøknadGrunnlag.id)
-            sykepengesøknadGrunnlag.logSendt()
-            VurderingResultat.Ok(vurdering)
+            logPassertAlleKriterier()
+            val request = utledBrukerinput(this)
+            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, id)
+            logSendt()
+            VurderingResultat.VurderingSkalLagres(vurdering)
         } catch (t: Throwable) {
             if (t.message.toString().contains("GradertAdresseException")) {
-                log.info("Gradert adresse : key:  ${sykepengesøknadGrunnlag.id}")
+                log.info("Gradert adresse : key:  $id")
             } else {
-                sykepengesøknadGrunnlag.logTekniskFeil(t)
+                logTekniskFeil(t)
             }
-            VurderingResultat.SkalIkkeLagres
+            VurderingResultat.VurderingSkalIkkeLagres
         }
     }
 
@@ -98,7 +114,13 @@ class BehandleSykepengesoeknad(
 
 }
 
+private sealed interface Behandlingsresultat {
+    data class Duplikat(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
+    data class Påfølgende(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
+    data class SkalVurderes(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
+}
+
 private sealed interface VurderingResultat {
-    data class Ok(val vurdering: String) : VurderingResultat
-    data object SkalIkkeLagres : VurderingResultat
+    data class VurderingSkalLagres(val vurdering: String) : VurderingResultat
+    data object VurderingSkalIkkeLagres : VurderingResultat
 }
