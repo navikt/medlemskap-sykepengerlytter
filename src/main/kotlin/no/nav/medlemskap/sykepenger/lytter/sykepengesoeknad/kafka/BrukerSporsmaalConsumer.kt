@@ -17,7 +17,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengeso
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BehandleBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
@@ -39,7 +39,7 @@ class BrukerSporsmaalConsumer(
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = MedlemskapOppslagService(Configuration())
         ),
-        behandleBrukersvar = BehandleBrukersvar(persistenceService)
+        lagreBrukerspoersmaal = LagreBrukerspoersmaal(persistenceService)
     ),
     private val consumer: KafkaConsumer<String, String> = config.createFlexConsumer(),
 

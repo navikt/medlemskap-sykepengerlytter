@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
@@ -190,6 +191,7 @@ class SykepengesoeknadFiltreringTest {
             fom = fom,
             tom = tom,
             arbeidUtenforNorge = arbeidUtenforNorge,
-            forstegangssoknad = førstegangssøknad
+            forstegangssoknad = førstegangssøknad,
+            sporsmal = JsonNodeFactory.instance.arrayNode()
         )
 }

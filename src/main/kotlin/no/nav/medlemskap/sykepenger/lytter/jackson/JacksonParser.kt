@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.treeToValue
@@ -44,7 +45,8 @@ class JacksonParser {
                 LocalDate.now(),
                 LocalDateTime.now(),
                 LocalDate.now(),
-                LocalDate.now(), false
+                LocalDate.now(), false,
+                sporsmal = JsonNodeFactory.instance.arrayNode()
             )
         }
     }
