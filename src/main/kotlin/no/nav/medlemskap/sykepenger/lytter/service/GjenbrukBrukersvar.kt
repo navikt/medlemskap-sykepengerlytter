@@ -5,14 +5,14 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import org.slf4j.MarkerFactory
 
-class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
+class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
 
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
     private val mapBrukersvar: MapBrukersvar = MapBrukersvar
 
-    fun vurderGjenbrukAvBrukersvar(
+    fun vurderBrukersvar(
         søknadsParametere: SoeknadsParametere,
         brukersvarPåInnkommendeSøknad: Brukersporsmaal? = null,
         kilde: Kilde
@@ -42,7 +42,7 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
     private fun GjenbrukKontekst.finnTidligereBrukersvar(): GjenbrukResultat {
         loggVurdererGjenbrukAvTidligereSvar()
 
-        val forrigeBrukersvar = finnForrigeBrukersvar.finnForrigeBrukersvar(
+        val forrigeBrukersvar = tidligereBrukersvar.finnNyesteGjenbrukbareSvar(
             søknadsParametere.fnr,
             søknadsParametere.førsteDagForYtelse
         )
@@ -119,10 +119,8 @@ class BrukersvarGjenbruk(val finnForrigeBrukersvar: FinnForrigeBrukersvar) {
     private fun søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad: Brukersporsmaal?): Boolean =
         brukersvarPåInnkommendeSøknad?.sporsmaal?.arbeidUtland == true
 
-
     private fun mapTilBrukerinput(arbeidUtenforNorge: Boolean): Brukerinput =
         Brukerinput(arbeidUtenforNorge = arbeidUtenforNorge)
-
 
     private fun mapTilBrukerinput(brukersvar: Brukersporsmaal?): Brukerinput {
         val utførtArbeidUtenforNorge =

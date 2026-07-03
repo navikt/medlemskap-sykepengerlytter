@@ -20,7 +20,6 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMott
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
@@ -564,7 +563,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         SykepengesoeknadMottak(
             behandleSykepengesøknad = BehandleSykepengesoeknad(
                 filtrering = SykepengesoeknadFiltrering(persistenceService),
-                utledBrukerinput = UtledBrukerinput(BrukersvarGjenbruk(FinnForrigeBrukersvar(persistenceService))),
+                utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))),
                 lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
                 medlemskapOppslagService = medlemskapOppslagService
             ),

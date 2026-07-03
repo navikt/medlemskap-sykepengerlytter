@@ -4,6 +4,7 @@ import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
@@ -70,7 +71,7 @@ class BehandleSykepengesoeknad(
     }
 
     private fun lagMedlemskapOppslagRequest(sykepengesøknad: Sykepengesoeknad): MedlOppslagRequest {
-        val brukerinput = utledBrukerinput.utledBrukerinput(sykepengesøknad)
+        val brukerinput = utledBrukerinput.fraSykepengesøknad(sykepengesøknad)
         return MedlemskapOppslagRequestMapper.tilMedlemskapOppslagRequest(sykepengesøknad.sykepengesøknadGrunnlag, brukerinput)
     }
 

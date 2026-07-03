@@ -40,8 +40,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         var sagaClient: SagaAPI
         var lovmeClient: LovmeAPI
 
-        private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
-        private val brukersvarGjenbruk = BrukersvarGjenbruk(finnForrigeBrukersvar)
+        private val utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService)))
 
         init {
             sagaClient = restClients.saga(configuration.register.medlemskapSagaBaseUrl)
@@ -75,15 +74,11 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
     //Brukt av speilvurdering-endepunktet (når det ikke finnes en eksisterende vurdering i databasen)
     private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
-        val søknadsParametere = request.tilSøknadsParametere(callId)
-
-        val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
-            søknadsParametere = søknadsParametere,
-            kilde = Kilde.SPEIL)
+        val brukerinput = utledBrukerinput.fraSpeilRequest(request, callId)
 
         val medlemskapOppslagRequest = MedlOppslagRequest(
-            fnr = søknadsParametere.fnr,
-            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
+            fnr = request.fnr,
+            førsteDagForYtelse = request.førsteDagForYtelse.toString(),
             periode = Periode(request.periode.fom.toString(), request.periode.tom.toString()),
             brukerinput = brukerinput
         )
@@ -178,12 +173,6 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         }
     }
 
-    private fun BomloRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =
-        SoeknadsParametere(
-            callId = callId,
-            fnr = fnr,
-            førsteDagForYtelse = førsteDagForYtelse.toString()
-        )
 }
 
 
