@@ -11,15 +11,14 @@ class UtledBrukerinput(
     fun fraSykepengesøknad(sykepengesøknad: Sykepengesoeknad): Brukerinput {
         val søknadsParametere = sykepengesøknad.sykepengesøknadGrunnlag.tilSøknadsParametere()
 
-        return gjenbrukBrukersvar.vurderBrukersvar(
-            søknadsParametere,
-            sykepengesøknad.brukerspørsmål,
-            Kilde.SYKEPENGEBACKEND
+        return gjenbrukBrukersvar.fraInnkommendeSøknad(
+            søknadsParametere = søknadsParametere,
+            brukersvarPåInnkommendeSøknad = sykepengesøknad.brukerspørsmål
         )
     }
 
     fun fraSpeilRequest(request: BomloRequest, callId: String): Brukerinput =
-        gjenbrukBrukersvar.vurderBrukersvar(
+        gjenbrukBrukersvar.fraTidligereSvar(
             søknadsParametere = request.tilSøknadsParametere(callId),
             kilde = Kilde.SPEIL
         )

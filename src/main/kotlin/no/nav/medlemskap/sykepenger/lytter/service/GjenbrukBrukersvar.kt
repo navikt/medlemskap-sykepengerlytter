@@ -12,15 +12,21 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
 
     private val mapBrukersvar: MapBrukersvar = MapBrukersvar
 
-    fun vurderBrukersvar(
+    fun fraInnkommendeSøknad(
         søknadsParametere: SoeknadsParametere,
-        brukersvarPåInnkommendeSøknad: Brukersporsmaal? = null,
+        brukersvarPåInnkommendeSøknad: Brukersporsmaal?
+    ): Brukerinput =
+        GjenbrukKontekst(søknadsParametere, brukersvarPåInnkommendeSøknad, Kilde.SYKEPENGEBACKEND)
+            .vurderBrukersvar()
+            .tilLoggetBrukerinput()
+
+    fun fraTidligereSvar(
+        søknadsParametere: SoeknadsParametere,
         kilde: Kilde
     ): Brukerinput =
-        GjenbrukKontekst(søknadsParametere, brukersvarPåInnkommendeSøknad, kilde)
-            .vurderBrukersvar()
-            .loggResultat()
-            .tilBrukerinput()
+        GjenbrukKontekst(søknadsParametere, brukersvarPåInnkommendeSøknad = null, kilde)
+            .finnTidligereBrukersvar()
+            .tilLoggetBrukerinput()
 
     private fun GjenbrukKontekst.vurderBrukersvar(): GjenbrukResultat =
         vurderInnkommendeBrukersvar() ?: finnTidligereBrukersvar()
@@ -101,6 +107,9 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
                     )
             }
         }
+
+    private fun GjenbrukResultat.tilLoggetBrukerinput(): Brukerinput =
+        loggResultat().tilBrukerinput()
 
     private fun GjenbrukResultat.tilBrukerinput(): Brukerinput =
         when (this) {
