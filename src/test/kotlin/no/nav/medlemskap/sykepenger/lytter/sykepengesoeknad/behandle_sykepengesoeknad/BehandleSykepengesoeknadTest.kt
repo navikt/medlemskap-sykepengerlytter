@@ -10,6 +10,8 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoek
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.service.BrukersvarGjenbruk
+import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
@@ -25,10 +27,11 @@ import java.util.UUID
 class BehandleSykepengesoeknadTest {
     private val medlemskapRepository = MedlemskapVurdertInMemmoryRepository()
     private val persistenceService = PersistenceService(medlemskapRepository, BrukersporsmaalInMemmoryRepository())
+    private val brukersvarGjenbruk = BrukersvarGjenbruk(FinnForrigeBrukersvar(persistenceService))
     private val lovmeApi = LovMeApiTestMock()
     private val behandleSykepengesoeknad = BehandleSykepengesoeknad(
         filtrering = SykepengesoeknadFiltrering(persistenceService),
-        utledBrukerinput = UtledBrukerinput(persistenceService),
+        utledBrukerinput = UtledBrukerinput(brukersvarGjenbruk),
         lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
         medlemskapOppslagService = MedlemskapOppslagService(lovmeApi)
     )
@@ -113,8 +116,8 @@ class BehandleSykepengesoeknadTest {
 
     private fun sykepengesoeknad(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Sykepengesoeknad =
         Sykepengesoeknad(
-            sykepengesoeknadGrunnlag = sykepengesøknadGrunnlag,
-            brukersporsmaal = Brukersporsmaal(
+            sykepengesøknadGrunnlag = sykepengesøknadGrunnlag,
+            brukerspørsmål = Brukersporsmaal(
                 fnr = sykepengesøknadGrunnlag.fnr,
                 soknadid = sykepengesøknadGrunnlag.id,
                 eventDate = sykepengesøknadGrunnlag.sendtNav!!.toLocalDate(),

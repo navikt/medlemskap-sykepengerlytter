@@ -14,7 +14,7 @@ class BrukersvarMapperTest {
 
     @Test
     fun `mapper bruker- og medlemskapssporsmal fra flexmelding`() {
-        val brukerspørsmål = BrukersvarMapper.mapBrukerspørsmål(
+        val brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal.json")
         )
 
@@ -32,7 +32,7 @@ class BrukersvarMapperTest {
 
     @Test
     fun `mapper arbeid utenfor norge fra medlemskapssporsmal`() {
-        val brukerspørsmål = BrukersvarMapper.mapBrukerspørsmål(
+        val brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal.json")
         )
 
@@ -59,7 +59,7 @@ class BrukersvarMapperTest {
 
     @Test
     fun `mapper opphold utenfor norge fra medlemskapssporsmal`() {
-        val brukerspørsmål = BrukersvarMapper.mapBrukerspørsmål(
+        val brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal.json")
         )
 
@@ -80,7 +80,7 @@ class BrukersvarMapperTest {
 
     @Test
     fun `mapper opphold utenfor eos fra medlemskapssporsmal`() {
-        val brukerspørsmål = BrukersvarMapper.mapBrukerspørsmål(
+        val brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal_EOS.json")
         )
 

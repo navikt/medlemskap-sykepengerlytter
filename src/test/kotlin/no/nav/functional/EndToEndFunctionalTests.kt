@@ -564,7 +564,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         SykepengesoeknadMottak(
             behandleSykepengesøknad = BehandleSykepengesoeknad(
                 filtrering = SykepengesoeknadFiltrering(persistenceService),
-                utledBrukerinput = UtledBrukerinput(persistenceService),
+                utledBrukerinput = UtledBrukerinput(BrukersvarGjenbruk(FinnForrigeBrukersvar(persistenceService))),
                 lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
                 medlemskapOppslagService = medlemskapOppslagService
             ),

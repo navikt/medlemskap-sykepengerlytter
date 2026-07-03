@@ -5,16 +5,16 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 
 object MedlemskapOppslagRequestMapper {
-    fun map(
-        sykepengeSoknad: SykepengesoeknadGrunnlag,
+
+    fun tilMedlemskapOppslagRequest(
+        sykepengeSøknad: SykepengesoeknadGrunnlag,
         utledetBrukerinput: UtledetBrukerinput
-    ): MedlOppslagRequest {
-        val søknadsParametere = utledetBrukerinput.søknadsParametere
-        return MedlOppslagRequest(
-            fnr = søknadsParametere.fnr,
-            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
-            periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
+    ): MedlOppslagRequest =
+        MedlOppslagRequest(
+            fnr = sykepengeSøknad.fnr,
+            førsteDagForYtelse = sykepengeSøknad.fom.toString(),
+            periode = Periode(sykepengeSøknad.fom.toString(), sykepengeSøknad.tom.toString()),
             brukerinput = utledetBrukerinput.brukerinput
         )
-    }
+
 }

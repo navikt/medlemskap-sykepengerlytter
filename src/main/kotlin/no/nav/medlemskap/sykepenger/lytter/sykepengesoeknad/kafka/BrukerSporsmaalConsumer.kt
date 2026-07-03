@@ -9,6 +9,8 @@ import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.service.BrukersvarGjenbruk
+import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
@@ -35,7 +37,7 @@ class BrukerSporsmaalConsumer(
     private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
             filtrering = SykepengesoeknadFiltrering(persistenceService),
-            utledBrukerinput = UtledBrukerinput(persistenceService),
+            utledBrukerinput = UtledBrukerinput(BrukersvarGjenbruk(FinnForrigeBrukersvar(persistenceService))),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = MedlemskapOppslagService(Configuration())
         ),

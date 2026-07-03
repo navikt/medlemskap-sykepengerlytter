@@ -39,8 +39,8 @@ class SykepengesoeknadMottak(
     }
 
     private suspend fun behandle(sykepengesøknad: Sykepengesoeknad) {
-        logOppfyllerInngangskriterier(sykepengesøknad.sykepengesoeknadGrunnlag)
-        lagreBrukerspoersmaal.lagre(sykepengesøknad.brukersporsmaal)
+        logOppfyllerInngangskriterier(sykepengesøknad.sykepengesøknadGrunnlag)
+        lagreBrukerspoersmaal.lagre(sykepengesøknad.brukerspørsmål)
         behandleSykepengesøknad.behandle(sykepengesøknad)
     }
 
@@ -66,8 +66,8 @@ class SykepengesoeknadMottak(
 
     private fun SykepengesoeknadGrunnlag.tilSykepengesøknad(): Sykepengesoeknad =
         Sykepengesoeknad(
-            sykepengesoeknadGrunnlag = this,
-            brukersporsmaal = BrukersvarMapper.mapBrukerspørsmål(this)
+            sykepengesøknadGrunnlag = this,
+            brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(this)
         )
 
     private sealed interface MottakResultat {

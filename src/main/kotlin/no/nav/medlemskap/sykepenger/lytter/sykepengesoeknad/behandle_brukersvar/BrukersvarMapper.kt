@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 object BrukersvarMapper {
 
-    fun mapBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
+    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
         if (sykepengesoeknadGrunnlag.dodsdato != null) {
             return sykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar()
         }

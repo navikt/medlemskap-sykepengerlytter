@@ -33,6 +33,8 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.service.BrukersvarGjenbruk
+import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
@@ -54,12 +56,13 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     )
     val brukersporsmaalService = BrukersporsmaalService(persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
+    val brukersvarGjenbruk = BrukersvarGjenbruk(FinnForrigeBrukersvar(persistenceService))
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
             filtrering = SykepengesoeknadFiltrering(persistenceService),
-            utledBrukerinput = UtledBrukerinput(persistenceService),
+            utledBrukerinput = UtledBrukerinput(brukersvarGjenbruk),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = medlemskapOppslagService
         ),

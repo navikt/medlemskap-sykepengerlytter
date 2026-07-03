@@ -79,7 +79,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
 
         val brukerinput = brukersvarGjenbruk.vurderGjenbrukAvBrukersvar(
             søknadsParametere = søknadsParametere,
-            kilde = "speil")
+            kilde = Kilde.SPEIL)
 
         val medlemskapOppslagRequest = MedlOppslagRequest(
             fnr = søknadsParametere.fnr,
