@@ -300,7 +300,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
-        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
         val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
         Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")

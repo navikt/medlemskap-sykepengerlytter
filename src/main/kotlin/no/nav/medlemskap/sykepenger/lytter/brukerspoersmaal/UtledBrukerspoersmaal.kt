@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 
-class UtledBrukerspørsmål(
+class UtledBrukerspoersmaal(
     private val tidligereBrukersvar: TidligereBrukersvar
 ) {
     private val log = KotlinLogging.logger { }
@@ -15,16 +15,16 @@ class UtledBrukerspørsmål(
 
     fun finnTidligereStilteSpørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> =
         tidligereBrukersvar
-            .finnNyesteMedSvarInnenforLevetid(
+            .finnNyesteGjenbrukbareSvar(
                 medlemskapOppslagRequest.fnr,
                 medlemskapOppslagRequest.førsteDagForYtelse
             )
-            ?.tilTidligereStilteSpørsmål()
+            ?.tilGjenbrukbareSpørsmål()
             .also { spørsmål ->
                 if (spørsmål != null) {
                     log.info(
                         teamLogs,
-                        "Fant følgende tidligere brukersvar innenfor levetiden med gyldig svartype for ${medlemskapOppslagRequest.fnr}: ${
+                        "Fant følgende tidligere gjenbrukbare brukersvar innenfor levetiden med gyldig svartype for ${medlemskapOppslagRequest.fnr}: ${
                             spørsmål.joinToString(", ")
                         }"
                     )
@@ -32,17 +32,10 @@ class UtledBrukerspørsmål(
             }
             ?: emptyList()
 
-    private fun Brukersporsmaal.tilTidligereStilteSpørsmål() = listOfNotNull(
-        utfort_arbeid_utenfor_norge.taHvis { svar.erNei() }?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
-        oppholdUtenforNorge.taHvis { svar.erNei() }?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
-        oppholdUtenforEOS.taHvis { svar.erNei() }?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
-        oppholdstilatelse.taHvis { svar.erJa() }?.let { Spørsmål.OPPHOLDSTILATELSE }
+    private fun Brukersporsmaal.tilGjenbrukbareSpørsmål() = listOfNotNull(
+        utfort_arbeid_utenfor_norge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
+        oppholdUtenforNorge?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
+        oppholdUtenforEOS?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
+        oppholdstilatelse?.let { Spørsmål.OPPHOLDSTILATELSE }
     )
-
-    private inline fun <T> T?.taHvis(predicate: T.() -> Boolean): T? =
-        this?.takeIf(predicate)
-
-    private fun Boolean.erJa() = this
-
-    private fun Boolean.erNei() = !this
 }

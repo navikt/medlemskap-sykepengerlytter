@@ -18,7 +18,7 @@ class BrukersporsmaalService(
         )
     )
 ) {
-    private val utledBrukerspørsmål = UtledBrukerspørsmål(TidligereBrukersvar(persistenceService))
+    private val utledBrukerspørsmål = UtledBrukerspoersmaal(TidligereBrukersvar(persistenceService))
 
     fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
         return utledBrukerspørsmål.finnTidligereStilteSpørsmål(medlemskapOppslagRequest)

@@ -20,13 +20,13 @@ fun Brukersporsmaal.normaliser(): NormalisertBrukersvar =
 
 fun NormalisertBrukersvar.erGjenbrukbart(): Boolean {
     return when {
-        arbeidUtenforNorge == false && oppholdUtenforNorge == false -> true
+        arbeidUtenforNorge == false && oppholdUtenforNorge == false && oppholdstillatelse == true -> true
 
-        arbeidUtenforNorge == false && oppholdUtenforEos == false && oppholdstillatelse == null -> true
+        arbeidUtenforNorge == false && oppholdUtenforNorge == false && oppholdstillatelse == null -> true
 
         arbeidUtenforNorge == false && oppholdUtenforEos == false && oppholdstillatelse == true -> true
 
-        arbeidUtenforNorge == false && oppholdUtenforNorge == false && oppholdstillatelse == true -> true
+        arbeidUtenforNorge == false && oppholdUtenforEos == false && oppholdstillatelse == null -> true
 
         else -> false
     }
