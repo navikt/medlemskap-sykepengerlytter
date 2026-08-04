@@ -16,11 +16,11 @@ class InngangskriterierTest {
     @Test
     fun `er oppfylt for sendt arbeidstakersoknad som ikke er ettersending`() {
         val søknad = søknad(type = Type.ARBEIDSTAKERE)
+        val resultat = Inngangskriterier.vurder(søknad)
 
-        assertTrue(Inngangskriterier.erOppfylt(søknad))
         assertEquals(
             InngangskriterierResultat(erOppfylt = true, brutteKriterier = emptyList()),
-            Inngangskriterier.vurder(søknad)
+            resultat
         )
     }
 
@@ -28,17 +28,18 @@ class InngangskriterierTest {
     fun `er oppfylt for sendt gradert reisetilskudd som ikke er ettersending`() {
         val søknad = søknad(type = Type.GRADERT_REISETILSKUDD)
 
-        assertTrue(Inngangskriterier.erOppfylt(søknad))
+        assertTrue(Inngangskriterier.vurder(søknad).erOppfylt)
     }
 
     @Test
     fun `er ikke oppfylt nar soknaden ikke er sendt`() {
         val søknad = søknad(status = Status.NY.name)
+        val resultat = Inngangskriterier.vurder(søknad)
 
-        assertFalse(Inngangskriterier.erOppfylt(søknad))
+        assertFalse(resultat.erOppfylt)
         assertEquals(
             listOf(BruttInngangskriterium.FEIL_STATUS),
-            Inngangskriterier.vurder(søknad).brutteKriterier
+            resultat.brutteKriterier
         )
     }
 
@@ -48,13 +49,15 @@ class InngangskriterierTest {
             .filterNot { it in setOf(Type.ARBEIDSTAKERE, Type.GRADERT_REISETILSKUDD) }
 
         søknadstyperSomIkkeSkalBehandles.forEach { søknadstype ->
+            val resultat = Inngangskriterier.vurder(søknad(type = søknadstype))
+
             assertFalse(
-                Inngangskriterier.erOppfylt(søknad(type = søknadstype)),
+                resultat.erOppfylt,
                 "$søknadstype skal ikke behandles"
             )
             assertEquals(
                 listOf(BruttInngangskriterium.IKKE_TILLATT_TYPE),
-                Inngangskriterier.vurder(søknad(type = søknadstype)).brutteKriterier,
+                resultat.brutteKriterier,
                 "$søknadstype skal gi brutt kriterium"
             )
         }
@@ -63,11 +66,12 @@ class InngangskriterierTest {
     @Test
     fun `er ikke oppfylt for ettersending`() {
         val søknad = søknad(ettersending = true)
+        val resultat = Inngangskriterier.vurder(søknad)
 
-        assertFalse(Inngangskriterier.erOppfylt(søknad))
+        assertFalse(resultat.erOppfylt)
         assertEquals(
             listOf(BruttInngangskriterium.ER_ETTERSENDING),
-            Inngangskriterier.vurder(søknad).brutteKriterier
+            resultat.brutteKriterier
         )
     }
 
