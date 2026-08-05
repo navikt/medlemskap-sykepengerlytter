@@ -9,27 +9,40 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.slf4j.MarkerFactory
 
 class Respons(
-    private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService()
+    private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService(),
+    private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper(),
+    private val regelMotorResponsHandler: RegelMotorResponsHandler = RegelMotorResponsHandler()
 ) {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun lagFlexRespons(medlemskapOppslagResponse: String, medlemskapOppslagRequest: MedlOppslagRequest, callId: String): FlexRespons {
-        val foreløpigResponse = RegelMotorResponsHandler().utledResultat(medlemskapOppslagResponse)
-        val forrigeBrukerspørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
-        val flexRespons = opprettResponsTilFlex(foreløpigResponse, forrigeBrukerspørsmål, medlemskapOppslagRequest.fnr)
-        if (flexRespons.sporsmal.contains(Spørsmål.OPPHOLDSTILATELSE)){
-            flexRespons.kjentOppholdstillatelse = RegelMotorResponsHandler().hentOppholdstillatelsePeriode(medlemskapOppslagResponse)
-        }
+    fun lagFlexRespons(
+        medlemskapOppslagResponse: String,
+        medlemskapOppslagRequest: MedlOppslagRequest,
+        callId: String
+    ): FlexRespons {
+        val medlemskapVurdering = medlemskapVurderingMapper.map(medlemskapOppslagResponse)
+        val gjenbrukbareSpørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
+
+        return regelMotorResponsHandler
+            .tilForeslåttFlexRespons(medlemskapVurdering)
+            .medSpørsmålSomSkalStilles(gjenbrukbareSpørsmål)
+            .medKjentOppholdstillatelseFra(medlemskapVurdering)
+            .also { loggRespons(it, gjenbrukbareSpørsmål, callId) }
+    }
+
+    private fun loggRespons(
+        flexRespons: FlexRespons,
+        gjenbrukbareSpørsmål: List<Spørsmål>,
+        callId: String
+    ) {
         logger.info(
             teamLogs,
             "Svarer brukerspørsmål",
             kv("callId", callId),
-            kv("fnr", medlemskapOppslagRequest.fnr),
             kv("brukersporsmal", JacksonParser().ToJson(flexRespons.sporsmal).toPrettyString()),
             kv("endpoint", "brukersporsmal"),
-            kv("eksiterende_sporsmaal",JacksonParser().ToJson(forrigeBrukerspørsmål).toPrettyString())
+            kv("eksisterende_sporsmaal", JacksonParser().ToJson(gjenbrukbareSpørsmål).toPrettyString())
         )
-        return flexRespons
     }
 }

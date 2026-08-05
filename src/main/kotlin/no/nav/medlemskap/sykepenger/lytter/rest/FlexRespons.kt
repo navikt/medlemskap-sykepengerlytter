@@ -6,7 +6,7 @@ import java.time.LocalDate
 data class FlexRespons(
     val svar:Svar,
     val sporsmal:Set<Spørsmål>,
-    var kjentOppholdstillatelse: Periode? = null
+    val kjentOppholdstillatelse: Periode? = null
 )
 
 data class Periode(val fom: LocalDate?,val tom:LocalDate?)
