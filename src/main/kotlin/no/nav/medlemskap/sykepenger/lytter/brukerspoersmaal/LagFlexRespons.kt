@@ -8,7 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.slf4j.MarkerFactory
 
-class Respons(
+class LagFlexRespons(
     private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService(),
     private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper(),
     private val regelMotorResponsHandler: RegelMotorResponsHandler = RegelMotorResponsHandler()

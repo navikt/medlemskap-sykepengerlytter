@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class FlexResponsPipelineTest {
+class TilpassFlexResponsTest {
 
     private val medlemskapVurderingMapper = MedlemskapVurderingMapper()
     private val regelMotorResponsHandler = RegelMotorResponsHandler()

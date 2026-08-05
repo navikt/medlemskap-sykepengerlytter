@@ -1,21 +1,15 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
-import io.ktor.server.response.respond
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Svar
 import org.slf4j.MarkerFactory
 
-class ExceptionHandler {
+class LoggerForFeilhåndtering {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun TimeoutCancellationException(callId: String, start: Long, medlemskapOppslagRequest: MedlOppslagRequest) {
+    fun logCancellationException(callId: String, start: Long, medlemskapOppslagRequest: MedlOppslagRequest) {
         logger.info(
             teamLogs,
             "Forespørsmål mot medlemskap-oppslag timet ut",
@@ -27,7 +21,7 @@ class ExceptionHandler {
 
     }
 
-    fun GradertAdresseException(callId: String, start: Long) {
+    fun logAdresseException(callId: String, start: Long) {
         logger.info(
             teamLogs,
             "Gradert adresse",
