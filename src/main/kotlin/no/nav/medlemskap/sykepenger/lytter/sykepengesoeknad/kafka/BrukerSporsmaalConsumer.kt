@@ -19,7 +19,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoek
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration

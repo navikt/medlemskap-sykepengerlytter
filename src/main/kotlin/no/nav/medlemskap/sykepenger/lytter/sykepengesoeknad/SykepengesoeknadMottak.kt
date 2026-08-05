@@ -5,8 +5,8 @@ import net.logstash.logback.argument.StructuredArguments.kv
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BrukersvarMapper
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.BrukersvarMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
