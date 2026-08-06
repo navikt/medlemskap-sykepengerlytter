@@ -5,8 +5,8 @@ import net.logstash.logback.argument.StructuredArguments.kv
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.BrukersvarMapper
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.BrukersvarMapper
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
@@ -39,8 +39,8 @@ class SykepengesoeknadMottak(
     }
 
     private suspend fun behandle(sykepengesøknad: Sykepengesoeknad) {
-        logOppfyllerInngangskriterier(sykepengesøknad.sykepengesoeknadGrunnlag)
-        lagreBrukerspoersmaal.lagre(sykepengesøknad.brukersporsmaal)
+        logOppfyllerInngangskriterier(sykepengesøknad.sykepengesøknadGrunnlag)
+        lagreBrukerspoersmaal.lagre(sykepengesøknad.brukerspørsmål)
         behandleSykepengesøknad.behandle(sykepengesøknad)
     }
 
@@ -66,8 +66,8 @@ class SykepengesoeknadMottak(
 
     private fun SykepengesoeknadGrunnlag.tilSykepengesøknad(): Sykepengesoeknad =
         Sykepengesoeknad(
-            sykepengesoeknadGrunnlag = this,
-            brukersporsmaal = BrukersvarMapper.mapBrukerspørsmål(this)
+            sykepengesøknadGrunnlag = this,
+            brukerspørsmål = BrukersvarMapper.tilBrukerspørsmål(this)
         )
 
     private sealed interface MottakResultat {

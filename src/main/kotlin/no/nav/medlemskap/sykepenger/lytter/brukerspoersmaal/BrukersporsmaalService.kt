@@ -5,8 +5,8 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.service.FinnForrigeBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 
 class BrukersporsmaalService(
     var persistenceService: PersistenceService = PersistenceService(
@@ -18,9 +18,9 @@ class BrukersporsmaalService(
         )
     )
 ) {
-    private val finnForrigeBrukersvar = FinnForrigeBrukersvar(persistenceService)
+    private val utledBrukerspørsmål = UtledBrukerspoersmaal(TidligereBrukersvar(persistenceService))
 
     fun finnForrigeBrukerspørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> {
-        return finnForrigeBrukersvar.finnForrigeStilteBrukerspørsmål(medlemskapOppslagRequest.fnr, medlemskapOppslagRequest.førsteDagForYtelse)
+        return utledBrukerspørsmål.finnTidligereStilteSpørsmål(medlemskapOppslagRequest)
     }
 }

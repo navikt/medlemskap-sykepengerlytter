@@ -9,15 +9,17 @@ import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
+import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
@@ -35,7 +37,7 @@ class BrukerSporsmaalConsumer(
     private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
             filtrering = SykepengesoeknadFiltrering(persistenceService),
-            utledBrukerinput = UtledBrukerinput(persistenceService),
+            utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))),
             lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
             medlemskapOppslagService = MedlemskapOppslagService(Configuration())
         ),

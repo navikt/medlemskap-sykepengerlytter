@@ -22,9 +22,6 @@ object Inngangskriterier {
         Type.GRADERT_REISETILSKUDD
     )
 
-    fun erOppfylt(soknad: SykepengesoeknadGrunnlag): Boolean =
-        vurder(soknad).erOppfylt
-
     fun vurder(soknad: SykepengesoeknadGrunnlag): InngangskriterierResultat {
         val brutteKriterier = buildList {
             if (soknad.status != Status.SENDT.name) {
