@@ -34,7 +34,7 @@ class TidligereBrukersvar(private val persistenceService: PersistenceService) {
         } else {
             log.info(
                 teamLogs,
-                "Nyeste brukersvar funnet for $fnr med id=${brukersvar.soknadid}, eventDate=${brukersvar.eventDate}"
+                "Nyeste gjenbrukbare brukersvaret funnet for $fnr med id=${brukersvar.soknadid}, eventDate=${brukersvar.eventDate}"
             )
         }
     }
