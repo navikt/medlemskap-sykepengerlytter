@@ -2,19 +2,20 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 
 object MedlemskapOppslagRequestMapper {
-    fun map(
-        sykepengeSoknad: SykepengesoeknadGrunnlag,
-        utledetBrukerinput: UtledetBrukerinput
-    ): MedlOppslagRequest {
-        val søknadsParametere = utledetBrukerinput.søknadsParametere
-        return MedlOppslagRequest(
-            fnr = søknadsParametere.fnr,
-            førsteDagForYtelse = søknadsParametere.førsteDagForYtelse,
-            periode = Periode(sykepengeSoknad.fom.toString(), sykepengeSoknad.tom.toString()),
-            brukerinput = utledetBrukerinput.brukerinput
+
+    fun tilMedlemskapOppslagRequest(
+        sykepengeSøknad: SykepengesoeknadGrunnlag,
+        brukerinput: Brukerinput
+    ): MedlOppslagRequest =
+        MedlOppslagRequest(
+            fnr = sykepengeSøknad.fnr,
+            førsteDagForYtelse = sykepengeSøknad.fom.toString(),
+            periode = Periode(sykepengeSøknad.fom.toString(), sykepengeSøknad.tom.toString()),
+            brukerinput = brukerinput
         )
-    }
+
 }

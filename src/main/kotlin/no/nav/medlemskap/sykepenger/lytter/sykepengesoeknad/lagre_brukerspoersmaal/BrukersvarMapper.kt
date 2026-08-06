@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar
+package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 object BrukersvarMapper {
 
-    fun mapBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
+    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
         if (sykepengesoeknadGrunnlag.dodsdato != null) {
             return sykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar()
         }

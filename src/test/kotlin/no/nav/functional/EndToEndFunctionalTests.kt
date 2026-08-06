@@ -20,8 +20,7 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMott
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_brukersvar.LagreBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import no.nav.persistence.AbstractContainerDatabaseTest
 import no.nav.persistence.MyPostgreSQLContainer
 import org.junit.jupiter.api.Assertions
@@ -301,7 +300,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val flexRespons: FlexRespons = opprettResponsTilFlex(foreslaattRespons, forrigeBrukerspørsmål, "abc")
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
-        val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
+        val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
         val forventedeSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
         Assertions.assertEquals(forventedeForeslåtteSpørsmål, foreslaattRespons.sporsmal, "Foreslåtte spørsmål")
@@ -564,7 +563,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         SykepengesoeknadMottak(
             behandleSykepengesøknad = BehandleSykepengesoeknad(
                 filtrering = SykepengesoeknadFiltrering(persistenceService),
-                utledBrukerinput = UtledBrukerinput(persistenceService),
+                utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))),
                 lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
                 medlemskapOppslagService = medlemskapOppslagService
             ),

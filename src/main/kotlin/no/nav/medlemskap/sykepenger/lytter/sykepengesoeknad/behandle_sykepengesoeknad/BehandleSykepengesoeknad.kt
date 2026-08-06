@@ -1,12 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
-import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
+import kotlinx.coroutines.CancellationException
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
-import org.slf4j.MarkerFactory
 
 class BehandleSykepengesoeknad(
     private val filtrering: SykepengesoeknadFiltrering,
@@ -14,26 +13,23 @@ class BehandleSykepengesoeknad(
     private val lagreVurderingsstatus: LagreVurderingsstatus,
     private val medlemskapOppslagService: MedlemskapOppslagService
 ) {
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
-    }
+    private val logger = BehandleSykepengesoeknadLogger()
 
-    suspend fun behandle(sykepengesoeknad: Sykepengesoeknad) {
-        when (val resultat = sykepengesoeknad.tilBehandlingsresultat()) {
+    suspend fun behandle(sykepengesøknad: Sykepengesoeknad) {
+        when (val resultat = sykepengesøknad.tilBehandlingsresultat()) {
             is Behandlingsresultat.Duplikat ->
-                resultat.grunnlag.logDuplikat()
+                logger.logDuplikat(resultat.grunnlag)
 
             is Behandlingsresultat.Påfølgende ->
-                resultat.grunnlag.logPåfølgende()
+                logger.logPåfølgende(resultat.grunnlag)
 
             is Behandlingsresultat.SkalVurderes ->
-                vurderOgLagre(resultat.grunnlag)
+                vurderOgLagre(resultat.sykepengesøknad)
         }
     }
 
     private fun Sykepengesoeknad.tilBehandlingsresultat(): Behandlingsresultat {
-        val grunnlag = sykepengesoeknadGrunnlag
+        val grunnlag = sykepengesøknadGrunnlag
 
         return when {
             filtrering.erDuplikatOgSvartNeiPåArbeidUtenforNorge(grunnlag) ->
@@ -43,84 +39,39 @@ class BehandleSykepengesoeknad(
                 Behandlingsresultat.Påfølgende(grunnlag)
 
             else ->
-                Behandlingsresultat.SkalVurderes(grunnlag)
+                Behandlingsresultat.SkalVurderes(this)
         }
     }
 
-    private suspend fun vurderOgLagre(grunnlag: SykepengesoeknadGrunnlag) {
-        when (val resultat = grunnlag.vurderMedlemskap()) {
-            is VurderingResultat.VurderingSkalLagres ->
-                lagreVurderingsstatus.lagreVurderingsstaus(grunnlag.id, resultat.vurdering)
-
-            VurderingResultat.VurderingSkalIkkeLagres -> Unit
-        }
+    private suspend fun vurderOgLagre(sykepengesøknad: Sykepengesoeknad) {
+        val vurdering = sykepengesøknad.hentMedlemskapsvurdering() ?: return
+        lagreVurderingsstatus.lagreVurderingsstaus(sykepengesøknad.sykepengesøknadGrunnlag.id, vurdering)
     }
 
-    private suspend fun SykepengesoeknadGrunnlag.vurderMedlemskap(): VurderingResultat {
+    private suspend fun Sykepengesoeknad.hentMedlemskapsvurdering(): String? {
+        val grunnlag = sykepengesøknadGrunnlag
+
         return try {
-            logPassertAlleKriterier()
-            val request = utledBrukerinput(this)
-            val vurdering = medlemskapOppslagService.vurderMedlemskap(request, id)
-            logSendt()
-            VurderingResultat.VurderingSkalLagres(vurdering)
-        } catch (t: Throwable) {
-            if (t.message.toString().contains("GradertAdresseException")) {
-                log.info("Gradert adresse : key:  $id")
-            } else {
-                logTekniskFeil(t)
-            }
-            VurderingResultat.VurderingSkalIkkeLagres
+            logger.logPassertAlleKriterier(grunnlag)
+            val request = lagMedlemskapOppslagRequest(this)
+            medlemskapOppslagService.vurderMedlemskap(request, grunnlag.id)
+                .also { logger.logSendt(grunnlag) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.logFeiletVurdering(grunnlag, e)
+            null
         }
     }
 
-    private fun utledBrukerinput(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): MedlOppslagRequest {
-        val brukerinput = utledBrukerinput.utledBrukerinput(sykepengesøknadGrunnlag)
-        return MedlemskapOppslagRequestMapper.map(sykepengesøknadGrunnlag, brukerinput)
+    private fun lagMedlemskapOppslagRequest(sykepengesøknad: Sykepengesoeknad): MedlOppslagRequest {
+        val brukerinput = utledBrukerinput.fraSykepengesøknad(sykepengesøknad)
+        return MedlemskapOppslagRequestMapper.tilMedlemskapOppslagRequest(sykepengesøknad.sykepengesøknadGrunnlag, brukerinput)
     }
-
-    private fun SykepengesoeknadGrunnlag.logPassertAlleKriterier() =
-        log.info(
-            teamLogs,
-            "Søknad med id ${id} har passert alle kriterier og sjekker. Søknaden sendes videre til UtledBrukerinput",
-        )
-
-    private fun SykepengesoeknadGrunnlag.logDuplikat() =
-        log.info(
-            teamLogs,
-            "Søknad med id $id er funksjonelt lik en annen soknad : kryptertFnr : $fnr. Sendes ikke videre for vurdering.",
-            kv("callId", id)
-        )
-
-    private fun SykepengesoeknadGrunnlag.logPåfølgende() =
-        log.info(
-            teamLogs,
-            "Søknad med id $id er påfølgende en annen søknad. Innslag vil bli laget i db, men ingen vurdering vil bli utført ",
-            kv("callId", id)
-        )
-
-    private fun SykepengesoeknadGrunnlag.logSendt() =
-        log.info(
-            teamLogs,
-            "Søknad videresendt til Lovme - sykmeldingId: $id",
-            kv("callId", id)
-        )
-
-    private fun SykepengesoeknadGrunnlag.logTekniskFeil(t: Throwable) =
-        log.info(
-            teamLogs,
-            "Teknisk feil ved kall mot LovMe - sykmeldingId: $id, melding:" + t.message,
-            kv("callId", id),
-        )
-
 }
 
 private sealed interface Behandlingsresultat {
     data class Duplikat(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
     data class Påfølgende(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
-    data class SkalVurderes(val grunnlag: SykepengesoeknadGrunnlag) : Behandlingsresultat
-}
-
-private sealed interface VurderingResultat {
-    data class VurderingSkalLagres(val vurdering: String) : VurderingResultat
-    data object VurderingSkalIkkeLagres : VurderingResultat
+    data class SkalVurderes(val sykepengesøknad: Sykepengesoeknad) : Behandlingsresultat
 }
