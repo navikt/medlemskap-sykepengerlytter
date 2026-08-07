@@ -19,7 +19,7 @@ import java.time.LocalDate
 
 class UtledBrukerspørsmålTest {
     private val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
-    private val utledBrukerspørsmål = UtledBrukerspoersmaal(
+    private val utledBrukerspørsmål = HentGjenbrukbareBrukerspoersmaal(
         TidligereBrukersvar(
             PersistenceService(
                 medlemskapVurdertRepository = MedlemskapVurdertInMemmoryRepository(),

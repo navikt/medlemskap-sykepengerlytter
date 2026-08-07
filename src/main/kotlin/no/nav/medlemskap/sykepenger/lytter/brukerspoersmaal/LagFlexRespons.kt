@@ -2,6 +2,9 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
@@ -11,7 +14,7 @@ import org.slf4j.MarkerFactory
 class LagFlexRespons(
     private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService(),
     private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper(),
-    private val regelMotorResponsHandler: RegelMotorResponsHandler = RegelMotorResponsHandler()
+    private val foreslaatteBrukerspoersmaalUtleder: ForeslaatteBrukerspoersmaalUtleder = ForeslaatteBrukerspoersmaalUtleder()
 ) {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
@@ -24,10 +27,10 @@ class LagFlexRespons(
         val medlemskapVurdering = medlemskapVurderingMapper.map(medlemskapOppslagResponse)
         val gjenbrukbareSpørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
 
-        return regelMotorResponsHandler
-            .tilForeslåttFlexRespons(medlemskapVurdering)
-            .medSpørsmålSomSkalStilles(gjenbrukbareSpørsmål)
-            .medKjentOppholdstillatelseFra(medlemskapVurdering)
+        return foreslaatteBrukerspoersmaalUtleder
+            .tilForeslåttBrukerspørsmål(medlemskapVurdering)
+            .finnSpørsmålSomSkalStilles(gjenbrukbareSpørsmål)
+            .tilFlexRespons(medlemskapVurdering)
             .also { loggRespons(it, gjenbrukbareSpørsmål, callId) }
     }
 

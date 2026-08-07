@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk
 
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 
@@ -16,3 +16,11 @@ fun finnSpørsmålSomSkalStilles(
         else -> potensielle
     }
 }
+
+fun Set<Spørsmål>.finnSpørsmålSomSkalStilles(
+    gjenbrukbareSpørsmål: Collection<Spørsmål>
+): Set<Spørsmål> =
+    finnSpørsmålSomSkalStilles(
+        potensielle = this,
+        forrigeStilte = gjenbrukbareSpørsmål.toSet()
+    )

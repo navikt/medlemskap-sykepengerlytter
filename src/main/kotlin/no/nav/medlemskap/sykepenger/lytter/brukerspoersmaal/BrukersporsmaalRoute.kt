@@ -9,7 +9,6 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.service.LoggerForFeilhåndtering
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.Request
 import org.slf4j.MarkerFactory
@@ -27,7 +26,7 @@ fun Routing.brukerSporsmaalRoute(
             val start = System.currentTimeMillis()
             val authContext = authorizationHandler.extractAuthContext(call)
             val callId = authContext.callId
-            val loggerForFeilhåndtering = LoggerForFeilhåndtering()
+            val feilhåndteringLogger = FeilhåndteringLogger()
             logger.info(
                 "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
@@ -51,12 +50,12 @@ fun Routing.brukerSporsmaalRoute(
                     )
                 ) {
                     MedlemskapOppslagResultat.GradertAdresse -> {
-                        loggerForFeilhåndtering.logAdresseException(callId, start)
+                        feilhåndteringLogger.logAdresseException(callId, start)
                         call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
                     }
 
                     MedlemskapOppslagResultat.Tidsavbrudd -> {
-                        loggerForFeilhåndtering.logCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
+                        feilhåndteringLogger.logCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
                         call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
                     }
 

@@ -1,6 +1,6 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.finnSpørsmålSomSkalStilles
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige_tom = emptySet<Spørsmål>()
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige_tom)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige_tom)
         Assertions.assertEquals(foreslått, faktisk)
     }
 
@@ -21,7 +21,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige)
         Assertions.assertEquals(foreslått, faktisk)
     }
 
@@ -30,7 +30,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige)
         Assertions.assertEquals(foreslått, faktisk)
     }
 
@@ -39,7 +39,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige)
         Assertions.assertEquals(emptySet<Spørsmål>(), faktisk)
     }
 
@@ -48,7 +48,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige)
         Assertions.assertEquals(emptySet<Spørsmål>(), faktisk)
     }
 
@@ -57,7 +57,7 @@ class FinnSpoersmalSomSkalStillesTest {
         val forrige = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val foreslått = emptySet<Spørsmål>()
 
-        val faktisk = finnSpørsmålSomSkalStilles(foreslått, forrige)
+        val faktisk = foreslått.finnSpørsmålSomSkalStilles(forrige)
         Assertions.assertEquals(emptySet<Spørsmål>(), faktisk)
     }
 }

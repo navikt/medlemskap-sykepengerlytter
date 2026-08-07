@@ -1,11 +1,11 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
+import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import org.slf4j.MarkerFactory
 
-class LoggerForFeilhåndtering {
+class FeilhåndteringLogger {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
@@ -13,10 +13,10 @@ class LoggerForFeilhåndtering {
         logger.info(
             teamLogs,
             "Forespørsmål mot medlemskap-oppslag timet ut",
-            kv("callId", callId),
-            kv("fnr", medlemskapOppslagRequest.fnr),
-            kv("tidsbrukInMs", System.currentTimeMillis() - start),
-            kv("endpoint", "brukersporsmal")
+            StructuredArguments.kv("callId", callId),
+            StructuredArguments.kv("fnr", medlemskapOppslagRequest.fnr),
+            StructuredArguments.kv("tidsbrukInMs", System.currentTimeMillis() - start),
+            StructuredArguments.kv("endpoint", "brukersporsmal")
         )
 
     }
@@ -25,9 +25,9 @@ class LoggerForFeilhåndtering {
         logger.info(
             teamLogs,
             "Gradert adresse",
-            kv("callId", callId),
-            kv("tidsbrukInMs", System.currentTimeMillis() - start),
-            kv("endpoint", "brukersporsmal")
+            StructuredArguments.kv("callId", callId),
+            StructuredArguments.kv("tidsbrukInMs", System.currentTimeMillis() - start),
+            StructuredArguments.kv("endpoint", "brukersporsmal")
         )
     }
 }

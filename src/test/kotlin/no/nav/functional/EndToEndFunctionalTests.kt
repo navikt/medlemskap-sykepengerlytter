@@ -3,8 +3,8 @@ package no.nav.functional
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.RegelMotorResponsHandler
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.medSpørsmålSomSkalStilles
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
@@ -68,9 +68,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
@@ -126,9 +128,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeforrigeBrukerspørsmål = emptyList<Spørsmål>()
@@ -182,9 +186,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.OPPHOLDSTILATELSE, Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -238,9 +244,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_NORGE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -295,9 +303,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = emptyList<Spørsmål>()
@@ -351,9 +361,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
 
         val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
@@ -409,9 +421,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål= setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE)
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
@@ -465,9 +479,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
 
         val forventedeForeslåtteSpørsmål = setOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)
@@ -522,9 +538,11 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         )
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
-        val foreslaattRespons = RegelMotorResponsHandler().utledResultat(lovmeresponse)
+        val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
         val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
-        val flexRespons: FlexRespons = foreslaattRespons.medSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        val flexRespons: FlexRespons = foreslaattRespons.copy(
+            sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
+        )
 
         val forventedeForeslåtteSpørsmål = emptySet<Spørsmål>()
         val forventedeForrigeBrukerspørsmål = listOf(Spørsmål.ARBEID_UTENFOR_NORGE, Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE, Spørsmål.OPPHOLDSTILATELSE)

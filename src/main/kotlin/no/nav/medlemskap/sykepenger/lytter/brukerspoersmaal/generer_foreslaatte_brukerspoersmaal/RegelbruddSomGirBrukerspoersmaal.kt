@@ -1,6 +1,6 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal
 
-class GenererBrukerSporsmaal {
+class RegelbruddSomGirBrukerspoersmaal {
 
     val ENKELTREGLER = listOf(
         "REGEL_3",
@@ -31,7 +31,7 @@ class GenererBrukerSporsmaal {
     )
     val MULTIREGLER_FOR_REGEL11 = "REGEL_11"
 
-    fun skalGenerereBrukerSpørsmål(årsaker: List<String>): Boolean {
+    fun skalGiBrukerspørsmål(årsaker: List<String>): Boolean {
         val regelbrudd = årsaker
 
         if (regelbrudd.isEmpty()) return false

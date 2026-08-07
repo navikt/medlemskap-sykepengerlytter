@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 
-class UtledBrukerspoersmaal(
+class HentGjenbrukbareBrukerspoersmaal(
     private val tidligereBrukersvar: TidligereBrukersvar
 ) {
     private val log = KotlinLogging.logger { }
