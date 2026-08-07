@@ -9,7 +9,6 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.rest.*
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.service.ExceptionHandler
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.Request
 import org.slf4j.MarkerFactory
@@ -20,14 +19,14 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
     medlemskapOppslagService: MedlemskapOppslagService,
-    brukersporsmaalService: BrukersporsmaalService
+    lagFlexRespons: LagFlexRespons
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
             val start = System.currentTimeMillis()
             val authContext = authorizationHandler.extractAuthContext(call)
             val callId = authContext.callId
-            val exceptionHandler = ExceptionHandler()
+            val feilhåndteringLogger = FeilhåndteringLogger()
             logger.info(
                 "kall autentisert, url : /brukersporsmal",
                 kv("callId", callId)
@@ -44,29 +43,29 @@ fun Routing.brukerSporsmaalRoute(
             )
             try {
                 val medlemskapOppslagHandler = MedlemskapOppslagHandler(requiredVariables)
-                val medlemskapOppslagResultat = medlemskapOppslagHandler.hentResultatFraMedlemskapOppslag(
-                    callId,
-                    medlemskapOppslagService
-                )
-
-                when (medlemskapOppslagResultat) {
-                    "GradertAdresse" -> {
-                        exceptionHandler.GradertAdresseException(callId, start)
+                when (
+                    val resultat = medlemskapOppslagHandler.hentResultatFraMedlemskapOppslag(
+                        callId,
+                        medlemskapOppslagService
+                    )
+                ) {
+                    MedlemskapOppslagResultat.GradertAdresse -> {
+                        feilhåndteringLogger.logAdresseException(callId, start)
                         call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
                     }
 
-                    "TimeoutCancellationException" -> {
-                        exceptionHandler.TimeoutCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
+                    MedlemskapOppslagResultat.Tidsavbrudd -> {
+                        feilhåndteringLogger.logCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
                         call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
                     }
 
-                    else -> {
-                        val respons = Respons(brukersporsmaalService).lagFlexRespons(
-                            medlemskapOppslagResultat,
-                            medlemskapOppslagHandler.medlemskapOppslagRequest,
-                            callId
+                    is MedlemskapOppslagResultat.Vurdering -> {
+                        val flexRespons = lagFlexRespons.lagFlexRespons(
+                            medlemskapOppslagResponse = resultat.respons,
+                            medlemskapOppslagRequest = medlemskapOppslagHandler.medlemskapOppslagRequest,
+                            callId = callId
                         )
-                        call.respond(HttpStatusCode.OK, respons)
+                        call.respond(HttpStatusCode.OK, flexRespons)
                     }
                 }
             } catch (t: Throwable) {
