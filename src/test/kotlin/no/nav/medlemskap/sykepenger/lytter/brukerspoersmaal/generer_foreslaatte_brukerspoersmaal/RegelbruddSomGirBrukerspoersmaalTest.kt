@@ -1,10 +1,10 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.RegelbruddSomGirBrukerspoersmaal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class GenererBrukerSporsmaalTest {
+class RegelbruddSomGirBrukerspoersmaalTest {
     @Test
     fun skalIkkeLageBrukerspørsmålUtenRegelbrudd() {
         val genererBrukerspørsmål = RegelbruddSomGirBrukerspoersmaal()

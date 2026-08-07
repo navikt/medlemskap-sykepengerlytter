@@ -19,7 +19,7 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
     medlemskapOppslagService: MedlemskapOppslagService,
-    brukersporsmaalService: BrukersporsmaalService
+    lagFlexRespons: LagFlexRespons
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
@@ -60,12 +60,12 @@ fun Routing.brukerSporsmaalRoute(
                     }
 
                     is MedlemskapOppslagResultat.Vurdering -> {
-                        val lagFlexRespons = LagFlexRespons(brukersporsmaalService).lagFlexRespons(
-                            resultat.respons,
-                            medlemskapOppslagHandler.medlemskapOppslagRequest,
-                            callId
+                        val flexRespons = lagFlexRespons.lagFlexRespons(
+                            medlemskapOppslagResponse = resultat.respons,
+                            medlemskapOppslagRequest = medlemskapOppslagHandler.medlemskapOppslagRequest,
+                            callId = callId
                         )
-                        call.respond(HttpStatusCode.OK, lagFlexRespons)
+                        call.respond(HttpStatusCode.OK, flexRespons)
                     }
                 }
             } catch (t: Throwable) {

@@ -1,7 +1,7 @@
 package no.nav.functional
 
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
@@ -69,7 +69,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -129,7 +131,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -187,7 +191,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -245,7 +251,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -304,7 +312,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -362,7 +372,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -422,7 +434,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -480,7 +494,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )
@@ -539,7 +555,9 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         val lovmeresponse = medlemskapOppslagService.kallMedlemskapOppslag(lovmeRequest,"2345")
         val foreslaattRespons = ForeslaatteBrukerspoersmaalUtleder().utledResultat(lovmeresponse)
-        val forrigeBrukerspørsmål = BrukersporsmaalService(containerPersistenceService).finnForrigeBrukerspørsmål(lovmeRequest)
+        val forrigeBrukerspørsmål =
+            HentGjenbrukbareBrukerspoersmaal(TidligereBrukersvar(containerPersistenceService))
+                .finnGjenbrukbareSpørsmål(lovmeRequest)
         val flexRespons: FlexRespons = foreslaattRespons.copy(
             sporsmal = foreslaattRespons.sporsmal.finnSpørsmålSomSkalStilles(forrigeBrukerspørsmål)
         )

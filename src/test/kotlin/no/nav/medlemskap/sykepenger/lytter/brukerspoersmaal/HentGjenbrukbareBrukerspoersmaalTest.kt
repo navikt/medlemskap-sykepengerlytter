@@ -17,9 +17,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class UtledBrukerspørsmålTest {
+class HentGjenbrukbareBrukerspoersmaalTest {
     private val brukersporsmaalRepository = BrukersporsmaalInMemmoryRepository()
-    private val utledBrukerspørsmål = HentGjenbrukbareBrukerspoersmaal(
+    private val hentGjenbrukbareBrukerspoersmaal = HentGjenbrukbareBrukerspoersmaal(
         TidligereBrukersvar(
             PersistenceService(
                 medlemskapVurdertRepository = MedlemskapVurdertInMemmoryRepository(),
@@ -38,7 +38,7 @@ class UtledBrukerspørsmålTest {
             )
         )
 
-        val spørsmål = utledBrukerspørsmål.finnTidligereStilteSpørsmål(
+        val spørsmål = hentGjenbrukbareBrukerspoersmaal.finnGjenbrukbareSpørsmål(
             medlemskapOppslagRequest(førsteDagForYtelse = "2023-08-30")
         )
 
@@ -59,7 +59,7 @@ class UtledBrukerspørsmålTest {
             )
         )
 
-        val spørsmål = utledBrukerspørsmål.finnTidligereStilteSpørsmål(
+        val spørsmål = hentGjenbrukbareBrukerspoersmaal.finnGjenbrukbareSpørsmål(
             medlemskapOppslagRequest(førsteDagForYtelse = "2023-08-30")
         )
 

@@ -1,5 +1,6 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons
 
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapVurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles

@@ -13,7 +13,7 @@ class HentGjenbrukbareBrukerspoersmaal(
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun finnTidligereStilteSpørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> =
+    fun finnGjenbrukbareSpørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> =
         tidligereBrukersvar
             .finnNyesteGjenbrukbareSvar(
                 medlemskapOppslagRequest.fnr,

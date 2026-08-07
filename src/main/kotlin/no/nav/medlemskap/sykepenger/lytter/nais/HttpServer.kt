@@ -24,7 +24,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.BrukersporsmaalService
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
@@ -54,9 +55,10 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val brukersporsmaalService = BrukersporsmaalService(persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
-    val gjenbrukBrukersvar = GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))
+    val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
+    val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
+    val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
@@ -109,7 +111,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
-            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
+            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }
     }

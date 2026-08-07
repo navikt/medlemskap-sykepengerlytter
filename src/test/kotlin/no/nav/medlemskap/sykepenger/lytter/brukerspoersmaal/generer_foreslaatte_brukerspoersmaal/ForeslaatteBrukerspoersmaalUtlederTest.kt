@@ -1,11 +1,11 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class RegelMotorResponsHandlerTest {
+class ForeslaatteBrukerspoersmaalUtlederTest {
 
     //Tester for om det skal genereres brukerspørsmål basert på type regelbrudd
     @Test

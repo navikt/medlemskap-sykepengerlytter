@@ -12,9 +12,9 @@ import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.slf4j.MarkerFactory
 
 class LagFlexRespons(
-    private val brukersporsmaalService: BrukersporsmaalService = BrukersporsmaalService(),
+    private val hentGjenbrukbareBrukerspoersmaal: HentGjenbrukbareBrukerspoersmaal,
     private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper(),
-    private val foreslaatteBrukerspoersmaalUtleder: ForeslaatteBrukerspoersmaalUtleder = ForeslaatteBrukerspoersmaalUtleder()
+    private val foreslåtteBrukerspørsmålUtleder: ForeslaatteBrukerspoersmaalUtleder = ForeslaatteBrukerspoersmaalUtleder()
 ) {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
@@ -25,9 +25,10 @@ class LagFlexRespons(
         callId: String
     ): FlexRespons {
         val medlemskapVurdering = medlemskapVurderingMapper.map(medlemskapOppslagResponse)
-        val gjenbrukbareSpørsmål = brukersporsmaalService.finnForrigeBrukerspørsmål(medlemskapOppslagRequest)
+        val gjenbrukbareSpørsmål =
+            hentGjenbrukbareBrukerspoersmaal.finnGjenbrukbareSpørsmål(medlemskapOppslagRequest)
 
-        return foreslaatteBrukerspoersmaalUtleder
+        return foreslåtteBrukerspørsmålUtleder
             .tilForeslåttBrukerspørsmål(medlemskapVurdering)
             .finnSpørsmålSomSkalStilles(gjenbrukbareSpørsmål)
             .tilFlexRespons(medlemskapVurdering)
