@@ -1,46 +1,33 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapVurderingMapper
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.domain.Delresultat
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdering
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Periode
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.rest.Svar
-import no.nav.medlemskap.sykepenger.lytter.service.GenererBrukerSporsmaal
 
-class RegelMotorResponsHandler {
+class ForeslaatteBrukerspoersmaalUtleder(
+    private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper()
+) {
 
-    fun utledResultat(medlemskapsVurdering: String): FlexRespons {
-        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapsVurdering)
+    fun utledResultat(medlemskapOppslagResponse: String): FlexRespons {
+        val medlemskapVurdering = medlemskapVurderingMapper.map(medlemskapOppslagResponse)
+        return tilForeslåttBrukerspørsmål(medlemskapVurdering).tilFlexRespons(medlemskapVurdering)
+    }
 
+    fun tilForeslåttBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): Set<Spørsmål> {
         return when (medlemskapVurdering.resultat.svar) {
             "UAVKLART" -> håndterBrukerspørsmål(medlemskapVurdering)
-            "JA" -> FlexRespons(svar = Svar.JA, emptySet())
-            "NEI" -> FlexRespons(svar = Svar.NEI, emptySet())
+            "JA", "NEI" -> emptySet()
             else -> throw IllegalStateException()
         }
     }
 
-    fun hentOppholdstillatelsePeriode(medlemskapOppslagRespons: String): Periode? {
-        val medlemskapVurdering = objectMapper.readValue<MedlemskapVurdering>(medlemskapOppslagRespons)
-
-        return medlemskapVurdering
-            .datagrunnlag
-            ?.oppholdstillatelse
-            ?.gjeldendeOppholdsstatus
-            ?.oppholdstillatelsePaSammeVilkar
-            ?.periode
-            ?.let {
-                Periode(fom = it.fom, tom = it.tom)
-            }
-    }
-
-    private fun håndterBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): FlexRespons {
+    private fun håndterBrukerspørsmål(medlemskapVurdering: MedlemskapVurdering): Set<Spørsmål> {
         val årsaker = medlemskapVurdering.resultat.årsaker.map { it.regelId }
 
-        if (GenererBrukerSporsmaal().skalGenerereBrukerSpørsmål(årsaker)) {
+        if (RegelbruddSomGirBrukerspoersmaal().skalGiBrukerspørsmål(årsaker)) {
             val erEØSborger = medlemskapVurdering.erEØSBorger()
             val erAndreBorgere = medlemskapVurdering.erAndreBorgere()
             val erAndreBorgereMedEØSfamilie = medlemskapVurdering.erAndreBorgereMedEØSFamilie()
@@ -91,9 +78,9 @@ class RegelMotorResponsHandler {
                 else -> emptySet()
             }
 
-            return FlexRespons(svar = Svar.UAVKLART, sporsmal = brukerspørsmål)
+            return brukerspørsmål
         }
-        return FlexRespons(svar = Svar.UAVKLART, sporsmal = emptySet())
+        return emptySet()
     }
 
     private fun MedlemskapVurdering.erEØSBorger(): Boolean {
