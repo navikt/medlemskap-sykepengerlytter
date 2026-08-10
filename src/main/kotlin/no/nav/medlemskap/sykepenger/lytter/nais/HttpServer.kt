@@ -38,6 +38,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.medlemskapsstatusRoute
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
@@ -111,6 +112,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
+            medlemskapsstatusRoute(bomloService)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }

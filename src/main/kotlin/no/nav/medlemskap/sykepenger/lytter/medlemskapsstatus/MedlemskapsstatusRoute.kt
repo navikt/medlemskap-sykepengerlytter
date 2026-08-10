@@ -1,16 +1,16 @@
-package no.nav.medlemskap.sykepenger.lytter.nais
+package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.callid.*
+import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
-import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.plugins.callid.callId
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.rest.*
+import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import org.slf4j.MarkerFactory
 import java.util.*
@@ -18,50 +18,50 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.sykepengerLytterRoutes(
+fun Routing.medlemskapsstatusRoute(
     bomloService: BomloService,
 ) {
     authenticate("azureAuth") {
-        post("/speilvurdering") {
+        post("/flexvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
             logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
-                "kall autentisert, url : /speilvurdering",
+                "kall autentisert, url : /flexvurdering",
                 kv("callId", callId),
-                kv("endpoint", "speilvurdering")
+                kv("endpoint", "flexvurdering")
             )
-            val start = System.currentTimeMillis()
-            val request = call.receive<BomloRequest>()
+            val request = call.receive<FlexRequest>()
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
-                val speilRespons = response.lagSpeilRespons(callId)
-                val timeInMS = System.currentTimeMillis() - start
-                logger.info(
-                    teamLogs,
-                    "{} svar funnet for bruker {}", speilRespons.speilSvar.name, speilRespons.fnr,
-                    kv("callId", callId),
-                    kv("fnr", request.fnr),
-                    kv("tidsbrukInMs", timeInMS),
-                    kv("endpoint", "speilvurdering"),
-                    kv("soknadId", speilRespons.soknadId),
-                    kv("konklusjon", speilRespons.speilSvar.name),
-                    kv("avklaringer", response.hentAvklaringer().toString()),
-                    kv("kanal", response.hentKanal())
-                )
-
-                call.respond(HttpStatusCode.OK, speilRespons)
+                if (response != null) {
+                    logger.info(
+                        teamLogs,
+                        "{} svar funnet for bruker {}", response.status, response.fnr,
+                        kv("fnr", response.fnr),
+                        kv("konklusjon", response.status),
+                        kv("endpoint", "flexvurdering")
+                    )
+                    call.respond(HttpStatusCode.OK, response)
+                } else {
+                    logger.info(
+                        teamLogs,
+                        "{} har ikke innslag i databasen for perioden {} - {}", request.fnr, request.fom, request.tom,
+                        kv("fnr", request.fnr),
+                        kv("endpoint", "flexvurdering"),
+                        kv("callId", callId),
+                    )
+                    call.respond(HttpStatusCode.NotFound, request)
+                }
             } catch (t: Throwable) {
-                val timeInMS = System.currentTimeMillis() - start
                 logger.info(
                     teamLogs,
                     "Feil ved kall mot medlemskap-oppslag",
                     kv("callId", callId),
                     kv("fnr", request.fnr),
                     kv("cause", t.stackTrace),
-                    kv("tidsbrukInMs", timeInMS),
-                    kv("endpoint", "speilvurdering")
+                    kv("endpoint", "flexvurdering")
                 )
                 call.respond(HttpStatusCode.InternalServerError, t.message!!)
             }
