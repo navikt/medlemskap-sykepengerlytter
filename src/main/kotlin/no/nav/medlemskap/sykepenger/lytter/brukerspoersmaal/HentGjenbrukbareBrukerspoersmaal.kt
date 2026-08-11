@@ -3,7 +3,6 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 

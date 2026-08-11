@@ -12,8 +12,8 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoek
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.service.*
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak

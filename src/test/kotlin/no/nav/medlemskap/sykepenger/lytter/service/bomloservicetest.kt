@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.finnMatchendeMedlemkapsPeriode
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.finnRelevantIkkePåfølgende
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -19,7 +19,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
             Medlemskap("2", LocalDate.of(2022,1,1,), LocalDate.of(2022,1,31,), ErMedlem.UAVKLART),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,1,1),LocalDate.of(2022,1,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, MedlemskapsstatusRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,1,1),LocalDate.of(2022,1,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.JA,match!!.medlem)
 
@@ -32,7 +32,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
             Medlemskap("2", LocalDate.of(2022,1,1,), LocalDate.of(2022,1,31,), ErMedlem.UAVKLART),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, MedlemskapsstatusRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
 
@@ -45,7 +45,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.of(2022,2,1,), LocalDate.of(2022,2,28,), ErMedlem.PAFOLGENDE),
             Medlemskap("1", LocalDate.of(2022,3,1,), LocalDate.of(2022,3,31,), ErMedlem.PAFOLGENDE),
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, MedlemskapsstatusRequest(UUID.randomUUID().toString(),"1",LocalDate.of(2022,3,1),LocalDate.of(2022,3,31)))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
         val forsteIkkePaafolgende = finnRelevantIkkePåfølgende(match,medlemskap)
@@ -62,7 +62,7 @@ class bomloservicetest {
             Medlemskap("1", LocalDate.parse("2022-03-10"), LocalDate.parse("2022-04-06"), ErMedlem.JA),
 
         )
-        var match = finnMatchendeMedlemkapsPeriode(medlemskap, FlexRequest(UUID.randomUUID().toString(),"1",LocalDate.parse("2022-06-21"),LocalDate.parse("2022-07-07")))
+        var match = finnMatchendeMedlemkapsPeriode(medlemskap, MedlemskapsstatusRequest(UUID.randomUUID().toString(),"1",LocalDate.parse("2022-06-21"),LocalDate.parse("2022-07-07")))
         Assertions.assertNotNull(match)
         Assertions.assertEquals(ErMedlem.PAFOLGENDE,match!!.medlem)
         val forsteIkkePaafolgende = finnRelevantIkkePåfølgende(match,medlemskap)

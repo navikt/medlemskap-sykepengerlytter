@@ -1,10 +1,10 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons
 
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdering
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Periode
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.rest.Svar
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Periode
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Svar
 
 fun Set<Spørsmål>.tilFlexRespons(
     medlemskapVurdering: MedlemskapVurdering

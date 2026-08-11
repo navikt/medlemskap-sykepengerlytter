@@ -1,7 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

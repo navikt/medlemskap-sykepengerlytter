@@ -2,9 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons
 
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapVurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
-import no.nav.medlemskap.sykepenger.lytter.rest.Periode
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Periode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

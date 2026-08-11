@@ -9,8 +9,6 @@ import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 
@@ -31,12 +29,12 @@ class HentMedlemskapsstatus(
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    suspend fun finnFlexVurdering(flexRequest: FlexRequest, callId: String): FlexVurderingRespons? {
-        val medlemskap = persistenceService.hentMedlemskap(flexRequest.fnr)
-        val found = finnMatchendeMedlemkapsPeriode(medlemskap, flexRequest)
+    suspend fun finnFlexVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus? {
+        val medlemskap = persistenceService.hentMedlemskap(medlemskapsstatusRequest.fnr)
+        val found = finnMatchendeMedlemkapsPeriode(medlemskap, medlemskapsstatusRequest)
 
         if (found != null && ErMedlem.PAFOLGENDE != found.medlem) {
-            return hentFlexVurdering(flexRequest, found, callId)
+            return hentFlexVurdering(medlemskapsstatusRequest, found, callId)
         }
 
         if (found != null && ErMedlem.PAFOLGENDE == found.medlem) {
@@ -44,18 +42,18 @@ class HentMedlemskapsstatus(
             if (forste != null) {
                 log.info(
                     teamLogs,
-                    "kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
+                    "kaller saga med første vurdering som ikke er paafolgende : fnr : ${medlemskapsstatusRequest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
                     StructuredArguments.kv("callId", callId)
                 )
                 return hentFlexVurdering(
-                    FlexRequest(flexRequest.sykepengesoknad_id, flexRequest.fnr, forste.fom, forste.tom),
+                    MedlemskapsstatusRequest(medlemskapsstatusRequest.sykepengesoknad_id, medlemskapsstatusRequest.fnr, forste.fom, forste.tom),
                     forste,
                     callId
                 )
             }
             log.info(
                 teamLogs,
-                "ingen førstegangssøknad funnet for  : ${flexRequest.fnr}, med request fom:${flexRequest.fom}, tom: ${flexRequest.tom}",
+                "ingen førstegangssøknad funnet for  : ${medlemskapsstatusRequest.fnr}, med request fom:${medlemskapsstatusRequest.fom}, tom: ${medlemskapsstatusRequest.tom}",
                 StructuredArguments.kv("callId", callId)
             )
             return null
@@ -63,25 +61,25 @@ class HentMedlemskapsstatus(
 
         log.info(
             teamLogs,
-            "ingen matchende treff i vurderinger  funnet for  : ${flexRequest.fnr}, med request fom:${flexRequest.fom}, tom: ${flexRequest.tom}",
+            "ingen matchende treff i vurderinger  funnet for  : ${medlemskapsstatusRequest.fnr}, med request fom:${medlemskapsstatusRequest.fom}, tom: ${medlemskapsstatusRequest.tom}",
             StructuredArguments.kv("callId", callId)
         )
-        return hentFlexVurdering(flexRequest, null, callId)
+        return hentFlexVurdering(medlemskapsstatusRequest, null, callId)
     }
 
     private suspend fun hentFlexVurdering(
-        flexRequest: FlexRequest,
+        medlemskapsstatusRequest: MedlemskapsstatusRequest,
         found: Medlemskap?,
         callId: String
-    ): FlexVurderingRespons? {
+    ): Medlemskapsstatus? {
         return try {
-            sagaClient.finnFlexVurdering(flexRequest, callId)
+            sagaClient.finnFlexVurdering(medlemskapsstatusRequest, callId)
         } catch (cause: ResponseException) {
             if (cause.response.status.value == 404) {
                 if (found != null) {
                     log.info(
                         teamLogs,
-                        "404 for kall mot saga på : fnr : ${flexRequest.fnr}, fom:${found.fom}, tom: ${found.tom}",
+                        "404 for kall mot saga på : fnr : ${medlemskapsstatusRequest.fnr}, fom:${found.fom}, tom: ${found.tom}",
                         StructuredArguments.kv("callId", callId)
                     )
                 }
@@ -98,9 +96,9 @@ fun finnRelevantIkkePåfølgende(paafolgende: Medlemskap, medlemskap: List<Medle
         .find { it.tom < paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE }
 }
 
-fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, flexRequest: FlexRequest): Medlemskap? {
+fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, medlemskapsstatusRequest: MedlemskapsstatusRequest): Medlemskap? {
     return medlemskap.firstOrNull {
-        it.fom.isEqual(flexRequest.fom) &&
-            it.tom.isEqual(flexRequest.tom)
+        it.fom.isEqual(medlemskapsstatusRequest.fom) &&
+            it.tom.isEqual(medlemskapsstatusRequest.tom)
     }
 }

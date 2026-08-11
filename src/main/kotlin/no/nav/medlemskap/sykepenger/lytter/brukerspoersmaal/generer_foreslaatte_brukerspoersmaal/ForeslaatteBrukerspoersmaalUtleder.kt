@@ -4,8 +4,8 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.MedlemskapVurderingM
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.domain.Delresultat
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapVurdering
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 
 class ForeslaatteBrukerspoersmaalUtleder(
     private val medlemskapVurderingMapper: MedlemskapVurderingMapper = MedlemskapVurderingMapper()

@@ -10,7 +10,6 @@ import io.ktor.http.*
 import io.ktor.server.plugins.callid.callId
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import org.slf4j.MarkerFactory
 import java.util.*
 
@@ -29,7 +28,7 @@ fun Routing.medlemskapsstatusRoute(hentMedlemskapsstatus: HentMedlemskapsstatus)
                 kv("callId", callId),
                 kv("endpoint", "flexvurdering")
             )
-            val request = call.receive<FlexRequest>()
+            val request = call.receive<MedlemskapsstatusRequest>()
             try {
                 val response = hentMedlemskapsstatus.finnFlexVurdering(request, callId)
                 if (response != null) {

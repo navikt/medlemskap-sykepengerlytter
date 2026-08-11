@@ -10,8 +10,8 @@ import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 
 open class SagaClient(
     private val baseUrl: String,
@@ -35,7 +35,7 @@ open class SagaClient(
 
     }
 
-    override suspend fun finnFlexVurdering(flexRequest: FlexRequest, callId: String): FlexVurderingRespons {
+    override suspend fun finnFlexVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "flexvurdering", retry) {
             httpClient.post {
@@ -44,8 +44,8 @@ open class SagaClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-                setBody(JacksonParser().ToJson(flexRequest))
-            }.body<FlexVurderingRespons>()
+                setBody(JacksonParser().ToJson(medlemskapsstatusRequest))
+            }.body<Medlemskapsstatus>()
         }
     }
 
@@ -66,6 +66,6 @@ open class SagaClient(
 
 interface SagaAPI{
     suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String
-    suspend fun finnFlexVurdering(flexRequest: FlexRequest, callId: String): FlexVurderingRespons
+    suspend fun finnFlexVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
     suspend fun ping(callId: String): String
 }
