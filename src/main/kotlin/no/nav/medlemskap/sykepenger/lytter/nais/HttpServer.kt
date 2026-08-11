@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.HentMedlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
@@ -56,6 +57,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
+    val hentMedlemskapsstatus = HentMedlemskapsstatus(configuration, persistenceService)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
@@ -112,7 +114,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
-            medlemskapsstatusRoute(bomloService)
+            medlemskapsstatusRoute(hentMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }

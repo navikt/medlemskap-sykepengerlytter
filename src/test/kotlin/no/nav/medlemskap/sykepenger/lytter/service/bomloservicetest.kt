@@ -2,6 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.finnMatchendeMedlemkapsPeriode
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.finnRelevantIkkePåfølgende
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

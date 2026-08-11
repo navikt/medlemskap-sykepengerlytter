@@ -15,5 +15,12 @@ data class FlexVurderingRespons(
     val fnr: String,
     val fom: LocalDate,
     val tom: LocalDate,
-    val status:String
+    val status: FlexVurderingStatus
 )
+
+enum class FlexVurderingStatus {
+    JA,
+    NEI,
+    UAVKLART,
+    PAFOLGENDE
+}

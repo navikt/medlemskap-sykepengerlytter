@@ -11,16 +11,13 @@ import io.ktor.server.plugins.callid.callId
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import org.slf4j.MarkerFactory
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.medlemskapsstatusRoute(
-    bomloService: BomloService,
-) {
+fun Routing.medlemskapsstatusRoute(hentMedlemskapsstatus: HentMedlemskapsstatus) {
     authenticate("azureAuth") {
         post("/flexvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -34,7 +31,7 @@ fun Routing.medlemskapsstatusRoute(
             )
             val request = call.receive<FlexRequest>()
             try {
-                val response = bomloService.finnFlexVurdering(request, callId)
+                val response = hentMedlemskapsstatus.finnFlexVurdering(request, callId)
                 if (response != null) {
                     logger.info(
                         teamLogs,
