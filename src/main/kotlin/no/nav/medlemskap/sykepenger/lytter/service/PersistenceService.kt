@@ -49,7 +49,7 @@ class PersistenceService(
         return brukersporsmaalRepository.finnBrukersporsmaal(fnr)
     }
 
-    fun hentMedlemskapsstatus(fnr: String): List<Medlemskap> {
+    fun hentMedlemskap(fnr: String): List<Medlemskap> {
         return medlemskapVurdertRepository.finnVurdering(fnr)
             .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
     }

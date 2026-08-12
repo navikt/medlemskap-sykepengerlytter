@@ -2,7 +2,11 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.erFunkskjoneltLik
+import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 
@@ -15,14 +19,13 @@ class SykepengesoeknadFiltrering(
     }
 
     fun erDuplikatOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
-        val medlemRequest = mapToMedlemskapsstatus(sykepengesøknadGrunnlag)
+        val medlemRequest = mapToMedlemskap(sykepengesøknadGrunnlag)
         val duplikat = erDuplikat(medlemRequest)
         return duplikat != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
 
-    fun erDuplikat(medlemRequest: Medlemskapsstatus): Medlemskapsstatus? {
-        val vurderinger = persistenceService.hentMedlemskapsstatus(medlemRequest.fnr)
-            .map { Medlemskapsstatus(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.medlem.name)) }
+    fun erDuplikat(medlemRequest: Medlemskap): Medlemskap? {
+        val vurderinger = persistenceService.hentMedlemskap(medlemRequest.fnr)
         return vurderinger.find { medlemRequest.erFunkskjoneltLik(it) }
     }
 
@@ -30,12 +33,9 @@ class SykepengesoeknadFiltrering(
         if (true == sykepengesøknadGrunnlag.forstegangssoknad) {
             return false
         }
-        val medlemRequest = mapToMedlemskapsstatus(sykepengesøknadGrunnlag)
-        val vurderinger = persistenceService.hentMedlemskapsstatus(sykepengesøknadGrunnlag.fnr)
-            .map { Medlemskapsstatus(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.medlem.name)) }
-        val result = vurderinger.find {
-            medlemRequest.erpåfølgende(it)
-        }
+        val medlemRequest = mapToMedlemskap(sykepengesøknadGrunnlag)
+        val vurderinger = persistenceService.hentMedlemskap(sykepengesøknadGrunnlag.fnr)
+        val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
         return result != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
 
@@ -59,6 +59,6 @@ class SykepengesoeknadFiltrering(
         return sykepengesøknadGrunnlag.arbeidUtenforNorge == false || sykepengesøknadGrunnlag.arbeidUtenforNorge == null
     }
 
-    private fun mapToMedlemskapsstatus(sykepengeSoknad: SykepengesoeknadGrunnlag): Medlemskapsstatus =
-        Medlemskapsstatus(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, ErMedlem.UAVKLART)
+    private fun mapToMedlemskap(sykepengeSoknad: SykepengesoeknadGrunnlag): Medlemskap =
+        Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, ErMedlem.UAVKLART)
 }
