@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.domain.erFunkskjoneltLik
@@ -60,5 +60,5 @@ class SykepengesoeknadFiltrering(
     }
 
     private fun mapToMedlemskap(sykepengeSoknad: SykepengesoeknadGrunnlag): Medlemskap =
-        Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, ErMedlem.UAVKLART)
+        Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, Status.UAVKLART)
 }

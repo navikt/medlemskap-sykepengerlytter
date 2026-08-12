@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status as SoknadStatus
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,7 +34,7 @@ class SykepengesoeknadFiltreringTest {
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 1, 1),
                 tom = LocalDate.of(2024, 1, 31),
-                medlem = ErMedlem.UAVKLART
+                medlem = MedlemskapStatus.UAVKLART
             )
         )
 
@@ -50,7 +50,7 @@ class SykepengesoeknadFiltreringTest {
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
                 tom = LocalDate.of(2024, 2, 28),
-                medlem = ErMedlem.UAVKLART
+                medlem = MedlemskapStatus.UAVKLART
             )
         )
 
@@ -134,7 +134,7 @@ class SykepengesoeknadFiltreringTest {
         assertTrue(lagret)
         val lagretVurdering = medlemskapRepository.finnVurdering("12345678901")
             .single { it.id == søknad.id }
-        assertEquals(ErMedlem.PAFOLGENDE.toString(), lagretVurdering.status)
+        assertEquals(MedlemskapStatus.PAFOLGENDE.toString(), lagretVurdering.status)
         assertEquals(søknad.fom, lagretVurdering.fom)
         assertEquals(søknad.tom, lagretVurdering.tom)
     }
@@ -160,7 +160,7 @@ class SykepengesoeknadFiltreringTest {
         fnr: String,
         fom: LocalDate,
         tom: LocalDate,
-        status: ErMedlem = ErMedlem.JA
+        status: MedlemskapStatus = MedlemskapStatus.JA
     ) {
         medlemskapRepository.lagreVurdering(
             VurderingDao(
@@ -183,7 +183,7 @@ class SykepengesoeknadFiltreringTest {
         SykepengesoeknadGrunnlag(
             id = UUID.randomUUID().toString(),
             type = Type.ARBEIDSTAKERE,
-            status = Status.SENDT.name,
+            status = SoknadStatus.SENDT.name,
             fnr = fnr,
             korrigerer = null,
             startSyketilfelle = fom,

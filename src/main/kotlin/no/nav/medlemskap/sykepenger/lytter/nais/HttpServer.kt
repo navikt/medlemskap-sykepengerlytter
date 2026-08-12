@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
-import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.HentMedlemskapsstatus
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.FinnMedlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
@@ -63,7 +63,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         azureAdClient = AzureAdClient(configuration),
         configuration = configuration
     ).saga(configuration.register.medlemskapSagaBaseUrl)
-    val hentMedlemskapsstatus = HentMedlemskapsstatus(persistenceService, sagaClient)
+    val finnMedlemskapsstatus = FinnMedlemskapsstatus(persistenceService, sagaClient)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
@@ -120,7 +120,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
-            medlemskapsstatusRoute(hentMedlemskapsstatus)
+            medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }

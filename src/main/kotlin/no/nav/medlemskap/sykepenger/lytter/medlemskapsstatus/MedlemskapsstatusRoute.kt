@@ -16,7 +16,7 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.medlemskapsstatusRoute(hentMedlemskapsstatus: HentMedlemskapsstatus) {
+fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus) {
     authenticate("azureAuth") {
         post("/flexvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -30,7 +30,7 @@ fun Routing.medlemskapsstatusRoute(hentMedlemskapsstatus: HentMedlemskapsstatus)
             )
             val request = call.receive<MedlemskapsstatusRequest>()
             try {
-                val response = hentMedlemskapsstatus.finnFlexVurdering(request, callId)
+                val response = finnMedlemskapsstatus.finnMedlemskapsstatus(request, callId)
                 if (response != null) {
                     logger.info(
                         teamLogs,
