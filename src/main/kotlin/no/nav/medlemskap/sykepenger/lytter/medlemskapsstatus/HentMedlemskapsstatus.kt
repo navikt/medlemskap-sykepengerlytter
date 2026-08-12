@@ -3,7 +3,10 @@ package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 import io.ktor.client.plugins.ResponseException
 import net.logstash.logback.argument.StructuredArguments
 import mu.KotlinLogging
+import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
+import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
+import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -13,6 +16,14 @@ class HentMedlemskapsstatus(
     private val persistenceService: PersistenceService,
     private val sagaClient: SagaAPI
 ) {
+    constructor(configuration: Configuration, persistenceService: PersistenceService) : this(
+        persistenceService,
+        RestClients(
+            azureAdClient = AzureAdClient(configuration),
+            configuration = configuration
+        ).saga(configuration.register.medlemskapSagaBaseUrl)
+    )
+
     companion object {
         private val log = KotlinLogging.logger { }
         private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
@@ -35,12 +46,7 @@ class HentMedlemskapsstatus(
                     StructuredArguments.kv("callId", callId)
                 )
                 return hentFlexVurdering(
-                    MedlemskapsstatusRequest(
-                        medlemskapsstatusRequest.sykepengesoknad_id,
-                        medlemskapsstatusRequest.fnr,
-                        forste.fom,
-                        forste.tom
-                    ),
+                    MedlemskapsstatusRequest(medlemskapsstatusRequest.sykepengesoknad_id, medlemskapsstatusRequest.fnr, forste.fom, forste.tom),
                     forste,
                     callId
                 )
