@@ -23,6 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
+import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
+import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.HentMedlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
@@ -57,7 +59,11 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val hentMedlemskapsstatus = HentMedlemskapsstatus(configuration, persistenceService)
+    val sagaClient = RestClients(
+        azureAdClient = AzureAdClient(configuration),
+        configuration = configuration
+    ).saga(configuration.register.medlemskapSagaBaseUrl)
+    val hentMedlemskapsstatus = HentMedlemskapsstatus(persistenceService, sagaClient)
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
