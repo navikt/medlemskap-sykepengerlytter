@@ -36,7 +36,7 @@ internal class FinnMedlemskapsstatusLogger {
             StructuredArguments.kv("callId", callId)
         )
 
-    fun logSagaVurderingIkkeFunnet(request: MedlemskapsstatusRequest, callId: String) =
+    fun logMedlemskapsstatusIkkeFunnet(request: MedlemskapsstatusRequest, callId: String) =
         log.info(
             teamLogs,
             "404 for kall mot saga på : fnr : ${request.fnr}, fom:${request.fom}, tom: ${request.tom}",

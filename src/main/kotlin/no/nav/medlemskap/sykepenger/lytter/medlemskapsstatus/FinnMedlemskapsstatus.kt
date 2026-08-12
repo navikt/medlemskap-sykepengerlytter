@@ -18,14 +18,14 @@ class FinnMedlemskapsstatus(
 
         val grunnlag = when (funnetMedlemskap?.medlem) {
             Status.PAFOLGENDE -> {
-                val førstegangssøknaden = medlemskap.finnFørstegangssøknaden(funnetMedlemskap)
+                val førstegangssøknadenGrunnlag = medlemskap.finnGrunnlagForFørstegangssøknaden(funnetMedlemskap)
                     ?: run {
                     logger.logIngenFørstegangssøknad(medlemskapsstatusRequest, callId)
                         return null
                     }
 
-                logger.logKallerSagaMedFørsteVurdering(medlemskapsstatusRequest, førstegangssøknaden, callId)
-                medlemskapsstatusRequest.copy(fom = førstegangssøknaden.fom, tom = førstegangssøknaden.tom)
+                logger.logKallerSagaMedFørsteVurdering(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
+                medlemskapsstatusRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
             }
             null -> {
                 logger.logIngenMatchendeVurdering(medlemskapsstatusRequest, callId)
@@ -34,18 +34,18 @@ class FinnMedlemskapsstatus(
             else -> medlemskapsstatusRequest
         }
 
-        return hentFlexVurdering(grunnlag, callId)
+        return hentMedlemskapsstatus(grunnlag, callId)
     }
 
-    private suspend fun hentFlexVurdering(
-        medlemskapsstatusRequest: MedlemskapsstatusRequest,
+    private suspend fun hentMedlemskapsstatus(
+        grunnlag: MedlemskapsstatusRequest,
         callId: String
     ): Medlemskapsstatus? {
         return try {
-            sagaClient.finnFlexVurdering(medlemskapsstatusRequest, callId)
+            sagaClient.hentMedlemskapsstatus(grunnlag, callId)
         } catch (cause: ResponseException) {
             if (cause.response.status.value == 404) {
-                logger.logSagaVurderingIkkeFunnet(medlemskapsstatusRequest, callId)
+                logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
                 return null
             }
             logger.logHttpFeil(cause.response.status.value, cause)
@@ -54,7 +54,7 @@ class FinnMedlemskapsstatus(
     }
 }
 
-fun List<Medlemskap>.finnFørstegangssøknaden(påfølgende: Medlemskap): Medlemskap? =
+fun List<Medlemskap>.finnGrunnlagForFørstegangssøknaden(påfølgende: Medlemskap): Medlemskap? =
     filter { it.tom < påfølgende.tom && it.medlem != Status.PAFOLGENDE }
         .maxByOrNull { it.tom }
 

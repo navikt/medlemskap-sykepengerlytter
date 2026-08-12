@@ -35,7 +35,7 @@ open class SagaClient(
 
     }
 
-    override suspend fun finnFlexVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus {
+    override suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "flexvurdering", retry) {
             httpClient.post {
@@ -66,6 +66,6 @@ open class SagaClient(
 
 interface SagaAPI{
     suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): String
-    suspend fun finnFlexVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
+    suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
     suspend fun ping(callId: String): String
 }
