@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import io.ktor.client.plugins.ResponseException
+import io.ktor.http.HttpStatusCode
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
@@ -44,12 +45,13 @@ class FinnMedlemskapsstatus(
         return try {
             sagaClient.hentMedlemskapsstatus(grunnlag, callId)
         } catch (cause: ResponseException) {
-            if (cause.response.status.value == 404) {
-                logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
-                return null
+            when (cause.response.status) {
+                HttpStatusCode.NotFound -> {
+                    logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
+                    null
+                }
+                else -> throw cause
             }
-            logger.logHttpFeil(cause.response.status.value, cause)
-            throw cause
         }
     }
 }
