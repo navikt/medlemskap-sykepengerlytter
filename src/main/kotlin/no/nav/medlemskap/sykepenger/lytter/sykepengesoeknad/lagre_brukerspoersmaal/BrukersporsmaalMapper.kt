@@ -1,8 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.convertValue
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
+import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
+import no.nav.medlemskap.sykepenger.lytter.domain.OppholdUtenforEos
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
@@ -14,6 +17,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
+import no.nav.medlemskap.sykepenger.lytter.persistence.sporsmaalSvar
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
@@ -21,37 +25,71 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     private val log  = KotlinLogging.logger { }
 
+    val spoersmaalListe: List<FlexMedlemskapsBrukerSporsmaal> = objectMapper.convertValue(sporsmal)
+
+    val arbeidUtland = spoersmaalListe.find { it.tag == "ARBEID_UTENFOR_NORGE" }
+    val utfoertArbeidUtenforNorge = spoersmaalListe.find { it.tag == "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE" }
+    val oppholdUtenforNorgeSpoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" }
+    val oppholdUtenforEOSSpoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" }
+
     val sporsmålArray = sporsmal
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
     val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
     val arbeidutland_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
     val oppholdUtenforNorge_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE") }
-    val oppholdUtenforEOS_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS") }
     val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
     val arbeidUtlandBrukerSporsmaal = getarbeidUtlandBrukerSporsmaal()
     val oppholdUtenforNorge = getOppholdUtenforNorgeBrukerSporsmaal()
-    val oppholdUtenforEOS = getOppholdUtenforEOSBrukerSporsmaal()
+    val oppholdUtenforEOS = getOppholdUtenforEOSBrukerSporsmaal(oppholdUtenforEOSSpoersmaal)
 
-    private fun getOppholdUtenforEOSBrukerSporsmaal(): Medlemskap_opphold_utenfor_eos? {
-        if (oppholdUtenforEOS_brukersporsmaal != null){
-            return mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOS_brukersporsmaal)
+    private fun mapSvar(svar: List<sporsmaalSvar>?): Boolean {
+        return svar?.first()?.equals("JA") ?: false
+    }
 
+    private fun getOppholdUtenforEOSBrukerSporsmaal(brukerSporsmaal: FlexMedlemskapsBrukerSporsmaal?): Medlemskap_opphold_utenfor_eos? {
+        if (brukerSporsmaal != null){
+            return mapOppholdUtenforEOS_BrukerSporsmaal(brukerSporsmaal)
         }
         return null
     }
 
-    private fun mapOppholdUtenforEOS_BrukerSporsmaal(oppholdutenforEOS: JsonNode): Medlemskap_opphold_utenfor_eos? {
-        val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdutenforEOS)
-        val id = flexModel.id
-        val sporsmalstekst = flexModel.sporsmalstekst
-        val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
-        var utlandsopphold: List<OppholdUtenforEOS> = emptyList()
-        if (svar){
-             utlandsopphold=
-                mapOppholdUtenforEOS(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
-                    ?: emptyList())
-        }
-        return Medlemskap_opphold_utenfor_eos(id, sporsmalstekst, svar, utlandsopphold);
+    private fun mapOppholdUtenforEOS_BrukerSporsmaal(oppholdutenforEOS: FlexMedlemskapsBrukerSporsmaal): Medlemskap_opphold_utenfor_eos? {
+        return Medlemskap_opphold_utenfor_eos(
+            id = oppholdutenforEOS.id,
+            sporsmalstekst = oppholdutenforEOS.sporsmalstekst,
+            svar = mapSvar(oppholdutenforEOS.svar),
+            oppholdUtenforEOS = mapOppholdUtenforEOSunderspoersmaal(oppholdutenforEOS.undersporsmal),
+        )
+    }
+
+    private fun mapOppholdUtenforEOSunderspoersmaal(underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?): List<OppholdUtenforEOS> {
+        return underspoersmaal?.map {
+            val oppholdUtenforEOSspoersmaalGruppering =
+                underspoersmaal.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+
+            val oppholdUtenforEOSbegrunnelse = oppholdUtenforEOSspoersmaalGruppering
+                .undersporsmal
+                ?.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") && it.svar?.size == 1 }
+
+            val oppholdutenforEOSspoersmaalHvorVerdi = oppholdUtenforEOSspoersmaalGruppering
+                .undersporsmal
+                ?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first().verdi
+
+            val oppholdUtenforEOSNaarDato =
+                oppholdUtenforEOSspoersmaalGruppering.undersporsmal
+                .first{ it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
+
+            OppholdUtenforEOS(
+                id = it.id,
+                land = oppholdutenforEOSspoersmaalHvorVerdi,
+                grunn = oppholdUtenforEOSbegrunnelse?.sporsmalstekst ?: "null",
+                perioder = mapOppholdUtenforEOSNaarDato(oppholdUtenforEOSNaarDato.svar)
+            )
+        } ?: emptyList()
+    }
+
+    private fun mapOppholdUtenforEOSNaarDato(svar: List<sporsmaalSvar>?): List<Periode> {
+        return listOf(objectMapper.convertValue<Periode>(svar?.first()?.verdi))
     }
 
 
