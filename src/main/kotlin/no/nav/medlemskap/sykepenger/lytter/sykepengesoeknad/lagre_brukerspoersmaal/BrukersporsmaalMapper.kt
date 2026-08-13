@@ -5,19 +5,18 @@ import com.fasterxml.jackson.module.kotlin.convertValue
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.domain.OppholdUtenforEos
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
-import no.nav.medlemskap.sykepenger.lytter.persistence.sporsmaalSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalNaarDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.getOppholdUtenforEOSBrukerSporsmaal
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
@@ -36,98 +35,53 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
     val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
     val arbeidutland_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE") }
-    val oppholdUtenforNorge_brukersporsmaal = sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE") }
     val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
     val arbeidUtlandBrukerSporsmaal = getarbeidUtlandBrukerSporsmaal()
     val oppholdUtenforNorge = getOppholdUtenforNorgeBrukerSporsmaal()
     val oppholdUtenforEOS = getOppholdUtenforEOSBrukerSporsmaal(oppholdUtenforEOSSpoersmaal)
 
-    private fun mapSvar(svar: List<sporsmaalSvar>?): Boolean {
-        return svar?.first()?.equals("JA") ?: false
-    }
-
-    private fun getOppholdUtenforEOSBrukerSporsmaal(brukerSporsmaal: FlexMedlemskapsBrukerSporsmaal?): Medlemskap_opphold_utenfor_eos? {
-        if (brukerSporsmaal != null){
-            return mapOppholdUtenforEOS_BrukerSporsmaal(brukerSporsmaal)
+    private fun getOppholdUtenforNorgeBrukerSporsmaal(): Medlemskap_opphold_utenfor_norge?{
+        if (oppholdUtenforNorgeSpoersmaal != null){
+            return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgeSpoersmaal)
         }
         return null
     }
 
-    private fun mapOppholdUtenforEOS_BrukerSporsmaal(oppholdutenforEOS: FlexMedlemskapsBrukerSporsmaal): Medlemskap_opphold_utenfor_eos? {
-        return Medlemskap_opphold_utenfor_eos(
-            id = oppholdutenforEOS.id,
-            sporsmalstekst = oppholdutenforEOS.sporsmalstekst,
-            svar = mapSvar(oppholdutenforEOS.svar),
-            oppholdUtenforEOS = mapOppholdUtenforEOSunderspoersmaal(oppholdutenforEOS.undersporsmal),
+    private fun mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge: FlexMedlemskapsBrukerSporsmaal): Medlemskap_opphold_utenfor_norge? {
+        val svar = mapSvar(oppholdUtenforNorge.svar)
+        return Medlemskap_opphold_utenfor_norge(
+            id = oppholdUtenforNorge.id,
+            sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,
+            svar = svar,
+            oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspoersmaal(oppholdUtenforNorge.undersporsmal) else emptyList(),
         )
     }
 
-    private fun mapOppholdUtenforEOSunderspoersmaal(underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?): List<OppholdUtenforEOS> {
+    private fun mapOppholdUtenforNorgeUnderspoersmaal(underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?): List<OppholdUtenforNorge> {
         return underspoersmaal?.map {
-            val oppholdUtenforEOSspoersmaalGruppering =
-                underspoersmaal.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+            val oppholdUtenforNorgeSpoersmaalGruppering =
+                underspoersmaal.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
 
-            val oppholdUtenforEOSbegrunnelse = oppholdUtenforEOSspoersmaalGruppering
+            val oppholdUtenforNorgeBegrunnelse = oppholdUtenforNorgeSpoersmaalGruppering
                 .undersporsmal
-                ?.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") && it.svar?.size == 1 }
+                ?.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") && it.svar?.size == 1 }
 
-            val oppholdutenforEOSspoersmaalHvorVerdi = oppholdUtenforEOSspoersmaalGruppering
+            val oppholdUtenforNorgeHvorVerdi = oppholdUtenforNorgeSpoersmaalGruppering
                 .undersporsmal
                 ?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first().verdi
 
-            val oppholdUtenforEOSNaarDato =
-                oppholdUtenforEOSspoersmaalGruppering.undersporsmal
-                .first{ it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
+            val oppholdUtenforNorgeNaarDato =
+                oppholdUtenforNorgeSpoersmaalGruppering.undersporsmal
+                    .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
 
-            OppholdUtenforEOS(
+            OppholdUtenforNorge(
                 id = it.id,
-                land = oppholdutenforEOSspoersmaalHvorVerdi,
-                grunn = oppholdUtenforEOSbegrunnelse?.sporsmalstekst ?: "null",
-                perioder = mapOppholdUtenforEOSNaarDato(oppholdUtenforEOSNaarDato.svar)
+                land = oppholdUtenforNorgeHvorVerdi,
+                grunn = oppholdUtenforNorgeBegrunnelse?.sporsmalstekst ?: "null",
+                perioder = mapBrukerSpoersmaalNaarDato(oppholdUtenforNorgeNaarDato.svar),
             )
         } ?: emptyList()
     }
-
-    private fun mapOppholdUtenforEOSNaarDato(svar: List<sporsmaalSvar>?): List<Periode> {
-        return listOf(objectMapper.convertValue<Periode>(svar?.first()?.verdi))
-    }
-
-
-    private fun mapOppholdUtenforEOS(flex_OppholdUtenforEOS: List<FlexMedlemskapsBrukerSporsmaal>): List<OppholdUtenforEOS> {
-        return flex_OppholdUtenforEOS.map{
-            val hvor = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first()!!.verdi
-            val grunnNode = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }
-            val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
-            val grunn = v2?.first()!!.sporsmalstekst
-            val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }?.svar!!.first()!!.verdi))
-            OppholdUtenforEOS(it.id, hvor, grunn!!, periode)
-        }
-
-    }
-
-    private fun getOppholdUtenforNorgeBrukerSporsmaal(): Medlemskap_opphold_utenfor_norge?{
-        if (oppholdUtenforNorge_brukersporsmaal != null){
-            return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge_brukersporsmaal)
-
-        }
-        return null
-    }
-
-    private fun mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorge: JsonNode): Medlemskap_opphold_utenfor_norge? {
-        val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(oppholdUtenforNorge)
-        val id = flexModel.id
-        val sporsmalstekst = flexModel.sporsmalstekst
-        val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
-        var utlandsopphold: List<OppholdUtenforNorge> = emptyList()
-        if (svar){
-            utlandsopphold = mapOppholdUtenforNorge(flexModel.undersporsmal?.filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
-                    ?: emptyList())
-
-        }
-        return Medlemskap_opphold_utenfor_norge(id, sporsmalstekst, svar, utlandsopphold);
-    }
-
-
 
     private fun getarbeidUtlandBrukerSporsmaal(): Medlemskap_utfort_arbeid_utenfor_norge? {
         if (arbeidutland_brukersporsmaal != null) {
@@ -187,17 +141,6 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
 
     }
 
-    private fun mapOppholdUtenforNorge(flex_OppholdUtenforNorge: List<FlexMedlemskapsBrukerSporsmaal>): List<OppholdUtenforNorge> {
-        return flex_OppholdUtenforNorge.map{
-            val hvor = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }?.svar!!.first()!!.verdi
-            val grunnNode = it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }
-            val v2 = grunnNode?.undersporsmal?.filter { it.svar?.size ==1 }
-            val grunn = v2?.first()!!.sporsmalstekst
-            val periode:List<Periode> = listOf(JacksonParser().toDomainObject(it.undersporsmal?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }?.svar!!.first()!!.verdi))
-            OppholdUtenforNorge(it.id, hvor, grunn!!, periode)
-        }
-
-    }
 
     private fun mapArbeidUtenforNorge(flex_arbeidUtenforNorgeList: List<FlexMedlemskapsBrukerSporsmaal>): List<ArbeidUtenforNorge> {
         val listOfArbeidUtenforNorge = flex_arbeidUtenforNorgeList.map {
