@@ -1,15 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
-import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 class FinnMedlemskapsstatus(
     private val persistenceService: PersistenceService,
-    private val sagaClient: SagaAPI
+    private val medlemskapsstatusService: MedlemskapsstatusService
 ) {
     private val logger = FinnMedlemskapsstatusLogger()
 
@@ -35,23 +31,10 @@ class FinnMedlemskapsstatus(
             else -> medlemskapsstatusRequest
         }
 
-        return hentMedlemskapsstatus(grunnlag, callId)
-    }
-
-    private suspend fun hentMedlemskapsstatus(
-        grunnlag: MedlemskapsstatusRequest,
-        callId: String
-    ): Medlemskapsstatus? {
-        return try {
-            sagaClient.hentMedlemskapsstatus(grunnlag, callId)
-        } catch (cause: ResponseException) {
-            when (cause.response.status) {
-                HttpStatusCode.NotFound -> {
-                    logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
-                    null
-                }
-                else -> throw cause
-            }
+        val medlemskapsstatus = medlemskapsstatusService.hent(grunnlag, callId)
+        if (medlemskapsstatus == null) {
+            logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
         }
+        return medlemskapsstatus
     }
 }
