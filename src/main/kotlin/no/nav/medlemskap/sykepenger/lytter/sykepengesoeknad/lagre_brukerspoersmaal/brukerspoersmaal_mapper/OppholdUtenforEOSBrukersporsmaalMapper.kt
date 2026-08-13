@@ -1,20 +1,16 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
-import com.fasterxml.jackson.module.kotlin.convertValue
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
-import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
-import no.nav.medlemskap.sykepenger.lytter.persistence.sporsmaalSvar
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalNaarDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforEOSBrukerSporsmaal(
-    brukerSporsmaal: FlexMedlemskapsBrukerSporsmaal?
+    oppholdUtenforEOSbrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
 ): Medlemskap_opphold_utenfor_eos? {
-    if (brukerSporsmaal != null) {
-        return mapOppholdUtenforEOS_BrukerSporsmaal(brukerSporsmaal)
+    if (oppholdUtenforEOSbrukerspoersmaal != null) {
+        return mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
     }
     return null
 }

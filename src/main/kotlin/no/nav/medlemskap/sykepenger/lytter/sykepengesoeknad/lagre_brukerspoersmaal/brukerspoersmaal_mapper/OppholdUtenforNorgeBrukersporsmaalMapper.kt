@@ -7,10 +7,10 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforNorgeBrukerSporsmaal(
-    brukerSporsmaal: FlexMedlemskapsBrukerSporsmaal?
+    oppholdUtenforNorgebrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
 ): Medlemskap_opphold_utenfor_norge? {
-    if (brukerSporsmaal != null) {
-        return mapOppholdUtenforNorge_BrukerSporsmaal(brukerSporsmaal)
+    if (oppholdUtenforNorgebrukerspoersmaal != null) {
+        return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
     }
     return null
 }
