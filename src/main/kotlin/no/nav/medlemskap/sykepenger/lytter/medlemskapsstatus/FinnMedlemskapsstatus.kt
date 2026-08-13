@@ -10,12 +10,12 @@ class FinnMedlemskapsstatus(
     private val logger = FinnMedlemskapsstatusLogger()
 
     suspend fun finnMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus? {
-        val medlemskap = persistenceService.hentMedlemskap(medlemskapsstatusRequest.fnr)
-        val funnetMedlemskap = medlemskap.finnMatchendeMedlemskapsperiode(medlemskapsstatusRequest)
+        val vurderingsstatuser = persistenceService.hentVurderingsstatus(medlemskapsstatusRequest.fnr)
+        val funnetStatus = vurderingsstatuser.finnMatchendeMedlemskapsperiode(medlemskapsstatusRequest)
 
-        val grunnlag = when (funnetMedlemskap?.medlem) {
+        val grunnlag = when (funnetStatus?.status) {
             Status.PAFOLGENDE -> {
-                val førstegangssøknadenGrunnlag = medlemskap.finnGrunnlagForFørstegangssøknaden(funnetMedlemskap)
+                val førstegangssøknadenGrunnlag = vurderingsstatuser.finnGrunnlagForFørstegangssøknaden(funnetStatus)
                     ?: run {
                     logger.logIngenFørstegangssøknad(medlemskapsstatusRequest, callId)
                         return null

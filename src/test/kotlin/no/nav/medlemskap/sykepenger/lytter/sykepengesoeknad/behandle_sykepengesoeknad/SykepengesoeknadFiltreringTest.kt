@@ -3,7 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -30,11 +30,11 @@ class SykepengesoeknadFiltreringTest {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
         val duplikat = filtrering.erDuplikat(
-            Medlemskap(
+            Vurderingsstatus(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 1, 1),
                 tom = LocalDate.of(2024, 1, 31),
-                medlem = MedlemskapStatus.UAVKLART
+                status = MedlemskapStatus.UAVKLART
             )
         )
 
@@ -46,11 +46,11 @@ class SykepengesoeknadFiltreringTest {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
         val duplikat = filtrering.erDuplikat(
-            Medlemskap(
+            Vurderingsstatus(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
                 tom = LocalDate.of(2024, 2, 28),
-                medlem = MedlemskapStatus.UAVKLART
+                status = MedlemskapStatus.UAVKLART
             )
         )
 

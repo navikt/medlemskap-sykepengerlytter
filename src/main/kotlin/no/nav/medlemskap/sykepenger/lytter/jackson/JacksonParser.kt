@@ -54,15 +54,6 @@ class JacksonParser {
         parse(jsonString)
 
 
-    fun parseMedlemskap(medlemskap: Medlemskap): String {
-        try {
-            return mapper.writeValueAsString(medlemskap)
-        } catch (t: Throwable) {
-            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            throw t;
-        }
-    }
-
     fun parse(obj: Any): String {
         try {
             return mapper.writeValueAsString(obj)

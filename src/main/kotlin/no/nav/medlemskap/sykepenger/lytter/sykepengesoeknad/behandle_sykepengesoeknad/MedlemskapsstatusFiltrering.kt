@@ -1,12 +1,12 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 
-fun Medlemskap.erpåfølgende(medlemskap: Medlemskap): Boolean =
-    fom.isEqual(medlemskap.tom.plusDays(1)) || erIMidtenAv(medlemskap)
+fun Vurderingsstatus.erpåfølgende(vurderingsstatus: Vurderingsstatus): Boolean =
+    fom.isEqual(vurderingsstatus.tom.plusDays(1)) || erIMidtenAv(vurderingsstatus)
 
-fun Medlemskap.erFunkskjoneltLik(medlemskap: Medlemskap): Boolean =
-    fom.isEqual(medlemskap.fom) && tom.isEqual(medlemskap.tom)
+fun Vurderingsstatus.erFunkskjoneltLik(vurderingsstatus: Vurderingsstatus): Boolean =
+    fom.isEqual(vurderingsstatus.fom) && tom.isEqual(vurderingsstatus.tom)
 
-private fun Medlemskap.erIMidtenAv(medlemskap: Medlemskap): Boolean =
-    fom.isAfter(medlemskap.fom) && fom.isBefore(medlemskap.tom)
+private fun Vurderingsstatus.erIMidtenAv(vurderingsstatus: Vurderingsstatus): Boolean =
+    fom.isAfter(vurderingsstatus.fom) && fom.isBefore(vurderingsstatus.tom)

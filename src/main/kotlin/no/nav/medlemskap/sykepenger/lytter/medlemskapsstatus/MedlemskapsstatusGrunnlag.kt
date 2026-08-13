@@ -1,15 +1,15 @@
 package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
 
-fun List<Medlemskap>.finnGrunnlagForFørstegangssøknaden(påfølgende: Medlemskap): Medlemskap? =
-    filter { it.tom < påfølgende.tom && it.medlem != Status.PAFOLGENDE }
+fun List<Vurderingsstatus>.finnGrunnlagForFørstegangssøknaden(påfølgende: Vurderingsstatus): Vurderingsstatus? =
+    filter { it.tom < påfølgende.tom && it.status != Status.PAFOLGENDE }
         .maxByOrNull { it.tom }
 
-fun List<Medlemskap>.finnMatchendeMedlemskapsperiode(
+fun List<Vurderingsstatus>.finnMatchendeMedlemskapsperiode(
     medlemskapsstatusRequest: MedlemskapsstatusRequest
-): Medlemskap? =
+): Vurderingsstatus? =
     firstOrNull {
         it.fom.isEqual(medlemskapsstatusRequest.fom) &&
             it.tom.isEqual(medlemskapsstatusRequest.tom)

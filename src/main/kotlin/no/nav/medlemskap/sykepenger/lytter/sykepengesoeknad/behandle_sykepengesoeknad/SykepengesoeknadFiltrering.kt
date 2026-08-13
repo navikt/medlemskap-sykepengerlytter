@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 
@@ -22,9 +22,9 @@ class SykepengesoeknadFiltrering(
         return duplikat != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
 
-    fun erDuplikat(medlemRequest: Medlemskap): Medlemskap? {
-        val vurderinger = persistenceService.hentMedlemskap(medlemRequest.fnr)
-        return vurderinger.find { medlemRequest.erFunkskjoneltLik(it) }
+    fun erDuplikat(medlemRequest: Vurderingsstatus): Vurderingsstatus? {
+        val vurderingsstatuser = persistenceService.hentVurderingsstatus(medlemRequest.fnr)
+        return vurderingsstatuser.find { medlemRequest.erFunkskjoneltLik(it) }
     }
 
     fun erPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Boolean {
@@ -32,7 +32,7 @@ class SykepengesoeknadFiltrering(
             return false
         }
         val medlemRequest = mapToMedlemskap(sykepengesøknadGrunnlag)
-        val vurderinger = persistenceService.hentMedlemskap(sykepengesøknadGrunnlag.fnr)
+        val vurderinger = persistenceService.hentVurderingsstatus(sykepengesøknadGrunnlag.fnr)
         val result = vurderinger.find { medlemRequest.erpåfølgende(it) }
         return result != null && arbeidUtenForNorgeFalse(sykepengesøknadGrunnlag)
     }
@@ -57,6 +57,6 @@ class SykepengesoeknadFiltrering(
         return sykepengesøknadGrunnlag.arbeidUtenforNorge == false || sykepengesøknadGrunnlag.arbeidUtenforNorge == null
     }
 
-    private fun mapToMedlemskap(sykepengeSoknad: SykepengesoeknadGrunnlag): Medlemskap =
-        Medlemskap(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, Status.UAVKLART)
+    private fun mapToMedlemskap(sykepengeSoknad: SykepengesoeknadGrunnlag): Vurderingsstatus =
+        Vurderingsstatus(sykepengeSoknad.fnr, sykepengeSoknad.fom!!, sykepengeSoknad.tom!!, Status.UAVKLART)
 }

@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 import org.slf4j.MarkerFactory
 
 internal class FinnMedlemskapsstatusLogger {
@@ -20,7 +20,7 @@ internal class FinnMedlemskapsstatusLogger {
 
     fun logKallerSagaMedFørsteVurdering(
         request: MedlemskapsstatusRequest,
-        førsteVurdering: Medlemskap,
+        førsteVurdering: Vurderingsstatus,
         callId: String
     ) =
         log.info(
