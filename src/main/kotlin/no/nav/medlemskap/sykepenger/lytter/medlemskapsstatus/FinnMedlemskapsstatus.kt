@@ -55,15 +55,3 @@ class FinnMedlemskapsstatus(
         }
     }
 }
-
-fun List<Medlemskap>.finnGrunnlagForFørstegangssøknaden(påfølgende: Medlemskap): Medlemskap? =
-    filter { it.tom < påfølgende.tom && it.medlem != Status.PAFOLGENDE }
-        .maxByOrNull { it.tom }
-
-fun List<Medlemskap>.finnMatchendeMedlemskapsperiode(
-    medlemskapsstatusRequest: MedlemskapsstatusRequest
-): Medlemskap? =
-    firstOrNull {
-        it.fom.isEqual(medlemskapsstatusRequest.fom) &&
-            it.tom.isEqual(medlemskapsstatusRequest.tom)
-    }
