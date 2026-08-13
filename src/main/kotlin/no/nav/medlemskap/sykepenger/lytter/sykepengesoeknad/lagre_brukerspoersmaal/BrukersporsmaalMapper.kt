@@ -10,6 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.getutfoertArbeidUtenforNorgeBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.getOppholdUtenforEOSBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.getOppholdUtenforNorgeBrukerSporsmaal
@@ -29,11 +30,18 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
 
     val sporsmålArray = sporsmal
     val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
-    val arbeidutland = sporsmålArray.find { it.get("tag").asText().equals("ARBEID_UTENFOR_NORGE") }
-    val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland)
+    val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidUtland)
     val arbeidUtlandBrukerSporsmaal = getutfoertArbeidUtenforNorgeBrukerSporsmaal(utfoertArbeidUtenforNorge)
     val oppholdUtenforNorge = getOppholdUtenforNorgeBrukerSporsmaal(oppholdUtenforNorgeSpoersmaal)
     val oppholdUtenforEOS = getOppholdUtenforEOSBrukerSporsmaal(oppholdUtenforEOSSpoersmaal)
+
+    fun FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland: FlexMedlemskapsBrukerSporsmaal?): FlexBrukerSporsmaal {
+        var svar: Boolean? = null
+        if (arbeidutland?.svar != null)
+            svar = mapSvar(arbeidutland.svar)
+        return FlexBrukerSporsmaal(svar)
+    }
+
 
     fun getOppholdstilatelse_brukerspørsmål(): Medlemskap_oppholdstilatelse_brukersporsmaal? {
         val medlemskap_oppholdstilatelse_jsonv2 =
@@ -159,28 +167,5 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
             )
             return null
         }
-    }
-
-    fun FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidutland: JsonNode?): FlexBrukerSporsmaal {
-        var svarText: String = "IKKE OPPGITT"
-        var svar: Boolean?
-        if (arbeidutland != null) {
-            //println(arbeidutland)
-            try {
-                svarText = arbeidutland.get("svar").get(0).get("verdi").asText()
-            } catch (t: Throwable) {
-
-            }
-        }
-        if (svarText == "IKKE OPPGITT") {
-            svar = null
-        } else {
-            if (svarText == "NEI") {
-                svar = false
-            } else if (svarText == "JA") {
-                svar = true
-            } else svar = null
-        }
-        return FlexBrukerSporsmaal(svar)
     }
 }
