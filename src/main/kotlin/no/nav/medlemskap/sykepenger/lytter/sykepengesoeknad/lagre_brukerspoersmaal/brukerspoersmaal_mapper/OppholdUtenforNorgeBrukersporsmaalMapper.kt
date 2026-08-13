@@ -9,10 +9,11 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 fun getOppholdUtenforNorgeBrukerSporsmaal(
     oppholdUtenforNorgebrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
 ): Medlemskap_opphold_utenfor_norge? {
-    if (oppholdUtenforNorgebrukerspoersmaal != null) {
-        return mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
+    return if (oppholdUtenforNorgebrukerspoersmaal != null) {
+        mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
+    } else {
+        null
     }
-    return null
 }
 
 private fun mapOppholdUtenforNorge_BrukerSporsmaal(

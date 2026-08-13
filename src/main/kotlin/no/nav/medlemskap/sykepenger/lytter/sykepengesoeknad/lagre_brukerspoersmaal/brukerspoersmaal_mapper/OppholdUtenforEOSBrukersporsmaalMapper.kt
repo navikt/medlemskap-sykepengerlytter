@@ -9,10 +9,11 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 fun getOppholdUtenforEOSBrukerSporsmaal(
     oppholdUtenforEOSbrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
 ): Medlemskap_opphold_utenfor_eos? {
-    if (oppholdUtenforEOSbrukerspoersmaal != null) {
-        return mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
+    return if (oppholdUtenforEOSbrukerspoersmaal != null) {
+        mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
+    } else {
+        null
     }
-    return null
 }
 
 private fun mapOppholdUtenforEOS_BrukerSporsmaal(
