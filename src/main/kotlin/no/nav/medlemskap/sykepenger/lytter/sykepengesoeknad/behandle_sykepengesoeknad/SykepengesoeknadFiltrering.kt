@@ -5,8 +5,6 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
-import no.nav.medlemskap.sykepenger.lytter.domain.erFunkskjoneltLik
-import no.nav.medlemskap.sykepenger.lytter.domain.erpåfølgende
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 
