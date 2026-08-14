@@ -28,8 +28,7 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
     val oppholdUtenforNorgeSpoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" }
     val oppholdUtenforEOSSpoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" }
 
-    val sporsmålArray = sporsmal
-    val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål()
+    val oppholdstilatelse_brukersporsmaal = getOppholdstilatelse_brukerspørsmål(spoersmaalListe)
     val brukersp_arb_utland_old_model: FlexBrukerSporsmaal = FlexBrukerSporsmaalmapArbeidUtlandOldModel(arbeidUtland)
     val arbeidUtlandBrukerSporsmaal = getutfoertArbeidUtenforNorgeBrukerSporsmaal(utfoertArbeidUtenforNorge)
     val oppholdUtenforNorge = getOppholdUtenforNorgeBrukerSporsmaal(oppholdUtenforNorgeSpoersmaal)
@@ -43,82 +42,69 @@ class BrukersporsmaalMapper(sporsmal: JsonNode) {
     }
 
 
-    fun getOppholdstilatelse_brukerspørsmål(): Medlemskap_oppholdstilatelse_brukersporsmaal? {
-        val medlemskap_oppholdstilatelse_jsonv2 =
-            sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLDSTILLATELSE_V2") }
-        if (medlemskap_oppholdstilatelse_jsonv2 != null) {
-            return mapOppholdstilatele_BrukerSpørsmålv2(medlemskap_oppholdstilatelse_jsonv2)
+    fun getOppholdstilatelse_brukerspørsmål(spoersmaalListe: List<FlexMedlemskapsBrukerSporsmaal>): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+        val oppholdstillatelseBrukerspoersmaal_v2 = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2" }
+        val oppholdstillatelseBrukerspoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE" }
 
-        }
-        val medlemskap_oppholdstilatelse_json =
-            sporsmålArray.find { it.get("tag").asText().equals("MEDLEMSKAP_OPPHOLDSTILLATELSE") }
-        if (medlemskap_oppholdstilatelse_json != null) {
-            return mapOppholdstilatele_BrukerSpørsmål(medlemskap_oppholdstilatelse_json)
-
-        }
-        else {
-            return null
-        }
-
+        return if(oppholdstillatelseBrukerspoersmaal_v2 != null)
+            mapOppholdstilatele_BrukerSpørsmålv2(oppholdstillatelseBrukerspoersmaal_v2)
+        else if (oppholdstillatelseBrukerspoersmaal != null)
+            mapOppholdstilatele_BrukerSporsmaal(oppholdstillatelseBrukerspoersmaal)
+        else null
     }
 
-    fun mapOppholdstilatele_BrukerSpørsmål(medlemskapOppholdstillatelse: JsonNode): Medlemskap_oppholdstilatelse_brukersporsmaal? {
-        try {
-            val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(medlemskapOppholdstillatelse)
-            val id = flexModel.id
-            val sporsmalstekst = flexModel.sporsmalstekst
-            val svar: Boolean = "JA" == flexModel.svar?.get(0)?.verdi ?: "NEI"
-            val vedtaksdato = flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }
-                ?.first()?.svar?.first()?.verdi
-            val midlertidigEllerPermanentNode =
-                flexModel.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE" }?.first()
-            val midlertidig = midlertidigEllerPermanentNode?.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG" }?.first()
-            val permanent = midlertidigEllerPermanentNode?.undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }?.first()
-
-            var perioder = mutableListOf<Periode>()
-            var vedtaksTypePermanent = ""
-            if (midlertidig!=null && true == midlertidig.svar?.isNotEmpty()){
-                val periode = midlertidig.undersporsmal?.first()?.svar!!.first()
-                val periodedto: Periode = JacksonParser().toDomainObject(periode!!.verdi)
-                perioder.add(periodedto)
-                vedtaksTypePermanent = "NEI"
-            }
-            /*
-            if (midlertidig != null && true == midlertidig.undersporsmal?.first()?.svar?.isNotEmpty()){
-                    val periode = midlertidig.undersporsmal?.first()?.svar!!.first()
-                    val periodedto: Periode = JacksonParser().toDomainObject(periode!!.verdi)
-                perioder.add(periodedto)
-                vedtaksTypePermanent = "NEI"
-            }
-
-             */
-            if (permanent!=null && true == permanent.svar?.isNotEmpty()){
-                vedtaksTypePermanent = "JA"
-                val fomdato = permanent.undersporsmal?.first()?.svar!!.first()
-                val fomLocalDate = LocalDate.parse(fomdato.verdi)
-                perioder.add(Periode(fomLocalDate, LocalDate.MAX))
-
-            }
-
-            val response = Medlemskap_oppholdstilatelse_brukersporsmaal(
-                id = id,
-                sporsmalstekst = sporsmalstekst,
-                svar = svar,
-                vedtaksdato = LocalDate.parse(vedtaksdato),
-                vedtaksTypePermanent = "JA" == vedtaksTypePermanent,
-                perioder = perioder
-            )
-            return response
-        } catch (e: Exception) {
-            log.error(
-                teamLogs,
-                "Not able to parse Medlemskap_oppholdstilatelse_brukersporsmaal",
-                StructuredArguments.kv("json", medlemskapOppholdstillatelse.toPrettyString())
-            )
-            return null
-        }
+    private fun hentVedtaksdatoFraUndersporsmaal(undersporsmal: List<FlexMedlemskapsBrukerSporsmaal>?): String {
+        return undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.first()?.svar?.first()?.verdi ?: "null"
     }
-    fun mapOppholdstilatele_BrukerSpørsmålv2(medlemskapOppholdstillatelse: JsonNode): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+
+    class VedtaksType(val erPermanentVedtaksType: Boolean, val periode: List<Periode>)
+
+    private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(undersporsmal: List<FlexMedlemskapsBrukerSporsmaal>?): VedtaksType {
+        val oppholdstillatelseSporsmaalGruppering = undersporsmal?.filter { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE" }?.first()
+
+        val oppholdstillatelseMidlertidigSporsmaal =
+            oppholdstillatelseSporsmaalGruppering
+                ?.undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG" }
+
+        val oppholdstillatelsePermanentBrukersporsmaal =
+            oppholdstillatelseSporsmaalGruppering
+                ?.undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
+
+        var erVedtakstypePermanent = false
+        var periode: List<Periode> = emptyList()
+
+        if (oppholdstillatelsePermanentBrukersporsmaal != null && oppholdstillatelsePermanentBrukersporsmaal.svar?.isNotEmpty() == true) {
+            erVedtakstypePermanent = true
+            val fom = LocalDate.parse(oppholdstillatelsePermanentBrukersporsmaal.svar.first().verdi)
+            periode = listOf(Periode(fom, LocalDate.MAX))
+        }
+
+        if (oppholdstillatelseMidlertidigSporsmaal != null && oppholdstillatelseMidlertidigSporsmaal.svar?.isNotEmpty() == true) {
+            erVedtakstypePermanent = true
+            val fom = LocalDate.parse(oppholdstillatelseMidlertidigSporsmaal.svar.first().verdi)
+            periode = listOf(Periode(fom, LocalDate.MAX))
+        }
+
+        return VedtaksType(
+            erPermanentVedtaksType = erVedtakstypePermanent,
+            periode = periode
+        )
+    }
+
+    fun mapOppholdstilatele_BrukerSporsmaal(medlemskapOppholdstillatelse: FlexMedlemskapsBrukerSporsmaal): Medlemskap_oppholdstilatelse_brukersporsmaal? {
+        val vedtaksdato = hentVedtaksdatoFraUndersporsmaal(medlemskapOppholdstillatelse.undersporsmal)
+        val vedtakstype = permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(medlemskapOppholdstillatelse.undersporsmal)
+        return Medlemskap_oppholdstilatelse_brukersporsmaal(
+            id = medlemskapOppholdstillatelse.id,
+            sporsmalstekst = medlemskapOppholdstillatelse.sporsmalstekst,
+            svar = mapSvar(medlemskapOppholdstillatelse.svar),
+            vedtaksdato = LocalDate.parse(vedtaksdato),
+            vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
+            perioder = vedtakstype.periode
+        )
+    }
+
+    fun mapOppholdstilatele_BrukerSpørsmålv2(medlemskapOppholdstillatelse: FlexMedlemskapsBrukerSporsmaal): Medlemskap_oppholdstilatelse_brukersporsmaal? {
         try {
             val flexModel: FlexMedlemskapsBrukerSporsmaal = JacksonParser().toDomainObject(medlemskapOppholdstillatelse)
             val id = flexModel.id
