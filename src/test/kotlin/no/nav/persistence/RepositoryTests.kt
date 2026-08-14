@@ -114,7 +114,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             ytelse = "SYKEPENGER",
             status="SENDT",
             sporsmaal = FlexBrukerSporsmaal(false),
-            oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            oppholdstilatelse = MedlemskapOppholdstilatelseBrukersporsmaal(
                 id=UUID.randomUUID().toString(),
                 sporsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
                 svar = true,
@@ -122,7 +122,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
                 vedtaksTypePermanent = false,
                 perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
             ),
-            utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+            utfort_arbeid_utenfor_norge = MedlemskapUtfortArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
                 sporsmalstekst = "",
                 svar = true,

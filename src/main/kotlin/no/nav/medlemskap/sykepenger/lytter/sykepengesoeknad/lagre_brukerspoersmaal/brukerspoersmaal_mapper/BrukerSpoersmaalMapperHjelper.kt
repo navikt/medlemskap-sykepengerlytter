@@ -10,7 +10,7 @@ object BrukerSpoersmaalMapperHjelper{
         return svar?.first()?.equals("JA") ?: false
     }
 
-    fun mapBrukerSpoersmaalNaarDato(svar: List<sporsmaalSvar>?): List<Periode> {
+    fun mapBrukerSpoersmaalDato(svar: List<sporsmaalSvar>?): List<Periode> {
         return listOf(objectMapper.convertValue<Periode>(svar?.first()?.verdi))
     }
 

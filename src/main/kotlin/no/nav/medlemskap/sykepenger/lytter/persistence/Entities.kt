@@ -38,10 +38,10 @@ data class Brukersporsmaal(
     val ytelse: String,
     val status: String,
     val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
-    val oppholdstilatelse:Medlemskap_oppholdstilatelse_brukersporsmaal? = null,
-    val utfort_arbeid_utenfor_norge:Medlemskap_utfort_arbeid_utenfor_norge? = null,
-    val oppholdUtenforNorge:Medlemskap_opphold_utenfor_norge? = null,
-    val oppholdUtenforEOS:Medlemskap_opphold_utenfor_eos? = null
+    val oppholdstilatelse:MedlemskapOppholdstilatelseBrukersporsmaal? = null,
+    val utfort_arbeid_utenfor_norge:MedlemskapUtfortArbeidUtenforNorge? = null,
+    val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
+    val oppholdUtenforEOS:MedlemskapOppholdUtenforEOS? = null
 
 )
 
@@ -60,7 +60,7 @@ data class FlexMedlemskapsBrukerSporsmaal(
 )
 data class sporsmaalSvar(val verdi:String)
 
-data class Medlemskap_oppholdstilatelse_brukersporsmaal(
+data class MedlemskapOppholdstilatelseBrukersporsmaal(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
@@ -68,7 +68,7 @@ data class Medlemskap_oppholdstilatelse_brukersporsmaal(
     val vedtaksTypePermanent:Boolean,
     val perioder:List<Periode> = mutableListOf()
 )
-data class Medlemskap_utfort_arbeid_utenfor_norge(
+data class MedlemskapUtfortArbeidUtenforNorge(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
@@ -93,14 +93,14 @@ data class OppholdUtenforEOS(
     val perioder: List<Periode>
 )
 
-data class Medlemskap_opphold_utenfor_norge(
+data class MedlemskapOppholdUtenforNorge(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
     val oppholdUtenforNorge:List<OppholdUtenforNorge>
 )
 
-data class Medlemskap_opphold_utenfor_eos(
+data class MedlemskapOppholdUtenforEOS(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,

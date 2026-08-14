@@ -7,13 +7,13 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.OppholdUtenforNor
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Oppholdstilatelse
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 
 object MapBrukersvar {
-    fun mapOppholdstillatelse(oppholdstillatelse: Medlemskap_oppholdstilatelse_brukersporsmaal?): Oppholdstilatelse? =
+    fun mapOppholdstillatelse(oppholdstillatelse: MedlemskapOppholdstilatelseBrukersporsmaal?): Oppholdstilatelse? =
         oppholdstillatelse?.let {
             Oppholdstilatelse(
                 id = it.id,
@@ -28,7 +28,7 @@ object MapBrukersvar {
         }
 
 
-    fun mapUtførtArbeidUtenforNorge(utfortArbeidUtenforNorge: Medlemskap_utfort_arbeid_utenfor_norge?): UtfortAarbeidUtenforNorge? =
+    fun mapUtførtArbeidUtenforNorge(utfortArbeidUtenforNorge: MedlemskapUtfortArbeidUtenforNorge?): UtfortAarbeidUtenforNorge? =
         utfortArbeidUtenforNorge?.let {
             UtfortAarbeidUtenforNorge(
                 id = it.id,
@@ -47,7 +47,7 @@ object MapBrukersvar {
             )
         }
 
-    fun mapOppholdUtenforNorge(oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge?): OppholdUtenforNorge? =
+    fun mapOppholdUtenforNorge(oppholdUtenforNorge: MedlemskapOppholdUtenforNorge?): OppholdUtenforNorge? =
         oppholdUtenforNorge?.let {
             OppholdUtenforNorge(
                 id = it.id,
@@ -66,7 +66,7 @@ object MapBrukersvar {
             )
         }
 
-    fun mapOppholdUtenforEØS(oppholdutenforEØS: Medlemskap_opphold_utenfor_eos?): OppholdUtenforEos? =
+    fun mapOppholdUtenforEØS(oppholdutenforEØS: MedlemskapOppholdUtenforEOS?): OppholdUtenforEos? =
         oppholdutenforEØS?.let {
             OppholdUtenforEos(
                 id = it.id,

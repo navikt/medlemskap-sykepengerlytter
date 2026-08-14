@@ -1,14 +1,14 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalNaarDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforEOSBrukerSporsmaal(
     oppholdUtenforEOSbrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
-): Medlemskap_opphold_utenfor_eos? {
+): MedlemskapOppholdUtenforEOS? {
     return if (oppholdUtenforEOSbrukerspoersmaal != null) {
         mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
     } else {
@@ -18,9 +18,9 @@ fun getOppholdUtenforEOSBrukerSporsmaal(
 
 private fun mapOppholdUtenforEOS_BrukerSporsmaal(
     oppholdutenforEOS: FlexMedlemskapsBrukerSporsmaal
-): Medlemskap_opphold_utenfor_eos {
+): MedlemskapOppholdUtenforEOS {
     val svar = mapSvar(oppholdutenforEOS.svar)
-    return Medlemskap_opphold_utenfor_eos(
+    return MedlemskapOppholdUtenforEOS(
         id = oppholdutenforEOS.id,
         sporsmalstekst = oppholdutenforEOS.sporsmalstekst,
         svar = svar,
@@ -51,7 +51,7 @@ private fun mapOppholdUtenforEOSunderspoersmaal(
             id = it.id,
             land = oppholdutenforEOSspoersmaalHvorVerdi,
             grunn = oppholdUtenforEOSbegrunnelse?.sporsmalstekst ?: "null",
-            perioder = mapBrukerSpoersmaalNaarDato(oppholdUtenforEOSNaarDato.svar),
+            perioder = mapBrukerSpoersmaalDato(oppholdUtenforEOSNaarDato.svar),
         )
     } ?: emptyList()
 }

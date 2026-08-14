@@ -9,7 +9,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
+        val v = mapper.getOppholdstilatelse_brukerspørsmål(spoersmaalListe)
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
@@ -22,7 +22,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2 `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
+        val v = mapper.getOppholdstilatelse_brukerspørsmål(spoersmaalListe)
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
@@ -34,7 +34,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
+        val v = mapper.getOppholdstilatelse_brukerspørsmål(spoersmaalListe)
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
@@ -44,7 +44,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
+        val v = mapper.getOppholdstilatelse_brukerspørsmål(spoersmaalListe)
         Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)

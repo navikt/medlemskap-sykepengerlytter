@@ -1,14 +1,14 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalNaarDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforNorgeBrukerSporsmaal(
     oppholdUtenforNorgebrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
-): Medlemskap_opphold_utenfor_norge? {
+): MedlemskapOppholdUtenforNorge? {
     return if (oppholdUtenforNorgebrukerspoersmaal != null) {
         mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
     } else {
@@ -18,9 +18,9 @@ fun getOppholdUtenforNorgeBrukerSporsmaal(
 
 private fun mapOppholdUtenforNorge_BrukerSporsmaal(
     oppholdUtenforNorge: FlexMedlemskapsBrukerSporsmaal,
-): Medlemskap_opphold_utenfor_norge {
+): MedlemskapOppholdUtenforNorge {
     val svar = mapSvar(oppholdUtenforNorge.svar)
-    return Medlemskap_opphold_utenfor_norge(
+    return MedlemskapOppholdUtenforNorge(
         id = oppholdUtenforNorge.id,
         sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,
         svar = svar,
@@ -51,7 +51,7 @@ private fun mapOppholdUtenforNorgeUnderspoersmaal(
             id = it.id,
             land = oppholdUtenforNorgeHvorVerdi,
             grunn = oppholdUtenforNorgeBegrunnelse?.sporsmalstekst ?: "null",
-            perioder = mapBrukerSpoersmaalNaarDato(oppholdUtenforNorgeNaarDato.svar)
+            perioder = mapBrukerSpoersmaalDato(oppholdUtenforNorgeNaarDato.svar)
         )
     } ?: emptyList()
 }

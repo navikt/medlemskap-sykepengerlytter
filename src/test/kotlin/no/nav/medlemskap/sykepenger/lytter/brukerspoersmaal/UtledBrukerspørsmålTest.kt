@@ -4,10 +4,10 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
@@ -87,7 +87,7 @@ class UtledBrukerspørsmålTest {
         status = "SENDT",
         sporsmaal = null,
         oppholdstilatelse = oppholdstillatelse?.let {
-            Medlemskap_oppholdstilatelse_brukersporsmaal(
+            MedlemskapOppholdstilatelseBrukersporsmaal(
                 id = "oppholdstillatelse",
                 sporsmalstekst = null,
                 svar = it,
@@ -95,14 +95,14 @@ class UtledBrukerspørsmålTest {
                 vedtaksTypePermanent = false
             )
         },
-        utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+        utfort_arbeid_utenfor_norge = MedlemskapUtfortArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
             sporsmalstekst = null,
             svar = false,
             arbeidUtenforNorge = emptyList()
         ),
         oppholdUtenforNorge = oppholdUtenforNorge?.let {
-            Medlemskap_opphold_utenfor_norge(
+            MedlemskapOppholdUtenforNorge(
                 id = "opphold-utenfor-norge",
                 sporsmalstekst = null,
                 svar = it,
@@ -110,7 +110,7 @@ class UtledBrukerspørsmålTest {
             )
         },
         oppholdUtenforEOS = oppholdUtenforEos?.let {
-            Medlemskap_opphold_utenfor_eos(
+            MedlemskapOppholdUtenforEOS(
                 id = "opphold-utenfor-eos",
                 sporsmalstekst = null,
                 svar = it,

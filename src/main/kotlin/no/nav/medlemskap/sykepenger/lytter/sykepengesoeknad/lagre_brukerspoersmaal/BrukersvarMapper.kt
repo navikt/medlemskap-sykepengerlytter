@@ -2,10 +2,10 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import java.time.LocalDate
 
@@ -31,10 +31,10 @@ object BrukersvarMapper {
 
     private fun SykepengesoeknadGrunnlag.tilBrukerspørsmål(
         sporsmaal: FlexBrukerSporsmaal? = null,
-        oppholdstilatelse: Medlemskap_oppholdstilatelse_brukersporsmaal? = null,
-        utfortArbeidUtenforNorge: Medlemskap_utfort_arbeid_utenfor_norge? = null,
-        oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge? = null,
-        oppholdUtenforEOS: Medlemskap_opphold_utenfor_eos? = null
+        oppholdstilatelse: MedlemskapOppholdstilatelseBrukersporsmaal? = null,
+        utfortArbeidUtenforNorge: MedlemskapUtfortArbeidUtenforNorge? = null,
+        oppholdUtenforNorge: MedlemskapOppholdUtenforNorge? = null,
+        oppholdUtenforEOS: MedlemskapOppholdUtenforEOS? = null
     ): Brukersporsmaal {
         return Brukersporsmaal(
             fnr = fnr,

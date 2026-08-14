@@ -2,13 +2,13 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalNaarDato
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
 
 fun getutfoertArbeidUtenforNorgeBrukerSporsmaal(
     utfoertArbeidUtenforNorgeSpoersmaal: FlexMedlemskapsBrukerSporsmaal?,
-): Medlemskap_utfort_arbeid_utenfor_norge? {
+): MedlemskapUtfortArbeidUtenforNorge? {
     return if (utfoertArbeidUtenforNorgeSpoersmaal != null) {
         mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(utfoertArbeidUtenforNorgeSpoersmaal)
     } else {
@@ -18,9 +18,9 @@ fun getutfoertArbeidUtenforNorgeBrukerSporsmaal(
 
 private fun mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(
     utfoertArbeidUtenforNorgeSpoersmaal: FlexMedlemskapsBrukerSporsmaal,
-): Medlemskap_utfort_arbeid_utenfor_norge {
+): MedlemskapUtfortArbeidUtenforNorge {
     val svar = mapSvar(utfoertArbeidUtenforNorgeSpoersmaal.svar)
-    return Medlemskap_utfort_arbeid_utenfor_norge(
+    return MedlemskapUtfortArbeidUtenforNorge(
         id = utfoertArbeidUtenforNorgeSpoersmaal.id,
         sporsmalstekst = utfoertArbeidUtenforNorgeSpoersmaal.sporsmalstekst,
         svar = svar,
@@ -55,7 +55,7 @@ private fun mapUtfoertArbeidUtenforNorgeUnderspoersmaal(
             id = it.id,
             arbeidsgiver = utfoertArbeidUtenforNorgeArbeidsgiverVerdi ?: "null",
             land = utfoertArbeidUtenforNorgeHvorVerdi,
-            perioder = mapBrukerSpoersmaalNaarDato(utfoertArbeidUtenforNorgeNaarDato.svar),
+            perioder = mapBrukerSpoersmaalDato(utfoertArbeidUtenforNorgeNaarDato.svar),
         )
     } ?: emptyList()
 }
