@@ -1,6 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

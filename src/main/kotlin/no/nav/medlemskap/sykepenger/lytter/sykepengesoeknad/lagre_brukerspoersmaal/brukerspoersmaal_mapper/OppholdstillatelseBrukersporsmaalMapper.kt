@@ -14,9 +14,9 @@ fun getOppholdstillatelseBrukersporsmaal(
     val oppholdstillatelseBrukerspoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE" }
 
     return if (oppholdstillatelseBrukerspoersmaalV2 != null) {
-        mapOppholdstilatele_BrukerSpørsmålv2(oppholdstillatelseBrukerspoersmaalV2)
+        mapOppholdstilateleBrukerSpørsmål_v2(oppholdstillatelseBrukerspoersmaalV2)
     } else if (oppholdstillatelseBrukerspoersmaal != null) {
-        mapOppholdstilatele_BrukerSporsmaal(oppholdstillatelseBrukerspoersmaal)
+        mapOppholdstilateleBrukerSporsmaal(oppholdstillatelseBrukerspoersmaal)
     } else {
         null
     }
@@ -83,7 +83,7 @@ private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(
     )
 }
 
-private fun mapOppholdstilatele_BrukerSporsmaal(
+private fun mapOppholdstilateleBrukerSporsmaal(
     oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
 ): MedlemskapOppholdstilatelseBrukersporsmaal {
     val vedtaksdato = hentVedtaksdatoFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
@@ -119,7 +119,7 @@ private fun permanentEllerMidlertidigVedtakstypeFraUndersporsmaalV2(
     )
 }
 
-private fun mapOppholdstilatele_BrukerSpørsmålv2(
+private fun mapOppholdstilateleBrukerSpørsmål_v2(
     oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
 ): MedlemskapOppholdstilatelseBrukersporsmaal? {
     val svar = mapSvar(oppholdstillatelseBrukersporsmaal.svar)
