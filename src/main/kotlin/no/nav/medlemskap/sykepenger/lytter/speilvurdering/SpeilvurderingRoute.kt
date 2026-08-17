@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.nais
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -11,21 +11,21 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.rest.*
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
 import org.slf4j.MarkerFactory
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-fun Routing.sykepengerLytterRoutes(
+fun Routing.speilvurderingRoute(
     bomloService: BomloService,
 ) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            logger.info(teamLogs, "SykepengerLytterRoutes: azp-claim i principal-token: {} ", azp)
+            logger.info(teamLogs, "SpeilvurderingRoute: azp-claim i principal-token: {} ", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info(
                 "kall autentisert, url : /speilvurdering",

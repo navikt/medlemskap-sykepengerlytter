@@ -42,12 +42,15 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SagaService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.medlemskapsstatusRoute
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.speilvurderingRoute
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
@@ -59,7 +62,7 @@ import java.util.*
 
 private val logger = KotlinLogging.logger { }
 
-fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
+fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
     val authorizationHandler = AuthorizationHandler()
     val configuration = Configuration()
@@ -79,6 +82,11 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
+    val bomloService = BomloService(
+        sagaService = SagaService(configuration),
+        medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
+        utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
+    )
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
@@ -148,7 +156,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
 
         routing {
             naisRoutes(consumeJob,bomloService)
-            sykepengerLytterRoutes(bomloService)
+            speilvurderingRoute(bomloService)
             medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)

@@ -1,52 +1,32 @@
-package no.nav.medlemskap.sykepenger.lytter.service
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.ktor.client.plugins.*
+import io.ktor.client.plugins.ResponseException
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
-import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
+import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import org.slf4j.MarkerFactory
 
-class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
-    PostgresMedlemskapVurdertRepository(DataSourceBuilder(System.getenv()).getDataSource()) ,
-    PostgresBrukersporsmaalRepository(DataSourceBuilder(System.getenv()).getDataSource())
-)) {
+class BomloService(
+    private val sagaService: SagaService,
+    private val medlemskapOppslagService: MedlemskapOppslagService,
+    private val utledBrukerinput: UtledBrukerinput
+) {
         companion object {
             private val log = KotlinLogging.logger { }
             private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
         }
 
-        val azureAdClient = AzureAdClient(configuration)
-        val restClients = RestClients(
-            azureAdClient = azureAdClient,
-            configuration = configuration
-        )
-        var sagaClient: SagaAPI
-        var lovmeClient: LovmeAPI
-        private val utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService)))
-
-        init {
-            sagaClient = restClients.saga(configuration.register.medlemskapSagaBaseUrl)
-            lovmeClient = restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
-        }
-
     //Brukt av speilvurdering-endepunktet
     suspend fun finnFlexVurdering(bomloRequest: BomloRequest, callId: String): JsonNode {
         try {
-            val response = sagaClient.finnVurdering(bomloRequest, callId)
+            val response = sagaService.finnVurdering(bomloRequest, callId)
             log.info("Vurdering funnet i database for kall med id $callId")
             return objectMapper.readTree(response)
         } catch (cause: ResponseException) {
@@ -54,9 +34,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             if (cause.response.status.value == 404) {
                 log.info(teamLogs, "Ingen vurdering utført for søknad med callId: ${callId}. " +
                         "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil",
-                    kv("fnr", bomloRequest.fnr),
-                    kv("fom", bomloRequest.periode.fom),
-                    kv("tom", bomloRequest.periode.tom),
+                    StructuredArguments.kv("fnr", bomloRequest.fnr),
+                    StructuredArguments.kv("fom", bomloRequest.periode.fom),
+                    StructuredArguments.kv("tom", bomloRequest.periode.tom),
                 )
                 log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
                 val resultat = mapBrukersvarOgKjørRegelmotor(callId, bomloRequest)
@@ -67,6 +47,9 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             throw cause
         }
     }
+
+    suspend fun pingSaga(callId: String): String =
+        sagaService.ping(callId)
 
     //Brukt av speilvurdering-endepunktet (når det ikke finnes en eksisterende vurdering i databasen)
     private suspend fun mapBrukersvarOgKjørRegelmotor(callId: String, request: BomloRequest): String {
@@ -79,7 +62,7 @@ class BomloService(private val configuration: Configuration, var persistenceServ
             brukerinput = brukerinput
         )
 
-        val resultat = lovmeClient.vurderMedlemskapBomlo(medlemskapOppslagRequest, callId)
+        val resultat = medlemskapOppslagService.vurderMedlemskap(medlemskapOppslagRequest, callId)
         return resultat
     }
 

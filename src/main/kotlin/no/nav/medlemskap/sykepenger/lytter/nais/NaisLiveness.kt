@@ -8,7 +8,7 @@ import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Job
 import mu.KotlinLogging
 
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
 import java.util.*
 
 fun Routing.naisRoutes(
@@ -32,7 +32,7 @@ fun Routing.naisRoutes(
     get("/status") {
         var map:MutableMap<String,Boolean> = mutableMapOf()
         try{
-            bomloService.sagaClient.ping(UUID.randomUUID().toString())
+            bomloService.pingSaga(UUID.randomUUID().toString())
             map["SAGA"] = true
             call.respondText(Dependencies(map,null).toString(), ContentType.Text.Plain, HttpStatusCode.OK)
         }
