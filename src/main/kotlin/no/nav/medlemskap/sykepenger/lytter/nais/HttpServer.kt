@@ -9,6 +9,9 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.plugins.ContentTransformationException
+import io.ktor.server.response.respond
 
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -21,14 +24,20 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
+import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.FinnMedlemskapsstatus
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusService
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
+import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
+import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
@@ -38,6 +47,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.medlemskapsstatusRoute
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
@@ -47,6 +57,8 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import java.io.Writer
 import java.util.*
 
+private val logger = KotlinLogging.logger { }
+
 fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
     val authorizationHandler = AuthorizationHandler()
@@ -54,6 +66,14 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
     val persistenceService = PersistenceService(
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
+    )
+    val sagaClient = RestClients(
+        azureAdClient = AzureAdClient(configuration),
+        configuration = configuration
+    ).saga(configuration.register.medlemskapSagaBaseUrl)
+    val finnMedlemskapsstatus = FinnMedlemskapsstatus(
+        persistenceService,
+        MedlemskapsstatusService(sagaClient)
     )
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
@@ -92,6 +112,24 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
             register(ContentType.Application.Json, JacksonConverter(objectMapper))
         }
 
+        install(StatusPages) {
+            exception<ContentTransformationException> { call, cause ->
+                logger.warn(cause) {
+                    "Ugyldig request, callId=${call.callId}"
+                }
+                call.respond(HttpStatusCode.BadRequest)
+            }
+            exception<Exception> { call, cause ->
+                if (cause is CancellationException) {
+                    throw cause
+                }
+                logger.error(cause) {
+                    "Uventet feil, callId=${call.callId}"
+                }
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
         if (useAuthentication) {
             //logger.info { "Installerer authentication" }
             install(Authentication) {
@@ -111,6 +149,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
+            medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }

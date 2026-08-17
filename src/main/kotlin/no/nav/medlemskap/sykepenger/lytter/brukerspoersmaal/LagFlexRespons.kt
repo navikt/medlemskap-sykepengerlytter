@@ -7,8 +7,6 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexR
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRespons
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import org.slf4j.MarkerFactory
 
 class LagFlexRespons(

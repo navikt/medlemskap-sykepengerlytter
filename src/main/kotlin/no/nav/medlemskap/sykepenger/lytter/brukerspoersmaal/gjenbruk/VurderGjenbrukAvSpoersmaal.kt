@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk
 
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 
 fun finnSpørsmålSomSkalStilles(
     potensielle: Set<Spørsmål>,

@@ -3,8 +3,8 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
+import no.nav.medlemskap.sykepenger.lytter.domain.Status
+import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
@@ -49,9 +49,9 @@ class PersistenceService(
         return brukersporsmaalRepository.finnBrukersporsmaal(fnr)
     }
 
-    fun hentMedlemskap(fnr: String): List<Medlemskap> {
+    fun hentVurderingsstatus(fnr: String): List<Vurderingsstatus> {
         return medlemskapVurdertRepository.finnVurdering(fnr)
-            .map { Medlemskap(it.fnr, it.fom, it.tom, ErMedlem.valueOf(it.status)) }
+            .map { Vurderingsstatus(it.fnr, it.fom, it.tom, Status.valueOf(it.status)) }
     }
 
     fun lagrePaafolgendeSoknad(soknadDTO: SykepengesoeknadGrunnlag) {
@@ -61,7 +61,7 @@ class PersistenceService(
                 soknadDTO.fnr,
                 soknadDTO.fom!!,
                 soknadDTO.tom!!,
-                ErMedlem.PAFOLGENDE.toString()
+                Status.PAFOLGENDE.toString()
             )
         )
     }

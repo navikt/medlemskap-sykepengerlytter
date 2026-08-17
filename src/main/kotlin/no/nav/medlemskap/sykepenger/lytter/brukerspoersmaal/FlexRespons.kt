@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.rest
+package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 
 import java.time.LocalDate

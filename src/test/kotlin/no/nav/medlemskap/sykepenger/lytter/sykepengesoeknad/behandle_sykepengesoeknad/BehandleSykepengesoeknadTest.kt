@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
@@ -15,7 +15,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status as SoknadStatus
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -84,7 +84,7 @@ class BehandleSykepengesoeknadTest {
         fnr: String,
         fom: LocalDate,
         tom: LocalDate,
-        status: ErMedlem = ErMedlem.JA
+        status: MedlemskapStatus = MedlemskapStatus.JA
     ) {
         medlemskapRepository.lagreVurdering(
             VurderingDao(
@@ -105,7 +105,7 @@ class BehandleSykepengesoeknadTest {
         SykepengesoeknadGrunnlag(
             id = UUID.randomUUID().toString(),
             type = Type.ARBEIDSTAKERE,
-            status = Status.SENDT.name,
+            status = SoknadStatus.SENDT.name,
             fnr = fnr,
             korrigerer = null,
             startSyketilfelle = fom,
