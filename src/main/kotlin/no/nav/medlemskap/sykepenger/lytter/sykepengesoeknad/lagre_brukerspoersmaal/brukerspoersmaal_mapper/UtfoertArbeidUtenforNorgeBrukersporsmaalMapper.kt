@@ -35,27 +35,30 @@ private fun mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(
 private fun mapUtfoertArbeidUtenforNorgeUnderspoersmaal(
     underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?,
 ): List<ArbeidUtenforNorge> {
-    val utfoertArbeidUtenforNorgeSpoersmaalGruppering =
-        underspoersmaal?.first { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
+    return underspoersmaal.orEmpty()
+        .filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
+        .map {
+            val undersporsmal = it.undersporsmal.orEmpty()
+            val utfoertArbeidUtenforNorgeArbeidsgiverVerdi =
+                undersporsmal.find { undersporsmal ->
+                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER")
+                }?.svar?.first()?.verdi
 
-    val utfoertArbeidUtenforNorgeArbeidsgiverVerdi = utfoertArbeidUtenforNorgeSpoersmaalGruppering
-        ?.undersporsmal
-        ?.find { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER") }?.svar?.first()?.verdi
+            val utfoertArbeidUtenforNorgeHvorVerdi =
+                undersporsmal.first { undersporsmal ->
+                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_HVOR")
+                }.svar!!.first().verdi
 
-    val utfoertArbeidUtenforNorgeHvorVerdi = utfoertArbeidUtenforNorgeSpoersmaalGruppering
-        ?.undersporsmal
-        ?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first().verdi
+            val utfoertArbeidUtenforNorgeNaarDato =
+                undersporsmal.first { undersporsmal ->
+                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR")
+                }
 
-    val utfoertArbeidUtenforNorgeNaarDato =
-        utfoertArbeidUtenforNorgeSpoersmaalGruppering.undersporsmal
-            .first { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR") }
-
-    return underspoersmaal.map {
         ArbeidUtenforNorge(
             id = it.id,
             arbeidsgiver = utfoertArbeidUtenforNorgeArbeidsgiverVerdi ?: "null",
             land = utfoertArbeidUtenforNorgeHvorVerdi,
             perioder = mapBrukerSpoersmaalDato(utfoertArbeidUtenforNorgeNaarDato.svar),
         )
-    } ?: emptyList()
+    }
 }

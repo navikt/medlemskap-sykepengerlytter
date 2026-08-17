@@ -31,27 +31,30 @@ private fun mapOppholdUtenforNorge_BrukerSporsmaal(
 private fun mapOppholdUtenforNorgeUnderspoersmaal(
     underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?
 ): List<OppholdUtenforNorge> {
-    return underspoersmaal?.map {
-        val oppholdUtenforNorgeSpoersmaalGruppering =
-            underspoersmaal.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
+    return underspoersmaal.orEmpty()
+        .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
+        .map {
+            val undersporsmal = it.undersporsmal.orEmpty()
 
-        val oppholdUtenforNorgeBegrunnelse = oppholdUtenforNorgeSpoersmaalGruppering
-            .undersporsmal
-            ?.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") && it.svar?.size == 1 }
+        val oppholdUtenforNorgeBegrunnelseUndersporsmaal = undersporsmal
+            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.undersporsmal
 
-        val oppholdUtenforNorgeHvorVerdi = oppholdUtenforNorgeSpoersmaalGruppering
-            .undersporsmal
-            ?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first().verdi
+        val oppholdUtenforNorgeBegrunnelseSporsmaalstekst = oppholdUtenforNorgeBegrunnelseUndersporsmaal?.find {
+            it.svar?.size == 1
+        }?.sporsmalstekst
+
+        val oppholdUtenforNorgeHvorVerdi = undersporsmal
+            .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }.svar!!.first().verdi
 
         val oppholdUtenforNorgeNaarDato =
-            oppholdUtenforNorgeSpoersmaalGruppering.undersporsmal
-                .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
+            undersporsmal
+                .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }
 
         OppholdUtenforNorge(
             id = it.id,
             land = oppholdUtenforNorgeHvorVerdi,
-            grunn = oppholdUtenforNorgeBegrunnelse?.sporsmalstekst ?: "null",
+            grunn = oppholdUtenforNorgeBegrunnelseSporsmaalstekst ?: "null",
             perioder = mapBrukerSpoersmaalDato(oppholdUtenforNorgeNaarDato.svar)
         )
-    } ?: emptyList()
+    }
 }

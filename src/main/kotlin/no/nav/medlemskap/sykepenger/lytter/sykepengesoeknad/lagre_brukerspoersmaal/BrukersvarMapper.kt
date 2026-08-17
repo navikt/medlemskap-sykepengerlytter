@@ -7,6 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforN
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukersporsmaalMapper
 import java.time.LocalDate
 
 object BrukersvarMapper {
@@ -18,8 +19,8 @@ object BrukersvarMapper {
 
         val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal)
         return sykepengesoeknadGrunnlag.tilBrukerspørsmål(
-            sporsmaal = mapper.brukersp_arb_utland_old_model,
-            oppholdstilatelse = mapper.oppholdstilatelse_brukersporsmaal,
+            sporsmaal = mapper.brukersporsmaalArbeidUtlandOldModel,
+            oppholdstilatelse = mapper.oppholdstilatelseBrukersporsmaal,
             utfortArbeidUtenforNorge = mapper.arbeidUtlandBrukerSporsmaal,
             oppholdUtenforNorge = mapper.oppholdUtenforNorge,
             oppholdUtenforEOS = mapper.oppholdUtenforEOS

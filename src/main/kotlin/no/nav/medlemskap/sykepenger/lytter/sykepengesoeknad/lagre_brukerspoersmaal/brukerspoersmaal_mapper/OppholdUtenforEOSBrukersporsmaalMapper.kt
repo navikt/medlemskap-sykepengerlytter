@@ -31,27 +31,29 @@ private fun mapOppholdUtenforEOS_BrukerSporsmaal(
 private fun mapOppholdUtenforEOSunderspoersmaal(
     underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?
 ): List<OppholdUtenforEOS> {
-    return underspoersmaal?.map {
-        val oppholdUtenforEOSspoersmaalGruppering =
-            underspoersmaal.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+    return underspoersmaal.orEmpty()
+        .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
+        .map {
+            val undersporsmal = it.undersporsmal.orEmpty()
 
-        val oppholdUtenforEOSbegrunnelse = oppholdUtenforEOSspoersmaalGruppering
-            .undersporsmal
-            ?.first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") && it.svar?.size == 1 }
+            val oppholdUtenforEOSbegrunnelseSporsmaal = undersporsmal
+                .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }?.undersporsmal
 
-        val oppholdutenforEOSspoersmaalHvorVerdi = oppholdUtenforEOSspoersmaalGruppering
-            .undersporsmal
-            ?.find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }?.svar!!.first().verdi
+            val oppholdUtenforEOSbegrunnelseSporsmaalstekst =
+                oppholdUtenforEOSbegrunnelseSporsmaal?.find { it.svar?.size == 1 }?.sporsmalstekst
 
-        val oppholdUtenforEOSNaarDato =
-            oppholdUtenforEOSspoersmaalGruppering.undersporsmal
-                .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
+            val oppholdutenforEOSspoersmaalHvorVerdi = undersporsmal
+                .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }.svar!!.first().verdi
 
-        OppholdUtenforEOS(
-            id = it.id,
-            land = oppholdutenforEOSspoersmaalHvorVerdi,
-            grunn = oppholdUtenforEOSbegrunnelse?.sporsmalstekst ?: "null",
-            perioder = mapBrukerSpoersmaalDato(oppholdUtenforEOSNaarDato.svar),
-        )
-    } ?: emptyList()
+            val oppholdUtenforEOSNaarDato =
+                undersporsmal
+                    .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
+
+            OppholdUtenforEOS(
+                id = it.id,
+                land = oppholdutenforEOSspoersmaalHvorVerdi,
+                grunn = oppholdUtenforEOSbegrunnelseSporsmaalstekst ?: "null",
+                perioder = mapBrukerSpoersmaalDato(oppholdUtenforEOSNaarDato.svar),
+            )
+        }
 }
