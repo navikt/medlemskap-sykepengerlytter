@@ -9,6 +9,9 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.plugins.ContentTransformationException
+import io.ktor.server.response.respond
 
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -21,7 +24,9 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
+import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.MDC_CALL_ID
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.FinnMedlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusService
@@ -51,6 +56,8 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 
 import java.io.Writer
 import java.util.*
+
+private val logger = KotlinLogging.logger { }
 
 fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
@@ -103,6 +110,24 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         }
         install(ContentNegotiation) {
             register(ContentType.Application.Json, JacksonConverter(objectMapper))
+        }
+
+        install(StatusPages) {
+            exception<ContentTransformationException> { call, cause ->
+                logger.warn(cause) {
+                    "Ugyldig request, callId=${call.callId}"
+                }
+                call.respond(HttpStatusCode.BadRequest)
+            }
+            exception<Exception> { call, cause ->
+                if (cause is CancellationException) {
+                    throw cause
+                }
+                logger.error(cause) {
+                    "Uventet feil, callId=${call.callId}"
+                }
+                call.respond(HttpStatusCode.InternalServerError)
+            }
         }
 
         if (useAuthentication) {

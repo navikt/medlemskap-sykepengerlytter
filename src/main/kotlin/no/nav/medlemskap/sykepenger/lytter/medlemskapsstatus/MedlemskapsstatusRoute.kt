@@ -7,8 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.plugins.callid.callId
-import io.ktor.server.plugins.ContentTransformationException
-import kotlinx.coroutines.CancellationException
 import java.util.UUID
 
 fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus) {
@@ -19,27 +17,17 @@ fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus)
             val callId = call.callId ?: UUID.randomUUID().toString()
             routeLogger.logAutentisert(callId)
 
-            try {
-                val request = call.receive<MedlemskapsstatusRequest>()
-                val response = finnMedlemskapsstatus.finnMedlemskapsstatus(request, callId)
+            val request = call.receive<MedlemskapsstatusRequest>()
+            val response = finnMedlemskapsstatus.finnMedlemskapsstatus(request, callId)
 
-                if (response == null) {
-                    routeLogger.logMedlemskapsstatusIkkeFunnet(request, callId)
-                    call.respond(HttpStatusCode.NotFound)
-                    return@post
-                }
-
-                routeLogger.logMedlemskapsstatusFunnet(response, callId)
-                call.respond(HttpStatusCode.OK, response)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: ContentTransformationException) {
-                routeLogger.logUgyldigRequest(e, callId)
-                call.respond(HttpStatusCode.BadRequest)
-            } catch (e: Exception) {
-                routeLogger.logFeil(e, callId)
-                call.respond(HttpStatusCode.InternalServerError)
+            if (response == null) {
+                routeLogger.logMedlemskapsstatusIkkeFunnet(request, callId)
+                call.respond(HttpStatusCode.NotFound)
+                return@post
             }
+
+            routeLogger.logMedlemskapsstatusFunnet(response, callId)
+            call.respond(HttpStatusCode.OK, response)
         }
     }
 }
