@@ -9,7 +9,6 @@ import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID

@@ -17,15 +17,15 @@ class FinnMedlemskapsstatus(
             Status.PAFOLGENDE -> {
                 val førstegangssøknadenGrunnlag = vurderingsstatuser.finnGrunnlagForFørstegangssøknaden(funnetStatus)
                     ?: run {
-                    logger.logIngenFørstegangssøknad(medlemskapsstatusRequest, callId)
+                    logger.logIngenFørstegangssøknadFunnet(medlemskapsstatusRequest, callId)
                         return null
                     }
 
-                logger.logKallerSagaMedFørsteVurdering(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
+                logger.logHenterMedlemskapsstatusForFørstegangssøknad(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
                 medlemskapsstatusRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
             }
             null -> {
-                logger.logIngenMatchendeVurdering(medlemskapsstatusRequest, callId)
+                logger.logFantIngenVurderingsstatus(medlemskapsstatusRequest, callId)
                 medlemskapsstatusRequest
             }
             else -> medlemskapsstatusRequest

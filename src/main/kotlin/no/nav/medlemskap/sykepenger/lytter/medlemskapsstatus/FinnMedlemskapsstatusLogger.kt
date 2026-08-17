@@ -11,28 +11,30 @@ internal class FinnMedlemskapsstatusLogger {
         val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    fun logIngenFørstegangssøknad(request: MedlemskapsstatusRequest, callId: String) =
+    fun logIngenFørstegangssøknadFunnet(request: MedlemskapsstatusRequest, callId: String) =
         log.info(
             teamLogs,
-            "ingen førstegangssøknad funnet for  : ${request.fnr}, med request fom:${request.fom}, tom: ${request.tom}",
+            "Fant ikke vurderingsstatus for førstegangssøknaden tilknyttet den påfølgende søknaden for : ${request.fnr}," +
+                    " med periode fom:${request.fom}, tom: ${request.tom}",
             StructuredArguments.kv("callId", callId)
         )
 
-    fun logKallerSagaMedFørsteVurdering(
+    fun logHenterMedlemskapsstatusForFørstegangssøknad(
         request: MedlemskapsstatusRequest,
         førsteVurdering: Vurderingsstatus,
         callId: String
     ) =
         log.info(
             teamLogs,
-            "kaller saga med første vurdering som ikke er paafolgende : fnr : ${request.fnr}, fom:${førsteVurdering.fom}, tom: ${førsteVurdering.tom}",
+            "Fant vurderingsstatus for førstegangssøknaden tilknyttet den påfølgende søknaden. Henter medlemskapsstatus for " +
+                    ": fnr : ${request.fnr}, fom:${førsteVurdering.fom}, tom: ${førsteVurdering.tom}",
             StructuredArguments.kv("callId", callId)
         )
 
-    fun logIngenMatchendeVurdering(request: MedlemskapsstatusRequest, callId: String) =
+    fun logFantIngenVurderingsstatus(request: MedlemskapsstatusRequest, callId: String) =
         log.info(
             teamLogs,
-            "ingen matchende treff i vurderinger  funnet for  : ${request.fnr}, med request fom:${request.fom}, tom: ${request.tom}",
+            "Fant ingen tidligere vurderingsstatus for : ${request.fnr}, med periode fom:${request.fom}, tom: ${request.tom}",
             StructuredArguments.kv("callId", callId)
         )
 
@@ -42,7 +44,4 @@ internal class FinnMedlemskapsstatusLogger {
             "404 for kall mot saga på : fnr : ${request.fnr}, fom:${request.fom}, tom: ${request.tom}",
             StructuredArguments.kv("callId", callId)
         )
-
-    fun logHttpFeil(statusCode: Int, cause: Throwable) =
-        log.error("HTTP error i kall mot saga: $statusCode ", cause)
 }

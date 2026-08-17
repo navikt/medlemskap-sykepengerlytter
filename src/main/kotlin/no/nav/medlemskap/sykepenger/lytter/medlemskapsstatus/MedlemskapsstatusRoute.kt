@@ -23,13 +23,14 @@ fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus)
                 val request = call.receive<MedlemskapsstatusRequest>()
                 val response = finnMedlemskapsstatus.finnMedlemskapsstatus(request, callId)
 
-                if (response != null) {
-                    routeLogger.logMedlemskapsstatusFunnet(response, callId)
-                    call.respond(HttpStatusCode.OK, response)
-                } else {
+                if (response == null) {
                     routeLogger.logMedlemskapsstatusIkkeFunnet(request, callId)
                     call.respond(HttpStatusCode.NotFound)
+                    return@post
                 }
+
+                routeLogger.logMedlemskapsstatusFunnet(response, callId)
+                call.respond(HttpStatusCode.OK, response)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: ContentTransformationException) {
