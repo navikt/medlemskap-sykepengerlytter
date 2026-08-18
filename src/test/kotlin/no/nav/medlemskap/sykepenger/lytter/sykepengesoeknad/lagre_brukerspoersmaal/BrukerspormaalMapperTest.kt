@@ -2,7 +2,6 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukersporsmaalMapper
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.getOppholdstillatelseBrukersporsmaal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -11,8 +10,6 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = getOppholdstillatelseBrukersporsmaal(mapper.spoersmaalListe)
-        Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
@@ -24,8 +21,6 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2 `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = getOppholdstillatelseBrukersporsmaal(mapper.spoersmaalListe)
-        Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
@@ -36,8 +31,6 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json"))
-        val v = getOppholdstillatelseBrukersporsmaal(mapper.spoersmaalListe)
-        Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
         Assertions.assertFalse(brukerspørsmaal!!.svar)
@@ -46,8 +39,6 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json"))
-        val v = getOppholdstillatelseBrukersporsmaal(mapper.spoersmaalListe)
-        Assertions.assertNotNull(v)
         val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
@@ -85,6 +76,24 @@ class BrukerspormaalMapperTest {
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.sporsmalstekst,"spørsmålstekst skal være satt") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.oppholdUtenforEOS.size==1,"det skal finnes et opphold utenfor norge") }
+    }
+
+    @Test
+    fun `spoersmaalListe inneholder bare medlemskapssporsmal som skal lagres separat`(){
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
+
+        Assertions.assertTrue(
+            mapper.spørsmålListe.map { it.tag }.all {
+                it in setOf(
+                    "ARBEID_UTENFOR_NORGE",
+                    "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE",
+                    "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE",
+                    "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS",
+                    "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2",
+                    "MEDLEMSKAP_OPPHOLDSTILLATELSE",
+                )
+            }
+        )
     }
 
     private fun sporsmalFra(resourceName: String) =

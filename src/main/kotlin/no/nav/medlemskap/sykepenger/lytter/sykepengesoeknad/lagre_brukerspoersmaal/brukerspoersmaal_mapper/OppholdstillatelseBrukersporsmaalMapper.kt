@@ -8,11 +8,9 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import java.time.LocalDate
 
 fun getOppholdstillatelseBrukersporsmaal(
-    spoersmaalListe: List<FlexMedlemskapsBrukerSporsmaal>
+    oppholdstillatelseBrukerspoersmaalV2: FlexMedlemskapsBrukerSporsmaal?,
+    oppholdstillatelseBrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?,
 ): MedlemskapOppholdstilatelseBrukersporsmaal? {
-    val oppholdstillatelseBrukerspoersmaalV2 = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2" }
-    val oppholdstillatelseBrukerspoersmaal = spoersmaalListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE" }
-
     return if (oppholdstillatelseBrukerspoersmaalV2 != null) {
         mapOppholdstilateleBrukerSpørsmål_v2(oppholdstillatelseBrukerspoersmaalV2)
     } else if (oppholdstillatelseBrukerspoersmaal != null) {
@@ -23,7 +21,8 @@ fun getOppholdstillatelseBrukersporsmaal(
 }
 
 private fun hentVedtaksdatoFraUndersporsmaal(undersporsmal: List<FlexMedlemskapsBrukerSporsmaal>?): String {
-    return undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.svar?.first()?.verdi ?: "null"
+    return undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.svar?.first()?.verdi
+        ?: "null"
 }
 
 private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(
@@ -62,10 +61,7 @@ private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(
         erVedtakstypePermanent = true
         val fom = LocalDate.parse(
             oppholdstillatelsePermanentBrukersporsmaal.undersporsmal
-                ?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT_DATO" }
-                ?.svar
-                ?.first()
-                ?.verdi
+                ?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT_DATO" }?.svar?.first()?.verdi
         )
         periode = listOf(Periode(fom, LocalDate.MAX))
     }
@@ -87,7 +83,8 @@ private fun mapOppholdstilateleBrukerSporsmaal(
     oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
 ): MedlemskapOppholdstilatelseBrukersporsmaal {
     val vedtaksdato = hentVedtaksdatoFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
-    val vedtakstype = permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
+    val vedtakstype =
+        permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
     return MedlemskapOppholdstilatelseBrukersporsmaal(
         id = oppholdstillatelseBrukersporsmaal.id,
         sporsmalstekst = oppholdstillatelseBrukersporsmaal.sporsmalstekst,
