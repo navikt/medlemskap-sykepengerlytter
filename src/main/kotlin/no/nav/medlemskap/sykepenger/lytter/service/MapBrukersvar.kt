@@ -9,15 +9,15 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 
 object MapBrukersvar {
-    fun mapOppholdstillatelse(oppholdstillatelse: MedlemskapOppholdstilatelseBrukersporsmaal?): Oppholdstilatelse? =
+    fun mapOppholdstillatelse(oppholdstillatelse: MedlemskapOppholdstillatelseBrukerspørsmål?): Oppholdstilatelse? =
         oppholdstillatelse?.let {
             Oppholdstilatelse(
                 id = it.id,
-                sporsmalstekst = it.sporsmalstekst,
+                sporsmalstekst = it.spørsmalstekst,
                 svar = it.svar,
                 vedtaksdato = it.vedtaksdato,
                 vedtaksTypePermanent = it.vedtaksTypePermanent,

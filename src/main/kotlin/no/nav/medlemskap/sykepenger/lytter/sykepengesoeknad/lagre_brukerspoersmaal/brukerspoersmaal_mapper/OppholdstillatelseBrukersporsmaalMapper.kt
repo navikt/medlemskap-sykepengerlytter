@@ -1,76 +1,76 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 import java.time.LocalDate
 
-fun getOppholdstillatelseBrukersporsmaal(
-    oppholdstillatelseBrukerspoersmaalV2: FlexMedlemskapsBrukerSporsmaal?,
-    oppholdstillatelseBrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?,
-): MedlemskapOppholdstilatelseBrukersporsmaal? {
-    return if (oppholdstillatelseBrukerspoersmaalV2 != null) {
-        mapOppholdstilateleBrukerSpørsmål_v2(oppholdstillatelseBrukerspoersmaalV2)
-    } else if (oppholdstillatelseBrukerspoersmaal != null) {
-        mapOppholdstilateleBrukerSporsmaal(oppholdstillatelseBrukerspoersmaal)
+fun hentOppholdstillatelseBrukerspørsmål(
+    oppholdstillatelseBrukerspørsmålV2: MedlemskapsBrukerSpørsmål?,
+    oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål?,
+): MedlemskapOppholdstillatelseBrukerspørsmål? {
+    return if (oppholdstillatelseBrukerspørsmålV2 != null) {
+        mapOppholdstilateleBrukerSpørsmål_v2(oppholdstillatelseBrukerspørsmålV2)
+    } else if (oppholdstillatelseBrukerspørsmål != null) {
+        mapOppholdstillatelseBrukerSpørsmål(oppholdstillatelseBrukerspørsmål)
     } else {
         null
     }
 }
 
-private fun hentVedtaksdatoFraUndersporsmaal(undersporsmal: List<FlexMedlemskapsBrukerSporsmaal>?): String {
-    return undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.svar?.first()?.verdi
+private fun hentVedtaksdatoFraUnderspørsmål(underspørsmål: List<MedlemskapsBrukerSpørsmål>?): String {
+    return underspørsmål?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_VEDTAKSDATO" }?.svar?.first()?.verdi
         ?: "null"
 }
 
-private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(
-    undersporsmal: List<FlexMedlemskapsBrukerSporsmaal>?
+private fun permanentEllerMidlertidigVedtaksTypeFraUnderspørsmål(
+    underspørsmål: List<MedlemskapsBrukerSpørsmål>?
 ): VedtaksType {
-    val oppholdstillatelseSporsmaalGruppering =
-        undersporsmal?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE" }
+    val oppholdstillatelseSpørsmålGruppering =
+        underspørsmål?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_GRUPPE" }
 
-    if (oppholdstillatelseSporsmaalGruppering == null) {
-        val oppholdstillatelsePermanentBrukersporsmaal =
-            undersporsmal?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
+    if (oppholdstillatelseSpørsmålGruppering == null) {
+        val oppholdstillatelsePermanentBrukerspørsmålUtenGruppering =
+            underspørsmål?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
                 ?: return VedtaksType(erPermanentVedtaksType = false, periode = emptyList())
 
-        val erVedtakstypePermanent = mapSvar(oppholdstillatelsePermanentBrukersporsmaal.svar)
-        val periodeSporsmaal = oppholdstillatelsePermanentBrukersporsmaal.undersporsmal
+        val erVedtakstypePermanent = mapSvar(oppholdstillatelsePermanentBrukerspørsmålUtenGruppering.svar)
+        val permanentPeriodeSpørsmål = oppholdstillatelsePermanentBrukerspørsmålUtenGruppering.underspørsmål
             ?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }
 
         return VedtaksType(
             erPermanentVedtaksType = erVedtakstypePermanent,
-            periode = mapBrukerSpoersmaalDato(periodeSporsmaal?.svar),
+            periode = mapBrukerSpørsmålDato(permanentPeriodeSpørsmål?.svar),
         )
     }
 
-    val oppholdstillatelseMidlertidigSporsmaal =
-        oppholdstillatelseSporsmaalGruppering
-            .undersporsmal?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG" }
+    val oppholdstillatelseMidlertidigSpørsmål =
+        oppholdstillatelseSpørsmålGruppering
+            .underspørsmål?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG" }
 
-    val oppholdstillatelsePermanentBrukersporsmaal =
-        oppholdstillatelseSporsmaalGruppering
-            .undersporsmal?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
+    val oppholdstillatelsePermanentBrukerspørsmål =
+        oppholdstillatelseSpørsmålGruppering
+            .underspørsmål?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
 
     var erVedtakstypePermanent = false
     var periode: List<Periode> = emptyList()
 
-    if (oppholdstillatelsePermanentBrukersporsmaal != null && oppholdstillatelsePermanentBrukersporsmaal.svar?.isNotEmpty() == true) {
+    if (oppholdstillatelsePermanentBrukerspørsmål != null && oppholdstillatelsePermanentBrukerspørsmål.svar?.isNotEmpty() == true) {
         erVedtakstypePermanent = true
         val fom = LocalDate.parse(
-            oppholdstillatelsePermanentBrukersporsmaal.undersporsmal
+            oppholdstillatelsePermanentBrukerspørsmål.underspørsmål
                 ?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT_DATO" }?.svar?.first()?.verdi
         )
         periode = listOf(Periode(fom, LocalDate.MAX))
     }
 
-    if (oppholdstillatelseMidlertidigSporsmaal != null && oppholdstillatelseMidlertidigSporsmaal.svar?.isNotEmpty() == true) {
+    if (oppholdstillatelseMidlertidigSpørsmål != null && oppholdstillatelseMidlertidigSpørsmål.svar?.isNotEmpty() == true) {
         erVedtakstypePermanent = false
-        val periodeSporsmaal = oppholdstillatelseMidlertidigSporsmaal.undersporsmal
+        val midlertidigPeriodeSpørsmål = oppholdstillatelseMidlertidigSpørsmål.underspørsmål
             ?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_MIDLERTIDIG_PERIODE" }
-        periode = mapBrukerSpoersmaalDato(periodeSporsmaal?.svar)
+        periode = mapBrukerSpørsmålDato(midlertidigPeriodeSpørsmål?.svar)
     }
 
     return VedtaksType(
@@ -79,34 +79,34 @@ private fun permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(
     )
 }
 
-private fun mapOppholdstilateleBrukerSporsmaal(
-    oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
-): MedlemskapOppholdstilatelseBrukersporsmaal {
-    val vedtaksdato = hentVedtaksdatoFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
+private fun mapOppholdstillatelseBrukerSpørsmål(
+    oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål
+): MedlemskapOppholdstillatelseBrukerspørsmål {
+    val vedtaksdato = hentVedtaksdatoFraUnderspørsmål(oppholdstillatelseBrukerspørsmål.underspørsmål)
     val vedtakstype =
-        permanentEllerMidlertidigVedtaksTypeFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
-    return MedlemskapOppholdstilatelseBrukersporsmaal(
-        id = oppholdstillatelseBrukersporsmaal.id,
-        sporsmalstekst = oppholdstillatelseBrukersporsmaal.sporsmalstekst,
-        svar = mapSvar(oppholdstillatelseBrukersporsmaal.svar),
+        permanentEllerMidlertidigVedtaksTypeFraUnderspørsmål(oppholdstillatelseBrukerspørsmål.underspørsmål)
+    return MedlemskapOppholdstillatelseBrukerspørsmål(
+        id = oppholdstillatelseBrukerspørsmål.id,
+        spørsmalstekst = oppholdstillatelseBrukerspørsmål.spørsmålstekst,
+        svar = mapSvar(oppholdstillatelseBrukerspørsmål.svar),
         vedtaksdato = LocalDate.parse(vedtaksdato),
         vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
         perioder = vedtakstype.periode,
     )
 }
 
-private fun permanentEllerMidlertidigVedtakstypeFraUndersporsmaalV2(
-    oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
+private fun permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(
+    oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål
 ): VedtaksType {
-    val oppholdstillatelsePeriodeSporsmaal =
-        oppholdstillatelseBrukersporsmaal
-            .undersporsmal?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }
+    val oppholdstillatelsePeriodeSpørsmål =
+        oppholdstillatelseBrukerspørsmål
+            .underspørsmål?.first { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }
 
     var vedtaksperiode: List<Periode> = emptyList()
     var vedtakstype = false
 
-    if (oppholdstillatelsePeriodeSporsmaal != null && oppholdstillatelsePeriodeSporsmaal.svar?.isNotEmpty() == true) {
-        vedtaksperiode = mapBrukerSpoersmaalDato(oppholdstillatelsePeriodeSporsmaal.svar)
+    if (oppholdstillatelsePeriodeSpørsmål != null && oppholdstillatelsePeriodeSpørsmål.svar?.isNotEmpty() == true) {
+        vedtaksperiode = mapBrukerSpørsmålDato(oppholdstillatelsePeriodeSpørsmål.svar)
         vedtakstype = false
     }
 
@@ -117,24 +117,24 @@ private fun permanentEllerMidlertidigVedtakstypeFraUndersporsmaalV2(
 }
 
 private fun mapOppholdstilateleBrukerSpørsmål_v2(
-    oppholdstillatelseBrukersporsmaal: FlexMedlemskapsBrukerSporsmaal
-): MedlemskapOppholdstilatelseBrukersporsmaal? {
-    val svar = mapSvar(oppholdstillatelseBrukersporsmaal.svar)
-    val vedtakstype = permanentEllerMidlertidigVedtakstypeFraUndersporsmaalV2(oppholdstillatelseBrukersporsmaal)
+    oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål
+): MedlemskapOppholdstillatelseBrukerspørsmål? {
+    val svar = mapSvar(oppholdstillatelseBrukerspørsmål.svar)
+    val vedtakstype = permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(oppholdstillatelseBrukerspørsmål)
     return if (svar) {
-        val vedtaksdato = hentVedtaksdatoFraUndersporsmaal(oppholdstillatelseBrukersporsmaal.undersporsmal)
-        MedlemskapOppholdstilatelseBrukersporsmaal(
-            id = oppholdstillatelseBrukersporsmaal.id,
-            sporsmalstekst = oppholdstillatelseBrukersporsmaal.sporsmalstekst,
+        val vedtaksdato = hentVedtaksdatoFraUnderspørsmål(oppholdstillatelseBrukerspørsmål.underspørsmål)
+        MedlemskapOppholdstillatelseBrukerspørsmål(
+            id = oppholdstillatelseBrukerspørsmål.id,
+            spørsmalstekst = oppholdstillatelseBrukerspørsmål.spørsmålstekst,
             svar = svar,
             vedtaksdato = LocalDate.parse(vedtaksdato),
             vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
             perioder = vedtakstype.periode,
         )
     } else {
-        MedlemskapOppholdstilatelseBrukersporsmaal(
-            id = oppholdstillatelseBrukersporsmaal.id,
-            sporsmalstekst = oppholdstillatelseBrukersporsmaal.sporsmalstekst,
+        MedlemskapOppholdstillatelseBrukerspørsmål(
+            id = oppholdstillatelseBrukerspørsmål.id,
+            spørsmalstekst = oppholdstillatelseBrukerspørsmål.spørsmålstekst,
             svar = svar,
             vedtaksdato = LocalDate.now(),
             vedtaksTypePermanent = false,

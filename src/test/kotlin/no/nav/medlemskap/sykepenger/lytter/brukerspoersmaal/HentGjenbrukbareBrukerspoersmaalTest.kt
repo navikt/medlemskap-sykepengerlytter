@@ -6,7 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
@@ -86,9 +86,9 @@ class HentGjenbrukbareBrukerspoersmaalTest {
         status = "SENDT",
         sporsmaal = null,
         oppholdstilatelse = oppholdstillatelse?.let {
-            MedlemskapOppholdstilatelseBrukersporsmaal(
+            MedlemskapOppholdstillatelseBrukerspørsmål(
                 id = "oppholdstillatelse",
-                sporsmalstekst = null,
+                spørsmalstekst = null,
                 svar = it,
                 vedtaksdato = LocalDate.parse("2023-01-01"),
                 vedtaksTypePermanent = false

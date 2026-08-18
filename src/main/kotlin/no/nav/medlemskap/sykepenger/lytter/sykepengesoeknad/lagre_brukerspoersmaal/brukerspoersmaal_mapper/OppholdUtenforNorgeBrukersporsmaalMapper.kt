@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforNorgeBrukerSporsmaal(
-    oppholdUtenforNorgebrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
+    oppholdUtenforNorgebrukerspoersmaal: MedlemskapsBrukerSpørsmål?
 ): MedlemskapOppholdUtenforNorge? {
     return if (oppholdUtenforNorgebrukerspoersmaal != null) {
         mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
@@ -17,31 +17,31 @@ fun getOppholdUtenforNorgeBrukerSporsmaal(
 }
 
 private fun mapOppholdUtenforNorge_BrukerSporsmaal(
-    oppholdUtenforNorge: FlexMedlemskapsBrukerSporsmaal,
+    oppholdUtenforNorge: MedlemskapsBrukerSpørsmål,
 ): MedlemskapOppholdUtenforNorge {
     val svar = mapSvar(oppholdUtenforNorge.svar)
     return MedlemskapOppholdUtenforNorge(
         id = oppholdUtenforNorge.id,
-        sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,
+        sporsmalstekst = oppholdUtenforNorge.spørsmålstekst,
         svar = svar,
-        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspoersmaal(oppholdUtenforNorge.undersporsmal) else emptyList()
+        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspoersmaal(oppholdUtenforNorge.underspørsmål) else emptyList()
     )
 }
 
 private fun mapOppholdUtenforNorgeUnderspoersmaal(
-    underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?
+    underspoersmaal: List<MedlemskapsBrukerSpørsmål>?
 ): List<OppholdUtenforNorge> {
     return underspoersmaal.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
         .map {
-            val undersporsmal = it.undersporsmal.orEmpty()
+            val undersporsmal = it.underspørsmål.orEmpty()
 
         val oppholdUtenforNorgeBegrunnelseUndersporsmaal = undersporsmal
-            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.undersporsmal
+            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.underspørsmål
 
         val oppholdUtenforNorgeBegrunnelseSporsmaalstekst = oppholdUtenforNorgeBegrunnelseUndersporsmaal?.find {
             it.svar?.size == 1
-        }?.sporsmalstekst
+        }?.spørsmålstekst
 
         val oppholdUtenforNorgeHvorVerdi = undersporsmal
             .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }.svar!!.first().verdi
@@ -54,7 +54,7 @@ private fun mapOppholdUtenforNorgeUnderspoersmaal(
             id = it.id,
             land = oppholdUtenforNorgeHvorVerdi,
             grunn = oppholdUtenforNorgeBegrunnelseSporsmaalstekst ?: "null",
-            perioder = mapBrukerSpoersmaalDato(oppholdUtenforNorgeNaarDato.svar)
+            perioder = mapBrukerSpørsmålDato(oppholdUtenforNorgeNaarDato.svar)
         )
     }
 }

@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
 fun getutfoertArbeidUtenforNorgeBrukerSporsmaal(
-    utfoertArbeidUtenforNorgeSpoersmaal: FlexMedlemskapsBrukerSporsmaal?,
+    utfoertArbeidUtenforNorgeSpoersmaal: MedlemskapsBrukerSpørsmål?,
 ): MedlemskapUtfortArbeidUtenforNorge? {
     return if (utfoertArbeidUtenforNorgeSpoersmaal != null) {
         mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(utfoertArbeidUtenforNorgeSpoersmaal)
@@ -17,15 +17,15 @@ fun getutfoertArbeidUtenforNorgeBrukerSporsmaal(
 }
 
 private fun mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(
-    utfoertArbeidUtenforNorgeSpoersmaal: FlexMedlemskapsBrukerSporsmaal,
+    utfoertArbeidUtenforNorgeSpoersmaal: MedlemskapsBrukerSpørsmål,
 ): MedlemskapUtfortArbeidUtenforNorge {
     val svar = mapSvar(utfoertArbeidUtenforNorgeSpoersmaal.svar)
     return MedlemskapUtfortArbeidUtenforNorge(
         id = utfoertArbeidUtenforNorgeSpoersmaal.id,
-        sporsmalstekst = utfoertArbeidUtenforNorgeSpoersmaal.sporsmalstekst,
+        sporsmalstekst = utfoertArbeidUtenforNorgeSpoersmaal.spørsmålstekst,
         svar = svar,
         arbeidUtenforNorge = if (svar) {
-            mapUtfoertArbeidUtenforNorgeUnderspoersmaal(utfoertArbeidUtenforNorgeSpoersmaal.undersporsmal)
+            mapUtfoertArbeidUtenforNorgeUnderspoersmaal(utfoertArbeidUtenforNorgeSpoersmaal.underspørsmål)
         } else {
             emptyList()
         },
@@ -33,12 +33,12 @@ private fun mapUtfoertArbeidUtenforNorge_BrukerSpoersmaal(
 }
 
 private fun mapUtfoertArbeidUtenforNorgeUnderspoersmaal(
-    underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?,
+    underspoersmaal: List<MedlemskapsBrukerSpørsmål>?,
 ): List<ArbeidUtenforNorge> {
     return underspoersmaal.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
         .map {
-            val undersporsmal = it.undersporsmal.orEmpty()
+            val undersporsmal = it.underspørsmål.orEmpty()
             val utfoertArbeidUtenforNorgeArbeidsgiverVerdi =
                 undersporsmal.find { undersporsmal ->
                     undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER")
@@ -58,7 +58,7 @@ private fun mapUtfoertArbeidUtenforNorgeUnderspoersmaal(
             id = it.id,
             arbeidsgiver = utfoertArbeidUtenforNorgeArbeidsgiverVerdi ?: "null",
             land = utfoertArbeidUtenforNorgeHvorVerdi,
-            perioder = mapBrukerSpoersmaalDato(utfoertArbeidUtenforNorgeNaarDato.svar),
+            perioder = mapBrukerSpørsmålDato(utfoertArbeidUtenforNorgeNaarDato.svar),
         )
     }
 }

@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukersporsmaalMapper
@@ -19,11 +19,11 @@ object BrukersvarMapper {
 
         val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal)
         return sykepengesoeknadGrunnlag.tilBrukerspørsmål(
-            sporsmaal = mapper.brukersporsmaalArbeidUtlandOldModel,
-            oppholdstilatelse = mapper.oppholdstilatelseBrukersporsmaal,
-            utfortArbeidUtenforNorge = mapper.arbeidUtlandBrukerSporsmaal,
-            oppholdUtenforNorge = mapper.oppholdUtenforNorge,
-            oppholdUtenforEOS = mapper.oppholdUtenforEOS
+            spørsmål = mapper.arbeidUtenforNorgeBrukerspørsmål,
+            oppholdstilatelse = mapper.oppholdstilatelseBrukerspørsmål,
+            utførtArbeidUtenforNorge = mapper.utførtArbeidUtenforNorgeBrukerspørsmål,
+            oppholdUtenforNorge = mapper.oppholdUtenforNorgeSpørsmål,
+            oppholdUtenforEØS = mapper.oppholdUtenforEØSbrukerspørsmål
         )
     }
 
@@ -31,11 +31,11 @@ object BrukersvarMapper {
         tilBrukerspørsmål()
 
     private fun SykepengesoeknadGrunnlag.tilBrukerspørsmål(
-        sporsmaal: FlexBrukerSporsmaal? = null,
-        oppholdstilatelse: MedlemskapOppholdstilatelseBrukersporsmaal? = null,
-        utfortArbeidUtenforNorge: MedlemskapUtfortArbeidUtenforNorge? = null,
+        spørsmål: FlexBrukerSporsmaal? = null,
+        oppholdstilatelse: MedlemskapOppholdstillatelseBrukerspørsmål? = null,
+        utførtArbeidUtenforNorge: MedlemskapUtfortArbeidUtenforNorge? = null,
         oppholdUtenforNorge: MedlemskapOppholdUtenforNorge? = null,
-        oppholdUtenforEOS: MedlemskapOppholdUtenforEOS? = null
+        oppholdUtenforEØS: MedlemskapOppholdUtenforEOS? = null
     ): Brukersporsmaal {
         return Brukersporsmaal(
             fnr = fnr,
@@ -43,11 +43,11 @@ object BrukersvarMapper {
             eventDate = finnTidligsteDato(sendtArbeidsgiver?.toLocalDate(), sendtNav?.toLocalDate()),
             ytelse = "SYKEPENGER",
             status = status,
-            sporsmaal = sporsmaal,
+            sporsmaal = spørsmål,
             oppholdstilatelse = oppholdstilatelse,
-            utfortArbeidUtenforNorge = utfortArbeidUtenforNorge,
+            utfortArbeidUtenforNorge = utførtArbeidUtenforNorge,
             oppholdUtenforNorge = oppholdUtenforNorge,
-            oppholdUtenforEOS = oppholdUtenforEOS
+            oppholdUtenforEOS = oppholdUtenforEØS
         )
     }
 

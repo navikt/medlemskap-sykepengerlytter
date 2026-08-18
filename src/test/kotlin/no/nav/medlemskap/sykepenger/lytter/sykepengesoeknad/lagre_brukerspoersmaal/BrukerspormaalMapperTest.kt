@@ -10,7 +10,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertFalse(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -21,7 +21,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2 `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertFalse(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -31,7 +31,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json"))
-        val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         Assertions.assertFalse(brukerspørsmaal!!.svar)
 
@@ -39,7 +39,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json"))
-        val brukerspørsmaal = mapper.oppholdstilatelseBrukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -50,7 +50,7 @@ class BrukerspormaalMapperTest {
     fun `test mapping av flex_arbeidIUtenforNorge bruker sporsmaal arbeidUlandTrue`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
 
-        val brukerspørsmaal = mapper.arbeidUtlandBrukerSporsmaal
+        val brukerspørsmaal = mapper.utførtArbeidUtenforNorgeBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
@@ -60,7 +60,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_OppholdUtenforNorge bruker sporsmaal True`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
-        val brukerspørsmaal = mapper.oppholdUtenforNorge
+        val brukerspørsmaal = mapper.oppholdUtenforNorgeSpørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
@@ -70,7 +70,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_OppholdUtenforEOS_bruker sporsmaal True`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_EOS.json"))
-        val brukerspørsmaal = mapper.oppholdUtenforEOS
+        val brukerspørsmaal = mapper.oppholdUtenforEØSbrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }

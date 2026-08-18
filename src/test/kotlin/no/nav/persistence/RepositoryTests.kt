@@ -114,9 +114,9 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             ytelse = "SYKEPENGER",
             status="SENDT",
             sporsmaal = FlexBrukerSporsmaal(false),
-            oppholdstilatelse = MedlemskapOppholdstilatelseBrukersporsmaal(
+            oppholdstilatelse = MedlemskapOppholdstillatelseBrukerspørsmål(
                 id=UUID.randomUUID().toString(),
-                sporsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
+                spørsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
                 svar = true,
                 vedtaksdato = LocalDate.now(),
                 vedtaksTypePermanent = false,

@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexMedlemskapsBrukerSporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapBrukerSpoersmaalDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSpoersmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
 fun getOppholdUtenforEOSBrukerSporsmaal(
-    oppholdUtenforEOSbrukerspoersmaal: FlexMedlemskapsBrukerSporsmaal?
+    oppholdUtenforEOSbrukerspoersmaal: MedlemskapsBrukerSpørsmål?
 ): MedlemskapOppholdUtenforEOS? {
     return if (oppholdUtenforEOSbrukerspoersmaal != null) {
         mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
@@ -17,30 +17,30 @@ fun getOppholdUtenforEOSBrukerSporsmaal(
 }
 
 private fun mapOppholdUtenforEOS_BrukerSporsmaal(
-    oppholdutenforEOS: FlexMedlemskapsBrukerSporsmaal
+    oppholdutenforEOS: MedlemskapsBrukerSpørsmål
 ): MedlemskapOppholdUtenforEOS {
     val svar = mapSvar(oppholdutenforEOS.svar)
     return MedlemskapOppholdUtenforEOS(
         id = oppholdutenforEOS.id,
-        sporsmalstekst = oppholdutenforEOS.sporsmalstekst,
+        sporsmalstekst = oppholdutenforEOS.spørsmålstekst,
         svar = svar,
-        oppholdUtenforEOS = if (svar) mapOppholdUtenforEOSunderspoersmaal(oppholdutenforEOS.undersporsmal) else emptyList(),
+        oppholdUtenforEOS = if (svar) mapOppholdUtenforEOSunderspoersmaal(oppholdutenforEOS.underspørsmål) else emptyList(),
     )
 }
 
 private fun mapOppholdUtenforEOSunderspoersmaal(
-    underspoersmaal: List<FlexMedlemskapsBrukerSporsmaal>?
+    underspoersmaal: List<MedlemskapsBrukerSpørsmål>?
 ): List<OppholdUtenforEOS> {
     return underspoersmaal.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
         .map {
-            val undersporsmal = it.undersporsmal.orEmpty()
+            val undersporsmal = it.underspørsmål.orEmpty()
 
             val oppholdUtenforEOSbegrunnelseSporsmaal = undersporsmal
-                .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }?.undersporsmal
+                .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }?.underspørsmål
 
             val oppholdUtenforEOSbegrunnelseSporsmaalstekst =
-                oppholdUtenforEOSbegrunnelseSporsmaal?.find { it.svar?.size == 1 }?.sporsmalstekst
+                oppholdUtenforEOSbegrunnelseSporsmaal?.find { it.svar?.size == 1 }?.spørsmålstekst
 
             val oppholdutenforEOSspoersmaalHvorVerdi = undersporsmal
                 .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }.svar!!.first().verdi
@@ -53,7 +53,7 @@ private fun mapOppholdUtenforEOSunderspoersmaal(
                 id = it.id,
                 land = oppholdutenforEOSspoersmaalHvorVerdi,
                 grunn = oppholdUtenforEOSbegrunnelseSporsmaalstekst ?: "null",
-                perioder = mapBrukerSpoersmaalDato(oppholdUtenforEOSNaarDato.svar),
+                perioder = mapBrukerSpørsmålDato(oppholdUtenforEOSNaarDato.svar),
             )
         }
 }

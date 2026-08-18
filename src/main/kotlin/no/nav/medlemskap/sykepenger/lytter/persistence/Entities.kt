@@ -16,6 +16,7 @@ fun Periode.begynnerIPerioden(periode: Periode): Boolean {
                     (fom.isAfter(periode.fom) && fom.isBefore(periode.tom))
             )
 }
+
 fun Periode.erAvsluttetPr(date:LocalDate): Boolean {
     return this.tom.isBefore(date)
 }
@@ -38,7 +39,7 @@ data class Brukersporsmaal(
     val ytelse: String,
     val status: String,
     val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
-    val oppholdstilatelse:MedlemskapOppholdstilatelseBrukersporsmaal? = null,
+    val oppholdstilatelse:MedlemskapOppholdstillatelseBrukerspørsmål? = null,
     val utfortArbeidUtenforNorge:MedlemskapUtfortArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
     val oppholdUtenforEOS:MedlemskapOppholdUtenforEOS? = null
@@ -48,44 +49,50 @@ data class Brukersporsmaal(
 data class FlexBrukerSporsmaal(
     val arbeidUtland: Boolean?
 )
-data class FlexMedlemskapsBrukerSporsmaal(
+
+data class MedlemskapsBrukerSpørsmål(
     val id: String,
     val tag: String,
-    val sporsmalstekst: String?,
+    val spørsmålstekst: String?,
     val undertekst: String?,
     val svartype: String?,
-    val kriterieForVisningAvUndersporsmal:String?,
-    val svar:List<sporsmaalSvar>?,
-    val undersporsmal:List<FlexMedlemskapsBrukerSporsmaal>?
+    val kriterieForVisningAvUnderspørsmål:String?,
+    val svar:List<spørsmålSvar>?,
+    val underspørsmål:List<MedlemskapsBrukerSpørsmål>?
 )
-data class sporsmaalSvar(val verdi:String)
 
-data class MedlemskapOppholdstilatelseBrukersporsmaal(
+data class spørsmålSvar(val verdi:String)
+
+data class MedlemskapOppholdstillatelseBrukerspørsmål(
     val id: String,
-    val sporsmalstekst: String?,
+    val spørsmalstekst: String?,
     val svar:Boolean,
     val vedtaksdato:LocalDate,
     val vedtaksTypePermanent:Boolean,
     val perioder:List<Periode> = mutableListOf()
 )
+
 data class MedlemskapUtfortArbeidUtenforNorge(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
     val arbeidUtenforNorge:List<ArbeidUtenforNorge>
 )
+
 data class ArbeidUtenforNorge(
     val id: String,
     val arbeidsgiver:String,
     val land:String,
     val perioder: List<Periode>
 )
+
 data class OppholdUtenforNorge(
     val id: String,
     val land:String,
     val grunn:String,
     val perioder: List<Periode>
 )
+
 data class OppholdUtenforEOS(
     val id: String,
     val land:String,
