@@ -5,6 +5,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as VurderingsstatusStatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Medlemskapsvurdering
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -129,7 +130,7 @@ class FinnMedlemskapsstatusTest {
         override suspend fun finnVurdering(
             bomloRequest: no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest,
             callId: String
-        ): String = error("Ikke relevant for denne testen")
+        ): Medlemskapsvurdering = error("Ikke relevant for denne testen")
 
         override suspend fun ping(callId: String): String =
             error("Ikke relevant for denne testen")

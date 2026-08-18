@@ -15,7 +15,7 @@ class SagaService(private val sagaApi: SagaAPI) {
         ).saga(configuration.register.medlemskapSagaBaseUrl)
     )
 
-    suspend fun finnVurdering(request: BomloRequest, callId: String): String =
+    suspend fun finnVurdering(request: BomloRequest, callId: String): Medlemskapsvurdering =
         sagaApi.finnVurdering(request, callId)
 
     suspend fun ping(callId: String): String =

@@ -17,18 +17,17 @@ class BomloService(
     private val medlemskapOppslagService: MedlemskapOppslagService,
     private val utledBrukerinput: UtledBrukerinput
 ) {
-        companion object {
-            private val log = KotlinLogging.logger { }
-            private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
-
-        }
+    companion object {
+        private val log = KotlinLogging.logger { }
+        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+    }
 
     //Brukt av speilvurdering-endepunktet
     suspend fun finnFlexVurdering(bomloRequest: BomloRequest, callId: String): JsonNode {
         try {
-            val response = sagaService.finnVurdering(bomloRequest, callId)
+            val medlemskapsvurdering = sagaService.finnVurdering(bomloRequest, callId)
             log.info("Vurdering funnet i database for kall med id $callId")
-            return objectMapper.readTree(response)
+            return objectMapper.readTree(medlemskapsvurdering.json)
         } catch (cause: ResponseException) {
             //TODO: Avklar her om vi skal returnere 404 eller om vi må kalle Lovme!
             if (cause.response.status.value == 404) {
