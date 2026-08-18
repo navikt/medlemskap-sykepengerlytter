@@ -3,23 +3,20 @@ package no.nav.medlemskap.sykepenger.lytter.service
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.plugins.*
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.*
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
-import no.nav.medlemskap.sykepenger.lytter.domain.Medlemskap
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.persistence.*
+import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexRequest
-import no.nav.medlemskap.sykepenger.lytter.rest.FlexVurderingRespons
 import org.slf4j.MarkerFactory
 
 class BomloService(private val configuration: Configuration, var persistenceService: PersistenceService=PersistenceService(
@@ -39,7 +36,6 @@ class BomloService(private val configuration: Configuration, var persistenceServ
         )
         var sagaClient: SagaAPI
         var lovmeClient: LovmeAPI
-
         private val utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService)))
 
         init {
@@ -88,102 +84,4 @@ class BomloService(private val configuration: Configuration, var persistenceServ
     }
 
 
-    //Brukt av flexvurdering-endepunktet
-    suspend fun finnFlexVurdering(flexRequeest: FlexRequest, callId: String): FlexVurderingRespons? {
-        val medlemskap = persistenceService.hentMedlemskap(flexRequeest.fnr)
-        val found = finnMatchendeMedlemkapsPeriode(medlemskap, flexRequeest)
-        //dersom vi har et innslag i vår db med status noe anent en påfølgedne, hent denne!
-        if (found != null && ErMedlem.PAFOLGENDE != (found.medlem)) {
-            try {
-                val response = sagaClient.finnFlexVurdering(flexRequeest, callId)
-                return JacksonParser().parseFlexVurdering(response)
-            } catch (cause: ResponseException) {
-                if (cause.response.status.value == 404) {
-                    log.info(
-                        teamLogs,
-                        "404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${found.fom}, tom: ${found.tom}",
-                        StructuredArguments.kv("callId", callId)
-                    )
-                    return null
-                }
-                //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
-                log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
-                throw cause
-            }
-
-        }
-
-        //Vi må finne første søknaden (vi støtter ikke påfølgende)
-        if (found != null && ErMedlem.PAFOLGENDE == (found.medlem)) {
-            val forste: Medlemskap? = finnRelevantIkkePåfølgende(found, medlemskap)
-            if (forste != null) {
-
-                log.info(
-                    teamLogs,
-                    "kaller saga med første vurdering som ikke er paafolgende : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
-                    StructuredArguments.kv("callId", callId)
-                )
-                try {
-                    val response = sagaClient.finnFlexVurdering(
-                        FlexRequest(
-                            flexRequeest.sykepengesoknad_id,
-                            flexRequeest.fnr,
-                            forste.fom,
-                            forste.tom
-                        ), callId
-                    )
-                    return JacksonParser().parseFlexVurdering(response)
-                } catch (cause: ResponseException) {
-                    if (cause.response.status.value == 404) {
-                        log.info(
-                            teamLogs,
-                            "404 for kall mot saga på : fnr : ${flexRequeest.fnr}, fom:${forste.fom}, tom: ${forste.tom}",
-                            StructuredArguments.kv("callId", callId)
-                        )
-                        return null
-                    }
-                    //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
-                    log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
-                    throw cause
-                }
-            }
-            log.info(
-                teamLogs,
-                "ingen førstegangssøknad funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}",
-                StructuredArguments.kv("callId", callId)
-            )
-            return null
-        }
-        log.info(
-            teamLogs,
-            "ingen matchende treff i vurderinger  funnet for  : ${flexRequeest.fnr}, med request fom:${flexRequeest.fom}, tom: ${flexRequeest.tom}",
-            StructuredArguments.kv("callId", callId)
-        )
-        try {
-            val response = sagaClient.finnFlexVurdering(flexRequeest, callId)
-            return JacksonParser().parseFlexVurdering(response)
-        } catch (cause: ResponseException) {
-            if (cause.response.status.value == 404) {
-
-                return null
-            }
-            //TODO: Hva gjør vi med alle andre feil (400 bad request etc)
-            log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
-            throw cause
-        }
-    }
-
-}
-
-
-fun finnRelevantIkkePåfølgende(paafolgende: Medlemskap, medlemskap: List<Medlemskap>): Medlemskap? {
-    return medlemskap.sortedByDescending { it.tom }
-        .find { it.tom < paafolgende.tom && it.medlem != ErMedlem.PAFOLGENDE }
-}
-
-fun finnMatchendeMedlemkapsPeriode(medlemskap: List<Medlemskap>, flexRequeest: FlexRequest): Medlemskap? {
-    return medlemskap.firstOrNull {
-        it.fom.isEqual(flexRequeest.fom) &&
-                it.tom.isEqual(flexRequeest.tom)
-    }
 }

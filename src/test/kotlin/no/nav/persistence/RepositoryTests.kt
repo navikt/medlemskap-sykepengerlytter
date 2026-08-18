@@ -4,7 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 
-import no.nav.medlemskap.sykepenger.lytter.domain.ErMedlem
+import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.persistence.*
 
@@ -63,13 +63,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         dsb.migrate();
 
         val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-        repo.lagreVurdering(VurderingDao("2222","2222", LocalDate.now(), LocalDate.now(),ErMedlem.PAFOLGENDE.toString()))
+        repo.lagreVurdering(VurderingDao("2222","2222", LocalDate.now(), LocalDate.now(),Status.PAFOLGENDE.toString()))
         val result = repo.finnVurdering("2222")
 
         assertTrue(result.size==1,"result set should contain 3 elements")
 
         assertEquals("2222".sha256(),result.first().fnr)
-        assertEquals(ErMedlem.PAFOLGENDE,ErMedlem.valueOf(result.first().status))
+        assertEquals(Status.PAFOLGENDE,Status.valueOf(result.first().status))
     }
     @Test
     fun `lagre brukersporsmaal MED flexBrukerSpørsmål`() {
