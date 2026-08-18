@@ -120,7 +120,7 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
         }
 
     private fun søknadInneholderNyeBrukerspørsmål(brukersvar: Brukersporsmaal?): Boolean =
-        brukersvar?.utfort_arbeid_utenfor_norge != null ||
+        brukersvar?.utfortArbeidUtenforNorge != null ||
                 brukersvar?.oppholdstilatelse != null ||
                 brukersvar?.oppholdUtenforEOS != null ||
                 brukersvar?.oppholdUtenforNorge != null
@@ -133,7 +133,7 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
 
     private fun mapTilBrukerinput(brukersvar: Brukersporsmaal?): Brukerinput {
         val utførtArbeidUtenforNorge =
-            mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvar?.utfort_arbeid_utenfor_norge)
+            mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvar?.utfortArbeidUtenforNorge)
         return Brukerinput(
             arbeidUtenforNorge = mapBrukersvar.kopierFraUtførtArbeidUtenforNorge(
                 utførtArbeidUtenforNorge?.svar ?: false

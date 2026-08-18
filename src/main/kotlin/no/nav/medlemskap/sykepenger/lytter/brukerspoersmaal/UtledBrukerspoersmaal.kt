@@ -33,7 +33,7 @@ class UtledBrukerspoersmaal(
             ?: emptyList()
 
     private fun Brukersporsmaal.tilGjenbrukbareSpørsmål() = listOfNotNull(
-        utfort_arbeid_utenfor_norge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
+        utfortArbeidUtenforNorge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
         oppholdUtenforNorge?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
         oppholdUtenforEOS?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
         oppholdstilatelse?.let { Spørsmål.OPPHOLDSTILATELSE }

@@ -12,7 +12,7 @@ data class NormalisertBrukersvar(
 
 fun Brukersporsmaal.normaliser(): NormalisertBrukersvar =
     NormalisertBrukersvar(
-        arbeidUtenforNorge = this.utfort_arbeid_utenfor_norge?.svar,
+        arbeidUtenforNorge = this.utfortArbeidUtenforNorge?.svar,
         oppholdUtenforNorge = this.oppholdUtenforNorge?.svar,
         oppholdUtenforEos = this.oppholdUtenforEOS?.svar,
         oppholdstillatelse = this.oppholdstilatelse?.svar

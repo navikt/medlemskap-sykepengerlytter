@@ -59,7 +59,7 @@ class JacksonParserTest {
             status= "SENT",
             sporsmaal= sporsmaal.sporsmaal,
             oppholdstilatelse = sporsmaal.oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = sporsmaal.utfort_arbeid_utenfor_norge,
+            utfortArbeidUtenforNorge = sporsmaal.utfortArbeidUtenforNorge,
             oppholdUtenforNorge = sporsmaal.oppholdUtenforNorge,
             oppholdUtenforEOS = sporsmaal.oppholdUtenforEOS)
 

@@ -122,7 +122,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
                 vedtaksTypePermanent = false,
                 perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
             ),
-            utfort_arbeid_utenfor_norge = MedlemskapUtfortArbeidUtenforNorge(
+            utfortArbeidUtenforNorge = MedlemskapUtfortArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
                 sporsmalstekst = "",
                 svar = true,

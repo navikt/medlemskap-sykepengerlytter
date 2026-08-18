@@ -95,7 +95,7 @@ class UtledBrukerspørsmålTest {
                 vedtaksTypePermanent = false
             )
         },
-        utfort_arbeid_utenfor_norge = MedlemskapUtfortArbeidUtenforNorge(
+        utfortArbeidUtenforNorge = MedlemskapUtfortArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
             sporsmalstekst = null,
             svar = false,

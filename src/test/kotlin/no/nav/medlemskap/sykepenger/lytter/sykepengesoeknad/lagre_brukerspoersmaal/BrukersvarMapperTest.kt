@@ -1,11 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -32,7 +27,10 @@ class BrukersvarMapperTest {
         assertNotNull(brukerspørsmål.sporsmaal)
         assertFalse(brukerspørsmål.sporsmaal!!.arbeidUtland!!)
 
-        assertNull(brukerspørsmål.oppholdstilatelse)
+        assertNotNull(brukerspørsmål.oppholdstilatelse)
+        assertNotNull(brukerspørsmål.oppholdUtenforNorge)
+        assertNotNull(brukerspørsmål.utfortArbeidUtenforNorge)
+
     }
 
     @Test
@@ -41,7 +39,7 @@ class BrukersvarMapperTest {
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal.json")
         )
 
-        val arbeidUtenforNorge = brukerspørsmål.utfort_arbeid_utenfor_norge
+        val arbeidUtenforNorge = brukerspørsmål.utfortArbeidUtenforNorge
         assertNotNull(arbeidUtenforNorge)
         assertEquals("694ee4e1-d6b9-306c-a940-bf87dad1665e", arbeidUtenforNorge!!.id)
         assertTrue(arbeidUtenforNorge.svar)

@@ -39,7 +39,7 @@ data class Brukersporsmaal(
     val status: String,
     val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
     val oppholdstilatelse:MedlemskapOppholdstilatelseBrukersporsmaal? = null,
-    val utfort_arbeid_utenfor_norge:MedlemskapUtfortArbeidUtenforNorge? = null,
+    val utfortArbeidUtenforNorge:MedlemskapUtfortArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
     val oppholdUtenforEOS:MedlemskapOppholdUtenforEOS? = null
 
