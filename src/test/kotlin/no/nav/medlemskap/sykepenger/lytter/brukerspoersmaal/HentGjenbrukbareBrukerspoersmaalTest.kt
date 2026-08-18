@@ -8,7 +8,6 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforE
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstilatelseBrukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.rest.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
