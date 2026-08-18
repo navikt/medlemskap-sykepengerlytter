@@ -43,6 +43,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRe
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SagaService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
@@ -85,7 +86,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     val bomloService = BomloService(
         sagaService = SagaService(configuration),
         medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
-        utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
+        medlemskapOppslagMapper = MedlemskapOppslagMapper(UtledBrukerinput(gjenbrukBrukersvar))
     )
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket

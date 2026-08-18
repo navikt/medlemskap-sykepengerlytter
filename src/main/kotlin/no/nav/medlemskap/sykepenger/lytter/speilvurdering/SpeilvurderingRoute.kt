@@ -36,7 +36,7 @@ fun Routing.speilvurderingRoute(
             val request = call.receive<BomloRequest>()
             try {
                 val response = bomloService.finnFlexVurdering(request, callId)
-                val speilRespons = response.lagSpeilRespons(callId)
+                val speilRespons = SpeilvurderingMapper().tilSpeilResponse(response)
                 val timeInMS = System.currentTimeMillis() - start
                 logger.info(
                     teamLogs,
@@ -47,8 +47,8 @@ fun Routing.speilvurderingRoute(
                     kv("endpoint", "speilvurdering"),
                     kv("soknadId", speilRespons.soknadId),
                     kv("konklusjon", speilRespons.speilSvar.name),
-                    kv("avklaringer", response.hentAvklaringer().toString()),
-                    kv("kanal", response.hentKanal())
+                    kv("avklaringer", response.avklaringer.toString()),
+                    kv("kanal", response.kanal)
                 )
 
                 call.respond(HttpStatusCode.OK, speilRespons)

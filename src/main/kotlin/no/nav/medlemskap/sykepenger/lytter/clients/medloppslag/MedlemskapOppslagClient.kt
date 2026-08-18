@@ -11,6 +11,7 @@ import kotlinx.coroutines.time.withTimeout
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import org.slf4j.MarkerFactory
@@ -18,12 +19,12 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 
-class MedlOppslagClient(
+class MedlemskapOppslagClient(
     private val baseUrl: String,
     private val azureAdClient: AzureAdClient,
     private val httpClient: HttpClient,
     private val retry: Retry? = null
-):LovmeAPI {
+): MedlemskapOppslagAPI {
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
@@ -73,7 +74,10 @@ class MedlOppslagClient(
         }
 
     }
-    override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+    override suspend fun vurderMedlemskapForSpeil(
+        medlOppslagRequest: MedlOppslagRequest,
+        callId: String
+    ): MedlemskapOppslagVurdering {
         log.info (
             teamLogs,
             "kaller regelmotor",
@@ -89,13 +93,16 @@ class MedlOppslagClient(
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
                 setBody(medlOppslagRequest)
-            }.body()
+            }.body<MedlemskapOppslagVurdering>()
         }
     }
 }
 
-interface LovmeAPI{
+interface MedlemskapOppslagAPI{
     suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String
-    suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String
+    suspend fun vurderMedlemskapForSpeil(
+        medlOppslagRequest: MedlOppslagRequest,
+        callId: String
+    ): MedlemskapOppslagVurdering
     suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String
 }

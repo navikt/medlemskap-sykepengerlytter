@@ -1,10 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
-import java.util.Date
+import com.fasterxml.jackson.databind.JsonNode
 
 data class Medlemskapsvurdering(
-    val id: String,
-    val soknadId: String,
-    val date: Date,
-    val json: String
+    val json: JsonNode
 )

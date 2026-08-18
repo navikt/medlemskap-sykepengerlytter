@@ -1,12 +1,14 @@
 package no.nav.medlemskap.sykepenger.lytter.clients.saga
 
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.github.resilience4j.retry.Retry
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
+import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
@@ -31,7 +33,15 @@ open class SagaClient(
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
                 setBody(JacksonParser().ToJson(bomloRequest))
-            }.body<Medlemskapsvurdering>()
+            }.body<JsonNode>().let { response ->
+                Medlemskapsvurdering(
+                    if (response.isTextual) {
+                        objectMapper.readTree(response.asText())
+                    } else {
+                        response
+                    }
+                )
+            }
         }
 
     }

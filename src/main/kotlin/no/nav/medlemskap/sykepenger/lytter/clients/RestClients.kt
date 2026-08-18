@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.clients
 
 
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagClient
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagClient
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaClient
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.flexretryRegistry
@@ -18,6 +18,6 @@ class RestClients(
     private val sagaRetry = retryRegistry.retry("MEDL-SAGA")
 
     private val httpClient = cioHttpClient
-    fun medlOppslag(endpointBaseUrl: String) = MedlOppslagClient(endpointBaseUrl, azureAdClient, httpClient, medlRetry)
+    fun medlOppslag(endpointBaseUrl: String) = MedlemskapOppslagClient(endpointBaseUrl, azureAdClient, httpClient, medlRetry)
     fun saga(endpointBaseUrl: String) = SagaClient(endpointBaseUrl, azureAdClient, httpClient, sagaRetry)
 }

@@ -2,8 +2,9 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
@@ -128,7 +129,7 @@ class BehandleSykepengesoeknadTest {
             )
         )
 
-    private class LovMeApiTestMock : LovmeAPI {
+    private class LovMeApiTestMock : MedlemskapOppslagAPI {
         var antallVurderMedlemskapKall = 0
         var sisteRequest: MedlOppslagRequest? = null
 
@@ -138,7 +139,10 @@ class BehandleSykepengesoeknadTest {
             return this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
         }
 
-        override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        override suspend fun vurderMedlemskapForSpeil(
+            medlOppslagRequest: MedlOppslagRequest,
+            callId: String
+        ): MedlemskapOppslagVurdering {
             error("Skal ikke kalle vurderMedlemskapBomlo")
         }
 

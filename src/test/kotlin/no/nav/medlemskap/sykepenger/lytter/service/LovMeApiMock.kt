@@ -1,12 +1,14 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 
 
 class LovMeApiMock(
     private val filer: Map<String, String> = emptyMap()
-) : LovmeAPI {
+) : MedlemskapOppslagAPI {
 
     var request: MedlOppslagRequest? = null
 
@@ -25,12 +27,12 @@ class LovMeApiMock(
         return hentFil("vurderMedlemskap")
     }
 
-    override suspend fun vurderMedlemskapBomlo(
+    override suspend fun vurderMedlemskapForSpeil(
         medlOppslagRequest: MedlOppslagRequest,
         callId: String
-    ): String {
+    ): MedlemskapOppslagVurdering {
         request = medlOppslagRequest
-        return hentFil("vurderMedlemskapBomlo")
+        return JacksonParser().toDomainObject(hentFil("vurderMedlemskapBomlo"))
     }
 
     override suspend fun brukerspørsmål(
