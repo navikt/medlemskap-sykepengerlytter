@@ -143,7 +143,7 @@ class BehandleSykepengesoeknadTest {
             medlOppslagRequest: MedlOppslagRequest,
             callId: String
         ): MedlemskapOppslagVurdering {
-            error("Skal ikke kalle vurderMedlemskapBomlo")
+            error("Skal ikke kalle vurderMedlemskapForSpeil")
         }
 
         override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {

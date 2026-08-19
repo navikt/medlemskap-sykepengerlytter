@@ -42,7 +42,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.FinnVurderingForSpeil
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SagaService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
@@ -83,7 +83,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
-    val bomloService = BomloService(
+    val finnVurderingForSpeil = FinnVurderingForSpeil(
         sagaService = SagaService(configuration),
         medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
         medlemskapOppslagMapper = MedlemskapOppslagMapper(UtledBrukerinput(gjenbrukBrukersvar))
@@ -156,8 +156,8 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         }
 
         routing {
-            naisRoutes(consumeJob,bomloService)
-            speilvurderingRoute(bomloService)
+            naisRoutes(consumeJob,finnVurderingForSpeil)
+            speilvurderingRoute(finnVurderingForSpeil)
             medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)

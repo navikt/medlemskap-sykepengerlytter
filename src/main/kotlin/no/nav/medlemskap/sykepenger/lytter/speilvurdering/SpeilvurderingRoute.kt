@@ -10,8 +10,6 @@ import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
-import no.nav.medlemskap.sykepenger.lytter.rest.*
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.BomloService
 import org.slf4j.MarkerFactory
 import java.util.*
 
@@ -19,7 +17,7 @@ private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 fun Routing.speilvurderingRoute(
-    bomloService: BomloService,
+    finnVurderingForSpeil: FinnVurderingForSpeil,
 ) {
     authenticate("azureAuth") {
         post("/speilvurdering") {
@@ -33,9 +31,9 @@ fun Routing.speilvurderingRoute(
                 kv("endpoint", "speilvurdering")
             )
             val start = System.currentTimeMillis()
-            val request = call.receive<BomloRequest>()
+            val request = call.receive<SpeilvurderingRequest>()
             try {
-                val response = bomloService.finnFlexVurdering(request, callId)
+                val response = finnVurderingForSpeil.finnVurdering(request, callId)
                 val speilRespons = SpeilvurderingMapper().tilSpeilResponse(response)
                 val timeInMS = System.currentTimeMillis() - start
                 logger.info(

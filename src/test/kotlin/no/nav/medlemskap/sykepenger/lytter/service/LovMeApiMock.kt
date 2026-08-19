@@ -32,7 +32,7 @@ class LovMeApiMock(
         callId: String
     ): MedlemskapOppslagVurdering {
         request = medlOppslagRequest
-        return JacksonParser().toDomainObject(hentFil("vurderMedlemskapBomlo"))
+        return JacksonParser().toDomainObject(hentFil("vurderMedlemskapForSpeil"))
     }
 
     override suspend fun brukerspørsmål(

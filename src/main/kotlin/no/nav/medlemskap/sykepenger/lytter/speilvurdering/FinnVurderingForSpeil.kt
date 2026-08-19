@@ -1,27 +1,27 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import io.ktor.client.plugins.ResponseException
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 
-class BomloService(
+class FinnVurderingForSpeil(
     private val sagaService: SagaService,
     private val medlemskapOppslagService: MedlemskapOppslagService,
     private val medlemskapOppslagMapper: MedlemskapOppslagMapper
 ) {
-    private val logger = BomloServiceLogger()
+    private val logger = FinnVurderingForSpeilLogger()
+    private val speilvurderingMapper = SpeilvurderingMapper()
 
-    suspend fun finnFlexVurdering(bomloRequest: BomloRequest, callId: String): Speilvurdering {
+    suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): Speilvurdering {
         try {
-            val medlemskapsvurdering = sagaService.finnVurdering(bomloRequest, callId)
+            val medlemskapsvurdering = sagaService.finnVurdering(speilvurderingRequest, callId)
             logger.vurderingFunnet(callId)
-            return SpeilvurderingMapper().fraSaga(medlemskapsvurdering, callId)
+            return speilvurderingMapper.fraSaga(medlemskapsvurdering, callId)
         } catch (cause: ResponseException) {
             if (cause.response.status.value == 404) {
-                logger.vurderingIkkeFunnet(bomloRequest, callId)
+                logger.vurderingIkkeFunnet(speilvurderingRequest, callId)
                 logger.lovmeKalles(callId, cause)
-                val medlemskapOppslagRequest = medlemskapOppslagMapper.map(callId, bomloRequest)
+                val medlemskapOppslagRequest = medlemskapOppslagMapper.map(callId, speilvurderingRequest)
                 val medlemskapOppslagVurdering = medlemskapOppslagService.vurderMedlemskapForSpeil(medlemskapOppslagRequest, callId)
-                return SpeilvurderingMapper().fraMedlemskapOppslag(medlemskapOppslagVurdering, callId)
+                return speilvurderingMapper.fraMedlemskapOppslag(medlemskapOppslagVurdering, callId)
             }
             logger.feilVedSagaKall(cause)
             throw cause

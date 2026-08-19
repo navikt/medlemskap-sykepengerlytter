@@ -54,7 +54,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -92,7 +92,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -154,7 +154,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_uavklart.json"
             )
             )
@@ -214,7 +214,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_uavklart_med_opphold.json"
             )
             )
@@ -274,7 +274,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -335,7 +335,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -398,7 +398,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart_brudd_23.json"
             )
             )
@@ -458,7 +458,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart.json"
             )
             )
@@ -519,7 +519,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_ja.json"
             )
             )

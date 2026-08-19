@@ -11,7 +11,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Medlemskapsvurdering
@@ -23,7 +23,7 @@ open class SagaClient(
     private val retry: Retry? = null
 ): SagaAPI {
 
-    override suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): Medlemskapsvurdering {
+    override suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): Medlemskapsvurdering {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "vurdering", retry) {
             httpClient.post {
@@ -32,7 +32,7 @@ open class SagaClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
-                setBody(JacksonParser().ToJson(bomloRequest))
+                setBody(JacksonParser().ToJson(speilvurderingRequest))
             }.body<JsonNode>().let { response ->
                 Medlemskapsvurdering(
                     if (response.isTextual) {
@@ -76,7 +76,7 @@ open class SagaClient(
 }
 
 interface SagaAPI{
-    suspend fun finnVurdering(bomloRequest: BomloRequest, callId: String): Medlemskapsvurdering
+    suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): Medlemskapsvurdering
     suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
     suspend fun ping(callId: String): String
 }

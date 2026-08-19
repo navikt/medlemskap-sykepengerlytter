@@ -3,10 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 import io.ktor.client.plugins.ResponseException
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
 import org.slf4j.MarkerFactory
 
-internal class BomloServiceLogger {
+internal class FinnVurderingForSpeilLogger {
     private companion object {
         val log = KotlinLogging.logger { }
         val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
@@ -15,7 +14,7 @@ internal class BomloServiceLogger {
     fun vurderingFunnet(callId: String) =
         log.info("Vurdering funnet i database for kall med id $callId")
 
-    fun vurderingIkkeFunnet(request: BomloRequest, callId: String) =
+    fun vurderingIkkeFunnet(request: SpeilvurderingRequest, callId: String) =
         log.info(
             teamLogs,
             "Ingen vurdering utført for søknad med callId: $callId. " +
