@@ -7,8 +7,11 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
 fun hentOppholdUtenforEØSBrukerSpørsmål(
-    oppholdUtenforEØSbrukerspørsmål: MedlemskapsBrukerSpørsmål?
+    spørsmålListe: List<MedlemskapsBrukerSpørsmål>
 ): MedlemskapOppholdUtenforEØS? {
+    val oppholdUtenforEØSbrukerspørsmål =
+        spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" }
+
     return if (oppholdUtenforEØSbrukerspørsmål != null) {
         mapOppholdUtenforEØSbrukerSpørsmål(oppholdUtenforEØSbrukerspørsmål)
     } else {

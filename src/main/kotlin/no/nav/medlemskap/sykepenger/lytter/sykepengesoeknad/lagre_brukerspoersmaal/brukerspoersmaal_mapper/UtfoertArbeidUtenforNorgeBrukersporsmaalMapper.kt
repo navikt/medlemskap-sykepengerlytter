@@ -7,8 +7,11 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
 fun hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
-    utførtArbeidUtenforNorgeSpørsmål: MedlemskapsBrukerSpørsmål?,
+    spørsmålListe: List<MedlemskapsBrukerSpørsmål>,
 ): MedlemskapUtførtArbeidUtenforNorge? {
+    val utførtArbeidUtenforNorgeSpørsmål =
+        spørsmålListe.find { it.tag == "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE" }
+
     return if (utførtArbeidUtenforNorgeSpørsmål != null) {
         mapUtførtArbeidUtenforNorgeBrukerSpørsmål(utførtArbeidUtenforNorgeSpørsmål)
     } else {

@@ -8,9 +8,13 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersma
 import java.time.LocalDate
 
 fun hentOppholdstillatelseBrukerspørsmål(
-    oppholdstillatelseBrukerspørsmålV2: MedlemskapsBrukerSpørsmål?,
-    oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål?,
+    spørsmålListe: List<MedlemskapsBrukerSpørsmål>,
 ): MedlemskapOppholdstillatelseBrukerspørsmål? {
+    val oppholdstillatelseBrukerspørsmålV2 =
+        spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2" }
+    val oppholdstillatelseBrukerspørsmål =
+        spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE" }
+
     return if (oppholdstillatelseBrukerspørsmålV2 != null) {
         mapOppholdstilateleBrukerSpørsmål_v2(oppholdstillatelseBrukerspørsmålV2)
     } else if (oppholdstillatelseBrukerspørsmål != null) {

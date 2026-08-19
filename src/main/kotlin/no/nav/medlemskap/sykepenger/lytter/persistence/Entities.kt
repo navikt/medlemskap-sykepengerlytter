@@ -43,7 +43,6 @@ data class Brukerspørsmål(
     val utfortArbeidUtenforNorge:MedlemskapUtførtArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
     val oppholdUtenforEOS:MedlemskapOppholdUtenforEØS? = null
-
 )
 
 data class ArbeidUtenforNorgeSpørsmål(

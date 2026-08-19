@@ -12,22 +12,16 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
         objectMapper.convertValue<List<MedlemskapsBrukerSpørsmål>>(spørsmål)
             .filter { it.tag in medlemskapSpørsmålTags }
 
-    val oppholdstilatelseBrukerspørsmål = hentOppholdstillatelseBrukerspørsmål(
-        spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2" },
-        spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE" },
-    )
-    val arbeidUtenforNorgeBrukerspørsmål: ArbeidUtenforNorgeSpørsmål =
-        mapArbeidUtenforNorgeBrukerspørsmål(spørsmålListe.find { it.tag == "ARBEID_UTENFOR_NORGE" })
-    val utførtArbeidUtenforNorgeBrukerspørsmål =
-        hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
-            spørsmålListe.find { it.tag == "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE" }
-        )
-    val oppholdUtenforNorgeSpørsmål =
-        hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" })
-    val oppholdUtenforEØSbrukerspørsmål =
-        hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" })
+    val oppholdstilatelseBrukerspørsmål = hentOppholdstillatelseBrukerspørsmål(spørsmålListe)
+    val arbeidUtenforNorgeBrukerspørsmål = mapArbeidUtenforNorgeBrukerspørsmål(spørsmålListe)
+    val utførtArbeidUtenforNorgeBrukerspørsmål = hentUtførtArbeidUtenforNorgeBrukerSpørsmål(spørsmålListe)
+    val oppholdUtenforNorgeSpørsmål = hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe)
+    val oppholdUtenforEØSbrukerspørsmål = hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe)
 
-    fun mapArbeidUtenforNorgeBrukerspørsmål(arbeidutland: MedlemskapsBrukerSpørsmål?): ArbeidUtenforNorgeSpørsmål {
+    fun mapArbeidUtenforNorgeBrukerspørsmål(
+        spørsmålListe: List<MedlemskapsBrukerSpørsmål>
+    ): ArbeidUtenforNorgeSpørsmål {
+        val arbeidutland = spørsmålListe.find { it.tag == "ARBEID_UTENFOR_NORGE" }
         var svar: Boolean? = null
         if (arbeidutland?.svar != null)
             svar = mapSvar(arbeidutland.svar)
