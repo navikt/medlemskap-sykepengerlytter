@@ -20,13 +20,9 @@ internal class FinnVurderingForSpeilLogger {
             teamLogs,
             "Ingen vurdering utført for søknad med callId: $callId. " +
                 "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil",
-            StructuredArguments.kv("fnr", request.fnr),
             StructuredArguments.kv("fom", request.periode.fom),
             StructuredArguments.kv("tom", request.periode.tom),
         )
-
-    fun lovmeKalles(callId: String, cause: ResponseException) =
-        log.warn("ingen vurdering funnet. Kaller Lovme $callId", cause)
 
     fun feilVedSagaKall(cause: ResponseException) =
         log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
