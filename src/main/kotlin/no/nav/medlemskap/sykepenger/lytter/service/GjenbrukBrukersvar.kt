@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import org.slf4j.MarkerFactory
 
 class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
@@ -14,7 +14,7 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
 
     fun fraInnkommendeSøknad(
         søknadsParametere: SoeknadsParametere,
-        brukersvarPåInnkommendeSøknad: Brukersporsmaal?
+        brukersvarPåInnkommendeSøknad: Brukerspørsmål?
     ): Brukerinput =
         GjenbrukKontekst(søknadsParametere, brukersvarPåInnkommendeSøknad, Kilde.SYKEPENGEBACKEND)
             .vurderBrukersvar()
@@ -119,19 +119,19 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
             is GjenbrukResultat.TidligereBrukersvar -> mapTilBrukerinput(brukersvar)
         }
 
-    private fun søknadInneholderNyeBrukerspørsmål(brukersvar: Brukersporsmaal?): Boolean =
+    private fun søknadInneholderNyeBrukerspørsmål(brukersvar: Brukerspørsmål?): Boolean =
         brukersvar?.utfortArbeidUtenforNorge != null ||
                 brukersvar?.oppholdstilatelse != null ||
                 brukersvar?.oppholdUtenforEOS != null ||
                 brukersvar?.oppholdUtenforNorge != null
 
-    private fun søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad: Brukersporsmaal?): Boolean =
+    private fun søknadInneholderGammeltBrukerspørsmålMedSvarJa(brukersvarPåInnkommendeSøknad: Brukerspørsmål?): Boolean =
         brukersvarPåInnkommendeSøknad?.sporsmaal?.arbeidUtland == true
 
     private fun mapTilBrukerinput(arbeidUtenforNorge: Boolean): Brukerinput =
         Brukerinput(arbeidUtenforNorge = arbeidUtenforNorge)
 
-    private fun mapTilBrukerinput(brukersvar: Brukersporsmaal?): Brukerinput {
+    private fun mapTilBrukerinput(brukersvar: Brukerspørsmål?): Brukerinput {
         val utførtArbeidUtenforNorge =
             mapBrukersvar.mapUtførtArbeidUtenforNorge(brukersvar?.utfortArbeidUtenforNorge)
         return Brukerinput(
@@ -148,7 +148,7 @@ class GjenbrukBrukersvar(private val tidligereBrukersvar: TidligereBrukersvar) {
 
 private data class GjenbrukKontekst(
     val søknadsParametere: SoeknadsParametere,
-    val brukersvarPåInnkommendeSøknad: Brukersporsmaal?,
+    val brukersvarPåInnkommendeSøknad: Brukerspørsmål?,
     val kilde: Kilde
 )
 
@@ -162,7 +162,7 @@ private sealed interface GjenbrukResultat {
 
     data class NyeBrukerspørsmål(
         override val søknadsParametere: SoeknadsParametere,
-        val brukersvar: Brukersporsmaal
+        val brukersvar: Brukerspørsmål
     ) : GjenbrukResultat
 
     data class ArbeidUtenforNorgeSvarJa(
@@ -175,6 +175,6 @@ private sealed interface GjenbrukResultat {
 
     data class TidligereBrukersvar(
         override val søknadsParametere: SoeknadsParametere,
-        val brukersvar: Brukersporsmaal
+        val brukersvar: Brukerspørsmål
     ) : GjenbrukResultat
 }

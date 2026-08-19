@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
@@ -118,7 +118,7 @@ class BehandleSykepengesoeknadTest {
     private fun sykepengesoeknad(sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag): Sykepengesoeknad =
         Sykepengesoeknad(
             sykepengesøknadGrunnlag = sykepengesøknadGrunnlag,
-            brukerspørsmål = Brukersporsmaal(
+            brukerspørsmål = Brukerspørsmål(
                 fnr = sykepengesøknadGrunnlag.fnr,
                 soknadid = sykepengesøknadGrunnlag.id,
                 eventDate = sykepengesøknadGrunnlag.sendtNav!!.toLocalDate(),

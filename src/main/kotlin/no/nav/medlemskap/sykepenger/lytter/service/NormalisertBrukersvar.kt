@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 
 data class NormalisertBrukersvar(
     val arbeidUtenforNorge: Boolean?,
@@ -10,7 +10,7 @@ data class NormalisertBrukersvar(
 )
 
 
-fun Brukersporsmaal.normaliser(): NormalisertBrukersvar =
+fun Brukerspørsmål.normaliser(): NormalisertBrukersvar =
     NormalisertBrukersvar(
         arbeidUtenforNorge = this.utfortArbeidUtenforNorge?.svar,
         oppholdUtenforNorge = this.oppholdUtenforNorge?.svar,

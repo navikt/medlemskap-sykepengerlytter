@@ -32,7 +32,7 @@ fun SykepengerVurderingDao.periode(): Periode {
 
 }
 
-data class Brukersporsmaal(
+data class Brukerspørsmål(
     val fnr: String,
     val soknadid: String,
     val eventDate: LocalDate,

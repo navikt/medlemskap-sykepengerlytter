@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorgeSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
@@ -12,7 +12,7 @@ import java.time.LocalDate
 
 object BrukersvarMapper {
 
-    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
+    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukerspørsmål {
         if (sykepengesoeknadGrunnlag.dodsdato != null) {
             return sykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar()
         }
@@ -27,7 +27,7 @@ object BrukersvarMapper {
         )
     }
 
-    private fun SykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar(): Brukersporsmaal =
+    private fun SykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar(): Brukerspørsmål =
         tilBrukerspørsmål()
 
     private fun SykepengesoeknadGrunnlag.tilBrukerspørsmål(
@@ -36,8 +36,8 @@ object BrukersvarMapper {
         utførtArbeidUtenforNorge: MedlemskapUtførtArbeidUtenforNorge? = null,
         oppholdUtenforNorge: MedlemskapOppholdUtenforNorge? = null,
         oppholdUtenforEØS: MedlemskapOppholdUtenforEØS? = null
-    ): Brukersporsmaal {
-        return Brukersporsmaal(
+    ): Brukerspørsmål {
+        return Brukerspørsmål(
             fnr = fnr,
             soknadid = id,
             eventDate = finnTidligsteDato(sendtArbeidsgiver?.toLocalDate(), sendtNav?.toLocalDate()),

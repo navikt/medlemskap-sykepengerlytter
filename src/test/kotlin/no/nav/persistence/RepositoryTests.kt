@@ -81,7 +81,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
@@ -107,7 +107,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
@@ -181,7 +181,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
@@ -206,7 +206,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
@@ -229,7 +229,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         dsb.migrate();
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
