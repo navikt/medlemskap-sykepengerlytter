@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain
 
 data class Speilvurdering(
     val soknadId: String,

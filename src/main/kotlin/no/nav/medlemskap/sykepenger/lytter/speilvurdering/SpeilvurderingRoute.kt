@@ -10,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 import org.slf4j.MarkerFactory
 import java.util.*
 

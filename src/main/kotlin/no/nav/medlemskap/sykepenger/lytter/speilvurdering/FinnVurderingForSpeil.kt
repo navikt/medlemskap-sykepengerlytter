@@ -1,11 +1,12 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import io.ktor.client.plugins.ResponseException
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 
 class FinnVurderingForSpeil(
     private val sagaService: SagaService,
-    private val medlemskapOppslagService: MedlemskapOppslagService,
-    private val medlemskapOppslagMapper: MedlemskapOppslagMapper
+    private val opprettNyVurderingForSpeil: OpprettNyVurderingForSpeil
 ) {
     private val logger = FinnVurderingForSpeilLogger()
     private val speilvurderingMapper = SpeilvurderingMapper()
@@ -19,9 +20,7 @@ class FinnVurderingForSpeil(
             if (cause.response.status.value == 404) {
                 logger.vurderingIkkeFunnet(speilvurderingRequest, callId)
                 logger.lovmeKalles(callId, cause)
-                val medlemskapOppslagRequest = medlemskapOppslagMapper.map(callId, speilvurderingRequest)
-                val medlemskapOppslagVurdering = medlemskapOppslagService.vurderMedlemskapForSpeil(medlemskapOppslagRequest, callId)
-                return speilvurderingMapper.fraMedlemskapOppslag(medlemskapOppslagVurdering, callId)
+                return opprettNyVurderingForSpeil.opprett(speilvurderingRequest, callId)
             }
             logger.feilVedSagaKall(cause)
             throw cause

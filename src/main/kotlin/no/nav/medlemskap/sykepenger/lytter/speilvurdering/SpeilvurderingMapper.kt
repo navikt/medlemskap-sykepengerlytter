@@ -5,6 +5,10 @@ import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.inneholderNyModell
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilResponse
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilsvar
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 
 class SpeilvurderingMapper {
     fun tilSpeilResponse(vurdering: Speilvurdering): SpeilResponse =

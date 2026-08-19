@@ -44,6 +44,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdert
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.FinnVurderingForSpeil
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagMapper
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.OpprettNyVurderingForSpeil
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SagaService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
@@ -83,10 +84,14 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
+    val opprettNyVurderingForSpeil = OpprettNyVurderingForSpeil(
+        medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
+        medlemskapOppslagMapper = MedlemskapOppslagMapper(),
+        utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
+    )
     val finnVurderingForSpeil = FinnVurderingForSpeil(
         sagaService = SagaService(configuration),
-        medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
-        medlemskapOppslagMapper = MedlemskapOppslagMapper(UtledBrukerinput(gjenbrukBrukersvar))
+        opprettNyVurderingForSpeil = opprettNyVurderingForSpeil
     )
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket

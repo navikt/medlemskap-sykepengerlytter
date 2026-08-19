@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain
 
 data class SpeilResponse(val soknadId: String, val fnr: String, val speilSvar: Speilsvar)
 
