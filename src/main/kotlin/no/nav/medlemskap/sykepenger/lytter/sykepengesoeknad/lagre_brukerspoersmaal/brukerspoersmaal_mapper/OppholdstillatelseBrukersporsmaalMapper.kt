@@ -122,21 +122,11 @@ private fun permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(
 
 private fun mapOppholdstilateleBrukerSpørsmål_v2(
     oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål
-): MedlemskapOppholdstillatelseBrukerspørsmål? {
+): MedlemskapOppholdstillatelseBrukerspørsmål {
     val svar = mapSvar(oppholdstillatelseBrukerspørsmål.svar)
-    val vedtakstype = permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(oppholdstillatelseBrukerspørsmål)
-    return if (svar) {
-        val vedtaksdato = hentVedtaksdatoFraUnderspørsmål(oppholdstillatelseBrukerspørsmål.undersporsmal)
-        MedlemskapOppholdstillatelseBrukerspørsmål(
-            id = oppholdstillatelseBrukerspørsmål.id,
-            spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
-            svar = svar,
-            vedtaksdato = LocalDate.parse(vedtaksdato),
-            vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
-            perioder = vedtakstype.periode,
-        )
-    } else {
-        MedlemskapOppholdstillatelseBrukerspørsmål(
+
+    if (!svar) {
+        return MedlemskapOppholdstillatelseBrukerspørsmål(
             id = oppholdstillatelseBrukerspørsmål.id,
             spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
             svar = svar,
@@ -145,6 +135,18 @@ private fun mapOppholdstilateleBrukerSpørsmål_v2(
             perioder = emptyList(),
         )
     }
+
+    val vedtakstype = permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(oppholdstillatelseBrukerspørsmål)
+    val vedtaksdato = hentVedtaksdatoFraUnderspørsmål(oppholdstillatelseBrukerspørsmål.undersporsmal)
+
+    return MedlemskapOppholdstillatelseBrukerspørsmål(
+        id = oppholdstillatelseBrukerspørsmål.id,
+        spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
+        svar = svar,
+        vedtaksdato = LocalDate.parse(vedtaksdato),
+        vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
+        perioder = vedtakstype.periode,
+    )
 }
 
 private class VedtaksType(val erPermanentVedtaksType: Boolean, val periode: List<Periode>)

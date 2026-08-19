@@ -12,8 +12,8 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
         objectMapper.convertValue<List<MedlemskapsBrukerSpørsmål>>(spørsmål)
             .filter { it.tag in medlemskapSpørsmålTags }
 
-    val oppholdstilatelseBrukerspørsmål = hentOppholdstillatelseBrukerspørsmål(spørsmålListe)
     val arbeidUtenforNorgeBrukerspørsmål = mapArbeidUtenforNorgeBrukerspørsmål(spørsmålListe)
+    val oppholdstilatelseBrukerspørsmål = hentOppholdstillatelseBrukerspørsmål(spørsmålListe)
     val utførtArbeidUtenforNorgeBrukerspørsmål = hentUtførtArbeidUtenforNorgeBrukerSpørsmål(spørsmålListe)
     val oppholdUtenforNorgeSpørsmål = hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe)
     val oppholdUtenforEØSbrukerspørsmål = hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe)
