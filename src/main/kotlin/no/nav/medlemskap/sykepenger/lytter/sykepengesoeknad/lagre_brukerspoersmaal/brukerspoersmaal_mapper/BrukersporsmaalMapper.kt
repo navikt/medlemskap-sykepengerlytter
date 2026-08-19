@@ -23,7 +23,7 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
             spørsmålListe.find { it.tag == "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE" }
         )
     val oppholdUtenforNorgeSpørsmål =
-        getOppholdUtenforNorgeBrukerSporsmaal(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" })
+        hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" })
     val oppholdUtenforEØSbrukerspørsmål =
         getOppholdUtenforEOSBrukerSporsmaal(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" })
 

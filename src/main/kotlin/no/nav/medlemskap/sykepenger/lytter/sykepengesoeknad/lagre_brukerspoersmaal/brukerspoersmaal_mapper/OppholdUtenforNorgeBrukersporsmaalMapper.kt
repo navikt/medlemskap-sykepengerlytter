@@ -6,17 +6,17 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
-fun getOppholdUtenforNorgeBrukerSporsmaal(
-    oppholdUtenforNorgebrukerspoersmaal: MedlemskapsBrukerSpørsmål?
+fun hentOppholdUtenforNorgeBrukerSpørsmål(
+    oppholdUtenforNorgebrukerspørsmål: MedlemskapsBrukerSpørsmål?
 ): MedlemskapOppholdUtenforNorge? {
-    return if (oppholdUtenforNorgebrukerspoersmaal != null) {
-        mapOppholdUtenforNorge_BrukerSporsmaal(oppholdUtenforNorgebrukerspoersmaal)
+    return if (oppholdUtenforNorgebrukerspørsmål != null) {
+        mapOppholdUtenforNorgeBrukerSpørsmål(oppholdUtenforNorgebrukerspørsmål)
     } else {
         null
     }
 }
 
-private fun mapOppholdUtenforNorge_BrukerSporsmaal(
+private fun mapOppholdUtenforNorgeBrukerSpørsmål(
     oppholdUtenforNorge: MedlemskapsBrukerSpørsmål,
 ): MedlemskapOppholdUtenforNorge {
     val svar = mapSvar(oppholdUtenforNorge.svar)
@@ -24,37 +24,37 @@ private fun mapOppholdUtenforNorge_BrukerSporsmaal(
         id = oppholdUtenforNorge.id,
         sporsmalstekst = oppholdUtenforNorge.spørsmålstekst,
         svar = svar,
-        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspoersmaal(oppholdUtenforNorge.underspørsmål) else emptyList()
+        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspørsmål(oppholdUtenforNorge.underspørsmål) else emptyList()
     )
 }
 
-private fun mapOppholdUtenforNorgeUnderspoersmaal(
-    underspoersmaal: List<MedlemskapsBrukerSpørsmål>?
+private fun mapOppholdUtenforNorgeUnderspørsmål(
+    underspørsmål: List<MedlemskapsBrukerSpørsmål>?
 ): List<OppholdUtenforNorge> {
-    return underspoersmaal.orEmpty()
+    return underspørsmål.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
         .map {
-            val undersporsmal = it.underspørsmål.orEmpty()
+            val underspørsmål = it.underspørsmål.orEmpty()
 
-        val oppholdUtenforNorgeBegrunnelseUndersporsmaal = undersporsmal
+        val oppholdUtenforNorgeBegrunnelseUnderspørsmål = underspørsmål
             .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.underspørsmål
 
-        val oppholdUtenforNorgeBegrunnelseSporsmaalstekst = oppholdUtenforNorgeBegrunnelseUndersporsmaal?.find {
+        val oppholdUtenforNorgeBegrunnelseSpørsmålstekst = oppholdUtenforNorgeBegrunnelseUnderspørsmål?.find {
             it.svar?.size == 1
         }?.spørsmålstekst
 
-        val oppholdUtenforNorgeHvorVerdi = undersporsmal
+        val oppholdUtenforNorgeHvorVerdi = underspørsmål
             .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }.svar!!.first().verdi
 
-        val oppholdUtenforNorgeNaarDato =
-            undersporsmal
+        val oppholdUtenforNorgeNårDato =
+            underspørsmål
                 .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }
 
         OppholdUtenforNorge(
             id = it.id,
             land = oppholdUtenforNorgeHvorVerdi,
-            grunn = oppholdUtenforNorgeBegrunnelseSporsmaalstekst ?: "null",
-            perioder = mapBrukerSpørsmålDato(oppholdUtenforNorgeNaarDato.svar)
+            grunn = oppholdUtenforNorgeBegrunnelseSpørsmålstekst ?: "null",
+            perioder = mapBrukerSpørsmålDato(oppholdUtenforNorgeNårDato.svar)
         )
     }
 }
