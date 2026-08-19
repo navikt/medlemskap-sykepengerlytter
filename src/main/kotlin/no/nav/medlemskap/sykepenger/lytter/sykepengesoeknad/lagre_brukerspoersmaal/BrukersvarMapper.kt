@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorgeSpørsmål
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
@@ -35,7 +35,7 @@ object BrukersvarMapper {
         oppholdstilatelse: MedlemskapOppholdstillatelseBrukerspørsmål? = null,
         utførtArbeidUtenforNorge: MedlemskapUtførtArbeidUtenforNorge? = null,
         oppholdUtenforNorge: MedlemskapOppholdUtenforNorge? = null,
-        oppholdUtenforEØS: MedlemskapOppholdUtenforEOS? = null
+        oppholdUtenforEØS: MedlemskapOppholdUtenforEØS? = null
     ): Brukersporsmaal {
         return Brukersporsmaal(
             fnr = fnr,

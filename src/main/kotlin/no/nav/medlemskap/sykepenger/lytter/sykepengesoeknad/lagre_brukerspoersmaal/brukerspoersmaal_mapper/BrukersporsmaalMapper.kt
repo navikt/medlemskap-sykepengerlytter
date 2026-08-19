@@ -25,7 +25,7 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
     val oppholdUtenforNorgeSpørsmål =
         hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE" })
     val oppholdUtenforEØSbrukerspørsmål =
-        getOppholdUtenforEOSBrukerSporsmaal(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" })
+        hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe.find { it.tag == "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS" })
 
     fun mapArbeidUtenforNorgeBrukerspørsmål(arbeidutland: MedlemskapsBrukerSpørsmål?): ArbeidUtenforNorgeSpørsmål {
         var svar: Boolean? = null

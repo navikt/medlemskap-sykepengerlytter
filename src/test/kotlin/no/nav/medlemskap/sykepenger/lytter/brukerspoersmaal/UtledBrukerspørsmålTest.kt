@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
@@ -109,7 +109,7 @@ class UtledBrukerspørsmålTest {
             )
         },
         oppholdUtenforEOS = oppholdUtenforEos?.let {
-            MedlemskapOppholdUtenforEOS(
+            MedlemskapOppholdUtenforEØS(
                 id = "opphold-utenfor-eos",
                 sporsmalstekst = null,
                 svar = it,

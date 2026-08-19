@@ -42,7 +42,7 @@ data class Brukersporsmaal(
     val oppholdstilatelse:MedlemskapOppholdstillatelseBrukerspørsmål? = null,
     val utfortArbeidUtenforNorge:MedlemskapUtførtArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
-    val oppholdUtenforEOS:MedlemskapOppholdUtenforEOS? = null
+    val oppholdUtenforEOS:MedlemskapOppholdUtenforEØS? = null
 
 )
 
@@ -53,12 +53,12 @@ data class ArbeidUtenforNorgeSpørsmål(
 data class MedlemskapsBrukerSpørsmål(
     val id: String,
     val tag: String,
-    val spørsmålstekst: String?,
+    val sporsmalstekst: String?,
     val undertekst: String?,
     val svartype: String?,
-    val kriterieForVisningAvUnderspørsmål:String?,
+    val kriterieForVisningAvUndersporsmal:String?,
     val svar:List<spørsmålSvar>?,
-    val underspørsmål:List<MedlemskapsBrukerSpørsmål>?
+    val undersporsmal:List<MedlemskapsBrukerSpørsmål>?
 )
 
 data class spørsmålSvar(val verdi:String)
@@ -93,7 +93,7 @@ data class OppholdUtenforNorge(
     val perioder: List<Periode>
 )
 
-data class OppholdUtenforEOS(
+data class OppholdUtenforEØS(
     val id: String,
     val land:String,
     val grunn:String,
@@ -107,10 +107,9 @@ data class MedlemskapOppholdUtenforNorge(
     val oppholdUtenforNorge:List<OppholdUtenforNorge>
 )
 
-data class MedlemskapOppholdUtenforEOS(
+data class MedlemskapOppholdUtenforEØS(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
-    val oppholdUtenforEOS:List<OppholdUtenforEOS>
+    val oppholdUtenforEOS:List<OppholdUtenforEØS>
 )
-

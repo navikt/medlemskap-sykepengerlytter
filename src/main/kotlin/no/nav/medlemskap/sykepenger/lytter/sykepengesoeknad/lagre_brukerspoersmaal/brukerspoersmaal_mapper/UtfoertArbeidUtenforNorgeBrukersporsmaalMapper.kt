@@ -22,10 +22,10 @@ private fun mapUtførtArbeidUtenforNorgeBrukerSpørsmål(
     val svar = mapSvar(utførtArbeidUtenforNorgeSpørsmål.svar)
     return MedlemskapUtførtArbeidUtenforNorge(
         id = utførtArbeidUtenforNorgeSpørsmål.id,
-        spørsmålstekst = utførtArbeidUtenforNorgeSpørsmål.spørsmålstekst,
+        spørsmålstekst = utførtArbeidUtenforNorgeSpørsmål.sporsmalstekst,
         svar = svar,
         arbeidUtenforNorge = if (svar) {
-            mapUtførtArbeidUtenforNorgeUnderspørsmål(utførtArbeidUtenforNorgeSpørsmål.underspørsmål)
+            mapUtførtArbeidUtenforNorgeUnderspørsmål(utførtArbeidUtenforNorgeSpørsmål.undersporsmal)
         } else {
             emptyList()
         },
@@ -38,7 +38,7 @@ private fun mapUtførtArbeidUtenforNorgeUnderspørsmål(
     return underspørsmål.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
         .map {
-            val underspørsmål = it.underspørsmål.orEmpty()
+            val underspørsmål = it.undersporsmal.orEmpty()
             val utførtArbeidUtenforNorgeArbeidsgiverVerdi =
                 underspørsmål.find { undersporsmal ->
                     undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER")

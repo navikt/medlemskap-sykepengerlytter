@@ -1,59 +1,59 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
-import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
+import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
 
-fun getOppholdUtenforEOSBrukerSporsmaal(
-    oppholdUtenforEOSbrukerspoersmaal: MedlemskapsBrukerSpørsmål?
-): MedlemskapOppholdUtenforEOS? {
-    return if (oppholdUtenforEOSbrukerspoersmaal != null) {
-        mapOppholdUtenforEOS_BrukerSporsmaal(oppholdUtenforEOSbrukerspoersmaal)
+fun hentOppholdUtenforEØSBrukerSpørsmål(
+    oppholdUtenforEØSbrukerspørsmål: MedlemskapsBrukerSpørsmål?
+): MedlemskapOppholdUtenforEØS? {
+    return if (oppholdUtenforEØSbrukerspørsmål != null) {
+        mapOppholdUtenforEØSbrukerSpørsmål(oppholdUtenforEØSbrukerspørsmål)
     } else {
         null
     }
 }
 
-private fun mapOppholdUtenforEOS_BrukerSporsmaal(
-    oppholdutenforEOS: MedlemskapsBrukerSpørsmål
-): MedlemskapOppholdUtenforEOS {
-    val svar = mapSvar(oppholdutenforEOS.svar)
-    return MedlemskapOppholdUtenforEOS(
-        id = oppholdutenforEOS.id,
-        sporsmalstekst = oppholdutenforEOS.spørsmålstekst,
+private fun mapOppholdUtenforEØSbrukerSpørsmål(
+    oppholdutenforEØS: MedlemskapsBrukerSpørsmål
+): MedlemskapOppholdUtenforEØS {
+    val svar = mapSvar(oppholdutenforEØS.svar)
+    return MedlemskapOppholdUtenforEØS(
+        id = oppholdutenforEØS.id,
+        sporsmalstekst = oppholdutenforEØS.sporsmalstekst,
         svar = svar,
-        oppholdUtenforEOS = if (svar) mapOppholdUtenforEOSunderspoersmaal(oppholdutenforEOS.underspørsmål) else emptyList(),
+        oppholdUtenforEOS = if (svar) mapOppholdUtenforEØSunderspørsmål(oppholdutenforEØS.undersporsmal) else emptyList(),
     )
 }
 
-private fun mapOppholdUtenforEOSunderspoersmaal(
-    underspoersmaal: List<MedlemskapsBrukerSpørsmål>?
-): List<OppholdUtenforEOS> {
-    return underspoersmaal.orEmpty()
+private fun mapOppholdUtenforEØSunderspørsmål(
+    underspørsmål: List<MedlemskapsBrukerSpørsmål>?
+): List<OppholdUtenforEØS> {
+    return underspørsmål.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_GRUPPERING") }
         .map {
-            val undersporsmal = it.underspørsmål.orEmpty()
+            val underspørsmål = it.undersporsmal.orEmpty()
 
-            val oppholdUtenforEOSbegrunnelseSporsmaal = undersporsmal
-                .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }?.underspørsmål
+            val oppholdUtenforEØSbegrunnelseSpørsmål = underspørsmål
+                .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_BEGRUNNELSE") }?.undersporsmal
 
-            val oppholdUtenforEOSbegrunnelseSporsmaalstekst =
-                oppholdUtenforEOSbegrunnelseSporsmaal?.find { it.svar?.size == 1 }?.spørsmålstekst
+            val oppholdUtenforEØSbegrunnelseSpørsmålstekst =
+                oppholdUtenforEØSbegrunnelseSpørsmål?.find { it.svar?.size == 1 }?.sporsmalstekst
 
-            val oppholdutenforEOSspoersmaalHvorVerdi = undersporsmal
+            val oppholdUtenforEØSspørsmålHvorVerdi = underspørsmål
                 .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_HVOR") }.svar!!.first().verdi
 
-            val oppholdUtenforEOSNaarDato =
-                undersporsmal
+            val oppholdUtenforEØSNårDato =
+                underspørsmål
                     .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_EOS_NAAR") }
 
-            OppholdUtenforEOS(
+            OppholdUtenforEØS(
                 id = it.id,
-                land = oppholdutenforEOSspoersmaalHvorVerdi,
-                grunn = oppholdUtenforEOSbegrunnelseSporsmaalstekst ?: "null",
-                perioder = mapBrukerSpørsmålDato(oppholdUtenforEOSNaarDato.svar),
+                land = oppholdUtenforEØSspørsmålHvorVerdi,
+                grunn = oppholdUtenforEØSbegrunnelseSpørsmålstekst ?: "null",
+                perioder = mapBrukerSpørsmålDato(oppholdUtenforEØSNårDato.svar),
             )
         }
 }

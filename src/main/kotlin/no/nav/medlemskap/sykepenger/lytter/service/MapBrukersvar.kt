@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.OppholdUtenforNor
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Oppholdstilatelse
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
@@ -66,7 +66,7 @@ object MapBrukersvar {
             )
         }
 
-    fun mapOppholdUtenforEØS(oppholdutenforEØS: MedlemskapOppholdUtenforEOS?): OppholdUtenforEos? =
+    fun mapOppholdUtenforEØS(oppholdutenforEØS: MedlemskapOppholdUtenforEØS?): OppholdUtenforEos? =
         oppholdutenforEØS?.let {
             OppholdUtenforEos(
                 id = it.id,

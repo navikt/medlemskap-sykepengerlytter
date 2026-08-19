@@ -22,9 +22,9 @@ private fun mapOppholdUtenforNorgeBrukerSpørsmål(
     val svar = mapSvar(oppholdUtenforNorge.svar)
     return MedlemskapOppholdUtenforNorge(
         id = oppholdUtenforNorge.id,
-        sporsmalstekst = oppholdUtenforNorge.spørsmålstekst,
+        sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,
         svar = svar,
-        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspørsmål(oppholdUtenforNorge.underspørsmål) else emptyList()
+        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspørsmål(oppholdUtenforNorge.undersporsmal) else emptyList()
     )
 }
 
@@ -34,14 +34,14 @@ private fun mapOppholdUtenforNorgeUnderspørsmål(
     return underspørsmål.orEmpty()
         .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
         .map {
-            val underspørsmål = it.underspørsmål.orEmpty()
+            val underspørsmål = it.undersporsmal.orEmpty()
 
         val oppholdUtenforNorgeBegrunnelseUnderspørsmål = underspørsmål
-            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.underspørsmål
+            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.undersporsmal
 
         val oppholdUtenforNorgeBegrunnelseSpørsmålstekst = oppholdUtenforNorgeBegrunnelseUnderspørsmål?.find {
             it.svar?.size == 1
-        }?.spørsmålstekst
+        }?.sporsmalstekst
 
         val oppholdUtenforNorgeHvorVerdi = underspørsmål
             .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }.svar!!.first().verdi
