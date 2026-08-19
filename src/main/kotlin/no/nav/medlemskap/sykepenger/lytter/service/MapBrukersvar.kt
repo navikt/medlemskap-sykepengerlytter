@@ -10,7 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUten
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
 
 object MapBrukersvar {
     fun mapOppholdstillatelse(oppholdstillatelse: MedlemskapOppholdstillatelseBrukerspørsmål?): Oppholdstilatelse? =
@@ -28,11 +28,11 @@ object MapBrukersvar {
         }
 
 
-    fun mapUtførtArbeidUtenforNorge(utfortArbeidUtenforNorge: MedlemskapUtfortArbeidUtenforNorge?): UtfortAarbeidUtenforNorge? =
+    fun mapUtførtArbeidUtenforNorge(utfortArbeidUtenforNorge: MedlemskapUtførtArbeidUtenforNorge?): UtfortAarbeidUtenforNorge? =
         utfortArbeidUtenforNorge?.let {
             UtfortAarbeidUtenforNorge(
                 id = it.id,
-                sporsmalstekst = it.sporsmalstekst,
+                sporsmalstekst = it.spørsmålstekst,
                 svar = it.svar,
                 arbeidUtenforNorge = it.arbeidUtenforNorge.map { arbeidUtenforNorge ->
                     ArbeidUtenforNorge(

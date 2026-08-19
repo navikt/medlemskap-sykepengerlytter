@@ -101,7 +101,7 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
 
         }
         catch (e:Exception){
-            val sporsmaal:FlexBrukerSporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+            val sporsmaal:ArbeidUtenforNorgeSpørsmål=  JacksonParser().toDomainObject(row.string("sporsmaal"))
             Brukersporsmaal(
                 fnr=row.string("fnr"),
                 soknadid = row.string("soknadid").toString(),

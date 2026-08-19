@@ -87,7 +87,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val result = repo.finnBrukersporsmaal("2222")
@@ -113,7 +113,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false),
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false),
             oppholdstilatelse = MedlemskapOppholdstillatelseBrukerspørsmål(
                 id=UUID.randomUUID().toString(),
                 spørsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
@@ -122,9 +122,9 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
                 vedtaksTypePermanent = false,
                 perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
             ),
-            utfortArbeidUtenforNorge = MedlemskapUtfortArbeidUtenforNorge(
+            utfortArbeidUtenforNorge = MedlemskapUtførtArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
-                sporsmalstekst = "",
+                spørsmålstekst = "",
                 svar = true,
                 arbeidUtenforNorge = listOf(ArbeidUtenforNorge(
                     id = "1",
@@ -187,7 +187,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val brukersporsmaal = repo.finnBrukersporsmaalForSoknad(soknadID)
@@ -212,7 +212,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val brukersporsmaal = repo.finnBrukersporsmaalForSoknad("1234")
@@ -235,7 +235,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             eventDate = LocalDate.now(),
             ytelse = "SYKEPPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(null)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(null)
 
         ))
         val result = repo.finnBrukersporsmaal("2222")

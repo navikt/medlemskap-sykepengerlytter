@@ -38,15 +38,15 @@ data class Brukersporsmaal(
     val eventDate: LocalDate,
     val ytelse: String,
     val status: String,
-    val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
+    val sporsmaal: ArbeidUtenforNorgeSpørsmål?, //fases ut til fordel for nye spørsmål
     val oppholdstilatelse:MedlemskapOppholdstillatelseBrukerspørsmål? = null,
-    val utfortArbeidUtenforNorge:MedlemskapUtfortArbeidUtenforNorge? = null,
+    val utfortArbeidUtenforNorge:MedlemskapUtførtArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
     val oppholdUtenforEOS:MedlemskapOppholdUtenforEOS? = null
 
 )
 
-data class FlexBrukerSporsmaal(
+data class ArbeidUtenforNorgeSpørsmål(
     val arbeidUtland: Boolean?
 )
 
@@ -72,9 +72,9 @@ data class MedlemskapOppholdstillatelseBrukerspørsmål(
     val perioder:List<Periode> = mutableListOf()
 )
 
-data class MedlemskapUtfortArbeidUtenforNorge(
+data class MedlemskapUtførtArbeidUtenforNorge(
     val id: String,
-    val sporsmalstekst: String?,
+    val spørsmålstekst: String?,
     val svar:Boolean,
     val arbeidUtenforNorge:List<ArbeidUtenforNorge>
 )

@@ -7,7 +7,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEOS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtfortArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
@@ -94,9 +94,9 @@ class HentGjenbrukbareBrukerspoersmaalTest {
                 vedtaksTypePermanent = false
             )
         },
-        utfortArbeidUtenforNorge = MedlemskapUtfortArbeidUtenforNorge(
+        utfortArbeidUtenforNorge = MedlemskapUtførtArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
-            sporsmalstekst = null,
+            spørsmålstekst = null,
             svar = false,
             arbeidUtenforNorge = emptyList()
         ),
