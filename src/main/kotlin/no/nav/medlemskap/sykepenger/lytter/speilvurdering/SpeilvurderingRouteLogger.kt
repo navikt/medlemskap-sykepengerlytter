@@ -23,16 +23,13 @@ internal class SpeilvurderingRouteLogger {
 
     fun logVurderingFunnet(
         response: Speilvurdering,
-        fnr: String,
-        callId: String,
-        tidsbrukInMs: Long
+        callId: String
     ) =
         log.info(
             teamLogs,
             "{} svar funnet for bruker {}", response.speilSvar.name, response.fnr,
             kv("callId", callId),
-            kv("fnr", fnr),
-            kv("tidsbrukInMs", tidsbrukInMs),
+            kv("fnr", response.fnr),
             kv("endpoint", "speilvurdering"),
             kv("soknadId", response.soknadId),
             kv("konklusjon", response.speilSvar.name),

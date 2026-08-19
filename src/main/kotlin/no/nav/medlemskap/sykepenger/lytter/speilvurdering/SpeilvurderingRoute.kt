@@ -22,13 +22,14 @@ fun Routing.speilvurderingRoute(
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
             routeLogger.logAzp(azp)
+
             val callId = call.callId ?: UUID.randomUUID().toString()
             routeLogger.logAutentisert(callId)
-            val start = System.currentTimeMillis()
             val request = call.receive<SpeilvurderingRequest>()
+
             val response = finnVurderingForSpeil.finnVurdering(request, callId)
             val speilRespons = SpeilvurderingMapper().tilSpeilResponse(response)
-            routeLogger.logVurderingFunnet(response, request.fnr, callId, System.currentTimeMillis() - start)
+            routeLogger.logVurderingFunnet(response,  callId)
 
             call.respond(HttpStatusCode.OK, speilRespons)
         }
