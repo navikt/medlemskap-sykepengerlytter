@@ -1,13 +1,59 @@
-package no.nav.medlemskap.sykepenger.lytter.rest
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Medlemskapsvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Speilsvar
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class SpeilSvarTest {
+class SpeilvurderingMapperTest {
+
+    @Test
+    fun `ja svar skal være case insensitive`() {
+        val mapper = SpeilvurderingMapper()
+        val vurdering = Medlemskapsvurdering(
+            JacksonParser().ToJson(
+                """
+                {
+                  "datagrunnlag": {
+                    "fnr": "98765434567",
+                    "brukerinput": {}
+                  },
+                  "resultat": {
+                    "svar": "ja"
+                  }
+                }
+                """.trimIndent()
+            )
+        )
+
+        Assertions.assertEquals(
+            Speilsvar.JA,
+            mapper.fraSaga(vurdering, "1").speilSvar
+        )
+    }
+
+    @Test
+    fun `nei svar skal være case insensitive`() {
+        val vurdering = Medlemskapsvurdering(
+            JacksonParser().ToJson(
+                """
+                {
+                  "datagrunnlag": {
+                    "fnr": "98765434567",
+                    "brukerinput": {}
+                  },
+                  "resultat": {
+                    "svar": "nei"
+                  }
+                }
+                """.trimIndent()
+            )
+        )
+
+        Assertions.assertEquals(
+            Speilsvar.NEI,
+            SpeilvurderingMapper().fraSaga(vurdering, "1").speilSvar
+        )
+    }
 
     @Test
     fun `Ja svar i konklusjon med uavklart i resultat skal svare JA`(){

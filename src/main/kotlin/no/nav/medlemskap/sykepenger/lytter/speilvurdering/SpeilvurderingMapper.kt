@@ -42,8 +42,8 @@ class SpeilvurderingMapper {
 
     private fun finnSpeilSvar(svar: String, brukerinput: Brukerinput): Speilsvar =
         when {
-            svar == "JA" -> Speilsvar.JA
-            svar == "NEI" -> Speilsvar.NEI
+            svar.equals("JA", ignoreCase = true) -> Speilsvar.JA
+            svar.equals("NEI", ignoreCase = true) -> Speilsvar.NEI
             brukerinput.inneholderNyModell() -> Speilsvar.UAVKLART_MED_BRUKERSPORSMAAL
             else -> Speilsvar.UAVKLART
         }
