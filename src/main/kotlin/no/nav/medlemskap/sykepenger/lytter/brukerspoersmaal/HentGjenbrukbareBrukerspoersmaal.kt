@@ -32,7 +32,7 @@ class HentGjenbrukbareBrukerspoersmaal(
             ?: emptyList()
 
     private fun Brukerspørsmål.tilGjenbrukbareSpørsmål() = listOfNotNull(
-        utfortArbeidUtenforNorge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
+        utfort_arbeid_utenfor_norge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
         oppholdUtenforNorge?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
         oppholdUtenforEOS?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },
         oppholdstilatelse?.let { Spørsmål.OPPHOLDSTILATELSE }

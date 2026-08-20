@@ -88,13 +88,13 @@ class UtledBrukerspørsmålTest {
         oppholdstilatelse = oppholdstillatelse?.let {
             MedlemskapOppholdstillatelseBrukerspørsmål(
                 id = "oppholdstillatelse",
-                spørsmalstekst = null,
+                sporsmalstekst = null,
                 svar = it,
                 vedtaksdato = LocalDate.parse("2023-01-01"),
                 vedtaksTypePermanent = false
             )
         },
-        utfortArbeidUtenforNorge = MedlemskapUtførtArbeidUtenforNorge(
+        utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
             spørsmålstekst = null,
             svar = false,

@@ -21,7 +21,7 @@ internal fun lagOppholdstillatelseBrukerspørsmål(
 ): MedlemskapOppholdstillatelseBrukerspørsmål {
     return MedlemskapOppholdstillatelseBrukerspørsmål(
         id = oppholdstillatelseBrukerspørsmål.id,
-        spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
+        sporsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
         svar = svar,
         vedtaksdato = vedtaksdato,
         vedtaksTypePermanent = vedtaksTypePermanent,

@@ -116,13 +116,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             sporsmaal = ArbeidUtenforNorgeSpørsmål(false),
             oppholdstilatelse = MedlemskapOppholdstillatelseBrukerspørsmål(
                 id=UUID.randomUUID().toString(),
-                spørsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
+                sporsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
                 svar = true,
                 vedtaksdato = LocalDate.now(),
                 vedtaksTypePermanent = false,
                 perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
             ),
-            utfortArbeidUtenforNorge = MedlemskapUtførtArbeidUtenforNorge(
+            utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
                 spørsmålstekst = "",
                 svar = true,

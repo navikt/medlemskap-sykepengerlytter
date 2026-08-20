@@ -29,7 +29,7 @@ class BrukersvarMapperTest {
 
         assertNotNull(brukerspørsmål.oppholdstilatelse)
         assertNotNull(brukerspørsmål.oppholdUtenforNorge)
-        assertNotNull(brukerspørsmål.utfortArbeidUtenforNorge)
+        assertNotNull(brukerspørsmål.utfort_arbeid_utenfor_norge)
 
     }
 
@@ -39,7 +39,7 @@ class BrukersvarMapperTest {
             sykepengesøknadGrunnlag("FlexSampleMessageFlereBrukerSporsmaal.json")
         )
 
-        val arbeidUtenforNorge = brukerspørsmål.utfortArbeidUtenforNorge
+        val arbeidUtenforNorge = brukerspørsmål.utfort_arbeid_utenfor_norge
         assertNotNull(arbeidUtenforNorge)
         assertEquals("694ee4e1-d6b9-306c-a940-bf87dad1665e", arbeidUtenforNorge!!.id)
         assertTrue(arbeidUtenforNorge.svar)

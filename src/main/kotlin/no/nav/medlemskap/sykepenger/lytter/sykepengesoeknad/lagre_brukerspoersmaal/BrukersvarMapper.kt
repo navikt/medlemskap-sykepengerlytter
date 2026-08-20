@@ -45,7 +45,7 @@ object BrukersvarMapper {
             status = status,
             sporsmaal = spørsmål,
             oppholdstilatelse = oppholdstilatelse,
-            utfortArbeidUtenforNorge = utførtArbeidUtenforNorge,
+            utfort_arbeid_utenfor_norge = utførtArbeidUtenforNorge,
             oppholdUtenforNorge = oppholdUtenforNorge,
             oppholdUtenforEOS = oppholdUtenforEØS
         )

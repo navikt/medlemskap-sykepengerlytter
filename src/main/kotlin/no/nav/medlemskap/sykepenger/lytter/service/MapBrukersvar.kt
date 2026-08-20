@@ -17,7 +17,7 @@ object MapBrukersvar {
         oppholdstillatelse?.let {
             Oppholdstilatelse(
                 id = it.id,
-                sporsmalstekst = it.spørsmalstekst,
+                sporsmalstekst = it.sporsmalstekst,
                 svar = it.svar,
                 vedtaksdato = it.vedtaksdato,
                 vedtaksTypePermanent = it.vedtaksTypePermanent,
