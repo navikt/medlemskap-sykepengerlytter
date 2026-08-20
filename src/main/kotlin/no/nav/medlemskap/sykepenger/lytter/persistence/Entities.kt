@@ -49,7 +49,7 @@ data class Brukerspørsmål(
     val status: String,
     val sporsmaal: ArbeidUtenforNorgeSpørsmål?, //fases ut til fordel for nye spørsmål
     val oppholdstilatelse:MedlemskapOppholdstillatelseBrukerspørsmål? = null,
-    val utfortArbeidUtenforNorge:MedlemskapUtførtArbeidUtenforNorge? = null,
+    val utfort_arbeid_utenfor_norge:MedlemskapUtførtArbeidUtenforNorge? = null,
     val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
     val oppholdUtenforEOS:MedlemskapOppholdUtenforEØS? = null
 )
@@ -73,7 +73,7 @@ data class spørsmålSvar(val verdi:String)
 
 data class MedlemskapOppholdstillatelseBrukerspørsmål(
     val id: String,
-    val spørsmalstekst: String?,
+    val sporsmalstekst: String?,
     val svar:Boolean,
     val vedtaksdato:LocalDate,
     val vedtaksTypePermanent:Boolean,
