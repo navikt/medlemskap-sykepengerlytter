@@ -3,15 +3,15 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Vurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.service.SagaService
 
-class FinnVurderingForSpeil(
+class HentEllerOpprettVurdering(
     private val sagaService: SagaService,
-    private val opprettNyVurderingForSpeil: OpprettNyVurderingForSpeil
+    private val opprettNyVurderingForSpeil: OpprettNyVurderingForSpeil,
+    private val speilvurderingMapper: SpeilvurderingMapper
 ) {
-    private val logger = FinnVurderingForSpeilLogger()
-    private val speilvurderingMapper = SpeilvurderingMapper()
+    private val logger = HentEllerOpprettVurderingLogger()
 
     suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): Speilvurdering {
         return when (val vurdering = hentVurdering(speilvurderingRequest, callId)) {

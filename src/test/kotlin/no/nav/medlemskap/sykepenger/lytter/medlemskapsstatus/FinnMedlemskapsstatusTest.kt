@@ -6,7 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.domain.Status as VurderingsstatusStat
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals

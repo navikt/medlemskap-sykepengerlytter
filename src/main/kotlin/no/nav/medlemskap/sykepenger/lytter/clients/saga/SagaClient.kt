@@ -11,7 +11,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering

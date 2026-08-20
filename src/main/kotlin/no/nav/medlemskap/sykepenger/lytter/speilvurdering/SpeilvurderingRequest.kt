@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import java.time.LocalDate
 

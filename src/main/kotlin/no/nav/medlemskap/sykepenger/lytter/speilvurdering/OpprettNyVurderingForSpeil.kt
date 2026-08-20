@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.service.MedlemskapOppslagService
 
 class OpprettNyVurderingForSpeil(
     private val medlemskapOppslagService: MedlemskapOppslagService,

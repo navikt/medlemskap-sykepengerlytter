@@ -8,12 +8,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 import java.util.*
 
 fun Routing.speilvurderingRoute(
-    finnVurderingForSpeil: FinnVurderingForSpeil,
+    hentEllerOpprettVurdering: HentEllerOpprettVurdering,
+    speilvurderingMapper: SpeilvurderingMapper,
 ) {
     val routeLogger = SpeilvurderingRouteLogger()
 
@@ -27,8 +26,8 @@ fun Routing.speilvurderingRoute(
             routeLogger.logAutentisert(callId)
             val request = call.receive<SpeilvurderingRequest>()
 
-            val response = finnVurderingForSpeil.finnVurdering(request, callId)
-            val speilRespons = SpeilvurderingMapper().tilSpeilResponse(response)
+            val response = hentEllerOpprettVurdering.finnVurdering(request, callId)
+            val speilRespons = speilvurderingMapper.tilSpeilResponse(response)
             routeLogger.logVurderingFunnet(response,  callId)
 
             call.respond(HttpStatusCode.OK, speilRespons)

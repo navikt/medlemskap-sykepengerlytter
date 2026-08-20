@@ -42,11 +42,12 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.FinnVurderingForSpeil
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.HentEllerOpprettVurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.OpprettNyVurderingForSpeil
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SagaService
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.service.SagaService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.service.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
@@ -85,14 +86,16 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
+    val speilvurderingMapper = SpeilvurderingMapper()
     val opprettNyVurderingForSpeil = OpprettNyVurderingForSpeil(
         medlemskapOppslagService = SpeilMedlemskapOppslagService(medlOppslagClient),
         medlemskapOppslagMapper = MedlemskapOppslagMapper(),
         utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
     )
-    val finnVurderingForSpeil = FinnVurderingForSpeil(
+    val hentEllerOpprettVurdering = HentEllerOpprettVurdering(
         sagaService = SagaService(sagaClient),
-        opprettNyVurderingForSpeil = opprettNyVurderingForSpeil
+        opprettNyVurderingForSpeil = opprettNyVurderingForSpeil,
+        speilvurderingMapper = speilvurderingMapper
     )
 
     //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
@@ -162,8 +165,11 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         }
 
         routing {
-            naisRoutes(consumeJob,finnVurderingForSpeil)
-            speilvurderingRoute(finnVurderingForSpeil)
+            naisRoutes(consumeJob, hentEllerOpprettVurdering)
+            speilvurderingRoute(
+                hentEllerOpprettVurdering = hentEllerOpprettVurdering,
+                speilvurderingMapper = speilvurderingMapper
+            )
             medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)

@@ -1,8 +1,8 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.service
 
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 
 class SagaService(private val sagaApi: SagaAPI) {
 

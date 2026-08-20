@@ -3,10 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 import io.ktor.client.plugins.ResponseException
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.SpeilvurderingRequest
 import org.slf4j.MarkerFactory
 
-internal class FinnVurderingForSpeilLogger {
+internal class HentEllerOpprettVurderingLogger {
     private companion object {
         val log = KotlinLogging.logger { }
         val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
