@@ -25,12 +25,8 @@ internal class SpeilvurderingRouteLogger {
     fun logForespørselMottatt(request: SpeilvurderingRequest, callId: String) =
         log.info(
             teamLogs,
-            "Mottatt forespørsel om å hente vurdering for Speil",
-            kv("callId", callId),
-            kv("fnr", request.fnr.sha256()),
-            kv("fom", request.periode.fom),
-            kv("tom", request.periode.tom),
-            kv("endpoint", "speilvurdering")
+            "Mottatt forespørsel om å hente vurdering for Speil for fnr ${request.fnr} for periode " +
+                    "${request.periode.fom} til ${request.periode.tom}"
         )
 
     fun logVurderingFunnet(

@@ -19,7 +19,7 @@ internal class HentEllerOpprettVurderingLogger {
         log.info(
             teamLogs,
             "Ingen vurdering er utført for søknaden med callId: $callId. " +
-                "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil for fnr: ${request.fnr} og $callId",
+                "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil for fnr: ${request.fnr}",
             StructuredArguments.kv("fom", request.periode.fom),
             StructuredArguments.kv("tom", request.periode.tom),
         )
