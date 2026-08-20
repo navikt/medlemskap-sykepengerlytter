@@ -3,9 +3,7 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.convertValue
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
-import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorgeSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 class BrukersporsmaalMapper(spørsmål: JsonNode) {
     val spørsmålListe: List<MedlemskapsBrukerSpørsmål> =
@@ -17,16 +15,6 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
     val utførtArbeidUtenforNorgeBrukerspørsmål = hentUtførtArbeidUtenforNorgeBrukerSpørsmål(spørsmålListe)
     val oppholdUtenforNorgeSpørsmål = hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe)
     val oppholdUtenforEØSbrukerspørsmål = hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe)
-
-    fun mapArbeidUtenforNorgeBrukerspørsmål(
-        spørsmålListe: List<MedlemskapsBrukerSpørsmål>
-    ): ArbeidUtenforNorgeSpørsmål {
-        val arbeidutland = spørsmålListe.find { it.tag == "ARBEID_UTENFOR_NORGE" }
-        var erSvarPåBrukerspørsmålJa: Boolean? = null
-        if (arbeidutland?.svar != null)
-            erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(arbeidutland.svar)
-        return ArbeidUtenforNorgeSpørsmål(erSvarPåBrukerspørsmålJa)
-    }
 
     companion object {
         private val medlemskapSpørsmålTags = setOf(
