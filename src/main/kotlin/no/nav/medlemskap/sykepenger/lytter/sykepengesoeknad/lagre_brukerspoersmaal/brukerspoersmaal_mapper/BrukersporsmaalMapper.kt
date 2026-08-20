@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.convertValue
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorgeSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 class BrukersporsmaalMapper(spørsmål: JsonNode) {
     val spørsmålListe: List<MedlemskapsBrukerSpørsmål> =
@@ -22,10 +22,10 @@ class BrukersporsmaalMapper(spørsmål: JsonNode) {
         spørsmålListe: List<MedlemskapsBrukerSpørsmål>
     ): ArbeidUtenforNorgeSpørsmål {
         val arbeidutland = spørsmålListe.find { it.tag == "ARBEID_UTENFOR_NORGE" }
-        var svar: Boolean? = null
+        var erSvarPåBrukerspørsmålJa: Boolean? = null
         if (arbeidutland?.svar != null)
-            svar = mapSvar(arbeidutland.svar)
-        return ArbeidUtenforNorgeSpørsmål(svar)
+            erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(arbeidutland.svar)
+        return ArbeidUtenforNorgeSpørsmål(erSvarPåBrukerspørsmålJa)
     }
 
     companion object {

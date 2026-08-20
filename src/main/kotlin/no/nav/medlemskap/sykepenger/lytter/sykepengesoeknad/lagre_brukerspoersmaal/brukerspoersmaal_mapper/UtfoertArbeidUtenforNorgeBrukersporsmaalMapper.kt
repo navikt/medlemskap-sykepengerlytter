@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 fun hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
     spørsmålListe: List<MedlemskapsBrukerSpørsmål>,
@@ -22,12 +22,12 @@ fun hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
 private fun mapUtførtArbeidUtenforNorgeBrukerSpørsmål(
     utførtArbeidUtenforNorgeSpørsmål: MedlemskapsBrukerSpørsmål,
 ): MedlemskapUtførtArbeidUtenforNorge {
-    val svar = mapSvar(utførtArbeidUtenforNorgeSpørsmål.svar)
+    val erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(utførtArbeidUtenforNorgeSpørsmål.svar)
     return MedlemskapUtførtArbeidUtenforNorge(
         id = utførtArbeidUtenforNorgeSpørsmål.id,
         spørsmålstekst = utførtArbeidUtenforNorgeSpørsmål.sporsmalstekst,
-        svar = svar,
-        arbeidUtenforNorge = if (svar) {
+        svar = erSvarPåBrukerspørsmålJa,
+        arbeidUtenforNorge = if (erSvarPåBrukerspørsmålJa) {
             mapUtførtArbeidUtenforNorgeUnderspørsmål(utførtArbeidUtenforNorgeSpørsmål.undersporsmal)
         } else {
             emptyList()

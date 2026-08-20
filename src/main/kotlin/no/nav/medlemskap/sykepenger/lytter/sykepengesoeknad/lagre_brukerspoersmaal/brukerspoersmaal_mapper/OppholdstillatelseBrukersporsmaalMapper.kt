@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsm�
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 import java.time.LocalDate
 
 fun hentOppholdstillatelseBrukerspørsmål(
@@ -40,7 +40,7 @@ private fun permanentEllerMidlertidigVedtaksTypeFraUnderspørsmål(
             underspørsmål?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERMANENT" }
                 ?: return VedtaksType(erPermanentVedtaksType = false, periode = emptyList())
 
-        val erVedtakstypePermanent = mapSvar(oppholdstillatelsePermanentBrukerspørsmålUtenGruppering.svar)
+        val erVedtakstypePermanent = erSvarPåBrukerspørsmålJa(oppholdstillatelsePermanentBrukerspørsmålUtenGruppering.svar)
         val permanentPeriodeSpørsmål = oppholdstillatelsePermanentBrukerspørsmålUtenGruppering.undersporsmal
             ?.firstOrNull { it.tag == "MEDLEMSKAP_OPPHOLDSTILLATELSE_PERIODE" }
 
@@ -92,7 +92,7 @@ private fun mapOppholdstillatelseBrukerSpørsmål(
     return MedlemskapOppholdstillatelseBrukerspørsmål(
         id = oppholdstillatelseBrukerspørsmål.id,
         spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
-        svar = mapSvar(oppholdstillatelseBrukerspørsmål.svar),
+        svar = erSvarPåBrukerspørsmålJa(oppholdstillatelseBrukerspørsmål.svar),
         vedtaksdato = LocalDate.parse(vedtaksdato),
         vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
         perioder = vedtakstype.periode,
@@ -123,13 +123,13 @@ private fun permanentEllerMidlertidigVedtakstypeFraUnderspørsmålV2(
 private fun mapOppholdstilateleBrukerSpørsmål_v2(
     oppholdstillatelseBrukerspørsmål: MedlemskapsBrukerSpørsmål
 ): MedlemskapOppholdstillatelseBrukerspørsmål {
-    val svar = mapSvar(oppholdstillatelseBrukerspørsmål.svar)
+    val erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(oppholdstillatelseBrukerspørsmål.svar)
 
-    if (!svar) {
+    if (!erSvarPåBrukerspørsmålJa) {
         return MedlemskapOppholdstillatelseBrukerspørsmål(
             id = oppholdstillatelseBrukerspørsmål.id,
             spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
-            svar = svar,
+            svar = erSvarPåBrukerspørsmålJa,
             vedtaksdato = LocalDate.now(),
             vedtaksTypePermanent = false,
             perioder = emptyList(),
@@ -142,7 +142,7 @@ private fun mapOppholdstilateleBrukerSpørsmål_v2(
     return MedlemskapOppholdstillatelseBrukerspørsmål(
         id = oppholdstillatelseBrukerspørsmål.id,
         spørsmalstekst = oppholdstillatelseBrukerspørsmål.sporsmalstekst,
-        svar = svar,
+        svar = erSvarPåBrukerspørsmålJa,
         vedtaksdato = LocalDate.parse(vedtaksdato),
         vedtaksTypePermanent = vedtakstype.erPermanentVedtaksType,
         perioder = vedtakstype.periode,

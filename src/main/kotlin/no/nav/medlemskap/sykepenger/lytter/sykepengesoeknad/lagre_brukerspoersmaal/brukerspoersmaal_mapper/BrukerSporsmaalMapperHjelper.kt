@@ -6,7 +6,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Periode
 import no.nav.medlemskap.sykepenger.lytter.persistence.spørsmålSvar
 
 object BrukerSporsmaalMapperHjelper{
-    fun mapSvar(svar: List<spørsmålSvar>?): Boolean {
+    fun erSvarPåBrukerspørsmålJa(svar: List<spørsmålSvar>?): Boolean {
         return svar?.first()?.verdi == "JA"
     }
 

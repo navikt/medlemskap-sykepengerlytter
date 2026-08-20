@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsm�
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 fun hentOppholdUtenforNorgeBrukerSpørsmål(
     spørsmålListe: List<MedlemskapsBrukerSpørsmål>
@@ -22,7 +22,7 @@ fun hentOppholdUtenforNorgeBrukerSpørsmål(
 private fun mapOppholdUtenforNorgeBrukerSpørsmål(
     oppholdUtenforNorge: MedlemskapsBrukerSpørsmål,
 ): MedlemskapOppholdUtenforNorge {
-    val svar = mapSvar(oppholdUtenforNorge.svar)
+    val svar = erSvarPåBrukerspørsmålJa(oppholdUtenforNorge.svar)
     return MedlemskapOppholdUtenforNorge(
         id = oppholdUtenforNorge.id,
         sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,

@@ -4,7 +4,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsm�
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapSvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 fun hentOppholdUtenforEØSBrukerSpørsmål(
     spørsmålListe: List<MedlemskapsBrukerSpørsmål>
@@ -22,12 +22,12 @@ fun hentOppholdUtenforEØSBrukerSpørsmål(
 private fun mapOppholdUtenforEØSbrukerSpørsmål(
     oppholdutenforEØS: MedlemskapsBrukerSpørsmål
 ): MedlemskapOppholdUtenforEØS {
-    val svar = mapSvar(oppholdutenforEØS.svar)
+    val erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(oppholdutenforEØS.svar)
     return MedlemskapOppholdUtenforEØS(
         id = oppholdutenforEØS.id,
         sporsmalstekst = oppholdutenforEØS.sporsmalstekst,
-        svar = svar,
-        oppholdUtenforEOS = if (svar) mapOppholdUtenforEØSunderspørsmål(oppholdutenforEØS.undersporsmal) else emptyList(),
+        svar = erSvarPåBrukerspørsmålJa,
+        oppholdUtenforEOS = if (erSvarPåBrukerspørsmålJa) mapOppholdUtenforEØSunderspørsmål(oppholdutenforEØS.undersporsmal) else emptyList(),
     )
 }
 
