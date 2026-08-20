@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering.service
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering
 
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagAPI

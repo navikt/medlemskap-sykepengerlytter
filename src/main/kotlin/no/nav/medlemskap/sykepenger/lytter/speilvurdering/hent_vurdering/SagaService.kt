@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering.service
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering
 
 import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest

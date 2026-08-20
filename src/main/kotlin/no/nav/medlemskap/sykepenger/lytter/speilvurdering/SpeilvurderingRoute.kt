@@ -8,6 +8,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.auth.jwt.JWTPrincipal
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.HentEllerOpprettVurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import java.util.*
 
 fun Routing.speilvurderingRoute(

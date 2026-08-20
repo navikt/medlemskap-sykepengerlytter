@@ -7,7 +7,7 @@ import io.ktor.server.routing.*
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Job
 
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.HentEllerOpprettVurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.HentEllerOpprettVurdering
 import java.util.*
 
 fun Routing.naisRoutes(

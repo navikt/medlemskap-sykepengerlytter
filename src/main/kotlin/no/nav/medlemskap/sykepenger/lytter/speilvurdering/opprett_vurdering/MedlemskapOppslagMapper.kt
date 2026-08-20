@@ -1,10 +1,11 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering
 
+import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 
-class MedlemskapOppslagMapper {
+object MedlemskapOppslagMapper {
     fun tilMedlemskapOppslagRequest(
         request: SpeilvurderingRequest,
         brukerinput: Brukerinput

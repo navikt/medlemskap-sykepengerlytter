@@ -1,10 +1,13 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering
 
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering.OpprettNyVurderingForSpeil
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Vurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.service.SagaService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.SagaService
 
 class HentEllerOpprettVurdering(
     private val sagaService: SagaService,

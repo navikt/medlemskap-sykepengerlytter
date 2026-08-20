@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

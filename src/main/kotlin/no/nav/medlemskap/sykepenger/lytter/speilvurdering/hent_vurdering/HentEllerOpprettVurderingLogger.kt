@@ -1,8 +1,9 @@
-package no.nav.medlemskap.sykepenger.lytter.speilvurdering
+package no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering
 
 import io.ktor.client.plugins.ResponseException
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import org.slf4j.MarkerFactory
 
 internal class HentEllerOpprettVurderingLogger {
