@@ -3,6 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.OppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.filterMedTagPrefiks
+import no.nav.medlemskap.sykepenger.lytter.persistence.firstMedTagPrefiks
+import no.nav.medlemskap.sykepenger.lytter.persistence.førsteSvarVerdi
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
@@ -20,44 +23,65 @@ fun hentOppholdUtenforNorgeBrukerSpørsmål(
 }
 
 private fun mapOppholdUtenforNorgeBrukerSpørsmål(
-    oppholdUtenforNorge: MedlemskapsBrukerSpørsmål,
+    oppholdUtenforNorge: MedlemskapsBrukerSpørsmål
 ): MedlemskapOppholdUtenforNorge {
-    val svar = erSvarPåBrukerspørsmålJa(oppholdUtenforNorge.svar)
+    val erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(oppholdUtenforNorge.svar)
     return MedlemskapOppholdUtenforNorge(
         id = oppholdUtenforNorge.id,
         sporsmalstekst = oppholdUtenforNorge.sporsmalstekst,
-        svar = svar,
-        oppholdUtenforNorge = if (svar) mapOppholdUtenforNorgeUnderspørsmål(oppholdUtenforNorge.undersporsmal) else emptyList()
+        svar = erSvarPåBrukerspørsmålJa,
+        oppholdUtenforNorge = mapOppholdUtenforNorgeUnderspørsmålVedJaSvar(
+            erSvarPåBrukerspørsmålJa,
+            oppholdUtenforNorge.undersporsmal
+        )
     )
+}
+
+private fun mapOppholdUtenforNorgeUnderspørsmålVedJaSvar(
+    svar: Boolean,
+    underspørsmål: List<MedlemskapsBrukerSpørsmål>?
+): List<OppholdUtenforNorge> {
+    if (!svar) {
+        return emptyList()
+    }
+
+    return mapOppholdUtenforNorgeUnderspørsmål(underspørsmål)
 }
 
 private fun mapOppholdUtenforNorgeUnderspørsmål(
     underspørsmål: List<MedlemskapsBrukerSpørsmål>?
 ): List<OppholdUtenforNorge> {
     return underspørsmål.orEmpty()
-        .filter { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING") }
-        .map {
-            val underspørsmål = it.undersporsmal.orEmpty()
+        .filterMedTagPrefiks("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_GRUPPERING")
+        .map { gruppering ->
+            mapOppholdUtenforNorgeGruppering(gruppering)
+        }
+}
 
-        val oppholdUtenforNorgeBegrunnelseUnderspørsmål = underspørsmål
-            .find { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE") }?.undersporsmal
+private fun mapOppholdUtenforNorgeGruppering(
+    gruppering: MedlemskapsBrukerSpørsmål
+): OppholdUtenforNorge {
+    val underspørsmål = gruppering.undersporsmal.orEmpty()
 
-        val oppholdUtenforNorgeBegrunnelseSpørsmålstekst = oppholdUtenforNorgeBegrunnelseUnderspørsmål?.find {
-            it.svar?.size == 1
-        }?.sporsmalstekst
+    val begrunnelseUnderspørsmål = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_BEGRUNNELSE")
+        ?.undersporsmal
 
-        val oppholdUtenforNorgeHvorVerdi = underspørsmål
-            .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR") }.svar!!.first().verdi
+    val begrunnelse = begrunnelseUnderspørsmål
+        ?.find { it.svar?.size == 1 }
+        ?.sporsmalstekst
 
-        val oppholdUtenforNorgeNårDato =
-            underspørsmål
-                .first { it.tag.startsWith("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR") }
+    val land = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_HVOR")!!
+        .førsteSvarVerdi()
 
-        OppholdUtenforNorge(
-            id = it.id,
-            land = oppholdUtenforNorgeHvorVerdi,
-            grunn = oppholdUtenforNorgeBegrunnelseSpørsmålstekst ?: "null",
-            perioder = mapBrukerSpørsmålDato(oppholdUtenforNorgeNårDato.svar)
-        )
-    }
+    val periodeSpørsmål = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE_NAAR")!!
+
+    return OppholdUtenforNorge(
+        id = gruppering.id,
+        land = land,
+        grunn = begrunnelse ?: "null",
+        perioder = mapBrukerSpørsmålDato(periodeSpørsmål.svar)
+    )
 }

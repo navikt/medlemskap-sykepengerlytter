@@ -3,14 +3,17 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.filterMedTagPrefiks
+import no.nav.medlemskap.sykepenger.lytter.persistence.firstMedTagPrefiks
+import no.nav.medlemskap.sykepenger.lytter.persistence.førsteSvarVerdi
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.mapBrukerSpørsmålDato
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukerSporsmaalMapperHjelper.erSvarPåBrukerspørsmålJa
 
 fun hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
-    spørsmålListe: List<MedlemskapsBrukerSpørsmål>,
+    spørsmålListe: List<MedlemskapsBrukerSpørsmål>
 ): MedlemskapUtførtArbeidUtenforNorge? {
     val utførtArbeidUtenforNorgeSpørsmål =
-        spørsmålListe.find { it.tag == "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE" }
+        spørsmålListe.firstMedTagPrefiks("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE")
 
     return if (utførtArbeidUtenforNorgeSpørsmål != null) {
         mapUtførtArbeidUtenforNorgeBrukerSpørsmål(utførtArbeidUtenforNorgeSpørsmål)
@@ -20,48 +23,58 @@ fun hentUtførtArbeidUtenforNorgeBrukerSpørsmål(
 }
 
 private fun mapUtførtArbeidUtenforNorgeBrukerSpørsmål(
-    utførtArbeidUtenforNorgeSpørsmål: MedlemskapsBrukerSpørsmål,
+    utførtArbeidUtenforNorgeSpørsmål: MedlemskapsBrukerSpørsmål
 ): MedlemskapUtførtArbeidUtenforNorge {
     val erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(utførtArbeidUtenforNorgeSpørsmål.svar)
+
     return MedlemskapUtførtArbeidUtenforNorge(
         id = utførtArbeidUtenforNorgeSpørsmål.id,
         spørsmålstekst = utførtArbeidUtenforNorgeSpørsmål.sporsmalstekst,
         svar = erSvarPåBrukerspørsmålJa,
-        arbeidUtenforNorge = if (erSvarPåBrukerspørsmålJa) {
-            mapUtførtArbeidUtenforNorgeUnderspørsmål(utførtArbeidUtenforNorgeSpørsmål.undersporsmal)
-        } else {
-            emptyList()
-        },
+        arbeidUtenforNorge = mapUtførtArbeidUtenforNorgeUnderspørsmålVedJaSvar(
+            erSvarPåBrukerspørsmålJa,
+            utførtArbeidUtenforNorgeSpørsmål.undersporsmal
+        )
     )
 }
 
-private fun mapUtførtArbeidUtenforNorgeUnderspørsmål(
-    underspørsmål: List<MedlemskapsBrukerSpørsmål>?,
+private fun mapUtførtArbeidUtenforNorgeUnderspørsmålVedJaSvar(
+    erSvarPåBrukerspørsmålJa: Boolean,
+    underspørsmål: List<MedlemskapsBrukerSpørsmål>?
 ): List<ArbeidUtenforNorge> {
-    return underspørsmål.orEmpty()
-        .filter { it.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING") }
-        .map {
-            val underspørsmål = it.undersporsmal.orEmpty()
-            val utførtArbeidUtenforNorgeArbeidsgiverVerdi =
-                underspørsmål.find { undersporsmal ->
-                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER")
-                }?.svar?.first()?.verdi
-
-            val utførtArbeidUtenforNorgeHvorVerdi =
-                underspørsmål.first { undersporsmal ->
-                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_HVOR")
-                }.svar!!.first().verdi
-
-            val utførtArbeidUtenforNorgeNårDato =
-                underspørsmål.first { undersporsmal ->
-                    undersporsmal.tag.startsWith("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR")
-                }
-
-        ArbeidUtenforNorge(
-            id = it.id,
-            arbeidsgiver = utførtArbeidUtenforNorgeArbeidsgiverVerdi ?: "null",
-            land = utførtArbeidUtenforNorgeHvorVerdi,
-            perioder = mapBrukerSpørsmålDato(utførtArbeidUtenforNorgeNårDato.svar),
-        )
+    if (!erSvarPåBrukerspørsmålJa) {
+        return emptyList()
     }
+
+    return mapUtførtArbeidUtenforNorgeUnderspørsmål(underspørsmål)
+}
+
+private fun mapUtførtArbeidUtenforNorgeUnderspørsmål(underspørsmål: List<MedlemskapsBrukerSpørsmål>?): List<ArbeidUtenforNorge> {
+    return underspørsmål.orEmpty()
+        .filterMedTagPrefiks("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_GRUPPERING")
+        .map { gruppering ->
+            mapUtførtArbeidUtenforNorgeGruppering(gruppering)
+        }
+}
+
+private fun mapUtførtArbeidUtenforNorgeGruppering(gruppering: MedlemskapsBrukerSpørsmål): ArbeidUtenforNorge {
+    val underspørsmål = gruppering.undersporsmal.orEmpty()
+
+    val arbeidsgiver = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_ARBEIDSGIVER")
+        ?.førsteSvarVerdi()
+
+    val land = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_HVOR")!!
+        .førsteSvarVerdi()
+
+    val periodeSpørsmål = underspørsmål
+        .firstMedTagPrefiks("MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE_NAAR")!!
+
+    return ArbeidUtenforNorge(
+        id = gruppering.id,
+        arbeidsgiver = arbeidsgiver ?: "null",
+        land = land,
+        perioder = mapBrukerSpørsmålDato(periodeSpørsmål.svar)
+    )
 }

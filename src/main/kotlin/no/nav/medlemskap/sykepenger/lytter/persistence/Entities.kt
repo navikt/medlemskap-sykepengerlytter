@@ -32,6 +32,15 @@ fun SykepengerVurderingDao.periode(): Periode {
 
 }
 
+fun List<MedlemskapsBrukerSpørsmål>.firstMedTagPrefiks(prefiks: String) =
+    firstOrNull { it.tag.startsWith(prefiks) }
+
+fun List<MedlemskapsBrukerSpørsmål>.filterMedTagPrefiks(prefiks: String) =
+    filter { it.tag.startsWith(prefiks) }
+
+fun MedlemskapsBrukerSpørsmål.førsteSvarVerdi(): String =
+    svar.orEmpty().first().verdi
+
 data class Brukerspørsmål(
     val fnr: String,
     val soknadid: String,
