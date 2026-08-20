@@ -131,7 +131,7 @@ class FinnMedlemskapsstatusTest {
         override suspend fun finnVurdering(
             speilvurderingRequest: SpeilvurderingRequest,
             callId: String
-        ): Medlemskapsvurdering = error("Ikke relevant for denne testen")
+        ): String = error("Ikke relevant for denne testen")
 
         override suspend fun ping(callId: String): String =
             error("Ikke relevant for denne testen")
