@@ -1,11 +1,10 @@
 package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as VurderingsstatusStatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
 import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
@@ -17,7 +16,7 @@ import java.util.UUID
 
 class FinnMedlemskapsstatusTest {
     private val vurderingsstatusRepository = MedlemskapVurdertInMemmoryRepository()
-    private val saga = FakeSaga()
+    private val saga = FakeMedlemskapSaga()
     private val finnMedlemskapsstatus = FinnMedlemskapsstatus(
         persistenceService = PersistenceService(
             vurderingsstatusRepository,
@@ -105,7 +104,7 @@ class FinnMedlemskapsstatusTest {
             tom = LocalDate.parse(tom)
         )
 
-    private class FakeSaga : SagaAPI {
+    private class FakeMedlemskapSaga : MedlemskapSagaAPI {
         val response = Medlemskapsstatus(
             sykepengesoknad_id = "søknad-1",
             vurdering_id = "vurdering-1",

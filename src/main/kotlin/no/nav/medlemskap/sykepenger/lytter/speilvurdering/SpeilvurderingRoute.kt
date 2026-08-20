@@ -27,6 +27,7 @@ fun Routing.speilvurderingRoute(
             val callId = call.callId ?: UUID.randomUUID().toString()
             routeLogger.logAutentisert(callId)
             val request = call.receive<SpeilvurderingRequest>()
+            routeLogger.logForespørselMottatt(request, callId)
 
             val response = hentEllerOpprettVurdering.finnVurdering(request, callId)
             val speilRespons = speilvurderingMapper.tilSpeilResponse(response)

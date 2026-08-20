@@ -1,6 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag

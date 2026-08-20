@@ -1,9 +1,9 @@
-package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
+package no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag
 import java.time.LocalDate
 import java.util.*
 
 
-data class MedlOppslagRequest(
+data class MedlemskapOppslagRequest(
     val fnr: String,
     val førsteDagForYtelse:String,
     val periode: Periode,

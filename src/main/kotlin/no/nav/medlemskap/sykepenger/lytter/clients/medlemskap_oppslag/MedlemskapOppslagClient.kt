@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.clients.medloppslag
+package no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag
 
 
 import io.github.resilience4j.retry.Retry
@@ -28,7 +28,7 @@ class MedlemskapOppslagClient(
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+    override suspend fun vurderMedlemskap(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String {
         log.info (
             teamLogs,
             "Kaller regelmotor",
@@ -47,7 +47,7 @@ class MedlemskapOppslagClient(
             }.body()
         }
     }
-    override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+    override suspend fun brukerspørsmål(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapOppslag()
         return runWithRetryAndMetrics("MEDL-OPPSLAG", "brukerspørsmål", retry) {
             try {
@@ -75,7 +75,7 @@ class MedlemskapOppslagClient(
 
     }
     override suspend fun vurderMedlemskapForSpeil(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): MedlemskapOppslagVurdering {
         log.info (
@@ -99,10 +99,10 @@ class MedlemskapOppslagClient(
 }
 
 interface MedlemskapOppslagAPI{
-    suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String
+    suspend fun vurderMedlemskap(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String
     suspend fun vurderMedlemskapForSpeil(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): MedlemskapOppslagVurdering
-    suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String
+    suspend fun brukerspørsmål(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String
 }

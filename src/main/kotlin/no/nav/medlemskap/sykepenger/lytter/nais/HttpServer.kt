@@ -44,7 +44,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdert
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.HentEllerOpprettVurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering.OpprettNyVurderingForSpeil
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.SagaService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.MedlemskapSagaService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
@@ -91,7 +91,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
     )
     val hentEllerOpprettVurdering = HentEllerOpprettVurdering(
-        sagaService = SagaService(sagaClient),
+        medlemskapSagaService = MedlemskapSagaService(sagaClient),
         opprettNyVurderingForSpeil = opprettNyVurderingForSpeil,
         speilvurderingMapper = speilvurderingMapper
     )

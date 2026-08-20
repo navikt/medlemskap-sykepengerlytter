@@ -8,7 +8,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Periode
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
@@ -62,13 +62,13 @@ class HentEllerOpprettVurderingTest {
         val response = mockk<HttpResponse> {
             every { this@mockk.status } returns status
         }
-        val sagaApi = mockk<SagaAPI> {
+        val medlemskapSagaApi = mockk<MedlemskapSagaAPI> {
             coEvery { finnVurdering(any(), any()) } throws ResponseException(response, status.description)
             coEvery { hentMedlemskapsstatus(any(), any()) } returns mockk<Medlemskapsstatus>()
             coEvery { ping(any()) } returns "OK"
         }
         return HentEllerOpprettVurdering(
-            sagaService = SagaService(sagaApi),
+            medlemskapSagaService = MedlemskapSagaService(medlemskapSagaApi),
             opprettNyVurderingForSpeil = opprett,
             speilvurderingMapper = mockk<SpeilvurderingMapper>()
         )

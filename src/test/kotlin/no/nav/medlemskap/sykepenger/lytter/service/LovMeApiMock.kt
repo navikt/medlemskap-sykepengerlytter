@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagAPI
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 
@@ -10,7 +10,7 @@ class LovMeApiMock(
     private val filer: Map<String, String> = emptyMap()
 ) : MedlemskapOppslagAPI {
 
-    var request: MedlOppslagRequest? = null
+    var request: MedlemskapOppslagRequest? = null
 
     private fun hentFil(nøkkel: String): String {
         val filnavn = filer[nøkkel]
@@ -20,7 +20,7 @@ class LovMeApiMock(
     }
 
     override suspend fun vurderMedlemskap(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): String {
         request = medlOppslagRequest
@@ -28,7 +28,7 @@ class LovMeApiMock(
     }
 
     override suspend fun vurderMedlemskapForSpeil(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): MedlemskapOppslagVurdering {
         request = medlOppslagRequest
@@ -36,7 +36,7 @@ class LovMeApiMock(
     }
 
     override suspend fun brukerspørsmål(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): String {
         request = medlOppslagRequest

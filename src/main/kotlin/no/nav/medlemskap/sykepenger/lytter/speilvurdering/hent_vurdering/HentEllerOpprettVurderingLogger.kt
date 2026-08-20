@@ -12,18 +12,18 @@ internal class HentEllerOpprettVurderingLogger {
         val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
     }
 
-    fun vurderingFunnet(callId: String) =
-        log.info("Vurdering funnet i database for kall med id $callId")
+    fun vurderingFunnet(request: SpeilvurderingRequest, callId: String) =
+        log.info(teamLogs, "Fant vurderingen for fnr ${request.fnr} for $callId i medlemskap-saga")
 
     fun vurderingIkkeFunnet(request: SpeilvurderingRequest, callId: String) =
         log.info(
             teamLogs,
-            "Ingen vurdering utført for søknad med callId: $callId. " +
-                "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil",
+            "Ingen vurdering er utført for søknaden med callId: $callId. " +
+                "Oppretter en ny kjøring av medlemskap-oppslag for forespørsel fra Speil for fnr: ${request.fnr} og $callId",
             StructuredArguments.kv("fom", request.periode.fom),
             StructuredArguments.kv("tom", request.periode.tom),
         )
 
     fun feilVedSagaKall(cause: ResponseException) =
-        log.error("HTTP error i kall mot saga: ${cause.response.status.value} ", cause)
+        log.error("Teknisk feil mot medlemskap-saga: ${cause.response.status.value} ", cause)
 }

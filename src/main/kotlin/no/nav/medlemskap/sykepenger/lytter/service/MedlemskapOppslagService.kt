@@ -2,8 +2,8 @@ package no.nav.medlemskap.sykepenger.lytter.service
 
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlemskapOppslagAPI
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 
 class MedlemskapOppslagService(private val medlemskapOppslagClient: MedlemskapOppslagAPI) {
@@ -14,7 +14,7 @@ class MedlemskapOppslagService(private val medlemskapOppslagClient: MedlemskapOp
         ).medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     )
 
-    suspend fun kallMedlemskapOppslag(request: MedlOppslagRequest, callId: String): String {
+    suspend fun kallMedlemskapOppslag(request: MedlemskapOppslagRequest, callId: String): String {
         runCatching { medlemskapOppslagClient.brukerspørsmål(request, callId) }
             .onFailure {
                 if (it.message?.contains("GradertAdresseException") == true) {
@@ -28,7 +28,7 @@ class MedlemskapOppslagService(private val medlemskapOppslagClient: MedlemskapOp
 
     }
 
-    suspend fun vurderMedlemskap(request: MedlOppslagRequest, callId: String): String {
+    suspend fun vurderMedlemskap(request: MedlemskapOppslagRequest, callId: String): String {
         return medlemskapOppslagClient.vurderMedlemskap(request, callId)
     }
 }

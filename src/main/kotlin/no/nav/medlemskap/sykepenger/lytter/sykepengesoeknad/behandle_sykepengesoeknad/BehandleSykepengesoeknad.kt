@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad
 
 import kotlinx.coroutines.CancellationException
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
@@ -64,7 +64,7 @@ class BehandleSykepengesoeknad(
         }
     }
 
-    private fun lagMedlemskapOppslagRequest(sykepengesøknad: Sykepengesoeknad): MedlOppslagRequest {
+    private fun lagMedlemskapOppslagRequest(sykepengesøknad: Sykepengesoeknad): MedlemskapOppslagRequest {
         val brukerinput = utledBrukerinput.fraSykepengesøknad(sykepengesøknad)
         return MedlemskapOppslagRequestMapper.tilMedlemskapOppslagRequest(sykepengesøknad.sykepengesøknadGrunnlag, brukerinput)
     }

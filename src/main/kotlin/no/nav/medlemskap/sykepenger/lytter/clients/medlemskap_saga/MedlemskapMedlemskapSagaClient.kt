@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.clients.saga
+package no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga
 
 
 import io.github.resilience4j.retry.Retry
@@ -14,12 +14,12 @@ import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 
-open class SagaClient(
+open class MedlemskapMedlemskapSagaClient(
     private val baseUrl: String,
     private val azureAdClient: AzureAdClient,
     private val httpClient: HttpClient,
     private val retry: Retry? = null
-): SagaAPI {
+): MedlemskapSagaAPI {
 
     override suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): String {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
@@ -65,7 +65,7 @@ open class SagaClient(
     }
 }
 
-interface SagaAPI{
+interface MedlemskapSagaAPI{
     suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): String
     suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
     suspend fun ping(callId: String): String

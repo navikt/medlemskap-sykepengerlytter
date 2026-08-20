@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import no.nav.medlemskap.sykepenger.lytter.security.sha256
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 import org.slf4j.MarkerFactory
 
@@ -18,6 +19,17 @@ internal class SpeilvurderingRouteLogger {
         log.info(
             "kall autentisert, url : /speilvurdering",
             kv("callId", callId),
+            kv("endpoint", "speilvurdering")
+        )
+
+    fun logForespørselMottatt(request: SpeilvurderingRequest, callId: String) =
+        log.info(
+            teamLogs,
+            "Mottatt forespørsel om å hente vurdering for Speil",
+            kv("callId", callId),
+            kv("fnr", request.fnr.sha256()),
+            kv("fom", request.periode.fom),
+            kv("tom", request.periode.tom),
             kv("endpoint", "speilvurdering")
         )
 

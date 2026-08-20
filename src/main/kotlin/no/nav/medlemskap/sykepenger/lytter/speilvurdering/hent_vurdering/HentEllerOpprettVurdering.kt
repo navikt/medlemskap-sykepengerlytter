@@ -7,10 +7,9 @@ import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Vurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.SagaService
 
 class HentEllerOpprettVurdering(
-    private val sagaService: SagaService,
+    private val medlemskapSagaService: MedlemskapSagaService,
     private val opprettNyVurderingForSpeil: OpprettNyVurderingForSpeil,
     private val speilvurderingMapper: SpeilvurderingMapper
 ) {
@@ -19,7 +18,7 @@ class HentEllerOpprettVurdering(
     suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): Speilvurdering {
         return when (val vurdering = hentVurdering(speilvurderingRequest, callId)) {
             is Vurdering.VurderingFunnet -> {
-                logger.vurderingFunnet(callId)
+                logger.vurderingFunnet(speilvurderingRequest, callId)
                 speilvurderingMapper.fraSaga(vurdering.vurdering, callId)
             }
 
@@ -35,7 +34,7 @@ class HentEllerOpprettVurdering(
         callId: String
     ): Vurdering =
         try {
-            Vurdering.VurderingFunnet(sagaService.finnVurdering(speilvurderingRequest, callId))
+            Vurdering.VurderingFunnet(medlemskapSagaService.finnVurdering(speilvurderingRequest, callId))
         } catch (cause: ResponseException) {
             if (cause.response.status == HttpStatusCode.NotFound) {
                 Vurdering.VurderingIkkeFunnet
@@ -46,5 +45,5 @@ class HentEllerOpprettVurdering(
         }
 
     suspend fun pingSaga(callId: String): String =
-        sagaService.ping(callId)
+        medlemskapSagaService.ping(callId)
 }

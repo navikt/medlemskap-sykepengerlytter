@@ -2,14 +2,14 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import org.slf4j.MarkerFactory
 
 class FeilhåndteringLogger {
     private val logger = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun logCancellationException(callId: String, start: Long, medlemskapOppslagRequest: MedlOppslagRequest) {
+    fun logCancellationException(callId: String, start: Long, medlemskapOppslagRequest: MedlemskapOppslagRequest) {
         logger.info(
             teamLogs,
             "Forespørsmål mot medlemskap-oppslag timet ut",

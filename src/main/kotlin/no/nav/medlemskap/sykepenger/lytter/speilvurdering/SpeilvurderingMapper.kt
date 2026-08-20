@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.inneholderNyModell
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.inneholderNyModell
 import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
