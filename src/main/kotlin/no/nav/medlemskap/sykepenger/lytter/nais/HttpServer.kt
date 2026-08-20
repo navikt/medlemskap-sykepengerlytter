@@ -72,10 +72,11 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         PostgresMedlemskapVurdertRepository(DataSourceBuilder(env).getDataSource()),
         PostgresBrukersporsmaalRepository(DataSourceBuilder(env).getDataSource())
     )
-    val sagaClient = RestClients(
-        azureAdClient = AzureAdClient(configuration),
-        configuration = configuration
-    ).saga(configuration.register.medlemskapSagaBaseUrl)
+    val restClients = RestClients(AzureAdClient(configuration))
+    val medlOppslagClient =
+        restClients.medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
+    val sagaClient =
+        restClients.saga(configuration.register.medlemskapSagaBaseUrl)
     val finnMedlemskapsstatus = FinnMedlemskapsstatus(
         persistenceService,
         MedlemskapsstatusService(sagaClient)
@@ -85,12 +86,12 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
     val opprettNyVurderingForSpeil = OpprettNyVurderingForSpeil(
-        medlemskapOppslagService = SpeilMedlemskapOppslagService(configuration),
+        medlemskapOppslagService = SpeilMedlemskapOppslagService(medlOppslagClient),
         medlemskapOppslagMapper = MedlemskapOppslagMapper(),
         utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
     )
     val finnVurderingForSpeil = FinnVurderingForSpeil(
-        sagaService = SagaService(configuration),
+        sagaService = SagaService(sagaClient),
         opprettNyVurderingForSpeil = opprettNyVurderingForSpeil
     )
 

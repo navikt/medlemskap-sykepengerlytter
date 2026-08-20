@@ -10,8 +10,7 @@ class MedlemskapOppslagService(private val medlemskapOppslagClient: MedlemskapOp
 
     constructor(configuration: Configuration) : this(
         RestClients(
-            azureAdClient = AzureAdClient(configuration),
-            configuration = configuration
+            azureAdClient = AzureAdClient(configuration)
         ).medlOppslag(configuration.register.medlemskapOppslagBaseUrl)
     )
 
