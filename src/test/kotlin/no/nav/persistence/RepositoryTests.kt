@@ -124,7 +124,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
             ),
             utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
-                spørsmålstekst = "",
+                sporsmalstekst = "",
                 svar = true,
                 arbeidUtenforNorge = listOf(ArbeidUtenforNorge(
                     id = "1",

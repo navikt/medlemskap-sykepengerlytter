@@ -29,7 +29,7 @@ private fun mapUtførtArbeidUtenforNorgeBrukerSpørsmål(
 
     return MedlemskapUtførtArbeidUtenforNorge(
         id = utførtArbeidUtenforNorgeSpørsmål.id,
-        spørsmålstekst = utførtArbeidUtenforNorgeSpørsmål.sporsmalstekst,
+        sporsmalstekst = utførtArbeidUtenforNorgeSpørsmål.sporsmalstekst,
         svar = erSvarPåBrukerspørsmålJa,
         arbeidUtenforNorge = mapUtførtArbeidUtenforNorgeUnderspørsmålVedJaSvar(
             erSvarPåBrukerspørsmålJa,

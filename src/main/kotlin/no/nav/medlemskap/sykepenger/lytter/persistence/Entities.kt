@@ -82,7 +82,7 @@ data class MedlemskapOppholdstillatelseBrukerspørsmål(
 
 data class MedlemskapUtførtArbeidUtenforNorge(
     val id: String,
-    val spørsmålstekst: String?,
+    val sporsmalstekst: String?,
     val svar:Boolean,
     val arbeidUtenforNorge:List<ArbeidUtenforNorge>
 )

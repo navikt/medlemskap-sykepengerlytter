@@ -96,7 +96,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
         },
         utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
-            spørsmålstekst = null,
+            sporsmalstekst = null,
             svar = false,
             arbeidUtenforNorge = emptyList()
         ),

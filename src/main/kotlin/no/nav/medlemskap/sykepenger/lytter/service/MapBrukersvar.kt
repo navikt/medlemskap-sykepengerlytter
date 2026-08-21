@@ -32,7 +32,7 @@ object MapBrukersvar {
         utfortArbeidUtenforNorge?.let {
             UtfortAarbeidUtenforNorge(
                 id = it.id,
-                sporsmalstekst = it.spørsmålstekst,
+                sporsmalstekst = it.sporsmalstekst,
                 svar = it.svar,
                 arbeidUtenforNorge = it.arbeidUtenforNorge.map { arbeidUtenforNorge ->
                     ArbeidUtenforNorge(
