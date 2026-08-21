@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Periode
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Speilsvar
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Ytelse
@@ -28,6 +29,40 @@ class HentEllerOpprettVurderingTest {
         periode = Periode(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-01-31")),
         ytelse = Ytelse.SYKEPENGER
     )
+
+    @Test
+    fun `returnerer vurdering fra Saga ved suksess`() = runBlocking {
+        val sagaJson = """
+            {
+              "vurderingsID": "saga-vurdering-id",
+              "datagrunnlag": { "fnr": "12345678901", "brukerinput": {} },
+              "resultat": { "svar": "JA" },
+              "kanal": "SPEIL"
+            }
+        """.trimIndent()
+        val forventetSpeilVurdering = Speilvurdering(
+            soknadId = "saga-vurdering-id",
+            fnr = "12345678901",
+            speilSvar = Speilsvar.JA,
+            avklaringer = emptyList(),
+            kanal = "SPEIL"
+        )
+        val opprett = mockk<OpprettNyVurderingForSpeil>()
+        val medlemskapSagaApi = mockk<MedlemskapSagaAPI> {
+            coEvery { finnVurdering(request, "call-id") } returns sagaJson
+            coEvery { ping(any()) } returns "OK"
+        }
+        val service = HentEllerOpprettVurdering(
+            medlemskapSagaService = MedlemskapSagaService(medlemskapSagaApi),
+            opprettNyVurderingForSpeil = opprett,
+            speilvurderingMapper = SpeilvurderingMapper()
+        )
+
+        val result = service.finnVurdering(request, "call-id")
+
+        assertEquals(forventetSpeilVurdering, result)
+        coVerify(exactly = 0) { opprett.opprett(any(), any()) }
+    }
 
     @Test
     fun `oppretter ny vurdering når Saga svarer 404`() = runBlocking {
