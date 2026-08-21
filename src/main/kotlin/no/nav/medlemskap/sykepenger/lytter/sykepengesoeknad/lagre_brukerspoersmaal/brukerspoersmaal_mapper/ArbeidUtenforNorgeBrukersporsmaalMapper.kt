@@ -8,8 +8,8 @@ fun mapArbeidUtenforNorgeBrukerspørsmål(
     spørsmålListe: List<MedlemskapsBrukerSpørsmål>
 ): ArbeidUtenforNorgeSpørsmål {
     val arbeidutland = spørsmålListe.find { it.tag == "ARBEID_UTENFOR_NORGE" }
-    var erSvarPåBrukerspørsmålJa: Boolean? = null
+    var erSvarPåArbeidUtenforNorgeJa: Boolean? = null
     if (arbeidutland?.svar != null)
-        erSvarPåBrukerspørsmålJa = erSvarPåBrukerspørsmålJa(arbeidutland.svar)
-    return ArbeidUtenforNorgeSpørsmål(erSvarPåBrukerspørsmålJa)
+        erSvarPåArbeidUtenforNorgeJa = erSvarPåBrukerspørsmålJa(arbeidutland.svar)
+    return ArbeidUtenforNorgeSpørsmål(erSvarPåArbeidUtenforNorgeJa)
 }
