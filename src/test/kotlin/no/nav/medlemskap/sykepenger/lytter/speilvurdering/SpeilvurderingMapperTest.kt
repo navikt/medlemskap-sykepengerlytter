@@ -101,7 +101,7 @@ class SpeilvurderingMapperTest {
 
     }
     @Test
-    fun `vureringsID skal hentes fra Json dersom det finnes`(){
+    fun `vurderingsID skal hentes fra Json dersom det finnes`(){
         val fileContent = this::class.java.classLoader.getResource("SagaResponsUavklartMedBrukerSporsmaalOgVurderingsId.json").readText(Charsets.UTF_8)
         val vurdering = SpeilvurderingMapper().fraSaga(
             Medlemskapsvurdering(JacksonParser().ToJson(fileContent)),
