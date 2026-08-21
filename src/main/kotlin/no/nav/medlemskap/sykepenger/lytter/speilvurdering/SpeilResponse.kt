@@ -1,8 +1,12 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
-data class SpeilResponse(val soknadId: String, val fnr: String, val speilSvar: Speilsvar)
+data class SpeilResponse(
+    val soknadId: String,
+    val fnr: String,
+    val speilSvar: Speilsvar
+)
 
-enum class Speilsvar{
+enum class Speilsvar {
     JA,
     NEI,
     UAVKLART,
