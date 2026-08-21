@@ -2,46 +2,21 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersm
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.convertValue
-import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapsBrukerSpørsmål
-import org.slf4j.MarkerFactory
 
-class BrukersporsmaalMapper(spørsmål: JsonNode, private val callId: String? = null) {
+class BrukersporsmaalMapper(spørsmål: JsonNode) {
     val spørsmålListe: List<MedlemskapsBrukerSpørsmål> =
         objectMapper.convertValue<List<MedlemskapsBrukerSpørsmål>>(spørsmål)
             .filter { it.tag in medlemskapSpørsmålTags }
 
     val arbeidUtenforNorgeBrukerspørsmål = mapArbeidUtenforNorgeBrukerspørsmål(spørsmålListe)
-    val oppholdstilatelseBrukerspørsmål =
-        mapMedFeilhåndtering("oppholdstillatelse") { hentOppholdstillatelseBrukerspørsmål(spørsmålListe) }
-    val utførtArbeidUtenforNorgeBrukerspørsmål =
-        mapMedFeilhåndtering("utførtArbeidUtenforNorge") { hentUtførtArbeidUtenforNorgeBrukerSpørsmål(spørsmålListe) }
-    val oppholdUtenforNorgeSpørsmål =
-        mapMedFeilhåndtering("oppholdUtenforNorge") { hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe) }
-    val oppholdUtenforEØSbrukerspørsmål =
-        mapMedFeilhåndtering("oppholdUtenforEØS") { hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe) }
-
-    private fun <T> mapMedFeilhåndtering(spørsmålstype: String, mapper: () -> T?): T? {
-        return try {
-            mapper()
-        } catch (e: Exception) {
-            log.error(
-                teamLogs,
-                "Feil ved mapping av brukerspørsmål",
-                kv("callId", callId),
-                kv("spørsmålstype", spørsmålstype),
-                e
-            )
-            null
-        }
-    }
+    val oppholdstilatelseBrukerspørsmål = hentOppholdstillatelseBrukerspørsmål(spørsmålListe)
+    val utførtArbeidUtenforNorgeBrukerspørsmål = hentUtførtArbeidUtenforNorgeBrukerSpørsmål(spørsmålListe)
+    val oppholdUtenforNorgeSpørsmål = hentOppholdUtenforNorgeBrukerSpørsmål(spørsmålListe)
+    val oppholdUtenforEØSbrukerspørsmål = hentOppholdUtenforEØSBrukerSpørsmål(spørsmålListe)
 
     companion object {
-        private val log = KotlinLogging.logger {}
-        private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
-
         private val medlemskapSpørsmålTags = setOf(
             "ARBEID_UTENFOR_NORGE",
             "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE",

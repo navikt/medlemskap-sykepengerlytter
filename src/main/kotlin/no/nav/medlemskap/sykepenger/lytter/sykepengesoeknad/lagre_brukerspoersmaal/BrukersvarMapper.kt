@@ -17,7 +17,7 @@ object BrukersvarMapper {
             return sykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar()
         }
 
-        val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal, sykepengesoeknadGrunnlag.id)
+        val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal)
         return sykepengesoeknadGrunnlag.tilBrukerspørsmål(
             spørsmål = mapper.arbeidUtenforNorgeBrukerspørsmål,
             oppholdstilatelse = mapper.oppholdstilatelseBrukerspørsmål,
