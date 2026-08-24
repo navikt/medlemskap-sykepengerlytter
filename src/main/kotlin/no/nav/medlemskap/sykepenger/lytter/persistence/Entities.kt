@@ -16,6 +16,7 @@ fun Periode.begynnerIPerioden(periode: Periode): Boolean {
                     (fom.isAfter(periode.fom) && fom.isBefore(periode.tom))
             )
 }
+
 fun Periode.erAvsluttetPr(date:LocalDate): Boolean {
     return this.tom.isBefore(date)
 }
@@ -31,36 +32,46 @@ fun SykepengerVurderingDao.periode(): Periode {
 
 }
 
-data class Brukersporsmaal(
+fun List<MedlemskapsBrukerSpørsmål>.firstMedTagPrefiks(prefiks: String) =
+    firstOrNull { it.tag.startsWith(prefiks) }
+
+fun List<MedlemskapsBrukerSpørsmål>.filterMedTagPrefiks(prefiks: String) =
+    filter { it.tag.startsWith(prefiks) }
+
+fun MedlemskapsBrukerSpørsmål.førsteSvarVerdi(): String =
+    svar.orEmpty().first().verdi
+
+data class Brukerspørsmål(
     val fnr: String,
     val soknadid: String,
     val eventDate: LocalDate,
     val ytelse: String,
     val status: String,
-    val sporsmaal: FlexBrukerSporsmaal?, //fases ut til fordel for nye spørsmål
-    val oppholdstilatelse:Medlemskap_oppholdstilatelse_brukersporsmaal? = null,
-    val utfort_arbeid_utenfor_norge:Medlemskap_utfort_arbeid_utenfor_norge? = null,
-    val oppholdUtenforNorge:Medlemskap_opphold_utenfor_norge? = null,
-    val oppholdUtenforEOS:Medlemskap_opphold_utenfor_eos? = null
-
+    val sporsmaal: ArbeidUtenforNorgeSpørsmål?, //fases ut til fordel for nye spørsmål
+    val oppholdstilatelse:MedlemskapOppholdstillatelseBrukerspørsmål? = null,
+    val utfort_arbeid_utenfor_norge:MedlemskapUtførtArbeidUtenforNorge? = null,
+    val oppholdUtenforNorge:MedlemskapOppholdUtenforNorge? = null,
+    val oppholdUtenforEOS:MedlemskapOppholdUtenforEØS? = null
 )
 
-data class FlexBrukerSporsmaal(
+data class ArbeidUtenforNorgeSpørsmål(
     val arbeidUtland: Boolean?
 )
-data class FlexMedlemskapsBrukerSporsmaal(
+
+data class MedlemskapsBrukerSpørsmål(
     val id: String,
     val tag: String,
     val sporsmalstekst: String?,
     val undertekst: String?,
     val svartype: String?,
     val kriterieForVisningAvUndersporsmal:String?,
-    val svar:List<sporsmaalSvar>?,
-    val undersporsmal:List<FlexMedlemskapsBrukerSporsmaal>?
+    val svar:List<spørsmålSvar>?,
+    val undersporsmal:List<MedlemskapsBrukerSpørsmål>?
 )
-data class sporsmaalSvar(val verdi:String)
 
-data class Medlemskap_oppholdstilatelse_brukersporsmaal(
+data class spørsmålSvar(val verdi:String)
+
+data class MedlemskapOppholdstillatelseBrukerspørsmål(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
@@ -68,42 +79,45 @@ data class Medlemskap_oppholdstilatelse_brukersporsmaal(
     val vedtaksTypePermanent:Boolean,
     val perioder:List<Periode> = mutableListOf()
 )
-data class Medlemskap_utfort_arbeid_utenfor_norge(
+
+data class MedlemskapUtførtArbeidUtenforNorge(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
     val arbeidUtenforNorge:List<ArbeidUtenforNorge>
 )
+
 data class ArbeidUtenforNorge(
     val id: String,
     val arbeidsgiver:String,
     val land:String,
     val perioder: List<Periode>
 )
+
 data class OppholdUtenforNorge(
     val id: String,
     val land:String,
     val grunn:String,
     val perioder: List<Periode>
 )
-data class OppholdUtenforEOS(
+
+data class OppholdUtenforEØS(
     val id: String,
     val land:String,
     val grunn:String,
     val perioder: List<Periode>
 )
 
-data class Medlemskap_opphold_utenfor_norge(
+data class MedlemskapOppholdUtenforNorge(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
     val oppholdUtenforNorge:List<OppholdUtenforNorge>
 )
 
-data class Medlemskap_opphold_utenfor_eos(
+data class MedlemskapOppholdUtenforEØS(
     val id: String,
     val sporsmalstekst: String?,
     val svar:Boolean,
-    val oppholdUtenforEOS:List<OppholdUtenforEOS>
+    val oppholdUtenforEOS:List<OppholdUtenforEØS>
 )
-

@@ -1,6 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukersporsmaalMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -9,9 +10,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med ikke permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
-        Assertions.assertNotNull(v)
-        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertFalse(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -22,9 +21,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2 `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
-        Assertions.assertNotNull(v)
-        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertFalse(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -34,9 +31,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelseV2_MedNeiISvaret `(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_test2.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
-        Assertions.assertNotNull(v)
-        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         Assertions.assertFalse(brukerspørsmaal!!.svar)
 
@@ -44,9 +39,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_oppholdstilatelse bruker sporsmaal med  permanent oppholdstilatelse`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett_permanent.json"))
-        val v = mapper.getOppholdstilatelse_brukerspørsmål()
-        Assertions.assertNotNull(v)
-        val brukerspørsmaal = mapper.oppholdstilatelse_brukersporsmaal
+        val brukerspørsmaal = mapper.oppholdstilatelseBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal)
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha oppholdstilatelse") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.vedtaksTypePermanent,"Bruker skal ikke ha permanent oppholdstilatelse") }
@@ -57,7 +50,7 @@ class BrukerspormaalMapperTest {
     fun `test mapping av flex_arbeidIUtenforNorge bruker sporsmaal arbeidUlandTrue`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
 
-        val brukerspørsmaal = mapper.arbeidUtlandBrukerSporsmaal
+        val brukerspørsmaal = mapper.utførtArbeidUtenforNorgeBrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
@@ -67,7 +60,7 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_OppholdUtenforNorge bruker sporsmaal True`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal.json"))
-        val brukerspørsmaal = mapper.oppholdUtenforNorge
+        val brukerspørsmaal = mapper.oppholdUtenforNorgeSpørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
@@ -77,12 +70,30 @@ class BrukerspormaalMapperTest {
     @Test
     fun `test mapping av flex_OppholdUtenforEOS_bruker sporsmaal True`(){
         val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_EOS.json"))
-        val brukerspørsmaal = mapper.oppholdUtenforEOS
+        val brukerspørsmaal = mapper.oppholdUtenforEØSbrukerspørsmål
         Assertions.assertNotNull(brukerspørsmaal,"Det finnes ikke brukerspørmål mappet")
         brukerspørsmaal?.let { Assertions.assertTrue(it.svar,"Bruker skal ha ArbeidUtland") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.id,"Bruker skal satt ID på spørsmål") }
         brukerspørsmaal?.let { Assertions.assertNotNull(it.sporsmalstekst,"spørsmålstekst skal være satt") }
         brukerspørsmaal?.let { Assertions.assertTrue(it.oppholdUtenforEOS.size==1,"det skal finnes et opphold utenfor norge") }
+    }
+
+    @Test
+    fun `spoersmaalListe inneholder bare medlemskapssporsmal som skal lagres separat`(){
+        val mapper = BrukersporsmaalMapper(sporsmalFra("FlexSampleMessageFlereBrukerSporsmaal_komplett.json"))
+
+        Assertions.assertTrue(
+            mapper.spørsmålListe.map { it.tag }.all {
+                it in setOf(
+                    "ARBEID_UTENFOR_NORGE",
+                    "MEDLEMSKAP_UTFORT_ARBEID_UTENFOR_NORGE",
+                    "MEDLEMSKAP_OPPHOLD_UTENFOR_NORGE",
+                    "MEDLEMSKAP_OPPHOLD_UTENFOR_EOS",
+                    "MEDLEMSKAP_OPPHOLDSTILLATELSE_V2",
+                    "MEDLEMSKAP_OPPHOLDSTILLATELSE",
+                )
+            }
+        )
     }
 
     private fun sporsmalFra(resourceName: String) =

@@ -27,7 +27,10 @@ class BrukersvarMapperTest {
         assertNotNull(brukerspørsmål.sporsmaal)
         assertFalse(brukerspørsmål.sporsmaal!!.arbeidUtland!!)
 
-        assertNull(brukerspørsmål.oppholdstilatelse)
+        assertNotNull(brukerspørsmål.oppholdstilatelse)
+        assertNotNull(brukerspørsmål.oppholdUtenforNorge)
+        assertNotNull(brukerspørsmål.utfort_arbeid_utenfor_norge)
+
     }
 
     @Test

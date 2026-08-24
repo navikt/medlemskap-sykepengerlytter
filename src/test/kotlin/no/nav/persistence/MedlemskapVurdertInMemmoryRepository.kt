@@ -1,6 +1,6 @@
 package no.nav.persistence
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
@@ -23,16 +23,16 @@ class MedlemskapVurdertInMemmoryRepository: MedlemskapVurdertRepository {
 
 }
 class BrukersporsmaalInMemmoryRepository: BrukersporsmaalRepository {
-    var storage = mutableListOf<Brukersporsmaal>()
-    override fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal> {
+    var storage = mutableListOf<Brukerspørsmål>()
+    override fun finnBrukersporsmaal(fnr: String): List<Brukerspørsmål> {
         return  storage.filter { it.fnr == fnr }
     }
 
-    override fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal) {
-        storage.add(brukersporsmaal)
+    override fun lagreBrukersporsmaal(brukerspørsmål: Brukerspørsmål) {
+        storage.add(brukerspørsmål)
     }
 
-    override fun finnBrukersporsmaalForSoknad(id: String): Brukersporsmaal? {
+    override fun finnBrukersporsmaalForSoknad(id: String): Brukerspørsmål? {
         return storage.filter { it.soknadid == id }.firstOrNull()
     }
 

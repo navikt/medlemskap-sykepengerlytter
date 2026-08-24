@@ -1,52 +1,53 @@
 package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.FlexBrukerSporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.ArbeidUtenforNorgeSpørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.brukerspoersmaal_mapper.BrukersporsmaalMapper
 import java.time.LocalDate
 
 object BrukersvarMapper {
 
-    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukersporsmaal {
+    fun tilBrukerspørsmål(sykepengesoeknadGrunnlag: SykepengesoeknadGrunnlag): Brukerspørsmål {
         if (sykepengesoeknadGrunnlag.dodsdato != null) {
             return sykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar()
         }
 
-        val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal)
+        val mapper = BrukersporsmaalMapper(sykepengesoeknadGrunnlag.sporsmal, sykepengesoeknadGrunnlag.id)
         return sykepengesoeknadGrunnlag.tilBrukerspørsmål(
-            sporsmaal = mapper.brukersp_arb_utland_old_model,
-            oppholdstilatelse = mapper.oppholdstilatelse_brukersporsmaal,
-            utfortArbeidUtenforNorge = mapper.arbeidUtlandBrukerSporsmaal,
-            oppholdUtenforNorge = mapper.oppholdUtenforNorge,
-            oppholdUtenforEOS = mapper.oppholdUtenforEOS
+            spørsmål = mapper.arbeidUtenforNorgeBrukerspørsmål,
+            oppholdstilatelse = mapper.oppholdstilatelseBrukerspørsmål,
+            utførtArbeidUtenforNorge = mapper.utførtArbeidUtenforNorgeBrukerspørsmål,
+            oppholdUtenforNorge = mapper.oppholdUtenforNorgeSpørsmål,
+            oppholdUtenforEØS = mapper.oppholdUtenforEØSbrukerspørsmål
         )
     }
 
-    private fun SykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar(): Brukersporsmaal =
+    private fun SykepengesoeknadGrunnlag.tilBrukerspørsmålUtenBrukersvar(): Brukerspørsmål =
         tilBrukerspørsmål()
 
     private fun SykepengesoeknadGrunnlag.tilBrukerspørsmål(
-        sporsmaal: FlexBrukerSporsmaal? = null,
-        oppholdstilatelse: Medlemskap_oppholdstilatelse_brukersporsmaal? = null,
-        utfortArbeidUtenforNorge: Medlemskap_utfort_arbeid_utenfor_norge? = null,
-        oppholdUtenforNorge: Medlemskap_opphold_utenfor_norge? = null,
-        oppholdUtenforEOS: Medlemskap_opphold_utenfor_eos? = null
-    ): Brukersporsmaal {
-        return Brukersporsmaal(
+        spørsmål: ArbeidUtenforNorgeSpørsmål? = null,
+        oppholdstilatelse: MedlemskapOppholdstillatelseBrukerspørsmål? = null,
+        utførtArbeidUtenforNorge: MedlemskapUtførtArbeidUtenforNorge? = null,
+        oppholdUtenforNorge: MedlemskapOppholdUtenforNorge? = null,
+        oppholdUtenforEØS: MedlemskapOppholdUtenforEØS? = null
+    ): Brukerspørsmål {
+        return Brukerspørsmål(
             fnr = fnr,
             soknadid = id,
             eventDate = finnTidligsteDato(sendtArbeidsgiver?.toLocalDate(), sendtNav?.toLocalDate()),
             ytelse = "SYKEPENGER",
             status = status,
-            sporsmaal = sporsmaal,
+            sporsmaal = spørsmål,
             oppholdstilatelse = oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = utfortArbeidUtenforNorge,
+            utfort_arbeid_utenfor_norge = utførtArbeidUtenforNorge,
             oppholdUtenforNorge = oppholdUtenforNorge,
-            oppholdUtenforEOS = oppholdUtenforEOS
+            oppholdUtenforEOS = oppholdUtenforEØS
         )
     }
 

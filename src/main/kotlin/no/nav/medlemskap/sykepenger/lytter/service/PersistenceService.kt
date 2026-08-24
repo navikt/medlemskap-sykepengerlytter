@@ -5,7 +5,7 @@ import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
 import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
 import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
@@ -42,10 +42,10 @@ class PersistenceService(
 
     }
 
-    fun hentbrukersporsmaalForSoknadID(soknadID:String):Brukersporsmaal?{
+    fun hentbrukersporsmaalForSoknadID(soknadID:String):Brukerspørsmål?{
         return brukersporsmaalRepository.finnBrukersporsmaalForSoknad(soknadID)
     }
-    fun hentbrukersporsmaalForFnr(fnr:String):List<Brukersporsmaal>{
+    fun hentbrukersporsmaalForFnr(fnr:String):List<Brukerspørsmål>{
         return brukersporsmaalRepository.finnBrukersporsmaal(fnr)
     }
 
@@ -65,8 +65,8 @@ class PersistenceService(
             )
         )
     }
-    fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal){
-        brukersporsmaalRepository.lagreBrukersporsmaal(brukersporsmaal)
+    fun lagreBrukersporsmaal(brukerspørsmål: Brukerspørsmål){
+        brukersporsmaalRepository.lagreBrukersporsmaal(brukerspørsmål)
     }
 
     fun slettBrukersporsmaal(fnr: String): Int {

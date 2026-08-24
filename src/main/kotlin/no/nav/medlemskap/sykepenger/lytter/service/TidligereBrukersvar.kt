@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -15,7 +15,7 @@ class TidligereBrukersvar(private val persistenceService: PersistenceService) {
     fun finnNyesteGjenbrukbareSvar(
         fnr: String,
         førsteDagForYtelse: String
-    ): Brukersporsmaal? =
+    ): Brukerspørsmål? =
         persistenceService
             .hentbrukersporsmaalForFnr(fnr)
             .filter { spm ->
@@ -25,7 +25,7 @@ class TidligereBrukersvar(private val persistenceService: PersistenceService) {
             .maxByOrNull { it.eventDate }
             .also { loggNyesteBrukersvar(fnr, it) }
 
-    private fun loggNyesteBrukersvar(fnr: String, brukersvar: Brukersporsmaal?) {
+    private fun loggNyesteBrukersvar(fnr: String, brukersvar: Brukerspørsmål?) {
         if (brukersvar == null) {
             log.info(
                 teamLogs,

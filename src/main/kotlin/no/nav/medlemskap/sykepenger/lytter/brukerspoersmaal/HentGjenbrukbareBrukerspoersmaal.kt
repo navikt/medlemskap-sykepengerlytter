@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 
@@ -31,7 +31,7 @@ class HentGjenbrukbareBrukerspoersmaal(
             }
             ?: emptyList()
 
-    private fun Brukersporsmaal.tilGjenbrukbareSpørsmål() = listOfNotNull(
+    private fun Brukerspørsmål.tilGjenbrukbareSpørsmål() = listOfNotNull(
         utfort_arbeid_utenfor_norge?.let { Spørsmål.ARBEID_UTENFOR_NORGE },
         oppholdUtenforNorge?.let { Spørsmål.OPPHOLD_UTENFOR_NORGE },
         oppholdUtenforEOS?.let { Spørsmål.OPPHOLD_UTENFOR_EØS_OMRÅDE },

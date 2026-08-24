@@ -81,13 +81,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val result = repo.finnBrukersporsmaal("2222")
@@ -107,14 +107,14 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false),
-            oppholdstilatelse = Medlemskap_oppholdstilatelse_brukersporsmaal(
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false),
+            oppholdstilatelse = MedlemskapOppholdstillatelseBrukerspørsmål(
                 id=UUID.randomUUID().toString(),
                 sporsmalstekst = "Har du oppholdstillatelse fra utlendingsdirektoratet?",
                 svar = true,
@@ -122,7 +122,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
                 vedtaksTypePermanent = false,
                 perioder = listOf(Periode(LocalDate.now(), LocalDate.now())),
             ),
-            utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+            utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
                 id = UUID.randomUUID().toString(),
                 sporsmalstekst = "",
                 svar = true,
@@ -181,13 +181,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val brukersporsmaal = repo.finnBrukersporsmaalForSoknad(soknadID)
@@ -206,13 +206,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
 
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
             ytelse = "SYKEPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(false)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(false)
 
         ))
         val brukersporsmaal = repo.finnBrukersporsmaalForSoknad("1234")
@@ -229,13 +229,13 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         dsb.migrate();
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
         val repo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
-        repo.lagreBrukersporsmaal(Brukersporsmaal(
+        repo.lagreBrukersporsmaal(Brukerspørsmål(
             fnr="2222",
             soknadid =soknadID,
             eventDate = LocalDate.now(),
             ytelse = "SYKEPPENGER",
             status="SENDT",
-            sporsmaal = FlexBrukerSporsmaal(null)
+            sporsmaal = ArbeidUtenforNorgeSpørsmål(null)
 
         ))
         val result = repo.finnBrukersporsmaal("2222")

@@ -3,11 +3,11 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.persistence.Brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_eos
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_opphold_utenfor_norge
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_oppholdstilatelse_brukersporsmaal
-import no.nav.medlemskap.sykepenger.lytter.persistence.Medlemskap_utfort_arbeid_utenfor_norge
+import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål
+import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
@@ -78,7 +78,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
         oppholdUtenforNorge: Boolean? = null,
         oppholdUtenforEos: Boolean? = null,
         oppholdstillatelse: Boolean? = null
-    ) = Brukersporsmaal(
+    ) = Brukerspørsmål(
         fnr = FNR,
         soknadid = "soknad-$eventDate",
         eventDate = eventDate,
@@ -86,7 +86,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
         status = "SENDT",
         sporsmaal = null,
         oppholdstilatelse = oppholdstillatelse?.let {
-            Medlemskap_oppholdstilatelse_brukersporsmaal(
+            MedlemskapOppholdstillatelseBrukerspørsmål(
                 id = "oppholdstillatelse",
                 sporsmalstekst = null,
                 svar = it,
@@ -94,14 +94,14 @@ class HentGjenbrukbareBrukerspoersmaalTest {
                 vedtaksTypePermanent = false
             )
         },
-        utfort_arbeid_utenfor_norge = Medlemskap_utfort_arbeid_utenfor_norge(
+        utfort_arbeid_utenfor_norge = MedlemskapUtførtArbeidUtenforNorge(
             id = "arbeid-utenfor-norge",
             sporsmalstekst = null,
             svar = false,
             arbeidUtenforNorge = emptyList()
         ),
         oppholdUtenforNorge = oppholdUtenforNorge?.let {
-            Medlemskap_opphold_utenfor_norge(
+            MedlemskapOppholdUtenforNorge(
                 id = "opphold-utenfor-norge",
                 sporsmalstekst = null,
                 svar = it,
@@ -109,7 +109,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
             )
         },
         oppholdUtenforEOS = oppholdUtenforEos?.let {
-            Medlemskap_opphold_utenfor_eos(
+            MedlemskapOppholdUtenforEØS(
                 id = "opphold-utenfor-eos",
                 sporsmalstekst = null,
                 svar = it,

@@ -10,9 +10,9 @@ import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
 
 interface BrukersporsmaalRepository {
-    fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal>
-    fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal)
-    fun finnBrukersporsmaalForSoknad(id: String) : Brukersporsmaal?
+    fun finnBrukersporsmaal(fnr: String): List<Brukerspørsmål>
+    fun lagreBrukersporsmaal(brukerspørsmål: Brukerspørsmål)
+    fun finnBrukersporsmaalForSoknad(id: String) : Brukerspørsmål?
     fun slettBrukersporsmaal(fnr: String): Int
 }
 
@@ -22,46 +22,46 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
     val FIND_BY_ID = "select * from brukersporsmaal where soknadid = ?"
     val DELETE_BY_FNR = "DELETE FROM brukersporsmaal WHERE fnr = ?"
 
-    override fun finnBrukersporsmaal(fnr: String): List<Brukersporsmaal> {
+    override fun finnBrukersporsmaal(fnr: String): List<Brukerspørsmål> {
 
 
         return using(sessionOf(dataSource)) {
-                it.run(queryOf(FIND_BY_FNR, fnr.sha256()).map(toBrukersporsmaalDao).asList)
+                it.run(queryOf(FIND_BY_FNR, fnr.sha256()).map(toBrukerspørsmålDao).asList)
         }
 
     }
 
-    override fun lagreBrukersporsmaal(brukersporsmaal: Brukersporsmaal) {
+    override fun lagreBrukersporsmaal(brukerspørsmål: Brukerspørsmål) {
 
         val json = JacksonParser().ToJson(
-            Brukersporsmaal(
-            fnr = brukersporsmaal.fnr.sha256(),
-            soknadid = brukersporsmaal.soknadid,
-            eventDate = brukersporsmaal.eventDate,
-            ytelse = brukersporsmaal.ytelse,
-            status = brukersporsmaal.status,
-            sporsmaal = brukersporsmaal.sporsmaal,
-            oppholdstilatelse = brukersporsmaal.oppholdstilatelse,
-            utfort_arbeid_utenfor_norge = brukersporsmaal.utfort_arbeid_utenfor_norge,
-            oppholdUtenforNorge = brukersporsmaal.oppholdUtenforNorge,
-            oppholdUtenforEOS = brukersporsmaal.oppholdUtenforEOS
+            Brukerspørsmål(
+            fnr = brukerspørsmål.fnr.sha256(),
+            soknadid = brukerspørsmål.soknadid,
+            eventDate = brukerspørsmål.eventDate,
+            ytelse = brukerspørsmål.ytelse,
+            status = brukerspørsmål.status,
+            sporsmaal = brukerspørsmål.sporsmaal,
+            oppholdstilatelse = brukerspørsmål.oppholdstilatelse,
+            utfort_arbeid_utenfor_norge = brukerspørsmål.utfort_arbeid_utenfor_norge,
+            oppholdUtenforNorge = brukerspørsmål.oppholdUtenforNorge,
+            oppholdUtenforEOS = brukerspørsmål.oppholdUtenforEOS
 
         ))
 
 
         using(sessionOf(dataSource)) { session ->
             session.transaction {
-                it.run(queryOf(INSERT_BRUKER_SPORSMAAL, brukersporsmaal.fnr.sha256(),brukersporsmaal.soknadid, brukersporsmaal.eventDate,brukersporsmaal.ytelse, brukersporsmaal.status,
-                    brukersporsmaal.let { json.toPrettyString() }).asExecute)
+                it.run(queryOf(INSERT_BRUKER_SPORSMAAL, brukerspørsmål.fnr.sha256(),brukerspørsmål.soknadid, brukerspørsmål.eventDate,brukerspørsmål.ytelse, brukerspørsmål.status,
+                    brukerspørsmål.let { json.toPrettyString() }).asExecute)
             }
 
         }
     }
 
-    override fun finnBrukersporsmaalForSoknad(id: String): Brukersporsmaal? {
+    override fun finnBrukersporsmaalForSoknad(id: String): Brukerspørsmål? {
             return using(sessionOf(dataSource)) {
                 it.run(queryOf(FIND_BY_ID, id)
-                    .map(toBrukersporsmaalDao)
+                    .map(toBrukerspørsmålDao)
                     .asList
                 ).firstOrNull()
             }
@@ -82,12 +82,12 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
         return PostgresBrukersporsmaalRepository(datasource)
     }
 
-    val toBrukersporsmaalDao: (Row) -> Brukersporsmaal = { row ->
+    val toBrukerspørsmålDao: (Row) -> Brukerspørsmål = { row ->
 
 
         try{
-            val sporsmaal:Brukersporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
-             Brukersporsmaal(
+            val sporsmaal:Brukerspørsmål=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+             Brukerspørsmål(
                 fnr=row.string("fnr"),
                 soknadid = row.string("soknadid").toString(),
                 eventDate= row.localDate("eventDate"),
@@ -101,8 +101,8 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
 
         }
         catch (e:Exception){
-            val sporsmaal:FlexBrukerSporsmaal=  JacksonParser().toDomainObject(row.string("sporsmaal"))
-            Brukersporsmaal(
+            val sporsmaal:ArbeidUtenforNorgeSpørsmål=  JacksonParser().toDomainObject(row.string("sporsmaal"))
+            Brukerspørsmål(
                 fnr=row.string("fnr"),
                 soknadid = row.string("soknadid").toString(),
                 eventDate= row.localDate("eventDate"),
