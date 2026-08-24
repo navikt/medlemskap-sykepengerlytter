@@ -1,36 +1,11 @@
 package no.nav.medlemskap.sykepenger.lytter.persistence
 
 
-import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import java.time.LocalDate
-import java.util.*
 
 data class VurderingDao(val id: String, val fnr: String, val fom: LocalDate, val tom: LocalDate, val status: String)
 
-data class SykepengerVurderingDao(val id: String, val soknadId: String, val date: Date, val json: String)
 data class Periode(val fom: LocalDate, val tom: LocalDate)
-
-fun Periode.begynnerIPerioden(periode: Periode): Boolean {
-    return (
-            (fom.isEqual(periode.fom)) ||
-                    (fom.isAfter(periode.fom) && fom.isBefore(periode.tom))
-            )
-}
-
-fun Periode.erAvsluttetPr(date:LocalDate): Boolean {
-    return this.tom.isBefore(date)
-}
-
-
-fun SykepengerVurderingDao.fnr(): String {
-    return objectMapper.readTree(json).get("datagrunnlag").get("fnr").asText()
-}
-
-fun SykepengerVurderingDao.periode(): Periode {
-    val periode = objectMapper.readTree(json).get("datagrunnlag").get("periode")
-    return Periode(LocalDate.parse(periode.get("fom").asText()), LocalDate.parse(periode.get("tom").asText()));
-
-}
 
 fun List<MedlemskapsBrukerSpørsmål>.firstMedTagPrefiks(prefiks: String) =
     firstOrNull { it.tag.startsWith(prefiks) }
