@@ -5,9 +5,9 @@ import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBruk
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
@@ -54,7 +54,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -63,7 +63,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         //Steg 1: Bruker blir syk for første gang
         val førsteDagForYtelse_mockData = "2023-08-16"
         val testperson = "15076500565"
-        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
@@ -92,7 +92,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -125,7 +125,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen og det skal sjekkes om forrige brukerspørsmål skal gjenbrukes
         val førsteDagForYtelse_mockData = "2024-08-16"
-        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = false)
         )
 
@@ -154,7 +154,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_uavklart.json"
             )
             )
@@ -185,7 +185,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = false)
         )
 
@@ -214,7 +214,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_uavklart_med_opphold.json"
             )
             )
@@ -245,7 +245,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
@@ -274,7 +274,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -306,7 +306,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = testperson, førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = false)
         )
 
@@ -335,7 +335,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_eos_borger_uavklart_REGEL_3.json"
             )
             )
@@ -366,7 +366,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
@@ -398,7 +398,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart_brudd_23.json"
             )
             )
@@ -428,7 +428,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
@@ -458,7 +458,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_uavklart.json"
             )
             )
@@ -488,7 +488,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 
@@ -519,7 +519,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
             LovMeApiMock(
             mapOf(
                 "vurderMedlemskap" to "sampleVurdering.json",
-                "vurderMedlemskapBomlo" to "sampleVurdering.json",
+                "vurderMedlemskapForSpeil" to "sampleVurdering.json",
                 "brukerspørsmål" to "vurdering_andre_borger_med_eos_familie_ja.json"
             )
             )
@@ -549,7 +549,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
 
         //Steg 2: Bruker blir syk igjen
         val førsteDagForYtelse_mockData = "2023-08-30"
-        val lovmeRequest = MedlOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
+        val lovmeRequest = MedlemskapOppslagRequest(fnr = "15076500565", førsteDagForYtelse = førsteDagForYtelse_mockData, periode = Periode("",""),
             Brukerinput(arbeidUtenforNorge = true)
         )
 

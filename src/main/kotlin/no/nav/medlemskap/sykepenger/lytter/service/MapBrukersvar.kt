@@ -1,12 +1,12 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.ArbeidUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Opphold
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.OppholdUtenforEos
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.OppholdUtenforNorge
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Oppholdstilatelse
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.UtfortAarbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.ArbeidUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Opphold
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.OppholdUtenforEos
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.OppholdUtenforNorge
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Oppholdstilatelse
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.UtfortAarbeidUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdstillatelseBrukerspørsmål

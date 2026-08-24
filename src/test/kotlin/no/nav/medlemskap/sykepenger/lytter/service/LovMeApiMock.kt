@@ -1,14 +1,16 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
+import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 
 
 class LovMeApiMock(
     private val filer: Map<String, String> = emptyMap()
-) : LovmeAPI {
+) : MedlemskapOppslagAPI {
 
-    var request: MedlOppslagRequest? = null
+    var request: MedlemskapOppslagRequest? = null
 
     private fun hentFil(nøkkel: String): String {
         val filnavn = filer[nøkkel]
@@ -18,23 +20,23 @@ class LovMeApiMock(
     }
 
     override suspend fun vurderMedlemskap(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): String {
         request = medlOppslagRequest
         return hentFil("vurderMedlemskap")
     }
 
-    override suspend fun vurderMedlemskapBomlo(
-        medlOppslagRequest: MedlOppslagRequest,
+    override suspend fun vurderMedlemskapForSpeil(
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
-    ): String {
+    ): MedlemskapOppslagVurdering {
         request = medlOppslagRequest
-        return hentFil("vurderMedlemskapBomlo")
+        return JacksonParser().toDomainObject(hentFil("vurderMedlemskapForSpeil"))
     }
 
     override suspend fun brukerspørsmål(
-        medlOppslagRequest: MedlOppslagRequest,
+        medlOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): String {
         request = medlOppslagRequest

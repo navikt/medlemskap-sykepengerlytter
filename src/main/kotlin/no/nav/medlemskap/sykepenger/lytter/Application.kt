@@ -3,11 +3,9 @@ package no.nav.medlemskap.sykepenger.lytter
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.nais.createHttpServer
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
 import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka.MedlemskapVurdertConsumer
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.BrukerSporsmaalConsumer
 import org.slf4j.Logger
@@ -19,7 +17,6 @@ fun main() {
 }
 
 class Application(private val env: Environment = System.getenv(),
-                  private val bomloService: BomloService =BomloService(Configuration()),
                   private val brukerSpørsmaalConsumer: BrukerSporsmaalConsumer = BrukerSporsmaalConsumer(env),
                   private val medlemskapVurdertConsumer: MedlemskapVurdertConsumer = MedlemskapVurdertConsumer()
 ) {
@@ -42,6 +39,6 @@ class Application(private val env: Environment = System.getenv(),
         @OptIn(DelicateCoroutinesApi::class)
         medlemskapVurdertConsumer.flow().launchIn(GlobalScope)
 
-        createHttpServer(consumeJob2,bomloService).start(wait = true)
+        createHttpServer(consumeJob2, env).start(wait = true)
     }
 }

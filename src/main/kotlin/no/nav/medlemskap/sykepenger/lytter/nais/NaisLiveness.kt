@@ -6,13 +6,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.Job
-import mu.KotlinLogging
 
-import no.nav.medlemskap.sykepenger.lytter.service.BomloService
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.HentEllerOpprettVurdering
 import java.util.*
 
 fun Routing.naisRoutes(
-    consumeJob: Job,bomloService: BomloService
+    consumeJob: Job, hentEllerOpprettVurdering: HentEllerOpprettVurdering
 ) {
     get("/isAlive") {
         if (consumeJob.isActive) {
@@ -32,7 +31,7 @@ fun Routing.naisRoutes(
     get("/status") {
         var map:MutableMap<String,Boolean> = mutableMapOf()
         try{
-            bomloService.sagaClient.ping(UUID.randomUUID().toString())
+            hentEllerOpprettVurdering.pingSaga(UUID.randomUUID().toString())
             map["SAGA"] = true
             call.respondText(Dependencies(map,null).toString(), ContentType.Text.Plain, HttpStatusCode.OK)
         }

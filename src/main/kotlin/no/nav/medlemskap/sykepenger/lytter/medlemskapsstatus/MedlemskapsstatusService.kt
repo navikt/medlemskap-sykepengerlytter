@@ -2,10 +2,10 @@ package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
-import no.nav.medlemskap.sykepenger.lytter.clients.saga.SagaAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 
 class MedlemskapsstatusService(
-    private val sagaClient: SagaAPI
+    private val sagaClient: MedlemskapSagaAPI
 ) {
     suspend fun hent(
         grunnlag: MedlemskapsstatusRequest,

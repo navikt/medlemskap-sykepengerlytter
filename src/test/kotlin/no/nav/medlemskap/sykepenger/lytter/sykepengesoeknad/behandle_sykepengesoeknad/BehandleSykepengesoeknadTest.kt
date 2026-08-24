@@ -2,8 +2,9 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import kotlinx.coroutines.runBlocking
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.LovmeAPI
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagAPI
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.domain.MedlemskapOppslagVurdering
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
@@ -128,21 +129,24 @@ class BehandleSykepengesoeknadTest {
             )
         )
 
-    private class LovMeApiTestMock : LovmeAPI {
+    private class LovMeApiTestMock : MedlemskapOppslagAPI {
         var antallVurderMedlemskapKall = 0
-        var sisteRequest: MedlOppslagRequest? = null
+        var sisteRequest: MedlemskapOppslagRequest? = null
 
-        override suspend fun vurderMedlemskap(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        override suspend fun vurderMedlemskap(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String {
             antallVurderMedlemskapKall++
             sisteRequest = medlOppslagRequest
             return this::class.java.classLoader.getResource("sampleVurdering.json").readText(Charsets.UTF_8)
         }
 
-        override suspend fun vurderMedlemskapBomlo(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
-            error("Skal ikke kalle vurderMedlemskapBomlo")
+        override suspend fun vurderMedlemskapForSpeil(
+            medlOppslagRequest: MedlemskapOppslagRequest,
+            callId: String
+        ): MedlemskapOppslagVurdering {
+            error("Skal ikke kalle vurderMedlemskapForSpeil")
         }
 
-        override suspend fun brukerspørsmål(medlOppslagRequest: MedlOppslagRequest, callId: String): String {
+        override suspend fun brukerspørsmål(medlOppslagRequest: MedlemskapOppslagRequest, callId: String): String {
             error("Skal ikke kalle brukerspørsmål")
         }
     }

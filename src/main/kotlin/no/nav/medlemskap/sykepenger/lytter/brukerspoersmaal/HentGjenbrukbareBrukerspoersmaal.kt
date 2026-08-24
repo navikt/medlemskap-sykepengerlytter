@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
@@ -12,7 +12,7 @@ class HentGjenbrukbareBrukerspoersmaal(
     private val log = KotlinLogging.logger { }
     private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
-    fun finnGjenbrukbareSpørsmål(medlemskapOppslagRequest: MedlOppslagRequest): List<Spørsmål> =
+    fun finnGjenbrukbareSpørsmål(medlemskapOppslagRequest: MedlemskapOppslagRequest): List<Spørsmål> =
         tidligereBrukersvar
             .finnNyesteGjenbrukbareSvar(
                 medlemskapOppslagRequest.fnr,

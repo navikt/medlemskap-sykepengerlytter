@@ -1,8 +1,8 @@
 package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Periode
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforEØS
 import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapOppholdUtenforNorge
@@ -66,7 +66,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
     }
 
     private fun medlemskapOppslagRequest(førsteDagForYtelse: String) =
-        MedlOppslagRequest(
+        MedlemskapOppslagRequest(
             fnr = FNR,
             førsteDagForYtelse = førsteDagForYtelse,
             periode = Periode("", ""),

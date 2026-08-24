@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
-import no.nav.medlemskap.sykepenger.lytter.rest.BomloRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 
@@ -17,7 +17,7 @@ class UtledBrukerinput(
         )
     }
 
-    fun fraSpeilRequest(request: BomloRequest, callId: String): Brukerinput =
+    fun fraSpeilRequest(request: SpeilvurderingRequest, callId: String): Brukerinput =
         gjenbrukBrukersvar.fraTidligereSvar(
             søknadsParametere = request.tilSøknadsParametere(callId),
             kilde = Kilde.SPEIL
@@ -31,7 +31,7 @@ private fun SykepengesoeknadGrunnlag.tilSøknadsParametere(): SoeknadsParametere
         førsteDagForYtelse = fom.toString()
     )
 
-private fun BomloRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =
+private fun SpeilvurderingRequest.tilSøknadsParametere(callId: String): SoeknadsParametere =
     SoeknadsParametere(
         callId = callId,
         fnr = fnr,

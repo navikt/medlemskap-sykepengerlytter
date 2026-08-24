@@ -5,7 +5,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.generer_foreslaatte_brukerspoersmaal.ForeslaatteBrukerspoersmaalUtleder
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.flexrespons.tilFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.gjenbruk.finnSpørsmålSomSkalStilles
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.MedlOppslagRequest
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagRequest
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import org.slf4j.MarkerFactory
 
@@ -19,7 +19,7 @@ class LagFlexRespons(
 
     fun lagFlexRespons(
         medlemskapOppslagResponse: String,
-        medlemskapOppslagRequest: MedlOppslagRequest,
+        medlemskapOppslagRequest: MedlemskapOppslagRequest,
         callId: String
     ): FlexRespons {
         val medlemskapVurdering = medlemskapVurderingMapper.map(medlemskapOppslagResponse)

@@ -1,7 +1,7 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.clients.medloppslag.Brukerinput
+import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Brukerinput
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import org.slf4j.MarkerFactory
 
