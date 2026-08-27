@@ -40,35 +40,31 @@ fun Routing.brukerSporsmaalRoute(
                 kv("callId", callId),
                 kv("endpoint", "brukersporsmal")
             )
-            try {
-                val medlemskapOppslagHandler = MedlemskapOppslagHandler(requiredVariables)
-                when (
-                    val resultat = medlemskapOppslagHandler.hentResultatFraMedlemskapOppslag(
-                        callId,
-                        medlemskapOppslagService
-                    )
-                ) {
-                    MedlemskapOppslagResultat.GradertAdresse -> {
-                        feilhåndteringLogger.logAdresseException(callId, start)
-                        call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
-                    }
-
-                    MedlemskapOppslagResultat.Tidsavbrudd -> {
-                        feilhåndteringLogger.logCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
-                        call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
-                    }
-
-                    is MedlemskapOppslagResultat.Vurdering -> {
-                        val flexRespons = lagFlexRespons.lagFlexRespons(
-                            medlemskapOppslagResponse = resultat.respons,
-                            medlemskapOppslagRequest = medlemskapOppslagHandler.medlemskapOppslagRequest,
-                            callId = callId
-                        )
-                        call.respond(HttpStatusCode.OK, flexRespons)
-                    }
+            val medlemskapOppslagHandler = MedlemskapOppslagHandler(requiredVariables)
+            when (
+                val resultat = medlemskapOppslagHandler.hentResultatFraMedlemskapOppslag(
+                    callId,
+                    medlemskapOppslagService
+                )
+            ) {
+                MedlemskapOppslagResultat.GradertAdresse -> {
+                    feilhåndteringLogger.logAdresseException(callId, start)
+                    call.respond(HttpStatusCode.OK, FlexRespons(Svar.JA, emptySet()))
                 }
-            } catch (t: Throwable) {
-                call.respond(HttpStatusCode.InternalServerError, t.message!!)
+
+                MedlemskapOppslagResultat.Tidsavbrudd -> {
+                    feilhåndteringLogger.logCancellationException(callId, start, medlemskapOppslagHandler.medlemskapOppslagRequest)
+                    call.respond(HttpStatusCode.InternalServerError, "Forespørsmål mot medlemskap-oppslag timet ut")
+                }
+
+                is MedlemskapOppslagResultat.Vurdering -> {
+                    val flexRespons = lagFlexRespons.lagFlexRespons(
+                        medlemskapOppslagResponse = resultat.respons,
+                        medlemskapOppslagRequest = medlemskapOppslagHandler.medlemskapOppslagRequest,
+                        callId = callId
+                    )
+                    call.respond(HttpStatusCode.OK, flexRespons)
+                }
             }
         }
     }
