@@ -64,6 +64,26 @@ import java.util.*
 
 private val logger = KotlinLogging.logger { }
 
+internal fun Application.configureStatusPages() {
+    install(StatusPages) {
+        exception<ContentTransformationException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<Exception> { call, cause ->
+            if (cause is CancellationException) {
+                throw cause
+            }
+            logger.error(cause) {
+                "Uventet feil, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+    }
+}
+
 fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
     val authorizationHandler = AuthorizationHandler()
@@ -128,23 +148,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
             register(ContentType.Application.Json, JacksonConverter(objectMapper))
         }
 
-        install(StatusPages) {
-            exception<ContentTransformationException> { call, cause ->
-                logger.warn(cause) {
-                    "Ugyldig request, callId=${call.callId}"
-                }
-                call.respond(HttpStatusCode.BadRequest)
-            }
-            exception<Exception> { call, cause ->
-                if (cause is CancellationException) {
-                    throw cause
-                }
-                logger.error(cause) {
-                    "Uventet feil, callId=${call.callId}"
-                }
-                call.respond(HttpStatusCode.InternalServerError)
-            }
-        }
+        configureStatusPages()
 
         if (useAuthentication) {
             //logger.info { "Installerer authentication" }

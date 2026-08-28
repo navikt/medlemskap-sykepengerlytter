@@ -70,6 +70,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.13.12")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.testcontainers:kafka:$testcontainerVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainerVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainerVersion")
