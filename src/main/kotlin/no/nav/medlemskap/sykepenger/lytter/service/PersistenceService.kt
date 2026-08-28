@@ -33,7 +33,7 @@ class PersistenceService(
                 "Vurdering lagret til database - sykmeldingId: $key",
                 StructuredArguments.kv("callId", key),
             )
-        } catch (throwable: Throwable) {
+        } catch (throwable: Exception) {
             log.error(
                 "Vurdering ble ikke lagret til database - sykmeldingId: $key , reason : ${throwable.cause}",
                 StructuredArguments.kv("callId", key),

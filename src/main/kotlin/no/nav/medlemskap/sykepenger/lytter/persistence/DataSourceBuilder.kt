@@ -2,7 +2,10 @@ package no.nav.medlemskap.sykepenger.lytter.persistence
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.medlemskap.sykepenger.lytter.Application
 import org.flywaydb.core.Flyway
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import javax.sql.DataSource
 
 class DataSourceBuilder(env: Map<String, String>) {
@@ -32,6 +35,10 @@ class DataSourceBuilder(env: Map<String, String>) {
         }
     }
 
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(Application::class.java)
+    }
+
     fun getDataSource() = HikariDataSource(hikariConfig)
 
 
@@ -39,8 +46,8 @@ class DataSourceBuilder(env: Map<String, String>) {
         try {
             runMigration(it)
         }
-        catch (t:Throwable){
-            //TODO: Logging
+        catch (t: Exception){
+            log.error("Feil oppstod under database migration", t)
         }
 
     }

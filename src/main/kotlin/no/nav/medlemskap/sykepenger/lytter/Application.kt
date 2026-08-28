@@ -30,7 +30,7 @@ class Application(private val env: Environment = System.getenv(),
         try {
             dataSourceBuilder.migrate()
         }
-        catch (t:Throwable){
+        catch (t: Exception){
             log.warn("klarte ikke å kjøre migrerings skript. årsak : ${t.message}")
         }
         @OptIn(DelicateCoroutinesApi::class)

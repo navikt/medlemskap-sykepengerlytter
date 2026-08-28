@@ -34,7 +34,7 @@ suspend fun <T> runWithRetryAndMetrics(service: String, operation: String, retry
             throw cause
         }
     }
-    catch (t: Throwable) {
+    catch (t: Exception) {
         logger.warn("Feilet under kall mot $service:$operation : ${t.message}", t)
         throw t
     }
@@ -64,7 +64,7 @@ suspend fun <T> runWithRetryAndMetrics(service: String, operation: String, retry
             throw cause
         }
     }
-    catch (t: Throwable) {
+    catch (t: Exception) {
         logger.warn("Feilet under kall mot $service:$operation : ${t.message}", t,
             kv("callId",callId))
         throw t
@@ -75,28 +75,28 @@ suspend fun <T> runWithMetrics(service: String, operation: String, block: suspen
     var timer: Timer.Sample? = null
     try {
         timer = Timer.start()
-    } catch (t: Throwable) {
+    } catch (t: Exception) {
         logger.warn("Feilet under opprettelsen av timer for $service:$operation", t)
     }
     try {
         val result: T = block.invoke()
         try {
             clientCounter(service, operation, "success").increment()
-        } catch (t: Throwable) {
+        } catch (t: Exception) {
             logger.warn("Feilet under inkrementinger av counter for $service:$operation", t)
         }
         return result
-    } catch (t: Throwable) {
+    } catch (t: Exception) {
         try {
             clientCounter(service, operation, "failure").increment()
-        } catch (t: Throwable) {
+        } catch (t: Exception) {
             logger.warn("Feilet under inkrementinger av counter for $service:$operation", t)
         }
         throw t
     } finally {
         try {
-            timer?.let { it.stop(clientTimer(service, operation)) }
-        } catch (t: Throwable) {
+            timer?.stop(clientTimer(service, operation))
+        } catch (t: Exception) {
             logger.warn("Feilet under loggingen av timer for $service:$operation", t)
         }
     }

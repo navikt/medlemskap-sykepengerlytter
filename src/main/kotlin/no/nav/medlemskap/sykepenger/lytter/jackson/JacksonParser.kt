@@ -3,12 +3,12 @@ package no.nav.medlemskap.sykepenger.lytter.jackson
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import mu.KotlinLogging
 
-import no.nav.medlemskap.sykepenger.lytter.domain.*
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
@@ -34,7 +34,7 @@ class JacksonParser {
     fun parse(jsonString: String): SykepengesoeknadGrunnlag {
         try {
             return mapper.readValue(jsonString)
-        } catch (t: Throwable) {
+        } catch (t: JsonProcessingException) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
             return SykepengesoeknadGrunnlag(
                 "",
@@ -57,7 +57,7 @@ class JacksonParser {
     fun parse(obj: Any): String {
         try {
             return mapper.writeValueAsString(obj)
-        } catch (t: Throwable) {
+        } catch (t: JsonProcessingException) {
             log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
             throw t;
         }
