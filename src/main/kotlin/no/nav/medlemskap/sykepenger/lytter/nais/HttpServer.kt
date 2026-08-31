@@ -11,6 +11,8 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.plugins.ContentTransformationException
+import io.ktor.server.plugins.BadRequestException
+import io.ktor.serialization.JsonConvertException
 import io.ktor.server.response.respond
 
 import io.ktor.server.routing.*
@@ -67,6 +69,18 @@ private val logger = KotlinLogging.logger { }
 internal fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<ContentTransformationException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<JsonConvertException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<BadRequestException> { call, cause ->
             logger.warn(cause) {
                 "Ugyldig request, callId=${call.callId}"
             }
