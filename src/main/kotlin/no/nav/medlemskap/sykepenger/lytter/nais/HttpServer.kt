@@ -86,10 +86,10 @@ internal fun Application.configureStatusPages() {
             }
             call.respond(HttpStatusCode.BadRequest)
         }
+        exception<CancellationException> { _, cause ->
+            throw cause
+        }
         exception<Exception> { call, cause ->
-            if (cause is CancellationException) {
-                throw cause
-            }
             logger.error(cause) {
                 "Uventet feil, callId=${call.callId}"
             }
