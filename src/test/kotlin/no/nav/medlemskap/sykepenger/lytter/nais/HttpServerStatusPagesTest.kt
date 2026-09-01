@@ -42,7 +42,7 @@ class HttpServerStatusPagesTest {
     }
 
     @Test
-    fun `CancellationException propagere`() = testApplication {
+    fun `CancellationException propagerer`() = testApplication {
         application {
             configureStatusPages()
             routing {
