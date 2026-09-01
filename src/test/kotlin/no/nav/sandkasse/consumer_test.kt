@@ -16,13 +16,8 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-fun main(args: Array<String>) {
+fun main() {
     val securityStrategy: SykepengeSoeknadKafkaConfig.SecurityStrategy = PlainStrategy(environment = System.getenv())
-    val value = 1652174197864
-    val date = LocalDateTime.ofInstant(
-        Instant.ofEpochMilli(value), ZoneId.systemDefault()
-    )
-    println(date)
 
     val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(
         mapOf(
