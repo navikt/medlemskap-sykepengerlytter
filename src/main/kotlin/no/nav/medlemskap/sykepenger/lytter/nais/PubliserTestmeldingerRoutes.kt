@@ -8,7 +8,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import mu.KotlinLogging
-import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
@@ -44,21 +43,9 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
                         kilde = Kilde.LOVME_GCP
                     )
 
-                    try {
-                        logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
-                        sykepengesoeknadMottak.behandle(sykepengesøknadMelding)
-                        call.respond(HttpStatusCode.OK)
-                    } catch (t: Throwable) {
-                        logger.error(
-                            "Feil ved behandling av testmelding",
-                            kv("callId", callId),
-                            kv("cause", t.message)
-                        )
-                        call.respond(
-                            HttpStatusCode.InternalServerError,
-                            t.message ?: "Ukjent feil"
-                        )
-                    }
+                    logger.info(teamLogs, "Mottatt testmelding for sykepengesøknad for $callId")
+                    sykepengesoeknadMottak.behandle(sykepengesøknadMelding)
+                    call.respond(HttpStatusCode.OK)
                 }
 
                 post("slett-brukersvar") {
@@ -68,22 +55,17 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
                         call.respond(HttpStatusCode.BadRequest, "Mangler fnr i request body")
                         return@post
                     }
-                    try {
-                        val antallSlettet = persistenceService.slettBrukersporsmaal(fnr)
-                        val antallVurderingerSlettet = persistenceService.slettVurderingsstatus(fnr)
-                        logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål og $antallVurderingerSlettet vurderinger for testperson")
-                        call.respond(
-                            HttpStatusCode.OK,
-                            mapOf(
-                                "fnr" to fnr,
-                                "slettetBrukersvar" to antallSlettet,
-                                "slettetVurderingsstatuser" to antallVurderingerSlettet
-                            )
+                    val antallSlettet = persistenceService.slettBrukersporsmaal(fnr)
+                    val antallVurderingerSlettet = persistenceService.slettVurderingsstatus(fnr)
+                    logger.info(teamLogs, "Slettet $antallSlettet brukerspørsmål og $antallVurderingerSlettet vurderinger for testperson")
+                    call.respond(
+                        HttpStatusCode.OK,
+                        mapOf(
+                            "fnr" to fnr,
+                            "slettetBrukersvar" to antallSlettet,
+                            "slettetVurderingsstatuser" to antallVurderingerSlettet
                         )
-                    } catch (t: Throwable) {
-                        logger.error("Feil ved sletting av brukerspørsmål", kv("cause", t.message))
-                        call.respond(HttpStatusCode.InternalServerError, t.message ?: "Ukjent feil")
-                    }
+                    )
                 }
             }
         }

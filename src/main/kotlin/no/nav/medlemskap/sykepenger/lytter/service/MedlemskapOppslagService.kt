@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.service
 
+import kotlinx.coroutines.CancellationException
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.MedlemskapOppslagAPI
@@ -15,17 +16,17 @@ class MedlemskapOppslagService(private val medlemskapOppslagClient: MedlemskapOp
     )
 
     suspend fun kallMedlemskapOppslag(request: MedlemskapOppslagRequest, callId: String): String {
-        runCatching { medlemskapOppslagClient.brukerspørsmål(request, callId) }
-            .onFailure {
-                if (it.message?.contains("GradertAdresseException") == true) {
-                    return "GradertAdresse"
-                } else {
-                    throw Exception("Teknisk feil ved kall mot Lovme. Årsak : ${it.message}")
-                }
+        return try {
+            medlemskapOppslagClient.brukerspørsmål(request, callId)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            if (e.message?.contains("GradertAdresseException") == true) {
+                "GradertAdresse"
+            } else {
+                throw IllegalStateException("Teknisk feil ved kall mot Lovme", e)
             }
-            .onSuccess { return it }
-        return "" //umulig å komme hit?
-
+        }
     }
 
     suspend fun vurderMedlemskap(request: MedlemskapOppslagRequest, callId: String): String {

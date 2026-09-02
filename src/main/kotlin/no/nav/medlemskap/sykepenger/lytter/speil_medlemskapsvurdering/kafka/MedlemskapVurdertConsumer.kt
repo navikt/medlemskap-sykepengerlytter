@@ -8,6 +8,7 @@ import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.SpeilRespo
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
+import org.apache.kafka.common.KafkaException
 import java.time.Duration
 
 class MedlemskapVurdertConsumer(
@@ -43,7 +44,7 @@ class MedlemskapVurdertConsumer(
             } catch (e: WakeupException) {
                 log.info("MedlemskapVurdertConsumer mottok wakeup-signal og avslutter")
                 break
-            } catch (t: Throwable) {
+            } catch (t: KafkaException) {
                 log.error("Feil ved polling fra $topic: ${t.message}", t)
                 delay(1_000)
                 emit(emptyList())
@@ -53,8 +54,11 @@ class MedlemskapVurdertConsumer(
         records.forEach { recordHandler.behandle(it) }
     }.onEach {
         if (kafkaEnabled && it.isNotEmpty()) {
-            runCatching { consumer.commitSync() }
-                .onFailure { e -> log.error("Commit feilet for $topic: ${e.message}") }
+            try {
+                consumer.commitSync()
+            } catch (e: KafkaException) {
+                log.error("Commit feilet for $topic: ${e.message}", e)
+            }
         }
     }
 }

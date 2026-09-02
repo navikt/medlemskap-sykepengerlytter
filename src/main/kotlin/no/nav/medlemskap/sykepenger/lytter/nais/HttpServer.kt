@@ -11,6 +11,8 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.plugins.ContentTransformationException
+import io.ktor.server.plugins.BadRequestException
+import io.ktor.serialization.JsonConvertException
 import io.ktor.server.response.respond
 
 import io.ktor.server.routing.*
@@ -63,6 +65,38 @@ import java.io.Writer
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
+
+internal fun Application.configureStatusPages() {
+    install(StatusPages) {
+        exception<ContentTransformationException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<JsonConvertException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<BadRequestException> { call, cause ->
+            logger.warn(cause) {
+                "Ugyldig request, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        exception<CancellationException> { _, cause ->
+            throw cause
+        }
+        exception<Exception> { call, cause ->
+            logger.error(cause) {
+                "Uventet feil, callId=${call.callId}"
+            }
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+    }
+}
 
 fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()) = embeddedServer(Netty, applicationEngineEnvironment {
     val useAuthentication = true
@@ -128,23 +162,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
             register(ContentType.Application.Json, JacksonConverter(objectMapper))
         }
 
-        install(StatusPages) {
-            exception<ContentTransformationException> { call, cause ->
-                logger.warn(cause) {
-                    "Ugyldig request, callId=${call.callId}"
-                }
-                call.respond(HttpStatusCode.BadRequest)
-            }
-            exception<Exception> { call, cause ->
-                if (cause is CancellationException) {
-                    throw cause
-                }
-                logger.error(cause) {
-                    "Uventet feil, callId=${call.callId}"
-                }
-                call.respond(HttpStatusCode.InternalServerError)
-            }
-        }
+        configureStatusPages()
 
         if (useAuthentication) {
             //logger.info { "Installerer authentication" }

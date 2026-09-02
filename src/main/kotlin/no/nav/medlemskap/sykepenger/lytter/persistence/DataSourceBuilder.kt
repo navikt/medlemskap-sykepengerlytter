@@ -35,15 +35,7 @@ class DataSourceBuilder(env: Map<String, String>) {
     fun getDataSource() = HikariDataSource(hikariConfig)
 
 
-    fun migrate() =getDataSource().use {
-        try {
-            runMigration(it)
-        }
-        catch (t:Throwable){
-            //TODO: Logging
-        }
-
-    }
+    fun migrate() = getDataSource().use(::runMigration)
 
 
     private fun runMigration(dataSource: DataSource) =
