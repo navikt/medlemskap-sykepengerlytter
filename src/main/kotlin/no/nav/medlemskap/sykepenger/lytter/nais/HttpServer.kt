@@ -91,6 +91,7 @@ fun createHttpServer(consumeJob: Job, bomloService: BomloService, env: Map<Strin
         routing {
             naisRoutes(consumeJob,bomloService)
             sykepengerLytterRoutes(bomloService)
+            speilVurderingTestRoutes(bomloService)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, brukersporsmaalService)
             publiserTestmeldinger(sykepengesoeknadMottak, persistenceService)
         }
