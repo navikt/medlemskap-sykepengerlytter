@@ -1,5 +1,6 @@
 package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
+import io.ktor.client.plugins.ResponseException
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.callid.*
@@ -26,14 +27,28 @@ fun Routing.speilvurderingRoute(
 
             val callId = call.callId ?: UUID.randomUUID().toString()
             routeLogger.logAutentisert(callId)
+            val start = System.currentTimeMillis()
             val request = call.receive<SpeilvurderingRequest>()
             routeLogger.logForespørselMottatt(request, callId)
 
-            val response = hentEllerOpprettVurdering.finnVurdering(request, callId)
-            val speilRespons = speilvurderingMapper.tilSpeilResponse(response)
-            routeLogger.logVurderingFunnet(response,  callId)
+            try {
+                val response = hentEllerOpprettVurdering.finnVurdering(request, callId)
+                val speilRespons = speilvurderingMapper.tilSpeilResponse(response)
+                routeLogger.logVurderingFunnet(response, callId)
 
-            call.respond(HttpStatusCode.OK, speilRespons)
+                call.respond(HttpStatusCode.OK, speilRespons)
+            } catch (cause: ResponseException) {
+                if (!cause.message.orEmpty().contains("GradertAdresseException")) {
+                    throw cause
+                }
+                routeLogger.logFeilVedKall(
+                    request = request,
+                    callId = callId,
+                    cause = cause,
+                    tidsbrukInMs = System.currentTimeMillis() - start
+                )
+                call.respond(HttpStatusCode.InternalServerError, cause.message!!)
+            }
         }
     }
 }

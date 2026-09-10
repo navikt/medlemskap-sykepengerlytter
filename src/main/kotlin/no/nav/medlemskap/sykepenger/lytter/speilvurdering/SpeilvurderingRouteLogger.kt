@@ -44,4 +44,20 @@ internal class SpeilvurderingRouteLogger {
             kv("avklaringer", response.avklaringer.toString()),
             kv("kanal", response.kanal)
         )
+
+    fun logFeilVedKall(
+        request: SpeilvurderingRequest,
+        callId: String,
+        cause: Throwable,
+        tidsbrukInMs: Long
+    ) =
+        log.info(
+            teamLogs,
+            "Feil ved kall mot medlemskap-oppslag",
+            kv("callId", callId),
+            kv("fnr", request.fnr),
+            kv("cause", cause.stackTrace),
+            kv("tidsbrukInMs", tidsbrukInMs),
+            kv("endpoint", "speilvurdering")
+        )
 }
