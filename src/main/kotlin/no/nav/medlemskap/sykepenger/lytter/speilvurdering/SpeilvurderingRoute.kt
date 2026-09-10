@@ -27,7 +27,6 @@ fun Routing.speilvurderingRoute(
 
             val callId = call.callId ?: UUID.randomUUID().toString()
             routeLogger.logAutentisert(callId)
-            val start = System.currentTimeMillis()
             val request = call.receive<SpeilvurderingRequest>()
             routeLogger.logForespørselMottatt(request, callId)
 
@@ -41,12 +40,7 @@ fun Routing.speilvurderingRoute(
                 if (!cause.message.orEmpty().contains("GradertAdresseException")) {
                     throw cause
                 }
-                routeLogger.logFeilVedKall(
-                    request = request,
-                    callId = callId,
-                    cause = cause,
-                    tidsbrukInMs = System.currentTimeMillis() - start
-                )
+                routeLogger.logGradertAdresse()
                 call.respond(HttpStatusCode.InternalServerError, cause.message!!)
             }
         }
