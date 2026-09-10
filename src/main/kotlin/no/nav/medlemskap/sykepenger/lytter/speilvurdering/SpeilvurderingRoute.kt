@@ -40,7 +40,7 @@ fun Routing.speilvurderingRoute(
                 if (!cause.message.orEmpty().contains("GradertAdresseException")) {
                     throw cause
                 }
-                routeLogger.logGradertAdresse()
+                routeLogger.logGradertAdresse(callId)
                 call.respond(HttpStatusCode.InternalServerError, cause.message!!)
             }
         }

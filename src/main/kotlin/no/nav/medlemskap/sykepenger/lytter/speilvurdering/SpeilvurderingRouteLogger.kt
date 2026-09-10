@@ -45,6 +45,10 @@ internal class SpeilvurderingRouteLogger {
             kv("kanal", response.kanal)
         )
 
-    fun logGradertAdresse() =
-        log.info(teamLogs, "Gradert adresse for forespørsel fra Speil. Returnerer derfor feilmelding tilbake.")
+    fun logGradertAdresse(callId: String) =
+        log.info(
+            teamLogs,
+            "Gradert adresse for forespørsel fra Speil. Returnerer derfor feilmelding tilbake.",
+            kv("callId", callId)
+        )
 }
