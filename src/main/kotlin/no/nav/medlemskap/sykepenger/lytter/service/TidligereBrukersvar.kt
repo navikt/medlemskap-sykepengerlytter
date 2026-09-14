@@ -25,6 +25,11 @@ class TidligereBrukersvar(private val persistenceService: PersistenceService) {
             .maxByOrNull { it.eventDate }
             .also { loggNyesteBrukersvar(fnr, it) }
 
+    fun finnNyesteBrukersvar(fnr: String): Brukerspørsmål? =
+        persistenceService
+            .hentbrukersporsmaalForFnr(fnr)
+            .maxByOrNull { it.eventDate }
+
     private fun loggNyesteBrukersvar(fnr: String, brukersvar: Brukerspørsmål?) {
         if (brukersvar == null) {
             log.info(

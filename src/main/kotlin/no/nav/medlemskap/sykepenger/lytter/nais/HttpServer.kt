@@ -187,7 +187,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
                 speilvurderingMapper = speilvurderingMapper
             )
             medlemskapsstatusRoute(finnMedlemskapsstatus)
-            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
+            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons, tidligereBrukersvar)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }
     }

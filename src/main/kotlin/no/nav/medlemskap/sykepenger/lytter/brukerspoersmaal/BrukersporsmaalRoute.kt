@@ -10,6 +10,7 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.Request
+import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 
 private val logger = KotlinLogging.logger { }
@@ -18,7 +19,8 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
     medlemskapOppslagService: MedlemskapOppslagService,
-    lagFlexRespons: LagFlexRespons
+    lagFlexRespons: LagFlexRespons,
+    tidligereBrukersvar: TidligereBrukersvar
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
@@ -64,6 +66,28 @@ fun Routing.brukerSporsmaalRoute(
                         callId = callId
                     )
                     call.respond(HttpStatusCode.OK, flexRespons)
+                }
+            }
+        }
+
+        if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
+            get("/hentNyesteBrukersvar") {
+                val authContext = authorizationHandler.extractAuthContext(call)
+                val callId = authContext.callId
+                logger.info(
+                    "kall autentisert, url : /hentNyesteBrukersvar",
+                    kv("callId", callId)
+                )
+                val fnr = call.request.headers["fnr"]
+                if (fnr.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Header 'fnr' mangler")
+                    return@get
+                }
+                val brukerspørsmål = tidligereBrukersvar.finnNyesteBrukersvar(fnr)
+                if (brukerspørsmål == null) {
+                    call.respond(HttpStatusCode.NoContent)
+                } else {
+                    call.respond(HttpStatusCode.OK, brukerspørsmål)
                 }
             }
         }
