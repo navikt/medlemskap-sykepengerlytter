@@ -36,6 +36,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
+import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.testrammeverkRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
@@ -187,7 +188,8 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
                 speilvurderingMapper = speilvurderingMapper
             )
             medlemskapsstatusRoute(finnMedlemskapsstatus)
-            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons, tidligereBrukersvar)
+            brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
+            testrammeverkRoute(authorizationHandler, tidligereBrukersvar)
             publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
         }
     }

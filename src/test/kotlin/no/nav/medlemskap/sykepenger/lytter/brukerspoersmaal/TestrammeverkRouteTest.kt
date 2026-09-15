@@ -23,14 +23,13 @@ import io.mockk.mockk
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
-import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class BrukersporsmaalRouteHentNyesteBrukersvarTest {
+class TestrammeverkRouteTest {
 
     private val hemmelighet = "test-hemmelighet"
     private val fnr = "12345678910"
@@ -58,10 +57,8 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
                 }
             }
             routing {
-                brukerSporsmaalRoute(
+                testrammeverkRoute(
                     authorizationHandler = AuthorizationHandler(),
-                    medlemskapOppslagService = mockk<MedlemskapOppslagService>(relaxed = true),
-                    lagFlexRespons = mockk<LagFlexRespons>(relaxed = true),
                     tidligereBrukersvar = tidligereBrukersvar,
                     erDevMiljø = erDevMiljø
                 )

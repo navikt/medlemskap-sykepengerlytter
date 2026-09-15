@@ -2,7 +2,6 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -11,7 +10,6 @@ import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.Request
-import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 
 private val logger = KotlinLogging.logger { }
@@ -20,9 +18,7 @@ private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
     medlemskapOppslagService: MedlemskapOppslagService,
-    lagFlexRespons: LagFlexRespons,
-    tidligereBrukersvar: TidligereBrukersvar,
-    erDevMiljø: Boolean = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
+    lagFlexRespons: LagFlexRespons
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
@@ -71,30 +67,5 @@ fun Routing.brukerSporsmaalRoute(
                 }
             }
         }
-
-        if (erDevMiljø) {
-            post("/hentNyesteBrukersvar") {
-                val authContext = authorizationHandler.extractAuthContext(call)
-                val callId = authContext.callId
-                logger.info(
-                    "kall autentisert, url : /hentNyesteBrukersvar",
-                    kv("callId", callId)
-                )
-                val request = call.receive<HentNyesteBrukersvarRequest>()
-                val fnr = request.fnr
-                if (fnr.isBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "Felt 'fnr' mangler i body")
-                    return@post
-                }
-                val brukerspørsmål = tidligereBrukersvar.finnNyesteBrukersvar(fnr)
-                if (brukerspørsmål == null) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.OK, brukerspørsmål)
-                }
-            }
-        }
     }
 }
-
-data class HentNyesteBrukersvarRequest(val fnr: String)
