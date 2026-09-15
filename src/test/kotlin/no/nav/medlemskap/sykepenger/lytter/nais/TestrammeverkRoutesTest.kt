@@ -1,4 +1,4 @@
-package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
+package no.nav.medlemskap.sykepenger.lytter.nais
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -23,13 +23,15 @@ import io.mockk.mockk
 import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
+import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class TestrammeverkRouteTest {
+class TestrammeverkRoutesTest {
 
     private val hemmelighet = "test-hemmelighet"
     private val fnr = "12345678910"
@@ -46,6 +48,9 @@ class TestrammeverkRouteTest {
         application: io.ktor.server.application.Application,
         erDevMiljø: Boolean = true
     ) {
+        val sykepengesoeknadMottak = mockk<SykepengesoeknadMottak>(relaxed = true)
+        val persistenceService = mockk<PersistenceService>(relaxed = true)
+
         application.apply {
             install(ContentNegotiation) {
                 register(ContentType.Application.Json, JacksonConverter(objectMapper))
@@ -57,7 +62,9 @@ class TestrammeverkRouteTest {
                 }
             }
             routing {
-                testrammeverkRoute(
+                testrammeverkRoutes(
+                    sykepengesoeknadMottak = sykepengesoeknadMottak,
+                    persistenceService = persistenceService,
                     authorizationHandler = AuthorizationHandler(),
                     tidligereBrukersvar = tidligereBrukersvar,
                     erDevMiljø = erDevMiljø

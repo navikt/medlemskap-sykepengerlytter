@@ -36,7 +36,6 @@ import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.HentGjenbrukbareBrukerspoersmaal
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.LagFlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.brukerSporsmaalRoute
-import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.testrammeverkRoute
 import no.nav.medlemskap.sykepenger.lytter.config.*
 import no.nav.medlemskap.sykepenger.lytter.config.JwtConfig.Companion.REALM
 import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
@@ -131,7 +130,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         speilvurderingMapper = speilvurderingMapper
     )
 
-    //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
+    //denne opprettes her fordi den brukes i routen testrammeverkRoutes til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
             filtrering = SykepengesoeknadFiltrering(persistenceService),
@@ -189,8 +188,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
             )
             medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
-            testrammeverkRoute(authorizationHandler, tidligereBrukersvar)
-            publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
+            testrammeverkRoutes(sykepengesøknadMottak, persistenceService, authorizationHandler, tidligereBrukersvar)
         }
     }
 })
