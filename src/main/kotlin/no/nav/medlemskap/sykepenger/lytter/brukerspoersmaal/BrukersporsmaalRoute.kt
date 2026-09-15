@@ -2,6 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -72,17 +73,18 @@ fun Routing.brukerSporsmaalRoute(
         }
 
         if (erDevMiljø) {
-            get("/hentNyesteBrukersvar") {
+            post("/hentNyesteBrukersvar") {
                 val authContext = authorizationHandler.extractAuthContext(call)
                 val callId = authContext.callId
                 logger.info(
                     "kall autentisert, url : /hentNyesteBrukersvar",
                     kv("callId", callId)
                 )
-                val fnr = call.request.headers["fnr"]
-                if (fnr.isNullOrBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "Header 'fnr' mangler")
-                    return@get
+                val request = call.receive<HentNyesteBrukersvarRequest>()
+                val fnr = request.fnr
+                if (fnr.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Felt 'fnr' mangler i body")
+                    return@post
                 }
                 val brukerspørsmål = tidligereBrukersvar.finnNyesteBrukersvar(fnr)
                 if (brukerspørsmål == null) {
@@ -94,3 +96,5 @@ fun Routing.brukerSporsmaalRoute(
         }
     }
 }
+
+data class HentNyesteBrukersvarRequest(val fnr: String)

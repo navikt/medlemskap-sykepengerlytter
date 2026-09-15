@@ -2,12 +2,14 @@ package no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -82,9 +84,10 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
         application { installTestApp(tidligereBrukersvar, this) }
 
-        val response = client.get("/hentNyesteBrukersvar") {
+        val response = client.post("/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
-            header("fnr", fnr)
+            contentType(ContentType.Application.Json)
+            setBody("""{"fnr":"$fnr"}""")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -98,22 +101,25 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
         application { installTestApp(tidligereBrukersvar, this) }
 
-        val response = client.get("/hentNyesteBrukersvar") {
+        val response = client.post("/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
-            header("fnr", fnr)
+            contentType(ContentType.Application.Json)
+            setBody("""{"fnr":"$fnr"}""")
         }
 
         assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
     @Test
-    fun `returnerer 400 når fnr header mangler`() = testApplication {
+    fun `returnerer 400 når fnr mangler i body`() = testApplication {
         val tidligereBrukersvar = mockk<TidligereBrukersvar>(relaxed = true)
 
         application { installTestApp(tidligereBrukersvar, this) }
 
-        val response = client.get("/hentNyesteBrukersvar") {
+        val response = client.post("/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
+            contentType(ContentType.Application.Json)
+            setBody("""{"fnr":""}""")
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -125,8 +131,9 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
         application { installTestApp(tidligereBrukersvar, this) }
 
-        val response = client.get("/hentNyesteBrukersvar") {
-            header("fnr", fnr)
+        val response = client.post("/hentNyesteBrukersvar") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"fnr":"$fnr"}""")
         }
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
@@ -138,9 +145,10 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
         application { installTestApp(tidligereBrukersvar, this, erDevMiljø = false) }
 
-        val response = client.get("/hentNyesteBrukersvar") {
-            header(HttpHeaders.Authorization, "******")
-            header("fnr", fnr)
+        val response = client.post("/hentNyesteBrukersvar") {
+            header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
+            contentType(ContentType.Application.Json)
+            setBody("""{"fnr":"$fnr"}""")
         }
 
         assertEquals(HttpStatusCode.NotFound, response.status)
