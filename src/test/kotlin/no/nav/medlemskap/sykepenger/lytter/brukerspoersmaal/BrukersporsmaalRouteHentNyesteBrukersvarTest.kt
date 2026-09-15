@@ -42,9 +42,9 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
     private fun installTestApp(
         tidligereBrukersvar: TidligereBrukersvar,
-        routing: io.ktor.server.application.Application
+        application: io.ktor.server.application.Application
     ) {
-        routing.apply {
+        application.apply {
             install(ContentNegotiation) {
                 register(ContentType.Application.Json, JacksonConverter(objectMapper))
             }
