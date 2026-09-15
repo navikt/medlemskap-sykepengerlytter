@@ -42,7 +42,8 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
 
     private fun installTestApp(
         tidligereBrukersvar: TidligereBrukersvar,
-        application: io.ktor.server.application.Application
+        application: io.ktor.server.application.Application,
+        erDevMiljø: Boolean = true
     ) {
         application.apply {
             install(ContentNegotiation) {
@@ -60,7 +61,7 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
                     medlemskapOppslagService = mockk<MedlemskapOppslagService>(relaxed = true),
                     lagFlexRespons = mockk<LagFlexRespons>(relaxed = true),
                     tidligereBrukersvar = tidligereBrukersvar,
-                    erDevMiljø = true
+                    erDevMiljø = erDevMiljø
                 )
             }
         }
@@ -129,5 +130,19 @@ class BrukersporsmaalRouteHentNyesteBrukersvarTest {
         }
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
+    fun `endepunktet finnes ikke utenfor dev-miljø`() = testApplication {
+        val tidligereBrukersvar = mockk<TidligereBrukersvar>(relaxed = true)
+
+        application { installTestApp(tidligereBrukersvar, this, erDevMiljø = false) }
+
+        val response = client.get("/hentNyesteBrukersvar") {
+            header(HttpHeaders.Authorization, "******")
+            header("fnr", fnr)
+        }
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
     }
 }
