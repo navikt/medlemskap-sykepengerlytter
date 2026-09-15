@@ -20,7 +20,8 @@ fun Routing.brukerSporsmaalRoute(
     authorizationHandler: AuthorizationHandler,
     medlemskapOppslagService: MedlemskapOppslagService,
     lagFlexRespons: LagFlexRespons,
-    tidligereBrukersvar: TidligereBrukersvar
+    tidligereBrukersvar: TidligereBrukersvar,
+    erDevMiljø: Boolean = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
 ) {
     authenticate("azureAuth") {
         get("/brukersporsmal") {
@@ -70,7 +71,7 @@ fun Routing.brukerSporsmaalRoute(
             }
         }
 
-        if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
+        if (erDevMiljø) {
             get("/hentNyesteBrukersvar") {
                 val authContext = authorizationHandler.extractAuthContext(call)
                 val callId = authContext.callId
