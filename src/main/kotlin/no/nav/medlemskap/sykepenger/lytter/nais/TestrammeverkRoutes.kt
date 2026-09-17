@@ -14,7 +14,6 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
 import java.util.*
@@ -29,7 +28,7 @@ fun Routing.testrammeverkRoutes(
     sykepengesoeknadMottak: SykepengesoeknadMottak,
     persistenceService: PersistenceService,
     authorizationHandler: AuthorizationHandler,
-    tidligereBrukersvar: TidligereBrukersvar,
+    testrammeverkService: TestrammeverkService,
     erDevMiljø: Boolean = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
 ) {
 
@@ -75,28 +74,26 @@ fun Routing.testrammeverkRoutes(
                         )
                     )
                 }
-            }
-        }
 
-        authenticate("azureAuth") {
-            post("/hentNyesteBrukersvar") {
-                val authContext = authorizationHandler.extractAuthContext(call)
-                val callId = authContext.callId
-                logger.info(
-                    "kall autentisert, url : /hentNyesteBrukersvar",
-                    kv("callId", callId)
-                )
-                val request = call.receive<HentNyesteBrukersvarRequest>()
-                val fnr = request.fnr
-                if (fnr.isBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "Felt 'fnr' mangler i body")
-                    return@post
-                }
-                val brukerspørsmål = tidligereBrukersvar.finnNyesteBrukersvar(fnr)
-                if (brukerspørsmål == null) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.OK, brukerspørsmål)
+                post("hentNyesteBrukersvar") {
+                    val authContext = authorizationHandler.extractAuthContext(call)
+                    val callId = authContext.callId
+                    logger.info(
+                        "kall autentisert, url : /test/hentNyesteBrukersvar",
+                        kv("callId", callId)
+                    )
+                    val request = call.receive<HentNyesteBrukersvarRequest>()
+                    val fnr = request.fnr
+                    if (fnr.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Felt 'fnr' mangler i body")
+                        return@post
+                    }
+                    val brukerspørsmål = testrammeverkService.finnNyesteBrukersvar(fnr)
+                    if (brukerspørsmål == null) {
+                        call.respond(HttpStatusCode.NoContent)
+                    } else {
+                        call.respond(HttpStatusCode.OK, brukerspørsmål)
+                    }
                 }
             }
         }

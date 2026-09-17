@@ -24,7 +24,6 @@ import no.nav.medlemskap.sykepenger.lytter.config.objectMapper
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -44,7 +43,7 @@ class TestrammeverkRoutesTest {
             .sign(Algorithm.HMAC256(hemmelighet))
 
     private fun installTestApp(
-        tidligereBrukersvar: TidligereBrukersvar,
+        testrammeverkService: TestrammeverkService,
         application: io.ktor.server.application.Application,
         erDevMiljø: Boolean = true
     ) {
@@ -66,7 +65,7 @@ class TestrammeverkRoutesTest {
                     sykepengesoeknadMottak = sykepengesoeknadMottak,
                     persistenceService = persistenceService,
                     authorizationHandler = AuthorizationHandler(),
-                    tidligereBrukersvar = tidligereBrukersvar,
+                    testrammeverkService = testrammeverkService,
                     erDevMiljø = erDevMiljø
                 )
             }
@@ -83,12 +82,12 @@ class TestrammeverkRoutesTest {
             status = "SENDT",
             sporsmaal = null
         )
-        val tidligereBrukersvar = mockk<TidligereBrukersvar>()
-        every { tidligereBrukersvar.finnNyesteBrukersvar(fnr) } returns forventetBrukersvar
+        val testrammeverkService = mockk<TestrammeverkService>()
+        every { testrammeverkService.finnNyesteBrukersvar(fnr) } returns forventetBrukersvar
 
-        application { installTestApp(tidligereBrukersvar, this) }
+        application { installTestApp(testrammeverkService, this) }
 
-        val response = client.post("/hentNyesteBrukersvar") {
+        val response = client.post("/test/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
             contentType(ContentType.Application.Json)
             setBody("""{"fnr":"$fnr"}""")
@@ -100,12 +99,12 @@ class TestrammeverkRoutesTest {
 
     @Test
     fun `returnerer 204 når ingen brukersvar finnes`() = testApplication {
-        val tidligereBrukersvar = mockk<TidligereBrukersvar>()
-        every { tidligereBrukersvar.finnNyesteBrukersvar(fnr) } returns null
+        val testrammeverkService = mockk<TestrammeverkService>()
+        every { testrammeverkService.finnNyesteBrukersvar(fnr) } returns null
 
-        application { installTestApp(tidligereBrukersvar, this) }
+        application { installTestApp(testrammeverkService, this) }
 
-        val response = client.post("/hentNyesteBrukersvar") {
+        val response = client.post("/test/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
             contentType(ContentType.Application.Json)
             setBody("""{"fnr":"$fnr"}""")
@@ -116,11 +115,11 @@ class TestrammeverkRoutesTest {
 
     @Test
     fun `returnerer 400 når fnr mangler i body`() = testApplication {
-        val tidligereBrukersvar = mockk<TidligereBrukersvar>(relaxed = true)
+        val testrammeverkService = mockk<TestrammeverkService>(relaxed = true)
 
-        application { installTestApp(tidligereBrukersvar, this) }
+        application { installTestApp(testrammeverkService, this) }
 
-        val response = client.post("/hentNyesteBrukersvar") {
+        val response = client.post("/test/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
             contentType(ContentType.Application.Json)
             setBody("""{"fnr":""}""")
@@ -131,11 +130,11 @@ class TestrammeverkRoutesTest {
 
     @Test
     fun `returnerer 401 uten token`() = testApplication {
-        val tidligereBrukersvar = mockk<TidligereBrukersvar>(relaxed = true)
+        val testrammeverkService = mockk<TestrammeverkService>(relaxed = true)
 
-        application { installTestApp(tidligereBrukersvar, this) }
+        application { installTestApp(testrammeverkService, this) }
 
-        val response = client.post("/hentNyesteBrukersvar") {
+        val response = client.post("/test/hentNyesteBrukersvar") {
             contentType(ContentType.Application.Json)
             setBody("""{"fnr":"$fnr"}""")
         }
@@ -145,11 +144,11 @@ class TestrammeverkRoutesTest {
 
     @Test
     fun `endepunktet finnes ikke utenfor dev-miljø`() = testApplication {
-        val tidligereBrukersvar = mockk<TidligereBrukersvar>(relaxed = true)
+        val testrammeverkService = mockk<TestrammeverkService>(relaxed = true)
 
-        application { installTestApp(tidligereBrukersvar, this, erDevMiljø = false) }
+        application { installTestApp(testrammeverkService, this, erDevMiljø = false) }
 
-        val response = client.post("/hentNyesteBrukersvar") {
+        val response = client.post("/test/hentNyesteBrukersvar") {
             header(HttpHeaders.Authorization, "Bearer ${gyldigToken()}")
             contentType(ContentType.Application.Json)
             setBody("""{"fnr":"$fnr"}""")
