@@ -8,9 +8,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Kilde
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
+import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import org.slf4j.MarkerFactory
 import java.time.LocalDateTime
@@ -20,12 +22,17 @@ private val logger = KotlinLogging.logger { }
 private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
 
 data class SlettBrukersvarRequest(val fnr: String)
+data class HentNyesteBrukersvarRequest(val fnr: String)
 
-fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak, persistenceService: PersistenceService) {
+fun Routing.testrammeverkRoutes(
+    sykepengesoeknadMottak: SykepengesoeknadMottak,
+    persistenceService: PersistenceService,
+    authorizationHandler: AuthorizationHandler,
+    testrammeverkService: TestrammeverkService,
+    erDevMiljø: Boolean = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
+) {
 
-    val cluster = System.getenv("NAIS_CLUSTER_NAME")
-
-    if (cluster == "dev-gcp") {
+    if (erDevMiljø) {
         route("test") {
             authenticate("azureAuth") {
                 post("publiser-sykepengesoknad") {
@@ -67,8 +74,28 @@ fun Routing.publiserTestmeldinger(sykepengesoeknadMottak: SykepengesoeknadMottak
                         )
                     )
                 }
+
+                post("hentNyesteBrukersvar") {
+                    val authContext = authorizationHandler.extractAuthContext(call)
+                    val callId = authContext.callId
+                    logger.info(
+                        "kall autentisert, url : /test/hentNyesteBrukersvar",
+                        kv("callId", callId)
+                    )
+                    val request = call.receive<HentNyesteBrukersvarRequest>()
+                    val fnr = request.fnr
+                    if (fnr.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Felt 'fnr' mangler i body")
+                        return@post
+                    }
+                    val brukerspørsmål = testrammeverkService.finnNyesteBrukersvar(fnr)
+                    if (brukerspørsmål == null) {
+                        call.respond(HttpStatusCode.NoContent)
+                    } else {
+                        call.respond(HttpStatusCode.OK, brukerspørsmål)
+                    }
+                }
             }
         }
-
     }
 }

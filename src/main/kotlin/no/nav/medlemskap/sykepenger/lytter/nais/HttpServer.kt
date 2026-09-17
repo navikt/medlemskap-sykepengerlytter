@@ -117,6 +117,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
     )
     val medlemskapOppslagService = MedlemskapOppslagService(configuration)
     val tidligereBrukersvar = TidligereBrukersvar(persistenceService)
+    val testrammeverkService = TestrammeverkService(persistenceService)
     val gjenbrukBrukersvar = GjenbrukBrukersvar(tidligereBrukersvar)
     val lagFlexRespons = LagFlexRespons(HentGjenbrukbareBrukerspoersmaal(tidligereBrukersvar))
     val speilvurderingMapper = SpeilvurderingMapper()
@@ -130,7 +131,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
         speilvurderingMapper = speilvurderingMapper
     )
 
-    //denne opprettes her fordi den brukes i routen publiserTestmeldinger til testrammeverket
+    //denne opprettes her fordi den brukes i routen testrammeverkRoutes til testrammeverket
     val sykepengesøknadMottak = SykepengesoeknadMottak(
         behandleSykepengesøknad = BehandleSykepengesoeknad(
             filtrering = SykepengesoeknadFiltrering(persistenceService),
@@ -188,7 +189,7 @@ fun createHttpServer(consumeJob: Job, env: Map<String, String> = System.getenv()
             )
             medlemskapsstatusRoute(finnMedlemskapsstatus)
             brukerSporsmaalRoute(authorizationHandler, medlemskapOppslagService, lagFlexRespons)
-            publiserTestmeldinger(sykepengesøknadMottak, persistenceService)
+            testrammeverkRoutes(sykepengesøknadMottak, persistenceService, authorizationHandler, testrammeverkService)
         }
     }
 })
