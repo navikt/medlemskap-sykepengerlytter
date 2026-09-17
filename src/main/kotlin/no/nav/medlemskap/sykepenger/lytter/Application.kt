@@ -1,10 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
-import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
+import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengeSoeknadKafkaConfig
 import no.nav.medlemskap.sykepenger.lytter.nais.createHttpServer
 import no.nav.medlemskap.sykepenger.lytter.speil_medlemskapsvurdering.kafka.MedlemskapVurdertConsumer
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.BrukerSporsmaalConsumer
@@ -17,7 +20,6 @@ fun main() {
 }
 
 class Application(private val env: Environment = System.getenv(),
-                  private val brukerSpørsmaalConsumer: BrukerSporsmaalConsumer = BrukerSporsmaalConsumer(env),
                   private val medlemskapVurdertConsumer: MedlemskapVurdertConsumer = MedlemskapVurdertConsumer()
 ) {
     companion object {
@@ -26,14 +28,25 @@ class Application(private val env: Environment = System.getenv(),
 
     fun start() {
         log.info("Start application")
-        val dataSourceBuilder = DataSourceBuilder(env)
-        dataSourceBuilder.migrate()
-        @OptIn(DelicateCoroutinesApi::class)
-        //val consumeJob = consumer.flow().launchIn(GlobalScope)
-        val consumeJob2 = brukerSpørsmaalConsumer.flow().launchIn(GlobalScope)
-        @OptIn(DelicateCoroutinesApi::class)
-        medlemskapVurdertConsumer.flow().launchIn(GlobalScope)
+        val components = ApplicationComponents.create(env)
+        DataSourceBuilder(env).migrate(components.dataSource)
+        val kafkaConfig = SykepengeSoeknadKafkaConfig(env)
+        val brukerSpørsmaalConsumer = BrukerSporsmaalConsumer(
+            config = kafkaConfig,
+            service = components.sykepengesøknadMottak,
+            consumer = kafkaConfig.createFlexConsumer()
+        )
+        val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val consumeJob = brukerSpørsmaalConsumer.flow().launchIn(applicationScope)
+        medlemskapVurdertConsumer.flow().launchIn(applicationScope)
 
-        createHttpServer(consumeJob2, env).start(wait = true)
+        try {
+            createHttpServer(consumeJob, components).start(wait = true)
+        } finally {
+            applicationScope.cancel()
+            brukerSpørsmaalConsumer.close()
+            medlemskapVurdertConsumer.close()
+            components.dataSource.close()
+        }
     }
 }

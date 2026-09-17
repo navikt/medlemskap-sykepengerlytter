@@ -61,4 +61,8 @@ class MedlemskapVurdertConsumer(
             }
         }
     }
+
+    fun close() {
+        consumer.close()
+    }
 }
