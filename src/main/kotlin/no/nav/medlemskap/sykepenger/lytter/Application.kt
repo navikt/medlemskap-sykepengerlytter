@@ -33,7 +33,7 @@ class Application(private val env: Environment = System.getenv(),
         val kafkaConfig = SykepengesoeknadKafkaConfig(env)
         val sykepengesøknadConsumer = SykepengesoeknadConsumer(
             config = kafkaConfig,
-            service = components.sykepengesøknadMottak,
+            service = components.sykepengesøknad.mottak,
             consumer = kafkaConfig.createFlexConsumer()
         )
         val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

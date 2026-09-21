@@ -33,14 +33,11 @@ class ApplicationComponents private constructor(
     val configuration: Configuration,
     val dataSource: HikariDataSource,
     val persistenceService: PersistenceService,
-    val authorizationHandler: AuthorizationHandler,
-    val medlemskapOppslagService: MedlemskapOppslagService,
-    val lagFlexRespons: LagFlexRespons,
-    val speilvurderingMapper: SpeilvurderingMapper,
-    val hentEllerOpprettVurdering: HentEllerOpprettVurdering,
-    val finnMedlemskapsstatus: FinnMedlemskapsstatus,
-    val sykepengesøknadMottak: SykepengesoeknadMottak,
-    val testrammeverkService: TestrammeverkService
+    val brukerspørsmål: BrukerspoersmaalComponents,
+    val speilvurdering: SpeilvurderingComponents,
+    val medlemskapsstatus: MedlemskapsstatusComponents,
+    val sykepengesøknad: SykepengesøknadComponents,
+    val testrammeverk: TestrammeverkComponents
 ) {
     companion object {
         fun create(env: Map<String, String>): ApplicationComponents {
@@ -81,18 +78,49 @@ class ApplicationComponents private constructor(
                 configuration = configuration,
                 dataSource = dataSource,
                 persistenceService = persistenceService,
-                authorizationHandler = AuthorizationHandler(),
-                medlemskapOppslagService = medlemskapOppslagService,
-                lagFlexRespons = lagFlexRespons,
-                speilvurderingMapper = speilvurderingMapper,
-                hentEllerOpprettVurdering = hentEllerOpprettVurdering,
-                finnMedlemskapsstatus = FinnMedlemskapsstatus(
-                    persistenceService,
-                    MedlemskapsstatusService(sagaClient)
+                brukerspørsmål = BrukerspoersmaalComponents(
+                    authorizationHandler = AuthorizationHandler(),
+                    medlemskapOppslagService = medlemskapOppslagService,
+                    lagFlexRespons = lagFlexRespons
                 ),
-                sykepengesøknadMottak = sykepengesøknadMottak,
-                testrammeverkService = TestrammeverkService(persistenceService)
+                speilvurdering = SpeilvurderingComponents(
+                    speilvurderingMapper = speilvurderingMapper,
+                    hentEllerOpprettVurdering = hentEllerOpprettVurdering
+                ),
+                medlemskapsstatus = MedlemskapsstatusComponents(
+                    finnMedlemskapsstatus = FinnMedlemskapsstatus(
+                        persistenceService,
+                        MedlemskapsstatusService(sagaClient)
+                    )
+                ),
+                sykepengesøknad = SykepengesøknadComponents(sykepengesøknadMottak),
+                testrammeverk = TestrammeverkComponents(
+                    testrammeverkService = TestrammeverkService(persistenceService)
+                )
             )
         }
     }
 }
+
+class BrukerspoersmaalComponents(
+    val authorizationHandler: AuthorizationHandler,
+    val medlemskapOppslagService: MedlemskapOppslagService,
+    val lagFlexRespons: LagFlexRespons
+)
+
+class SpeilvurderingComponents(
+    val speilvurderingMapper: SpeilvurderingMapper,
+    val hentEllerOpprettVurdering: HentEllerOpprettVurdering
+)
+
+class MedlemskapsstatusComponents(
+    val finnMedlemskapsstatus: FinnMedlemskapsstatus
+)
+
+class SykepengesøknadComponents(
+    val mottak: SykepengesoeknadMottak
+)
+
+class TestrammeverkComponents(
+    val testrammeverkService: TestrammeverkService
+)

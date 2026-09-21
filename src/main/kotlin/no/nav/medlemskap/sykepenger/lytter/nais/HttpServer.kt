@@ -117,22 +117,22 @@ fun createHttpServer(consumeJob: Job, components: ApplicationComponents) = embed
         }
 
         routing {
-            naisRoutes(consumeJob, components.hentEllerOpprettVurdering)
+            naisRoutes(consumeJob, components.speilvurdering.hentEllerOpprettVurdering)
             speilvurderingRoute(
-                hentEllerOpprettVurdering = components.hentEllerOpprettVurdering,
-                speilvurderingMapper = components.speilvurderingMapper
+                hentEllerOpprettVurdering = components.speilvurdering.hentEllerOpprettVurdering,
+                speilvurderingMapper = components.speilvurdering.speilvurderingMapper
             )
-            medlemskapsstatusRoute(components.finnMedlemskapsstatus)
+            medlemskapsstatusRoute(components.medlemskapsstatus.finnMedlemskapsstatus)
             brukerSporsmaalRoute(
-                components.authorizationHandler,
-                components.medlemskapOppslagService,
-                components.lagFlexRespons
+                components.brukerspørsmål.authorizationHandler,
+                components.brukerspørsmål.medlemskapOppslagService,
+                components.brukerspørsmål.lagFlexRespons
             )
             testrammeverkRoutes(
-                components.sykepengesøknadMottak,
+                components.sykepengesøknad.mottak,
                 components.persistenceService,
-                components.authorizationHandler,
-                components.testrammeverkService
+                components.brukerspørsmål.authorizationHandler,
+                components.testrammeverk.testrammeverkService
             )
         }
     }
