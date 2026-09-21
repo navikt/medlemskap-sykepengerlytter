@@ -8,10 +8,12 @@ import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMott
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.errors.WakeupException
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.concurrent.atomic.AtomicBoolean
 
 class SykepengesoeknadConsumer(
     private val config: SykepengesoeknadKafkaConfig,
@@ -20,6 +22,7 @@ class SykepengesoeknadConsumer(
     ) {
 
     private val logger = KotlinLogging.logger { }
+    private val running = AtomicBoolean(true)
 
     init {
         consumer.subscribe(listOf(config.flexTopic))
@@ -47,13 +50,18 @@ class SykepengesoeknadConsumer(
 
     fun flow(): Flow<List<SykepengesoeknadMelding>> =
         kotlinx.coroutines.flow.flow {
-            while (true) {
+            while (running.get()) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
                     emit(emptyList<SykepengesoeknadMelding>())
                 } else {
-                    emit(pollMessages())
+                    try {
+                        emit(pollMessages())
+                    } catch (e: WakeupException) {
+                        logger.info("SykepengesoeknadConsumer mottok wakeup-signal og avslutter")
+                        break
+                    }
                 }
             }
         }.onEach { it ->
@@ -64,10 +72,17 @@ class SykepengesoeknadConsumer(
                 consumer.commitSync()
             } catch (e: CommitFailedException) {
                 logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
+            } catch (e: WakeupException) {
+                logger.info("SykepengesoeknadConsumer mottok wakeup-signal under commit og avslutter")
             }
         }.onEach {
             Metrics.incProcessedVurderingerTotal(it.count())
         }
+
+    fun stop() {
+        running.set(false)
+        consumer.wakeup()
+    }
 
     fun close() {
         consumer.close()

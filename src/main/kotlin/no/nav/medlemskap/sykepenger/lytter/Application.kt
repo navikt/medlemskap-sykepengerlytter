@@ -5,6 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengesoeknadKafkaConfig
@@ -38,11 +40,16 @@ class Application(private val env: Environment = System.getenv(),
         )
         val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         val consumeJob = sykepengesøknadConsumer.flow().launchIn(applicationScope)
-        medlemskapVurdertConsumer.flow().launchIn(applicationScope)
+        val medlemskapVurdertJob = medlemskapVurdertConsumer.flow().launchIn(applicationScope)
 
         try {
             createHttpServer(consumeJob, components).start(wait = true)
         } finally {
+            sykepengesøknadConsumer.stop()
+            medlemskapVurdertConsumer.stop()
+            runBlocking {
+                listOf(consumeJob, medlemskapVurdertJob).joinAll()
+            }
             applicationScope.cancel()
             sykepengesøknadConsumer.close()
             medlemskapVurdertConsumer.close()
