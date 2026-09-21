@@ -9,7 +9,7 @@ import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 
 internal class PlainStrategy(private val environment: Environment) :
-    SykepengeSoeknadKafkaConfig.SecurityStrategy {
+    SykepengesoeknadKafkaConfig.SecurityStrategy {
     private val isLocal = EnvironmentKey.IS_LOCAL.equals("true")
 
     override fun securityConfig() = mapOf(

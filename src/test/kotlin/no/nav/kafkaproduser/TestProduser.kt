@@ -3,7 +3,7 @@ package no.nav.kafkaproduser
 
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.config.Environment
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengeSoeknadKafkaConfig
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka.SykepengesoeknadKafkaConfig
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -19,10 +19,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 fun main(args: Array<String>) {
-    SimpleProducer(SykepengeSoeknadKafkaConfig(System.getenv())).produce(2)
+    SimpleProducer(SykepengesoeknadKafkaConfig(System.getenv())).produce(2)
 }
 
-class SimpleProducer(brokers: SykepengeSoeknadKafkaConfig) {
+class SimpleProducer(brokers: SykepengesoeknadKafkaConfig) {
     private val env: Environment = System.getenv()
     private val logger = Logger.getLogger("SimpleProducer")
 
