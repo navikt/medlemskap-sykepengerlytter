@@ -37,6 +37,8 @@ class DataSourceBuilder(env: Map<String, String>) {
 
     fun migrate() = getDataSource().use(::runMigration)
 
+    fun migrate(dataSource: DataSource) = runMigration(dataSource)
+
 
     private fun runMigration(dataSource: DataSource) =
         Flyway.configure()

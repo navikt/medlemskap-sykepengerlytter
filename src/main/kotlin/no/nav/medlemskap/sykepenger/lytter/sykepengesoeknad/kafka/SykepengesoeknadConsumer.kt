@@ -3,51 +3,26 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.kafka
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import mu.KotlinLogging
-import no.nav.medlemskap.sykepenger.lytter.config.Environment
-import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.nais.Metrics
-import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
-import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
-import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
-import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
-import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.BehandleSykepengesoeknad
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.LagreVurderingsstatus
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepengesoeknad.SykepengesoeknadFiltrering
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.lagre_brukerspoersmaal.LagreBrukerspoersmaal
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.errors.WakeupException
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.concurrent.atomic.AtomicBoolean
 
-class BrukerSporsmaalConsumer(
-    environment: Environment,
-    private val persistenceService: PersistenceService = PersistenceService(
-        PostgresMedlemskapVurdertRepository(DataSourceBuilder(environment).getDataSource()),
-        PostgresBrukersporsmaalRepository(DataSourceBuilder(environment).getDataSource())
-    ),
-    private val config: SykepengeSoeknadKafkaConfig = SykepengeSoeknadKafkaConfig(environment),
-    private val service: SykepengesoeknadMottak = SykepengesoeknadMottak(
-        behandleSykepengesøknad = BehandleSykepengesoeknad(
-            filtrering = SykepengesoeknadFiltrering(persistenceService),
-            utledBrukerinput = UtledBrukerinput(GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))),
-            lagreVurderingsstatus = LagreVurderingsstatus(persistenceService),
-            medlemskapOppslagService = MedlemskapOppslagService(Configuration())
-        ),
-        lagreBrukerspoersmaal = LagreBrukerspoersmaal(persistenceService)
-    ),
-    private val consumer: KafkaConsumer<String, String> = config.createFlexConsumer(),
-
+class SykepengesoeknadConsumer(
+    private val config: SykepengesoeknadKafkaConfig,
+    private val service: SykepengesoeknadMottak,
+    private val consumer: KafkaConsumer<String, String>,
     ) {
 
     private val logger = KotlinLogging.logger { }
+    private val running = AtomicBoolean(true)
 
     init {
         consumer.subscribe(listOf(config.flexTopic))
@@ -75,13 +50,18 @@ class BrukerSporsmaalConsumer(
 
     fun flow(): Flow<List<SykepengesoeknadMelding>> =
         kotlinx.coroutines.flow.flow {
-            while (true) {
+            while (running.get()) {
 
                 if (config.brukersporsmaal_enabled != "Ja") {
                     logger.debug("Kafka is disabled. Does not fetch messages from topic")
                     emit(emptyList<SykepengesoeknadMelding>())
                 } else {
-                    emit(pollMessages())
+                    try {
+                        emit(pollMessages())
+                    } catch (e: WakeupException) {
+                        logger.info("SykepengesoeknadConsumer mottok wakeup-signal og avslutter")
+                        break
+                    }
                 }
             }
         }.onEach { it ->
@@ -92,9 +72,19 @@ class BrukerSporsmaalConsumer(
                 consumer.commitSync()
             } catch (e: CommitFailedException) {
                 logger.error { "Commit feilet med feilmeldingen: ${e.message}" }
+            } catch (e: WakeupException) {
+                logger.info("SykepengesoeknadConsumer mottok wakeup-signal under commit og avslutter")
             }
         }.onEach {
             Metrics.incProcessedVurderingerTotal(it.count())
         }
 
+    fun stop() {
+        running.set(false)
+        consumer.wakeup()
+    }
+
+    fun close() {
+        consumer.close()
+    }
 }

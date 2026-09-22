@@ -10,6 +10,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
 import org.apache.kafka.common.KafkaException
 import java.time.Duration
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MedlemskapVurdertConsumer(
     private val topic: String = MedlemskapVurdertKafkaConfig.TOPIC,
@@ -21,6 +22,7 @@ class MedlemskapVurdertConsumer(
 ) {
 
     private val log = KotlinLogging.logger { }
+    private val running = AtomicBoolean(true)
 
     init {
         if (kafkaEnabled) {
@@ -32,7 +34,7 @@ class MedlemskapVurdertConsumer(
     }
 
     fun flow(): Flow<List<ConsumerRecord<String, String>>> = kotlinx.coroutines.flow.flow {
-        while (true) {
+        while (running.get()) {
             if (!kafkaEnabled) {
                 delay(5_000)
                 emit(emptyList())
@@ -60,5 +62,14 @@ class MedlemskapVurdertConsumer(
                 log.error("Commit feilet for $topic: ${e.message}", e)
             }
         }
+    }
+
+    fun stop() {
+        running.set(false)
+        consumer.wakeup()
+    }
+
+    fun close() {
+        consumer.close()
     }
 }
