@@ -98,7 +98,11 @@ class SykepengesoeknadMottak(
     private fun logMottattFraFlex(
         sykepengesøknadRecord: SykepengesoeknadMelding,
         sykepengesøknadGrunnlag: SykepengesoeknadGrunnlag
-    ) =
+    ) {
+        log.info(
+            "Behandler innkommende sykepengesøknad", kv("callId", sykepengesøknadRecord.key)
+        )
+
         log.info(
             teamLogs,
             "${sykepengesøknadRecord.kilde}: Mottatt melding fra Flex for: ${sykepengesøknadGrunnlag.fnr}, status: ${sykepengesøknadGrunnlag.status}, type: ${sykepengesøknadGrunnlag.type}",
@@ -108,6 +112,7 @@ class SykepengesoeknadMottak(
             kv("partition", sykepengesøknadRecord.partition),
             kv("offset", sykepengesøknadRecord.offset)
         )
+    }
 
     private fun logOppfyllerIkkeInngangskriterier(
         sykepengesøknadRecord: SykepengesoeknadMelding,
