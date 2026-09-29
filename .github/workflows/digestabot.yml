@@ -1,0 +1,26 @@
+name: Digestabot Update
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+jobs:
+  digestabot-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1
+        with:
+          egress-policy: audit
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - name: Run Digestabot
+        uses: navikt/digestabot@3302a753e533ceb9ec216de7f78345436cd636e3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          team: medlemskap
