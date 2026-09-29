@@ -1,20 +1,20 @@
-val ktorVersion = "2.3.12"
-val kafkaVersion = "3.7.1"
-val jacksonVersion = "2.17.2"
+val ktorVersion = "2.3.13"
+val kafkaVersion = "3.9.2"
+val jacksonVersion = "2.22"
 val konfigVersion = "1.6.10.0"
-val kotlinLoggerVersion = "1.8.3"
-val resilience4jVersion = "1.5.0"
+val kotlinLoggerVersion = "1.12.5"
+val resilience4jVersion = "1.7.1"
 val logstashVersion = "8.1"
-val logbackVersion = "1.3.14"
-val flywayVersion = "9.5.1"
+val logbackVersion = "1.6.4"
+val flywayVersion = "9.22.3"
 val hikariVersion = "5.1.0"
-val kotliqueryVersion = "1.3.1"
-val httpClientVersion = "4.5.13"
+val kotliqueryVersion = "1.9.1"
+val httpClientVersion = "4.5.14"
 val testcontainerVersion = "1.21.4"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.25"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -35,7 +35,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
@@ -57,7 +57,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.7.0")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
@@ -65,18 +65,18 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation(platform("org.junit:junit-bom:5.14.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("io.mockk:mockk:1.14.11")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.testcontainers:kafka:$testcontainerVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainerVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainerVersion")
-    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("org.assertj:assertj-core:3.27.7")
     //Database
-    implementation("org.postgresql:postgresql:42.7.4")
+    implementation("org.postgresql:postgresql:42.7.13")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
