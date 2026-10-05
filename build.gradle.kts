@@ -1,12 +1,12 @@
 val ktorVersion = "2.3.13"
 val kafkaVersion = "3.9.2"
-val jacksonVersion = "2.22.0"
+val jacksonVersion = "2.22.3"
 val jacksonAnnotationsVersion = "2.22"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.12.5"
 val resilience4jVersion = "1.7.1"
 val logstashVersion = "8.1"
-val logbackVersion = "1.6.4"
+val logbackVersion = "1.6.5"
 val flywayVersion = "9.22.3"
 val hikariVersion = "5.1.0"
 val kotliqueryVersion = "1.9.1"
@@ -15,7 +15,7 @@ val testcontainerVersion = "1.21.4"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.4.20"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -36,7 +36,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
@@ -58,7 +58,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.12.13")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
