@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val ktorVersion = "2.3.13"
 val kafkaVersion = "3.9.2"
 val jacksonVersion = "2.22.3"
@@ -58,7 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
+    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.17.1")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
@@ -83,12 +85,14 @@ dependencies {
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_21
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
+}
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "21"
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-    }
     shadowJar {
         archiveBaseName.set("app")
         archiveClassifier.set("")
