@@ -10,13 +10,13 @@ import no.nav.medlemskap.sykepenger.lytter.http.apacheHttpClient
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class AzureAdOpenIdConfiguration(
-    @JsonProperty("jwks_uri")
+    @param:JsonProperty("jwks_uri")
     val jwksUri: String,
-    @JsonProperty("issuer")
+    @param:JsonProperty("issuer")
     val issuer: String,
-    @JsonProperty("token_endpoint")
+    @param:JsonProperty("token_endpoint")
     val tokenEndpoint: String,
-    @JsonProperty("authorization_endpoint")
+    @param:JsonProperty("authorization_endpoint")
     val authorizationEndpoint: String
 )
 

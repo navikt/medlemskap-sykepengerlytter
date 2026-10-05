@@ -50,7 +50,7 @@ class PostgresMedlemskapVurdertRepository(val dataSource: DataSource) : Medlemsk
     val toVurderingDao: (Row) -> VurderingDao = { row ->
         VurderingDao(
             row.string("id"),
-            row.string("fnr").toString(),
+            row.string("fnr"),
             row.localDate("fom"),
             row.localDate("tom"),
             row.string("status")
