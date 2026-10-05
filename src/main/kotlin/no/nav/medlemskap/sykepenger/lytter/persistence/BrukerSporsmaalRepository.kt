@@ -89,7 +89,7 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             val sporsmaal:Brukerspørsmål=  JacksonParser().toDomainObject(row.string("sporsmaal"))
              Brukerspørsmål(
                 fnr=row.string("fnr"),
-                soknadid = row.string("soknadid").toString(),
+                soknadid = row.string("soknadid"),
                 eventDate= row.localDate("eventDate"),
                 ytelse= row.string("ytelse"),
                 status= row.string("status"),
@@ -104,7 +104,7 @@ class PostgresBrukersporsmaalRepository(val dataSource: DataSource) : Brukerspor
             val sporsmaal:ArbeidUtenforNorgeSpørsmål=  JacksonParser().toDomainObject(row.string("sporsmaal"))
             Brukerspørsmål(
                 fnr=row.string("fnr"),
-                soknadid = row.string("soknadid").toString(),
+                soknadid = row.string("soknadid"),
                 eventDate= row.localDate("eventDate"),
                 ytelse= row.string("ytelse"),
                 status= row.string("status"),

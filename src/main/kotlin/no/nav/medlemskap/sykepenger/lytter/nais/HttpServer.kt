@@ -22,8 +22,7 @@ import io.ktor.server.metrics.micrometer.*
 import org.slf4j.event.Level
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.exporter.common.TextFormat
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.CancellationException
@@ -141,7 +140,7 @@ fun createHttpServer(consumeJob: Job, components: ApplicationComponents) = embed
 suspend fun writeMetrics004(writer: Writer, registry: PrometheusMeterRegistry) {
     withContext(Dispatchers.IO) {
         kotlin.runCatching {
-            TextFormat.write004(writer, registry.prometheusRegistry.metricFamilySamples())
+            writer.write(registry.scrape())
         }
     }
 }

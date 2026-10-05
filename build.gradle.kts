@@ -17,7 +17,7 @@ val testcontainerVersion = "1.21.4"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "2.4.20"
+    kotlin("jvm") version "2.3.21"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -60,7 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.17.1")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
