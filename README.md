@@ -1,6 +1,9 @@
 # medlemskap-sykepengerlytter
 komponent for lytting på sykepenger-søknad-kafkaTopic
 
+## Deploy
+Workflows i `.github/workflows/master.yml` og `.github/workflows/pull-request.yml` bygger Docker-image og deployer med `nais/setup` og `nais apply`. Applikasjons- og topic-manifester ligger i `.nais/`. Image sendes med `--set spec.image`, ikke via templating i manifestet, og `--wait` venter på at applikasjonen blir klar. Pull requests deployer app og topic til dev-gcp; main deployer app til dev-gcp og prod-gcp. Den gamle alerts-workflowen og Alert-manifestene er fjernet.
+
 
 ## URL til tjeneste
 * dev: https://medlemskap-vurdering-sykepenger.intern.dev.nav.no/flexvurdering  -- POST
