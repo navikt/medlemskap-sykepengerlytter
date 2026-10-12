@@ -18,7 +18,8 @@ fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus)
             routeLogger.logAutentisert(callId)
 
             val request = call.receive<MedlemskapsstatusRequest>()
-            val response = finnMedlemskapsstatus.finnMedlemskapsstatus(request, callId)
+            val vurderingRequest = medlemskapsstatusRequestTilVurderingRequest(request)
+            val response = finnMedlemskapsstatus.finnMedlemskapsstatus(vurderingRequest, callId)
 
             if (response == null) {
                 routeLogger.logMedlemskapsstatusIkkeFunnet(request, callId)
@@ -30,4 +31,13 @@ fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus)
             call.respond(HttpStatusCode.OK, response)
         }
     }
+
 }
+    fun medlemskapsstatusRequestTilVurderingRequest(medlemskapsstatusRequest: MedlemskapsstatusRequest): VurderingRequest =
+        VurderingRequest(
+            sykepengesoknad_id = medlemskapsstatusRequest.sykepengesoknad_id,
+            fnr = medlemskapsstatusRequest.fnr,
+            fom = medlemskapsstatusRequest.fom,
+            tom = medlemskapsstatusRequest.tom,
+            ytelse = medlemskapsstatusRequest.ytelse,
+        )

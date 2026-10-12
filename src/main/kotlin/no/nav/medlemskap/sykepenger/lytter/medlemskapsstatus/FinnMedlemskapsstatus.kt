@@ -9,27 +9,27 @@ class FinnMedlemskapsstatus(
 ) {
     private val logger = FinnMedlemskapsstatusLogger()
 
-    suspend fun finnMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Vurdering? {
-        val klassifiseringer = persistenceService.hentKlassifisering(medlemskapsstatusRequest.fnr)
-        val funnetStatus = klassifiseringer.finnKlassifiseringForPeriode(medlemskapsstatusRequest.fom, medlemskapsstatusRequest.tom)
+    suspend fun finnMedlemskapsstatus(vurderingRequest: VurderingRequest, callId: String): Vurdering? {
+        val klassifiseringer = persistenceService.hentKlassifisering(vurderingRequest.fnr)
+        val funnetStatus = klassifiseringer.finnKlassifiseringForPeriode(vurderingRequest.fom, vurderingRequest.tom)
 
         val grunnlag = when (funnetStatus?.status) {
             Status.PAFOLGENDE -> {
                 val førstegangssøknadenGrunnlag = klassifiseringer.finnGrunnlagForFørstegangssøknaden(funnetStatus)
                     ?: run {
-                    logger.logIngenFørstegangssøknadFunnet(medlemskapsstatusRequest, callId)
+                    logger.logIngenFørstegangssøknadFunnet(vurderingRequest, callId)
                         return null
                     }
 
-                logger.logHenterMedlemskapsstatusForFørstegangssøknad(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
+                logger.logHenterMedlemskapsstatusForFørstegangssøknad(vurderingRequest, førstegangssøknadenGrunnlag, callId)
 
-                medlemskapsstatusRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
+                vurderingRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
             }
             null -> {
-                logger.logFantIngenVurderingsstatus(medlemskapsstatusRequest, callId)
-                medlemskapsstatusRequest
+                logger.logFantIngenVurderingsstatus(vurderingRequest, callId)
+                vurderingRequest
             }
-            else -> medlemskapsstatusRequest
+            else -> vurderingRequest
         }
 
         val vurdering = medlemskapSagaVurderingService.hent(grunnlag, callId)

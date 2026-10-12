@@ -8,7 +8,7 @@ class MedlemskapSagaVurderingService(
     private val sagaClient: MedlemskapSagaAPI
 ) {
     suspend fun hent(
-        grunnlag: MedlemskapsstatusRequest,
+        grunnlag: VurderingRequest,
         callId: String
     ): Vurdering? =
         try {

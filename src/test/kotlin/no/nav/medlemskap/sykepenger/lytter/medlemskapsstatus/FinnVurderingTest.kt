@@ -27,7 +27,7 @@ class FinnVurderingTest {
 
     @Test
     fun `vurdering som ikke er påfølgende bruker original vurderingsperiode`() = runBlocking {
-        val request = request("2024-03-01", "2024-03-31")
+        val request = vurderingRequest("2024-03-01", "2024-03-31")
         lagreVurdering(request.fom, request.tom, VurderingsstatusStatus.JA)
         lagreVurdering(
             LocalDate.parse("2024-01-01"),
@@ -37,14 +37,14 @@ class FinnVurderingTest {
 
         finnMedlemskapsstatus.finnMedlemskapsstatus(request, "call-id")
 
-        assertEquals(request, saga.sisteRequest)
+        assertEquals(request, saga.sisteVurderingRequest)
     }
 
     @Test
     fun `påfølgende vurdering bruker siste tidligere vurderingsperiode`() = runBlocking {
         lagreVurdering(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-01-31"))
         lagreVurdering(LocalDate.parse("2024-02-01"), LocalDate.parse("2024-02-29"))
-        val request = request("2024-03-01", "2024-03-31")
+        val request = vurderingRequest("2024-03-01", "2024-03-31")
         lagreVurdering(request.fom, request.tom, VurderingsstatusStatus.PAFOLGENDE)
 
         finnMedlemskapsstatus.finnMedlemskapsstatus(request, "call-id")
@@ -54,29 +54,29 @@ class FinnVurderingTest {
                 fom = LocalDate.parse("2024-02-01"),
                 tom = LocalDate.parse("2024-02-29")
             ),
-            saga.sisteRequest
+            saga.sisteVurderingRequest
         )
     }
 
     @Test
     fun `påfølgende vurdering uten tidligere vurdering returnerer null og kaller ikke Saga`() = runBlocking {
-        val request = request("2024-03-01", "2024-03-31")
+        val request = vurderingRequest("2024-03-01", "2024-03-31")
         lagreVurdering(request.fom, request.tom, VurderingsstatusStatus.PAFOLGENDE)
 
         val resultat = finnMedlemskapsstatus.finnMedlemskapsstatus(request, "call-id")
 
         assertNull(resultat)
-        assertNull(saga.sisteRequest)
+        assertNull(saga.sisteVurderingRequest)
     }
 
     @Test
     fun `ingen matchende vurdering sender original request til Saga`() = runBlocking {
-        val request = request("2024-03-01", "2024-03-31")
+        val request = vurderingRequest("2024-03-01", "2024-03-31")
         lagreVurdering(LocalDate.parse("2024-02-01"), LocalDate.parse("2024-02-29"))
 
         finnMedlemskapsstatus.finnMedlemskapsstatus(request, "call-id")
 
-        assertEquals(request, saga.sisteRequest)
+        assertEquals(request, saga.sisteVurderingRequest)
     }
 
 
@@ -96,8 +96,8 @@ class FinnVurderingTest {
         )
     }
 
-    private fun request(fom: String, tom: String) =
-        MedlemskapsstatusRequest(
+    private fun vurderingRequest(fom: String, tom: String) =
+        VurderingRequest(
             sykepengesoknad_id = "søknad-1",
             fnr = "12345678901",
             fom = LocalDate.parse(fom),
@@ -113,16 +113,16 @@ class FinnVurderingTest {
             tom = LocalDate.parse("2024-01-31"),
             status = Status.JA
         )
-        var sisteRequest: MedlemskapsstatusRequest? = null
+        var sisteVurderingRequest: VurderingRequest? = null
         var sisteCallId: String? = null
         var exception: Exception? = null
 
         override suspend fun hentVurdering(
-            medlemskapsstatusRequest: MedlemskapsstatusRequest,
+            vurderingRequest: VurderingRequest,
             callId: String
         ): Vurdering {
             exception?.let { throw it }
-            sisteRequest = medlemskapsstatusRequest
+            sisteVurderingRequest = vurderingRequest
             sisteCallId = callId
             return response
         }
