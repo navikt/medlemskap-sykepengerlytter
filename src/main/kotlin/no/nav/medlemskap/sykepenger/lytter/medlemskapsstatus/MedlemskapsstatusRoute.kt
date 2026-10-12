@@ -33,11 +33,3 @@ fun Routing.medlemskapsstatusRoute(finnMedlemskapsstatus: FinnMedlemskapsstatus)
     }
 
 }
-    fun medlemskapsstatusRequestTilVurderingRequest(medlemskapsstatusRequest: MedlemskapsstatusRequest): VurderingRequest =
-        VurderingRequest(
-            sykepengesoknad_id = medlemskapsstatusRequest.sykepengesoknad_id,
-            fnr = medlemskapsstatusRequest.fnr,
-            fom = medlemskapsstatusRequest.fom,
-            tom = medlemskapsstatusRequest.tom,
-            ytelse = medlemskapsstatusRequest.ytelse,
-        )
