@@ -12,7 +12,7 @@ import no.nav.medlemskap.sykepenger.lytter.http.runWithRetryAndMetrics
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusRequest
-import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Vurdering
 
 open class MedlemskapMedlemskapSagaClient(
     private val baseUrl: String,
@@ -36,7 +36,7 @@ open class MedlemskapMedlemskapSagaClient(
 
     }
 
-    override suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus {
+    override suspend fun hentVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Vurdering {
         val token = azureAdClient.hentTokenScopetMotMedlemskapSaga()
         return runWithRetryAndMetrics("SAGA", "flexvurdering", retry) {
             httpClient.post {
@@ -46,7 +46,7 @@ open class MedlemskapMedlemskapSagaClient(
                 header("Nav-Call-Id", callId)
                 header("X-Correlation-Id", callId)
                 setBody(JacksonParser().ToJson(medlemskapsstatusRequest))
-            }.body<Medlemskapsstatus>()
+            }.body<Vurdering>()
         }
     }
 
@@ -67,6 +67,6 @@ open class MedlemskapMedlemskapSagaClient(
 
 interface MedlemskapSagaAPI{
     suspend fun finnVurdering(speilvurderingRequest: SpeilvurderingRequest, callId: String): String
-    suspend fun hentMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus
+    suspend fun hentVurdering(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Vurdering
     suspend fun ping(callId: String): String
 }

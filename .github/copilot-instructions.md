@@ -59,7 +59,7 @@ Two tables (see `src/main/resources/db/migration/`):
 - `KAFKA_ENABLED=false` disables the Kafka consumer (useful for local HTTP-only testing).
 
 ### Testing patterns
-- Unit tests use **in-memory repository stubs** (`MedlemskapVurdertInMemmoryRepository`, `BrukersporsmaalInMemmoryRepository`) instead of Testcontainers.
+- Unit tests use **in-memory repository stubs** (`KlassifiseringInMemmoryRepositoryInterface`, `BrukersporsmaalInMemmoryRepository`) instead of Testcontainers.
 - Integration/repository tests extend `AbstractContainerDatabaseTest` and use `@Testcontainers` + real PostgreSQL.
 - Coroutine-based service methods are tested with `runBlocking { }`.
 - Mock external HTTP clients with `io.mockk` or `ktor-client-mock`.

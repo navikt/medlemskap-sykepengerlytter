@@ -5,23 +5,24 @@ import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 class FinnMedlemskapsstatus(
     private val persistenceService: PersistenceService,
-    private val medlemskapsstatusService: MedlemskapsstatusService
+    private val medlemskapSagaVurderingService: MedlemskapSagaVurderingService
 ) {
     private val logger = FinnMedlemskapsstatusLogger()
 
-    suspend fun finnMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus? {
-        val vurderingsstatuser = persistenceService.hentVurderingsstatus(medlemskapsstatusRequest.fnr)
-        val funnetStatus = vurderingsstatuser.finnMatchendeMedlemskapsperiode(medlemskapsstatusRequest)
+    suspend fun finnMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Vurdering? {
+        val klassifiseringer = persistenceService.hentKlassifisering(medlemskapsstatusRequest.fnr)
+        val funnetStatus = klassifiseringer.finnKlassifiseringForPeriode(medlemskapsstatusRequest.fom, medlemskapsstatusRequest.tom)
 
         val grunnlag = when (funnetStatus?.status) {
             Status.PAFOLGENDE -> {
-                val førstegangssøknadenGrunnlag = vurderingsstatuser.finnGrunnlagForFørstegangssøknaden(funnetStatus)
+                val førstegangssøknadenGrunnlag = klassifiseringer.finnGrunnlagForFørstegangssøknaden(funnetStatus)
                     ?: run {
                     logger.logIngenFørstegangssøknadFunnet(medlemskapsstatusRequest, callId)
                         return null
                     }
 
                 logger.logHenterMedlemskapsstatusForFørstegangssøknad(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
+
                 medlemskapsstatusRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
             }
             null -> {
@@ -31,10 +32,10 @@ class FinnMedlemskapsstatus(
             else -> medlemskapsstatusRequest
         }
 
-        val medlemskapsstatus = medlemskapsstatusService.hent(grunnlag, callId)
-        if (medlemskapsstatus == null) {
+        val vurdering = medlemskapSagaVurderingService.hent(grunnlag, callId)
+        if (vurdering == null) {
             logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
         }
-        return medlemskapsstatus
+        return vurdering
     }
 }

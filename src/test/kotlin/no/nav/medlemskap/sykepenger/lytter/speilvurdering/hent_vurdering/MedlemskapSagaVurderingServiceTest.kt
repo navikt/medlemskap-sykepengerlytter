@@ -5,7 +5,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
-import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Vurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Periode
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Ytelse
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class MedlemskapSagaServiceTest {
+class MedlemskapSagaVurderingServiceTest {
     private val request = SpeilvurderingRequest(
         fnr = "12345678901",
         førsteDagForYtelse = LocalDate.parse("2024-01-01"),
@@ -60,7 +60,7 @@ class MedlemskapSagaServiceTest {
 
     private fun fakeSagaApi(response: String): MedlemskapSagaAPI = mockk {
         coEvery { finnVurdering(any(), any()) } returns response
-        coEvery { hentMedlemskapsstatus(any(), any()) } returns mockk<Medlemskapsstatus>()
+        coEvery { hentVurdering(any(), any()) } returns mockk<Vurdering>()
         coEvery { ping(any()) } returns "OK"
     }
 }

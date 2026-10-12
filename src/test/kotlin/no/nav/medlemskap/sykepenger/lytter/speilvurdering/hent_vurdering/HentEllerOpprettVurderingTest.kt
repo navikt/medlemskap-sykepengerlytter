@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
-import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Medlemskapsstatus
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.Vurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Periode
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.Speilsvar
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
@@ -99,7 +99,7 @@ class HentEllerOpprettVurderingTest {
         }
         val medlemskapSagaApi = mockk<MedlemskapSagaAPI> {
             coEvery { finnVurdering(any(), any()) } throws ResponseException(response, status.description)
-            coEvery { hentMedlemskapsstatus(any(), any()) } returns mockk<Medlemskapsstatus>()
+            coEvery { hentVurdering(any(), any()) } returns mockk<Vurdering>()
             coEvery { ping(any()) } returns "OK"
         }
         return HentEllerOpprettVurdering(

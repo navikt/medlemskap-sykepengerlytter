@@ -1,21 +1,21 @@
 package no.nav.persistence
 
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
-import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringDao
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringRepositoryInterface
 
-class MedlemskapVurdertInMemmoryRepository: MedlemskapVurdertRepository {
-    var storage = mutableListOf<VurderingDao>()
-    override fun finnVurdering(fnr: String): List<VurderingDao> {
+class KlassifiseringInMemmoryRepositoryInterface: KlassifiseringRepositoryInterface {
+    var storage = mutableListOf<KlassifiseringDao>()
+    override fun finnKlassifisering(fnr: String): List<KlassifiseringDao> {
         return  storage.filter { it.fnr == fnr }
     }
 
-    override fun lagreVurdering(vurderingDao: VurderingDao) {
-        storage.add(vurderingDao)
+    override fun lagreKlassifisering(klassifiseringDao: KlassifiseringDao) {
+        storage.add(klassifiseringDao)
     }
 
-    override fun slettVurderingsstatus(fnr: String): Int {
+    override fun slettKlassifisering(fnr: String): Int {
         val count = storage.count { it.fnr == fnr }
         storage.removeAll { it.fnr == fnr }
         return count

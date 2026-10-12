@@ -11,7 +11,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapUtførtArbeidUt
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
-import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
+import no.nav.persistence.KlassifiseringInMemmoryRepositoryInterface
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -21,7 +21,7 @@ class HentGjenbrukbareBrukerspoersmaalTest {
     private val hentGjenbrukbareBrukerspoersmaal = HentGjenbrukbareBrukerspoersmaal(
         TidligereBrukersvar(
             PersistenceService(
-                medlemskapVurdertRepository = MedlemskapVurdertInMemmoryRepository(),
+                klassifiseringRepositoryInterface = KlassifiseringInMemmoryRepositoryInterface(),
                 brukersporsmaalRepository = brukersporsmaalRepository
             )
         )

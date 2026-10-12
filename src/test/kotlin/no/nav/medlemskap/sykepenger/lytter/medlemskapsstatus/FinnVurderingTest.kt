@@ -3,26 +3,26 @@ package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as VurderingsstatusStatus
-import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingRequest
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
-import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
+import no.nav.persistence.KlassifiseringInMemmoryRepositoryInterface
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
 
-class FinnMedlemskapsstatusTest {
-    private val vurderingsstatusRepository = MedlemskapVurdertInMemmoryRepository()
+class FinnVurderingTest {
+    private val vurderingsstatusRepository = KlassifiseringInMemmoryRepositoryInterface()
     private val saga = FakeMedlemskapSaga()
     private val finnMedlemskapsstatus = FinnMedlemskapsstatus(
         persistenceService = PersistenceService(
             vurderingsstatusRepository,
             BrukersporsmaalInMemmoryRepository()
         ),
-        medlemskapsstatusService = MedlemskapsstatusService(saga)
+        medlemskapSagaVurderingService = MedlemskapSagaVurderingService(saga)
     )
 
     @Test
@@ -85,8 +85,8 @@ class FinnMedlemskapsstatusTest {
         tom: LocalDate,
         status: VurderingsstatusStatus = VurderingsstatusStatus.JA
     ) {
-        vurderingsstatusRepository.lagreVurdering(
-            VurderingDao(
+        vurderingsstatusRepository.lagreKlassifisering(
+            KlassifiseringDao(
                 id = UUID.randomUUID().toString(),
                 fnr = "12345678901",
                 fom = fom,
@@ -105,7 +105,7 @@ class FinnMedlemskapsstatusTest {
         )
 
     private class FakeMedlemskapSaga : MedlemskapSagaAPI {
-        val response = Medlemskapsstatus(
+        val response = Vurdering(
             sykepengesoknad_id = "søknad-1",
             vurdering_id = "vurdering-1",
             fnr = "12345678901",
@@ -117,10 +117,10 @@ class FinnMedlemskapsstatusTest {
         var sisteCallId: String? = null
         var exception: Exception? = null
 
-        override suspend fun hentMedlemskapsstatus(
+        override suspend fun hentVurdering(
             medlemskapsstatusRequest: MedlemskapsstatusRequest,
             callId: String
-        ): Medlemskapsstatus {
+        ): Vurdering {
             exception?.let { throw it }
             sisteRequest = medlemskapsstatusRequest
             sisteCallId = callId

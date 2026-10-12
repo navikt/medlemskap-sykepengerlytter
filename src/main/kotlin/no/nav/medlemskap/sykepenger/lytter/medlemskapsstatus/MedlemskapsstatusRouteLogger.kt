@@ -17,7 +17,7 @@ internal class MedlemskapsstatusRouteLogger {
             kv("endpoint", "flexvurdering")
         )
 
-    fun logMedlemskapsstatusFunnet(response: Medlemskapsstatus, callId: String) =
+    fun logMedlemskapsstatusFunnet(response: Vurdering, callId: String) =
         log.info(
             teamLogs,
             "{} svar funnet for bruker {}", response.status, response.fnr,

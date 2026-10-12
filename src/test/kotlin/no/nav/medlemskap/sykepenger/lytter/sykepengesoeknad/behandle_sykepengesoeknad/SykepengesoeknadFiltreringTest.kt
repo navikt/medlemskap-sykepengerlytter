@@ -3,13 +3,13 @@ package no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.behandle_sykepenges
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import no.nav.medlemskap.sykepenger.lytter.domain.Status as MedlemskapStatus
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
-import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.domain.Klassifisering
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
-import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringDao
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status as SoknadStatus
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
-import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
+import no.nav.persistence.KlassifiseringInMemmoryRepositoryInterface
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class SykepengesoeknadFiltreringTest {
-    private val medlemskapRepository = MedlemskapVurdertInMemmoryRepository()
+    private val medlemskapRepository = KlassifiseringInMemmoryRepositoryInterface()
     private val persistenceService = PersistenceService(medlemskapRepository, BrukersporsmaalInMemmoryRepository())
     private val filtrering = SykepengesoeknadFiltrering(persistenceService)
 
@@ -30,7 +30,7 @@ class SykepengesoeknadFiltreringTest {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
         val duplikat = filtrering.erDuplikat(
-            Vurderingsstatus(
+            Klassifisering(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 1, 1),
                 tom = LocalDate.of(2024, 1, 31),
@@ -46,7 +46,7 @@ class SykepengesoeknadFiltreringTest {
         lagreVurdering(fnr = "12345678901", fom = LocalDate.of(2024, 1, 1), tom = LocalDate.of(2024, 1, 31))
 
         val duplikat = filtrering.erDuplikat(
-            Vurderingsstatus(
+            Klassifisering(
                 fnr = "12345678901",
                 fom = LocalDate.of(2024, 2, 1),
                 tom = LocalDate.of(2024, 2, 28),
@@ -132,7 +132,7 @@ class SykepengesoeknadFiltreringTest {
         val lagret = filtrering.lagreHvisPåfølgendeSøknadOgSvartNeiPåArbeidUtenforNorge(søknad)
 
         assertTrue(lagret)
-        val lagretVurdering = medlemskapRepository.finnVurdering("12345678901")
+        val lagretVurdering = medlemskapRepository.finnKlassifisering("12345678901")
             .single { it.id == søknad.id }
         assertEquals(MedlemskapStatus.PAFOLGENDE.toString(), lagretVurdering.status)
         assertEquals(søknad.fom, lagretVurdering.fom)
@@ -153,7 +153,7 @@ class SykepengesoeknadFiltreringTest {
         )
 
         assertFalse(lagret)
-        assertEquals(1, medlemskapRepository.finnVurdering("12345678901").size)
+        assertEquals(1, medlemskapRepository.finnKlassifisering("12345678901").size)
     }
 
     private fun lagreVurdering(
@@ -162,8 +162,8 @@ class SykepengesoeknadFiltreringTest {
         tom: LocalDate,
         status: MedlemskapStatus = MedlemskapStatus.JA
     ) {
-        medlemskapRepository.lagreVurdering(
-            VurderingDao(
+        medlemskapRepository.lagreKlassifisering(
+            KlassifiseringDao(
                 id = UUID.randomUUID().toString(),
                 fnr = fnr,
                 fom = fom,
