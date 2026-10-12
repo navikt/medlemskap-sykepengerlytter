@@ -1,13 +1,13 @@
 package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
-import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.domain.Klassifisering
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class MedlemskapsstatusGrunnlagTest {
+class VurderingGrunnlagTest {
     @Test
     fun `finner siste tidligere vurdering som ikke er påfølgende`() {
         val vurderinger = listOf(
@@ -45,8 +45,9 @@ class MedlemskapsstatusGrunnlagTest {
         val resultat = listOf(
             vurdering("2024-02-01", "2024-02-29"),
             forventet
-        ).finnMatchendeMedlemskapsperiode(
-            request("2024-01-01", "2024-01-31")
+        ).finnKlassifiseringForPeriode(
+            LocalDate.of(2024, 1, 1),
+            LocalDate.of(2024, 1, 31)
         )
 
         assertEquals(forventet, resultat)
@@ -56,8 +57,9 @@ class MedlemskapsstatusGrunnlagTest {
     fun `returnerer null når vurderingen ikke har samme periode`() {
         val resultat = listOf(
             vurdering("2024-01-01", "2024-01-30")
-        ).finnMatchendeMedlemskapsperiode(
-            request("2024-01-01", "2024-01-31")
+        ).finnKlassifiseringForPeriode(
+            LocalDate.of(2024, 1, 1),
+            LocalDate.of(2024, 1, 31)
         )
 
         assertNull(resultat)
@@ -67,7 +69,7 @@ class MedlemskapsstatusGrunnlagTest {
         fom: String,
         tom: String,
         status: Status = Status.JA
-    ) = Vurderingsstatus(
+    ) = Klassifisering(
         fnr = "12345678901",
         fom = LocalDate.parse(fom),
         tom = LocalDate.parse(tom),

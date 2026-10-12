@@ -4,16 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.sykepenger.lytter.domain.Status
-import no.nav.medlemskap.sykepenger.lytter.domain.Vurderingsstatus
+import no.nav.medlemskap.sykepenger.lytter.domain.Klassifisering
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.persistence.BrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.MedlemskapVurdertRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringRepositoryInterface
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringDao
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import java.time.LocalDate
 
 class PersistenceService(
-    private val medlemskapVurdertRepository: MedlemskapVurdertRepository,
+    private val klassifiseringRepositoryInterface: KlassifiseringRepositoryInterface,
     private val brukersporsmaalRepository: BrukersporsmaalRepository
 ) {
     companion object {
@@ -23,7 +23,7 @@ class PersistenceService(
 
     fun lagreLovmeResponse(key:String,medlemskapVurdert:JsonNode) {
         try {
-            medlemskapVurdertRepository.lagreVurdering(
+            klassifiseringRepositoryInterface.lagreKlassifisering(
                 VurderingDaoMapper().mapJsonNodeToVurderingDao(
                     key,
                     medlemskapVurdert
@@ -49,14 +49,14 @@ class PersistenceService(
         return brukersporsmaalRepository.finnBrukersporsmaal(fnr)
     }
 
-    fun hentVurderingsstatus(fnr: String): List<Vurderingsstatus> {
-        return medlemskapVurdertRepository.finnVurdering(fnr)
-            .map { Vurderingsstatus(it.fnr, it.fom, it.tom, Status.valueOf(it.status)) }
+    fun hentKlassifisering(fnr: String): List<Klassifisering> {
+        return klassifiseringRepositoryInterface.finnKlassifisering(fnr)
+            .map { Klassifisering(it.fnr, it.fom, it.tom, Status.valueOf(it.status)) }
     }
 
     fun lagrePaafolgendeSoknad(soknadDTO: SykepengesoeknadGrunnlag) {
-        medlemskapVurdertRepository.lagreVurdering(
-            VurderingDao(
+        klassifiseringRepositoryInterface.lagreKlassifisering(
+            KlassifiseringDao(
                 soknadDTO.id,
                 soknadDTO.fnr,
                 soknadDTO.fom!!,
@@ -74,16 +74,16 @@ class PersistenceService(
     }
 
     fun slettVurderingsstatus(fnr: String): Int {
-        return medlemskapVurdertRepository.slettVurderingsstatus(fnr)
+        return klassifiseringRepositoryInterface.slettKlassifisering(fnr)
     }
 }
 
 class VurderingDaoMapper {
-    fun mapJsonNodeToVurderingDao(id: String, jsonNode: JsonNode): VurderingDao {
+    fun mapJsonNodeToVurderingDao(id: String, jsonNode: JsonNode): KlassifiseringDao {
         val fnr = jsonNode.get("datagrunnlag").get("fnr").asText()
         val fom = jsonNode.get("datagrunnlag").get("periode").get("fom").asText()
         val tom = jsonNode.get("datagrunnlag").get("periode").get("tom").asText()
         val status = jsonNode.get("resultat").get("svar").asText()
-        return VurderingDao(id, fnr, LocalDate.parse(fom), LocalDate.parse(tom), status)
+        return KlassifiseringDao(id, fnr, LocalDate.parse(fom), LocalDate.parse(tom), status)
     }
 }

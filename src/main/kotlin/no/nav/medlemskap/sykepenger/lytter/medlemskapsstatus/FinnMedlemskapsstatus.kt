@@ -5,36 +5,37 @@ import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
 
 class FinnMedlemskapsstatus(
     private val persistenceService: PersistenceService,
-    private val medlemskapsstatusService: MedlemskapsstatusService
+    private val medlemskapSagaVurderingService: MedlemskapSagaVurderingService
 ) {
     private val logger = FinnMedlemskapsstatusLogger()
 
-    suspend fun finnMedlemskapsstatus(medlemskapsstatusRequest: MedlemskapsstatusRequest, callId: String): Medlemskapsstatus? {
-        val vurderingsstatuser = persistenceService.hentVurderingsstatus(medlemskapsstatusRequest.fnr)
-        val funnetStatus = vurderingsstatuser.finnMatchendeMedlemskapsperiode(medlemskapsstatusRequest)
+    suspend fun finnMedlemskapsstatus(vurderingRequest: VurderingRequest, callId: String): Vurdering? {
+        val klassifiseringer = persistenceService.hentKlassifisering(vurderingRequest.fnr)
+        val funnetStatus = klassifiseringer.finnKlassifiseringForPeriode(vurderingRequest.fom, vurderingRequest.tom)
 
         val grunnlag = when (funnetStatus?.status) {
             Status.PAFOLGENDE -> {
-                val førstegangssøknadenGrunnlag = vurderingsstatuser.finnGrunnlagForFørstegangssøknaden(funnetStatus)
+                val førstegangssøknadenGrunnlag = klassifiseringer.finnGrunnlagForFørstegangssøknaden(funnetStatus)
                     ?: run {
-                    logger.logIngenFørstegangssøknadFunnet(medlemskapsstatusRequest, callId)
+                    logger.logIngenFørstegangssøknadFunnet(vurderingRequest, callId)
                         return null
                     }
 
-                logger.logHenterMedlemskapsstatusForFørstegangssøknad(medlemskapsstatusRequest, førstegangssøknadenGrunnlag, callId)
-                medlemskapsstatusRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
+                logger.logHenterMedlemskapsstatusForFørstegangssøknad(vurderingRequest, førstegangssøknadenGrunnlag, callId)
+
+                vurderingRequest.copy(fom = førstegangssøknadenGrunnlag.fom, tom = førstegangssøknadenGrunnlag.tom)
             }
             null -> {
-                logger.logFantIngenVurderingsstatus(medlemskapsstatusRequest, callId)
-                medlemskapsstatusRequest
+                logger.logFantIngenVurderingsstatus(vurderingRequest, callId)
+                vurderingRequest
             }
-            else -> medlemskapsstatusRequest
+            else -> vurderingRequest
         }
 
-        val medlemskapsstatus = medlemskapsstatusService.hent(grunnlag, callId)
-        if (medlemskapsstatus == null) {
+        val vurdering = medlemskapSagaVurderingService.hent(grunnlag, callId)
+        if (vurdering == null) {
             logger.logMedlemskapsstatusIkkeFunnet(grunnlag, callId)
         }
-        return medlemskapsstatus
+        return vurdering
     }
 }

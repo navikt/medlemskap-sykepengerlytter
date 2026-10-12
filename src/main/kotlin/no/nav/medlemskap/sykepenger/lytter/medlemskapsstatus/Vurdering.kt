@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus
 
 import java.time.LocalDate
 
-data class Medlemskapsstatus(
+data class Vurdering(
     val sykepengesoknad_id: String,
     val vurdering_id: String,
     val fnr: String,

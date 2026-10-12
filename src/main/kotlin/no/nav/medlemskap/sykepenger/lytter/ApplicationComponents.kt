@@ -7,10 +7,10 @@ import no.nav.medlemskap.sykepenger.lytter.clients.RestClients
 import no.nav.medlemskap.sykepenger.lytter.clients.azuread.AzureAdClient
 import no.nav.medlemskap.sykepenger.lytter.config.Configuration
 import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.FinnMedlemskapsstatus
-import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapsstatusService
+import no.nav.medlemskap.sykepenger.lytter.medlemskapsstatus.MedlemskapSagaVurderingService
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringRepository
 import no.nav.medlemskap.sykepenger.lytter.security.AuthorizationHandler
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
@@ -19,7 +19,6 @@ import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.HentEllerOpprettVurdering
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.MedlemskapSagaService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering.MedlemskapOppslagService as SpeilMedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.opprett_vurdering.OpprettNyVurderingForSpeil
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.SykepengesoeknadMottak
@@ -44,7 +43,7 @@ class ApplicationComponents private constructor(
             val configuration = Configuration()
             val dataSource = DataSourceBuilder(env).getDataSource()
             val persistenceService = PersistenceService(
-                PostgresMedlemskapVurdertRepository(dataSource),
+                KlassifiseringRepository(dataSource),
                 PostgresBrukersporsmaalRepository(dataSource)
             )
             val restClients = RestClients(AzureAdClient(configuration))
@@ -60,7 +59,7 @@ class ApplicationComponents private constructor(
                 utledBrukerinput = UtledBrukerinput(gjenbrukBrukersvar)
             )
             val hentEllerOpprettVurdering = HentEllerOpprettVurdering(
-                medlemskapSagaService = MedlemskapSagaService(sagaClient),
+                medlemskapSagaService = no.nav.medlemskap.sykepenger.lytter.speilvurdering.hent_vurdering.MedlemskapSagaService(sagaClient),
                 opprettNyVurderingForSpeil = opprettNyVurderingForSpeil,
                 speilvurderingMapper = speilvurderingMapper
             )
@@ -90,7 +89,7 @@ class ApplicationComponents private constructor(
                 medlemskapsstatus = MedlemskapsstatusComponents(
                     finnMedlemskapsstatus = FinnMedlemskapsstatus(
                         persistenceService,
-                        MedlemskapsstatusService(sagaClient)
+                        MedlemskapSagaVurderingService(sagaClient)
                     )
                 ),
                 sykepengesøknad = SykepengesøknadComponents(sykepengesøknadMottak),

@@ -4,15 +4,15 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_saga.MedlemskapSagaAPI
 
-class MedlemskapsstatusService(
+class MedlemskapSagaVurderingService(
     private val sagaClient: MedlemskapSagaAPI
 ) {
     suspend fun hent(
-        grunnlag: MedlemskapsstatusRequest,
+        grunnlag: VurderingRequest,
         callId: String
-    ): Medlemskapsstatus? =
+    ): Vurdering? =
         try {
-            sagaClient.hentMedlemskapsstatus(grunnlag, callId)
+            sagaClient.hentVurdering(grunnlag, callId)
         } catch (cause: ResponseException) {
             when (cause.response.status) {
                 HttpStatusCode.NotFound -> null

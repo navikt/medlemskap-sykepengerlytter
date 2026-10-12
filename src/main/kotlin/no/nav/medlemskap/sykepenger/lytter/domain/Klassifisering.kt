@@ -2,7 +2,7 @@ package no.nav.medlemskap.sykepenger.lytter.domain
 
 import java.time.LocalDate
 
-data class Vurderingsstatus(
+data class Klassifisering(
     val fnr: String,
     val fom: LocalDate,
     val tom: LocalDate,

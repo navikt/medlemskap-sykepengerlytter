@@ -11,7 +11,7 @@ import no.nav.medlemskap.sykepenger.lytter.clients.medlemskap_oppslag.Periode
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadMelding
 import no.nav.medlemskap.sykepenger.lytter.persistence.DataSourceBuilder
 import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresBrukersporsmaalRepository
-import no.nav.medlemskap.sykepenger.lytter.persistence.PostgresMedlemskapVurdertRepository
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringRepository
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
@@ -586,7 +586,7 @@ class EndToEndFunctionalTests : AbstractContainerDatabaseTest() {
         val brukerspormsalRepo = PostgresBrukersporsmaalRepository(dsb.getDataSource())
         dsb.getDataSource().connection.createStatement().execute("delete  from brukersporsmaal")
         dsb.getDataSource().connection.createStatement().execute("delete  from syk_vurdering")
-        val medlemskapVurdertRepo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
+        val medlemskapVurdertRepo = KlassifiseringRepository(dsb.getDataSource())
 
         return PersistenceService(medlemskapVurdertRepo,brukerspormsalRepo)
 

@@ -10,7 +10,7 @@ import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Sykepengesoeknad
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
-import no.nav.medlemskap.sykepenger.lytter.persistence.VurderingDao
+import no.nav.medlemskap.sykepenger.lytter.persistence.KlassifiseringDao
 import no.nav.medlemskap.sykepenger.lytter.service.GjenbrukBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.MedlemskapOppslagService
 import no.nav.medlemskap.sykepenger.lytter.service.PersistenceService
@@ -18,7 +18,7 @@ import no.nav.medlemskap.sykepenger.lytter.service.TidligereBrukersvar
 import no.nav.medlemskap.sykepenger.lytter.service.UtledBrukerinput
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status as SoknadStatus
 import no.nav.persistence.BrukersporsmaalInMemmoryRepository
-import no.nav.persistence.MedlemskapVurdertInMemmoryRepository
+import no.nav.persistence.KlassifiseringInMemmoryRepositoryInterface
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class BehandleSykepengesoeknadTest {
-    private val medlemskapRepository = MedlemskapVurdertInMemmoryRepository()
+    private val medlemskapRepository = KlassifiseringInMemmoryRepositoryInterface()
     private val persistenceService = PersistenceService(medlemskapRepository, BrukersporsmaalInMemmoryRepository())
     private val gjenbrukBrukersvar = GjenbrukBrukersvar(TidligereBrukersvar(persistenceService))
     private val lovmeApi = LovMeApiTestMock()
@@ -87,8 +87,8 @@ class BehandleSykepengesoeknadTest {
         tom: LocalDate,
         status: MedlemskapStatus = MedlemskapStatus.JA
     ) {
-        medlemskapRepository.lagreVurdering(
-            VurderingDao(
+        medlemskapRepository.lagreKlassifisering(
+            KlassifiseringDao(
                 id = UUID.randomUUID().toString(),
                 fnr = fnr,
                 fom = fom,

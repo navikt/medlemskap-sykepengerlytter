@@ -42,14 +42,14 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
-        val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,1), LocalDate.of(2020,1,10),"JA"))
-        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,11), LocalDate.of(2020,1,20),"UAVKLART"))
-        repo.lagreVurdering(VurderingDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,21), LocalDate.of(2020,1,29),"PÅFØLGENDE"))
+        val repo = KlassifiseringRepository(dsb.getDataSource())
+        repo.lagreKlassifisering(KlassifiseringDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,1), LocalDate.of(2020,1,10),"JA"))
+        repo.lagreKlassifisering(KlassifiseringDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,11), LocalDate.of(2020,1,20),"UAVKLART"))
+        repo.lagreKlassifisering(KlassifiseringDao(UUID.randomUUID().toString(),"1234", LocalDate.of(2020,1,21), LocalDate.of(2020,1,29),"PÅFØLGENDE"))
 
 
         assertNotNull("complete")
-        val result = repo.finnVurdering("1234")
+        val result = repo.finnKlassifisering("1234")
 
         assertTrue(result.size==3,"result set should contain 3 elements")
 
@@ -62,9 +62,9 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
 
-        val repo = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
-        repo.lagreVurdering(VurderingDao("2222","2222", LocalDate.now(), LocalDate.now(),Status.PAFOLGENDE.toString()))
-        val result = repo.finnVurdering("2222")
+        val repo = KlassifiseringRepository(dsb.getDataSource())
+        repo.lagreKlassifisering(KlassifiseringDao("2222","2222", LocalDate.now(), LocalDate.now(),Status.PAFOLGENDE.toString()))
+        val result = repo.finnKlassifisering("2222")
 
         assertTrue(result.size==1,"result set should contain 3 elements")
 
@@ -254,7 +254,7 @@ class RepositoryTests : AbstractContainerDatabaseTest() {
         postgresqlContainer.withUrlParam("password", postgresqlContainer.password)
         val dsb = DataSourceBuilder(mapOf("DB_JDBC_URL" to postgresqlContainer.jdbcUrl))
         dsb.migrate();
-        val repo: MedlemskapVurdertRepository = PostgresMedlemskapVurdertRepository(dsb.getDataSource())
+        val repo: KlassifiseringRepositoryInterface = KlassifiseringRepository(dsb.getDataSource())
         assertNotNull(repo)
 
     }
