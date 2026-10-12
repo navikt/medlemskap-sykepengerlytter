@@ -1,8 +1,6 @@
 name: build
 permissions:
   contents: "read"
-  id-token: "write"
-  packages: "write"
 on:
   push:
     branches:
@@ -11,6 +9,12 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+      packages: "read"
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -28,45 +32,48 @@ jobs:
         id: docker-push
         with:
           team: medlemskap # required
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
       - name: Post failures to Slack
         if: failure()
         run: |
           curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
         env:
           MESSAGE: "Bygg feilet"
-          CHANNEL: "#team-p3-medlemskap-notifications"
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-    outputs:
-      image: ${{ steps.docker-push.outputs.image }}
+          CHANNEL: "#lovme-teknisk"
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   deploypreprod:
     name: Deploy to Preprod
     needs: build_and_push
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Preprod
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/dev.yaml
-          IMAGE: ${{ needs.build_and_push.outputs.image }}
-          TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
+      - uses: actions/checkout@v6
+      - uses: nais/setup@v1
+        with:
+          team: medlemskap
+      - name: Deploy to dev-gcp
+        run: |
+          nais apply .nais/dev.yaml \
+            --environment dev-gcp \
+            --set spec.image="${{ needs.build_and_push.outputs.image }}" \
+            --wait
   prod:
     name: Deploy to Prod
     needs: build_and_push
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-      - name: Deploy to Prod
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: .nais/prod.yaml
-          IMAGE: ${{ needs.build_and_push.outputs.image }}
-          TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
+      - uses: actions/checkout@v6
+      - uses: nais/setup@v1
+        with:
+          team: medlemskap
+      - name: Deploy to prod-gcp
+        run: |
+          nais apply .nais/prod.yaml \
+            --environment prod-gcp \
+            --set spec.image="${{ needs.build_and_push.outputs.image }}" \
+            --wait
