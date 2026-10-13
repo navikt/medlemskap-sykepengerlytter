@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val ktorVersion = "2.3.13"
-val nettyBomVersion = "4.1.139.Final"
+val nettyBomVersion = "4.2.19.Final"
 val lz4Version = "1.12.0"
 val kafkaVersion = "3.9.2"
 val jacksonVersion = "2.22.3"
@@ -19,7 +19,7 @@ val testcontainerVersion = "1.21.4"
 val mainClass = "no.nav.medlemskap.sykepenger.lytter.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.21"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -80,7 +80,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:$testcontainerVersion")
     testImplementation("org.assertj:assertj-core:3.27.7")
     //Database
-    implementation("org.postgresql:postgresql:42.7.13")
+    implementation("org.postgresql:postgresql:42.7.14")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
