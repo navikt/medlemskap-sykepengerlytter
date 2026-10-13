@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val ktorVersion = "2.3.13"
+val nettyBomVersion = "4.1.139.Final"
+val lz4Version = "1.12.0"
 val kafkaVersion = "3.9.2"
 val jacksonVersion = "2.22.3"
 val jacksonAnnotationsVersion = "2.22"
@@ -42,10 +44,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion") {
-        exclude(group = "io.netty", module = "netty-codec")
-        exclude(group = "io.netty", module = "netty-codec-http")
-    }
+    implementation(platform("io.netty:netty-bom:$nettyBomVersion"))
+    implementation("at.yawk.lz4:lz4-java:$lz4Version")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
