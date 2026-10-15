@@ -1,23 +1,85 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
+import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Periode
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Svar
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 
 class JacksonParserTest {
 
     @Test
-    fun `parse Json String`() {
+    fun `parser alle kjente soknadstyper uten fallback`() {
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
+        val json = JacksonParser.mapper.readValue(fileContent, ObjectNode::class.java)
+
+        Type.entries.forEach { type ->
+            json.put("type", type.name)
+
+            val sykepengeSoknad = requireNotNull(JacksonParser().parse(json.toString()))
+
+            assertEquals(type, sykepengeSoknad.type, "$type skal parses uten fallback")
+            assertEquals(json["id"].asText(), sykepengeSoknad.id, "$type skal beholde soknads-ID")
+        }
+    }
+
+    @Test
+    fun `ukjent soknadstype gir ingen soknad`() {
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
+        val json = JacksonParser.mapper.readValue(fileContent, ObjectNode::class.java)
+        json.put("type", "UKJENT_SOKNADSTYPE")
+
+        assertNull(JacksonParser().parse(json.toString()))
+    }
+
+    @Test
+    fun `ugyldig JSON gir ingen soknad`() {
+        assertNull(JacksonParser().parse("{"))
+    }
+
+    @Test
+    fun `manglende pakrevde felter gir ingen soknad`() {
+        assertNull(JacksonParser().parse("{}"))
+    }
+
+    @Test
+    fun `parsefeil logges med forklaring uten meldingsinnhold`() {
+        val logger = LoggerFactory.getLogger(JacksonParser::class.java) as Logger
+        val appender = ListAppender<ILoggingEvent>().apply { start() }
+        logger.addAppender(appender)
+        try {
+            assertNull(JacksonParser().parse("""{"id":"test","type":"verdi-som-ikke-skal-logges"}"""))
+            assertNull(JacksonParser().parse("{"))
+            assertNull(JacksonParser().parse("{}"))
+
+            val meldinger = appender.list.map { it.formattedMessage }
+            assertTrue(meldinger.any { it.contains("ukjent enumverdi for Type") })
+            assertTrue(meldinger.any { it.contains("ugyldig JSON-syntaks") })
+            assertTrue(meldinger.any { it.contains("manglende påkrevd felt eller feil JSON-struktur") })
+            assertTrue(meldinger.none { it.contains("verdi-som-ikke-skal-logges") })
+            assertTrue(appender.list.all { it.throwableProxy == null })
+        } finally {
+            logger.detachAppender(appender)
+            appender.stop()
+        }
+    }
+
+    @Test
+    fun `soknad uten pakrevd sporsmal gir ingen soknad`() {
         val fileContent = this::class.java.classLoader.getResource("sampleRequest.json").readText(Charsets.UTF_8)
         val sykepengeSoknad = JacksonParser().parse(fileContent)
-        assertNotNull(sykepengeSoknad)
+        assertNull(sykepengeSoknad)
     }
     @Test
     fun `parse Json String2`() {
