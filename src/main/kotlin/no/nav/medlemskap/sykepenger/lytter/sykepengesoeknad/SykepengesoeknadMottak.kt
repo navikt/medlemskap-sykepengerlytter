@@ -22,7 +22,13 @@ class SykepengesoeknadMottak(
     }
 
     suspend fun behandle(melding: SykepengesoeknadMelding) {
-        when (val resultat = melding.tilMottakResultat()) {
+        val grunnlag = JacksonParser().lesSykepengesøknadGrunnlag(melding.value)
+        if (grunnlag == null) {
+            logParsefeil(melding)
+            return
+        }
+
+        when (val resultat = melding.tilMottakResultat(grunnlag)) {
             is MottakResultat.ManglerPåkrevdeFelter ->
                 logManglerPåkrevdeFelter(resultat.melding)
 
@@ -44,9 +50,7 @@ class SykepengesoeknadMottak(
         behandleSykepengesøknad.behandle(sykepengesøknad)
     }
 
-    private fun SykepengesoeknadMelding.tilMottakResultat(): MottakResultat {
-        val grunnlag = tilSykepengesøknadGrunnlag()
-
+    private fun SykepengesoeknadMelding.tilMottakResultat(grunnlag: SykepengesoeknadGrunnlag): MottakResultat {
         if (!harPåkrevdeFelter(grunnlag)) {
             return MottakResultat.ManglerPåkrevdeFelter(this)
         }
@@ -60,9 +64,6 @@ class SykepengesoeknadMottak(
 
         return MottakResultat.SkalBehandles(grunnlag.tilSykepengesøknad())
     }
-
-    private fun SykepengesoeknadMelding.tilSykepengesøknadGrunnlag(): SykepengesoeknadGrunnlag =
-        JacksonParser().lesSykepengesøknadGrunnlag(value)
 
     private fun SykepengesoeknadGrunnlag.tilSykepengesøknad(): Sykepengesoeknad =
         Sykepengesoeknad(
@@ -85,6 +86,14 @@ class SykepengesoeknadMottak(
             val sykepengesøknad: Sykepengesoeknad
         ) : MottakResultat
     }
+
+    private fun logParsefeil(melding: SykepengesoeknadMelding) =
+        log.warn(
+            "Sykepengesoknad droppet grunnet parsefeil. Meldingen behandles ikke pa nytt automatisk.",
+            kv("topic", melding.topic),
+            kv("partition", melding.partition),
+            kv("offset", melding.offset)
+        )
 
     private fun logManglerPåkrevdeFelter(
         sykepengesøknadRecord: SykepengesoeknadMelding

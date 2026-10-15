@@ -108,7 +108,9 @@ class BrukersvarMapperTest {
     }
 
     private fun sykepengesøknadGrunnlag(resourceName: String): SykepengesoeknadGrunnlag =
-        JacksonParser().lesSykepengesøknadGrunnlag(
-            this::class.java.classLoader.getResource(resourceName).readText(Charsets.UTF_8)
+        requireNotNull(
+            JacksonParser().lesSykepengesøknadGrunnlag(
+                this::class.java.classLoader.getResource(resourceName).readText(Charsets.UTF_8)
+            )
         )
 }

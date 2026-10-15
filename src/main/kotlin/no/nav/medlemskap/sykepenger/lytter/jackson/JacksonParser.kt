@@ -2,18 +2,17 @@ package no.nav.medlemskap.sykepenger.lytter.jackson
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments.kv
 
 import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.SykepengesoeknadGrunnlag
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
-import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Status
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 class JacksonParser {
@@ -31,26 +30,33 @@ class JacksonParser {
             .build()
     }
 
-    fun parse(jsonString: String): SykepengesoeknadGrunnlag {
+    fun parse(jsonString: String): SykepengesoeknadGrunnlag? {
         try {
             return mapper.readValue(jsonString)
         } catch (t: JsonProcessingException) {
-            log.error("Unable to parse json. Dropping message. Cause : ${t.message}")
-            return SykepengesoeknadGrunnlag(
-                "",
-                Type.ARBEIDSTAKERE,
-                Status.SENDT.name,
-                "", null,
-                LocalDate.now(),
-                LocalDateTime.now(),
-                LocalDate.now(),
-                LocalDate.now(), false,
-                sporsmal = JsonNodeFactory.instance.arrayNode()
+            val melding = when (t) {
+                is InvalidFormatException ->
+                    if (t.targetType.isEnum) {
+                        "Kan ikke lese sykepengesøknad: ukjent enumverdi for ${t.targetType.simpleName}"
+                    } else {
+                        "Kan ikke lese sykepengesøknad: ugyldig verdi for ${t.targetType.simpleName}"
+                    }
+                is JsonParseException -> "Kan ikke lese sykepengesøknad: ugyldig JSON-syntaks"
+                is MismatchedInputException ->
+                    "Kan ikke lese sykepengesøknad: manglende påkrevd felt eller feil JSON-struktur"
+                else -> "Kan ikke lese sykepengesøknad: JSON kan ikke deserialiseres"
+            }
+            log.warn(
+                melding,
+                kv("feiltype", t.javaClass.simpleName),
+                kv("linje", t.location?.lineNr),
+                kv("kolonne", t.location?.columnNr)
             )
+            return null
         }
     }
 
-    fun lesSykepengesøknadGrunnlag(jsonString: String): SykepengesoeknadGrunnlag =
+    fun lesSykepengesøknadGrunnlag(jsonString: String): SykepengesoeknadGrunnlag? =
         parse(jsonString)
 
 
