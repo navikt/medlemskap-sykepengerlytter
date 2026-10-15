@@ -66,7 +66,7 @@ class JacksonParserTest {
             val meldinger = appender.list.map { it.formattedMessage }
             assertTrue(meldinger.any { it.contains("ukjent enumverdi for Type") })
             assertTrue(meldinger.any { it.contains("ugyldig JSON-syntaks") })
-            assertTrue(meldinger.any { it.contains("manglende pakrevd felt eller feil JSON-struktur") })
+            assertTrue(meldinger.any { it.contains("manglende påkrevd felt eller feil JSON-struktur") })
             assertTrue(meldinger.none { it.contains("verdi-som-ikke-skal-logges") })
             assertTrue(appender.list.all { it.throwableProxy == null })
         } finally {
