@@ -1,17 +1,34 @@
 package no.nav.medlemskap.sykepenger.lytter.jackson
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.medlemskap.sykepenger.lytter.persistence.Brukerspørsmål
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.FlexRespons
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Periode
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Spørsmål
 import no.nav.medlemskap.sykepenger.lytter.brukerspoersmaal.Svar
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
+import no.nav.medlemskap.sykepenger.lytter.sykepengesoeknad.domain.Type
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 
 class JacksonParserTest {
+
+    @Test
+    fun `parser alle kjente soknadstyper uten fallback`() {
+        val fileContent = this::class.java.classLoader.getResource("FlexSampleMessageSENDT.json").readText(Charsets.UTF_8)
+        val json = JacksonParser.mapper.readValue(fileContent, ObjectNode::class.java)
+
+        Type.entries.forEach { type ->
+            json.put("type", type.name)
+
+            val sykepengeSoknad = JacksonParser().parse(json.toString())
+
+            assertEquals(type, sykepengeSoknad.type, "$type skal parses uten fallback")
+            assertEquals(json["id"].asText(), sykepengeSoknad.id, "$type skal beholde soknads-ID")
+        }
+    }
 
     @Test
     fun `parse Json String`() {
