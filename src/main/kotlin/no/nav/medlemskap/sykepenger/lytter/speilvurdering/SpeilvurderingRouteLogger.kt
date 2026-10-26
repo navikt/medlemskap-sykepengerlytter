@@ -3,7 +3,6 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.sykepenger.lytter.security.sha256
-import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 import org.slf4j.MarkerFactory
 
 internal class SpeilvurderingRouteLogger {
@@ -30,19 +29,18 @@ internal class SpeilvurderingRouteLogger {
         )
 
     fun logVurderingFunnet(
-        response: Speilvurdering,
+        response: SpeilResponse,
         callId: String
     ) =
         log.info(
             teamLogs,
-            "{} svar funnet for bruker {}", response.speilSvar.name, response.fnr,
+            "{} svar funnet for bruker {}", response.speilSvar.name, response.fnr.sha256(),
             kv("callId", callId),
-            kv("fnr", response.fnr),
+            kv("fnr", response.fnr.sha256()),
             kv("endpoint", "speilvurdering"),
             kv("soknadId", response.soknadId),
-            kv("konklusjon", response.speilSvar.name),
-            kv("avklaringer", response.avklaringer.toString()),
-            kv("kanal", response.kanal)
+            kv("speilSvar", response.speilSvar.name),
+            kv("aarsaker", response.aarsaker)
         )
 
     fun logGradertAdresse(callId: String) =
