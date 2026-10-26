@@ -2,16 +2,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val ktorVersion = "2.3.13"
 val nettyBomVersion = "4.2.19.Final"
-val lz4Version = "1.12.0"
+val lz4Version = "1.12.1"
 val kafkaVersion = "3.9.2"
-val jacksonVersion = "2.22.3"
+val jacksonVersion = "2.22.4"
 val jacksonAnnotationsVersion = "2.22"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.12.5"
 val resilience4jVersion = "1.7.1"
 val logstashVersion = "8.1"
 val logbackVersion = "1.6.5"
-val flywayVersion = "13.10.2"
+val flywayVersion = "13.11.1"
 val hikariVersion = "5.1.0"
 val kotliqueryVersion = "1.9.1"
 val httpClientVersion = "4.5.14"
@@ -40,7 +40,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
@@ -61,7 +61,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.17.2")
     implementation("com.natpryce:konfig:$konfigVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggerVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
