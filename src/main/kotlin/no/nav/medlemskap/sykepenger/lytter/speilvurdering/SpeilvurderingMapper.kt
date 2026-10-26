@@ -13,7 +13,12 @@ class SpeilvurderingMapper {
         SpeilResponse(
             soknadId = vurdering.soknadId,
             fnr = vurdering.fnr,
-            speilSvar = vurdering.speilSvar
+            speilSvar = vurdering.speilSvar,
+            aarsaker = when (vurdering.speilSvar) {
+                Speilsvar.JA, Speilsvar.NEI -> emptyList()
+                Speilsvar.UAVKLART, Speilsvar.UAVKLART_MED_BRUKERSPORSMAAL ->
+                    vurdering.avklaringer.map(::tilAarsak)
+            }
         )
 
     fun fraSaga(vurdering: Medlemskapsvurdering, callId: String): Speilvurdering {

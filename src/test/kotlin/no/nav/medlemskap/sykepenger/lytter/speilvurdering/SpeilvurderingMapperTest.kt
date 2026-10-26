@@ -2,11 +2,58 @@ package no.nav.medlemskap.sykepenger.lytter.speilvurdering
 
 import no.nav.medlemskap.sykepenger.lytter.jackson.JacksonParser
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Medlemskapsvurdering
+import no.nav.medlemskap.sykepenger.lytter.speilvurdering.domain.Speilvurdering
 import no.nav.medlemskap.sykepenger.lytter.speilvurdering.SpeilvurderingMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 class SpeilvurderingMapperTest {
+
+    @ParameterizedTest
+    @EnumSource(Speilsvar::class, names = ["UAVKLART", "UAVKLART_MED_BRUKERSPORSMAAL"])
+    fun `uavklart respons inneholder regelbrudd med forelopige forklaringer`(svar: Speilsvar) {
+        val vurdering = Speilvurdering(
+            soknadId = "12345",
+            fnr = "test-fnr",
+            speilSvar = svar,
+            avklaringer = listOf("REGEL_3", "REGEL_23", "SP6120", "UKJENT_REGEL"),
+            kanal = "kafka"
+        )
+
+        val response = SpeilvurderingMapper().tilSpeilResponse(vurdering)
+
+        Assertions.assertEquals(vurdering.soknadId, response.soknadId)
+        Assertions.assertEquals(vurdering.fnr, response.fnr)
+        Assertions.assertEquals(svar, response.speilSvar)
+        Assertions.assertEquals(
+            listOf(
+                Aarsak("REGEL_3", "Forklaring er foreløpig ikke tilgjengelig."),
+                Aarsak("REGEL_23", "Forklaring er foreløpig ikke tilgjengelig."),
+                Aarsak("SP6120", "Forklaring er foreløpig ikke tilgjengelig."),
+                Aarsak("UKJENT_REGEL", "Forklaring er foreløpig ikke tilgjengelig.")
+            ),
+            response.aarsaker
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource(Speilsvar::class, names = ["JA", "NEI"])
+    fun `ja og nei respons har tom aarsaksliste`(svar: Speilsvar) {
+        val vurdering = Speilvurdering(
+            soknadId = "12345",
+            fnr = "test-fnr",
+            speilSvar = svar,
+            avklaringer = listOf("REGEL_3"),
+            kanal = "kafka"
+        )
+
+        val response = SpeilvurderingMapper().tilSpeilResponse(vurdering)
+
+        Assertions.assertEquals(svar, response.speilSvar)
+        Assertions.assertTrue(response.aarsaker.isEmpty())
+    }
 
     @Test
     fun `ja svar skal være case insensitive`() {
