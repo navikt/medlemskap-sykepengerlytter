@@ -29,10 +29,10 @@ class SpeilvurderingMapperTest {
         Assertions.assertEquals(svar, response.speilSvar)
         Assertions.assertEquals(
             listOf(
-                Aarsak("REGEL_3", "Forklaring er foreløpig ikke tilgjengelig."),
-                Aarsak("REGEL_23", "Forklaring er foreløpig ikke tilgjengelig."),
-                Aarsak("SP6120", "Forklaring er foreløpig ikke tilgjengelig."),
-                Aarsak("UKJENT_REGEL", "Forklaring er foreløpig ikke tilgjengelig.")
+                Aarsak("REGEL_3", "Forklaring er foreløpig ikke tilgjengelig. For regelnummer REGEL_3"),
+                Aarsak("REGEL_23", "Forklaring er foreløpig ikke tilgjengelig. For regelnummer REGEL_23"),
+                Aarsak("SP6120", "Forklaring er foreløpig ikke tilgjengelig. For regelnummer SP6120"),
+                Aarsak("UKJENT_REGEL", "Forklaring er foreløpig ikke tilgjengelig. For regelnummer UKJENT_REGEL")
             ),
             response.aarsaker
         )

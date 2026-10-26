@@ -154,5 +154,5 @@ private val regelforklaringer = mapOf(
 fun tilAarsak(regelId: String): Aarsak =
     Aarsak(
         regelId = regelId,
-        forklaringPaaUavklart = regelforklaringer[regelId] ?: STANDARD_FORKLARING
+        forklaringPaaUavklart = "${regelforklaringer[regelId] ?: STANDARD_FORKLARING} For regelnummer $regelId"
     )
