@@ -34,9 +34,9 @@ internal class SpeilvurderingRouteLogger {
     ) =
         log.info(
             teamLogs,
-            "{} svar funnet for bruker {}", response.speilSvar.name, response.fnr.sha256(),
+            "{} svar funnet for bruker {}", response.speilSvar.name, response.fnr,
             kv("callId", callId),
-            kv("fnr", response.fnr.sha256()),
+            kv("fnr-hashverdi", response.fnr.sha256()),
             kv("endpoint", "speilvurdering"),
             kv("soknadId", response.soknadId),
             kv("speilSvar", response.speilSvar.name),
