@@ -164,28 +164,91 @@ private val regelforklaringer = mapOf(
         "og UDI kan ikke bekrefte at oppholdstilatelsen er gyldig 12 måneder tilbake og 2 måneder frem i tid.",
     "SP6001" to STANDARD_FORKLARING,
     "SP6110" to STANDARD_FORKLARING,
-    "SP6120" to STANDARD_FORKLARING,
-    "SP6130" to STANDARD_FORKLARING,
+    "SP6120" to """
+        Bruker oppgir å ha vært i arbeid utenfor Norge i søknad.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
+    "SP6130" to "Bruker har svart at hen har utført arbeid utenfor Norge i søknad om sykepenger. " +
+        "Det finnes ingen tilleggsinformasjon i søknaden.",
     "SP6201" to STANDARD_FORKLARING,
     "SP6211" to STANDARD_FORKLARING,
-    "SP6212" to STANDARD_FORKLARING,
+    "SP6212" to """
+        Bruker har oppgitt informasjon om oppholdstillatelse i søknad.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
     "SP6221" to STANDARD_FORKLARING,
-    "SP6222" to STANDARD_FORKLARING,
-    "SP6223" to STANDARD_FORKLARING,
-    "SP6225" to STANDARD_FORKLARING,
-    "SP6226" to STANDARD_FORKLARING,
+    "SP6222" to """
+        Bruker har oppgitt informasjon om tidligere oppholdstillatelse i søknad.
+        Startdatoen bruker oppgir er mer enn 12 måneder tilbake i tid.
+    """.trimIndent(),
+    "SP6223" to """
+        Bruker har oppgitt informasjon om tidligere oppholdstillatelse i søknad.
+        Vedtaksdatoen bruker oppgir er mer enn 12 måneder tilbake i tid.
+    """.trimIndent(),
+    "SP6225" to """
+        Bruker har oppgitt informasjon om oppholdstillatelse i søknad.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
+    "SP6226" to """
+        Bruker har oppgitt informasjon om oppholdstillatelse i søknad.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
     "SP6229_1" to STANDARD_FORKLARING,
-    "SP6301" to STANDARD_FORKLARING,
+    "SP6301" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor EØS.
+
+        Se første søknad for skjæringspunktet.
+
+        Brukers statsborgerskap tilsier at bruker er omfattet av EØS-avtalen, derfor er opphold i EØS-området ikke tatt med.
+    """.trimIndent(),
     "SP6311" to STANDARD_FORKLARING,
-    "SP6312" to STANDARD_FORKLARING,
+    "SP6312" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor EØS.
+
+        Se første søknad for skjæringspunktet.
+
+        Brukers statsborgerskap tilsier at bruker er omfattet av EØS-avtalen, derfor er opphold i EØS-området ikke tatt med.
+    """.trimIndent(),
     "SP6313" to STANDARD_FORKLARING,
-    "SP6314" to STANDARD_FORKLARING,
-    "SP6321" to STANDARD_FORKLARING,
-    "SP6401" to STANDARD_FORKLARING,
+    "SP6314" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor EØS.
+
+        Se første søknad for skjæringspunktet.
+
+        Brukers statsborgerskap tilsier at bruker er omfattet av EØS-avtalen, derfor er opphold i EØS-området ikke tatt med.
+    """.trimIndent(),
+    "SP6321" to """
+        Bruker oppgir ferieopphold utenfor EØS i søknad.
+
+        Se første søknad for skjæringspunktet.
+
+        Brukers statsborgerskap tilsier at bruker er omfattet av EØS-avtalen, derfor er opphold i EØS-området ikke tatt med.
+    """.trimIndent(),
+    "SP6401" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor Norge.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
     "SP6411" to STANDARD_FORKLARING,
-    "SP6412" to STANDARD_FORKLARING,
-    "SP6413" to STANDARD_FORKLARING,
-    "SP6414" to STANDARD_FORKLARING,
+    "SP6412" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor Norge.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
+    "SP6413" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor Norge.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
+    "SP6414" to """
+        Bruker har oppgitt informasjon i søknad om opphold utenfor Norge.
+
+        Se første søknad for skjæringspunktet.
+    """.trimIndent(),
     "SP6510" to STANDARD_FORKLARING,
     "SP6600" to STANDARD_FORKLARING,
     "SP6700" to STANDARD_FORKLARING
@@ -194,5 +257,8 @@ private val regelforklaringer = mapOf(
 fun tilAarsak(regelId: String): Aarsak =
     Aarsak(
         regelId = regelId,
-        forklaringPaaUavklart = regelforklaringer[regelId] ?: STANDARD_FORKLARING
+        forklaringPaaUavklart = (regelforklaringer[regelId] ?: STANDARD_FORKLARING)
+            .lineSequence()
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { it.trim() }
     )
