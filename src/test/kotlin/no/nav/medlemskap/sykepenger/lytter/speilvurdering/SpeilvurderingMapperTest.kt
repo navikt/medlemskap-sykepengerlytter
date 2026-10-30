@@ -185,7 +185,7 @@ class SpeilvurderingMapperTest {
     }
 
     @Test
-    fun `flerlinjet forklaring sendes som sammenhengende tekst uten ekstra mellomrom`() {
+    fun `forklaring sendes som sammenhengende tekst uten ekstra mellomrom`() {
         Assertions.assertEquals(
             Aarsak(
                 "REGEL_30",
