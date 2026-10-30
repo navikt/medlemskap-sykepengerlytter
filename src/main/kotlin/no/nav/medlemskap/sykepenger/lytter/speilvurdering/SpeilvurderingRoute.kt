@@ -33,7 +33,7 @@ fun Routing.speilvurderingRoute(
             try {
                 val response = hentEllerOpprettVurdering.finnVurdering(request, callId)
                 val speilRespons = speilvurderingMapper.tilSpeilResponse(response)
-                routeLogger.logVurderingFunnet(response, callId)
+                routeLogger.logVurderingFunnet(speilRespons, callId)
 
                 call.respond(HttpStatusCode.OK, speilRespons)
             } catch (cause: ResponseException) {
